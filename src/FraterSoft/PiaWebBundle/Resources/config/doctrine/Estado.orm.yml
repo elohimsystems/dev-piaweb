@@ -1,0 +1,34 @@
+FraterSoft\PiaWebBundle\Entity\Estado:
+    type: entity
+    table: piaaccess.tmestados
+    indexes:
+        IDX_522159EAAD92DF5F:
+            columns:
+                - idpais
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nombre:
+            type: string
+            nullable: true
+            length: 30
+            fixed: false
+            comment: ''
+    manyToOne:
+        idpais:
+            targetEntity: Pais
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idpais:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

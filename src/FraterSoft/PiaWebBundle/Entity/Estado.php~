@@ -1,0 +1,64 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Estado
+ */
+class Estado
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $nombre;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set estado
+     *
+     * @param string $estado
+     * @return Estado
+     */
+    public function setEstado($nombre)
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    /**
+     * Get estado
+     *
+     * @return string 
+     */
+    public function getEstado()
+    {
+        return $this->nombre;
+    }
+    
+    /**
+     * to string
+     *
+     * @return string 
+     */
+    public function __toString() {
+        return $this->nombre;
+    }      
+}

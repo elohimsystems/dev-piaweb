@@ -1,0 +1,42 @@
+evento:
+    pattern:  /
+    defaults: { _controller: "FraterSoftPiaWebBundle:Evento:index" }
+
+evento_listemail:
+    pattern:  /{email}/listaporemail
+    defaults: { _controller: "FraterSoftPiaWebBundle:Evento:listaemail" }
+    
+evento_listacompetidor:
+    pattern:  /{email}/listacompetidor
+    defaults: { _controller: "FraterSoftPiaWebBundle:Evento:listacompetidor" }    
+
+evento_new:
+    pattern:  /new
+    defaults: { _controller: "FraterSoftPiaWebBundle:Evento:new" }
+
+evento_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Evento:create" }
+    requirements: { _method: post }
+
+evento_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Evento:edit" }
+
+evento_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Evento:update" }
+    requirements: { _method: post|put }
+
+evento_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Evento:delete" }
+    requirements: { _method: post|delete }
+
+evento_show:
+    pattern:  /{id}/{email}/show
+    defaults: { _controller: "FraterSoftPiaWebBundle:Evento:show" }
+
+evento_configurarinscripciones:
+    pattern:  /configurarinscripciones/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Evento:configurarinscripciones" }

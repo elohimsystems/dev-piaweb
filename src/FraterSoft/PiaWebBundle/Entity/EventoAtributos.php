@@ -1,0 +1,250 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * EventoAtributos
+ */
+class EventoAtributos
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $etiqueta;
+
+    /**
+     * @var boolean
+     */
+    private $criterio;
+
+    /**
+     * @var integer
+     */
+    private $orden;
+
+    /**
+     * @var boolean
+     */
+    private $busqueda;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Evento
+     */
+    private $idevento;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Atributo
+     */
+    private $idatributo;
+
+    /**
+     * @var boolean
+     */
+    private $requerido;
+    
+    /**
+     * @var string
+     */
+    private $mascara;    
+    
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set etiqueta
+     *
+     * @param string $etiqueta
+     * @return EventoAtributos
+     */
+    public function setEtiqueta($etiqueta)
+    {
+        $this->etiqueta = $etiqueta;
+
+        return $this;
+    }
+
+    /**
+     * Get etiqueta
+     *
+     * @return string 
+     */
+    public function getEtiqueta()
+    {
+        return $this->etiqueta;
+    }
+
+    /**
+     * Set criterio
+     *
+     * @param boolean $criterio
+     * @return EventoAtributos
+     */
+    public function setCriterio($criterio)
+    {
+        $this->criterio = $criterio;
+
+        return $this;
+    }
+
+    /**
+     * Get criterio
+     *
+     * @return boolean 
+     */
+    public function getCriterio()
+    {
+        return $this->criterio;
+    }
+
+    /**
+     * Set orden
+     *
+     * @param integer $orden
+     * @return EventoAtributos
+     */
+    public function setOrden($orden)
+    {
+        $this->orden = $orden;
+
+        return $this;
+    }
+
+    /**
+     * Get orden
+     *
+     * @return integer 
+     */
+    public function getOrden()
+    {
+        return $this->orden;
+    }
+
+    /**
+     * Set busqueda
+     *
+     * @param boolean $busqueda
+     * @return EventoAtributos
+     */
+    public function setBusqueda($busqueda)
+    {
+        $this->busqueda = $busqueda;
+
+        return $this;
+    }
+
+    /**
+     * Get busqueda
+     *
+     * @return boolean 
+     */
+    public function getBusqueda()
+    {
+        return $this->busqueda;
+    }
+
+    /**
+     * Set idevento
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Evento $idevento
+     * @return EventoAtributos
+     */
+    public function setIdevento(\FraterSoft\PiaWebBundle\Entity\Evento $idevento = null)
+    {
+        $this->idevento = $idevento;
+
+        return $this;
+    }
+
+    /**
+     * Get idevento
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Evento 
+     */
+    public function getIdevento()
+    {
+        return $this->idevento;
+    }
+
+    /**
+     * Set idatributo
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Atributo $idatributo
+     * @return EventoAtributos
+     */
+    public function setIdatributo(\FraterSoft\PiaWebBundle\Entity\Atributo $idatributo = null)
+    {
+        $this->idatributo = $idatributo;
+
+        return $this;
+    }
+
+    /**
+     * Get idatributo
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Atributo 
+     */
+    public function getIdatributo()
+    {
+        return $this->idatributo;
+    }
+    
+    /**
+     * Set requerido
+     *
+     * @param boolean $requerido
+     * @return EventoAtributos
+     */
+    public function setRequerido($requerido)
+    {
+        $this->requerido = $requerido;
+
+        return $this;
+    }
+
+    /**
+     * Get requerido
+     *
+     * @return boolean 
+     */
+    public function getRequerido()
+    {
+        return $this->requerido;
+    }    
+    
+    /**
+     * Set mascara
+     *
+     * @param string $mascara
+     * @return String
+     */
+    public function setMascara($mascara)
+    {
+        $this->mascara = $mascara;
+
+        return $this;
+    }
+
+    /**
+     * Get mascara
+     *
+     * @return String 
+     */
+    public function getMascara()
+    {
+        return $this->mascara;
+    }      
+}

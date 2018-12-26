@@ -1,0 +1,38 @@
+FraterSoft\PiaWebBundle\Entity\Numeracionexterna:
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\NumeracionexternaRepository      
+    type: entity
+    table: piaaccess.tmnumeracionexterna
+    indexes:
+        IDX_C10D59EDD1B707F:
+            columns:
+                - idnumeracion
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        numero:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        asignado:
+            type: boolean
+            nullable: true
+            comment: ''
+    manyToOne:
+        idnumeracion:
+            targetEntity: Numeracion
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idnumeracion:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

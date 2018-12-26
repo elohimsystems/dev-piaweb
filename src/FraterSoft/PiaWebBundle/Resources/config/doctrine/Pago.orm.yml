@@ -1,0 +1,75 @@
+FraterSoft\PiaWebBundle\Entity\Pago:
+    type: entity
+    table: piaaccess.tmpagos
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\PagoRepository        
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+            #sequenceGenerator:
+            #    sequenceName: piaaccess.tmpagos_id_sq
+            #    allocationSize: 100
+            #    initialValue: 1                   
+    fields:
+        fechahora:
+            type: datetime
+            nullable: true
+            comment: ''
+        monto:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            comment: ''
+        moneda:
+            type: string
+            nullable: true
+            length: 3
+            fixed: false
+            comment: ''
+        referencia:
+            type: string
+            nullable: true
+            length: 20
+            fixed: false
+            comment: ''
+        comprobante:
+            type: string
+            nullable: true
+            length: 200
+            fixed: false
+            comment: 'Almacena la ruta y el nombre del archivo del comprobante'
+        tipo:
+            type: string
+            nullable: true
+            length: 20
+            fixed: false
+            comment: ''
+        banco:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        conciliado:
+            type: boolean
+            nullable: true
+            comment: ''
+        conciliadoel:
+            type: datetime
+            nullable: true
+            comment: ''
+        idliquidacion:
+            type: bigint
+            nullable: true
+            comment: ''    
+        notificado:
+            type: datetime
+            nullable: true
+            comment: ''            
+    lifecycleCallbacks: {  }

@@ -1,0 +1,280 @@
+{% extends '::base.html.twig' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
+<style type="text/css">
+    #sel_competencias{
+        margin: 10px 0;
+    }    
+    #tabs{  /* Oculta el tabs para que se muestre luego de cargar todo el html */
+        display: none;
+    }
+    /*#formulario > div:nth-child(1){
+        display: none;
+    }*/
+    td.details-control {
+        background: url('{{asset('bundles/fratersoftpiaweb/images/details_open.png')}}') no-repeat center center;
+        cursor: pointer;
+    }
+    tr.shown td.details-control {
+        background: url('{{asset('bundles/fratersoftpiaweb/images/details_close.png')}}') no-repeat center center;
+    }    
+    table.dataTable tbody th, table.dataTable tbody td {
+        padding: 1px 2px;
+    }
+    #formularioCategoriaReglas > div:nth-child(n+0){
+        margin: 5px;
+    }
+    #formularioCategoriaReglas > div:nth-last-child(-n+1) { 
+        float: left;
+        width: 250px;
+        text-align: center;
+    }
+    #formularioCategoriaReglas > div:nth-child(n+0) > label{
+        display: inline-block;
+        width: 130px;
+        text-align: left;   
+        vertical-align: middle;
+    }
+    #formularioCategoriaReglas > div:nth-child(n+0) > input[type="checkbox"]{
+        vertical-align: middle;
+        margin-left: 0;
+    }
+    #formularioCategoriaReglas > div:nth-child(n+0) > input[type="text"],input[type="number"] {
+        vertical-align: middle;
+        width: 196px;
+    }
+    #formularioCategoriaReglas > div:nth-child(n+0) > select {
+        height: 21px;
+    }
+    
+</style>
+{% endblock %}  
+{% set entidad='categoria' %}
+{% block body -%}
+    <div id="tabs">    
+        {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
+        <div id="tabs-2">     
+            {{ include("FraterSoftPiaWebBundle:Evento:menu_conf_inscripciones.html.twig") }}
+            <div id="titulotabla"><h3>{{entidad|title}}s Configuradas</h3></div>
+            <div id="sel_competencias">
+                Seleccione la Comptencia
+                <select id="select_competencias_opcion">
+                {% for competencia in competencias %}
+                    <option value="{{ competencia.id }}">{{competencia.descripcion}}</option>
+                {% endfor %}
+                </select>
+            </div>
+            <table id="{{entidad}}" class="display row-border hover">
+            </table>    
+            <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistaeventos')}}');">Regresar</button>
+            <div id="dialogformGuardar">
+                {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+                {{ form_end(form) }} 
+            </div>          
+            <div id="dialogelimiar">
+                ¿Esta seguro que desea elimar la {{entidad}} <strong id="eliminar"></strong>?
+            </div> 
+            <div id="dialogformGuardarCategoriaReglas">
+                {{ form_start(formCategoriaReglas,{'attr': {'id': 'formularioCategoriaReglas'}}) }}
+                {{ form_end(formCategoriaReglas) }} 
+            </div> 
+            <div id="dialogEliminarCategoriaReglas">
+                ¿Esta seguro que desea ELIMIAR todas las reglas de seleccion de categorias de esta categoria?<strong id="eliminar"></strong>
+            </div> 
+            <div id="dialog-message" title="Mensaje">
+            </div>        
+        </div> 
+    </div>         
+{% endblock %}
+{% block javascripts -%}
+{{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}
+<link href="{{asset('bundles/fratersoftpiaweb/css/jquery.datetimepicker.css')}}" rel="stylesheet" type="text/css"/>
+<script src="{{asset('bundles/fratersoftpiaweb/js/jquery.datetimepicker.full.js')}}" type="text/javascript"></script>  
+<script>
+    $(document).ready(function () { 
+        var entidad = 'categoria';
+        var tabla;
+        $("#tabs").css("display","block");
+        $( "#botonera" ).controlgroup();                          
+        tabla=tablaDatos(
+                $('#formulario'), //Se usa para llenar lo campos del formulario
+                {{campos|json_encode|raw}}, //json con los atributos de la entidad y sus caracteristicas
+                toTitleCase(entidad), //Usada para el titulo 
+                "{{ path(entidad ~ '_create')}}", //Url para crear
+                "{{ path(entidad ~ '_update',{'id':'_id_'})}}", //Url para editar
+                "{{ path(entidad ~ '_listaajax',{'idevento': idevento }) }}", //Url para buscar los datos a listar
+                [ //Agrega columnas no mapeadas a la tabla
+                    {
+                        posicion:0, 
+                        config:{ 
+                            "targets": 0 , 
+                            "visible": true,
+                            "className": 'details-control',
+                            "orderable": false,
+                            "data": null,
+                            "defaultContent": '',
+                            "width": 20
+                        },
+                    },                    
+                ],
+                [//Agregar una columna de botones en la posicion indicada, con los parametros descritos
+                    {
+                        "posicion":5,
+                        "titulo": "Opciones Reglas",
+                        "botones":[
+                            {"icon":'ui-icon-plusthick',"title":'Crear Regla',"onclick":'openGuardarForm(id);'},
+                            {"icon":'ui-icon-copy',"title":'Copiar Reglas',"onclick":'openGuardarForm(id);'},
+                            {"icon":'ui-icon-closethick',"title":'liminar Reglas',"onclick":'openDialogEliminar(id);'},
+                        ]
+                    }
+                ],
+                $('#select_competencias_opcion')
+        );
+        dialogGuardar($('#formulario'),{{campos|json_encode|raw}});
+        dialogEliminar('{{ path(entidad ~ '_delete',{'id':'_id_'})}}');
+        dialogMensaje();
+        
+        menuConfInscripcionesControl('categorias');        
+        
+        {% if estado is defined %}
+            {% if estado == 1 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>La {{entidad|title}} fue ELIMINADA satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+            {% if estado == 2 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>La {{entidad|title}} fue CREADA satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+            {% if estado == 3 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>La {{entidad|title}} fue ACTUALIZADA satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+            {% if estado == 4 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>Se ELIMINARON todas las reglas de la categoria satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+        {% endif %}    
+            
+        // Add event listener for opening and closing details
+        $('#'+entidad+' tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = tabla.row( tr );
+
+            if ( row.child.isShown() ) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            }
+            else {
+                var url = "{{ path('categoriareglas_listarajax',{'idcategoria':'_idcategoria_'}) }}";
+                url=url.replace('_idcategoria_',row.data().id);
+                $.ajax({
+                    type: "GET",
+                    //data: criterios,
+                    url: url,
+                    dataType: "json",
+                    success: function (datos){
+                        row.child( format(datos)).show();
+                    },
+                    error: function (jqXHR, textStatus, errorThrown){
+                        alert("PIA Ajax Error Categoria Reglas: " + jqXHR.responseText);
+                    }
+                });
+                tr.addClass('shown');                                
+            }
+        });     
+        
+        
+        
+        $("#dialogformGuardarCategoriaReglas").dialog({
+            autoOpen: false,
+            width: 400,
+            modal: true,
+            buttons: [
+                {
+                    text: "Guardar",
+                    click: function () {
+                        $("#formularioCategoriaReglas").submit();
+                        //alert($("#dialogformGuardarCategoriaReglas").data('id'));
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "Carrar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]             
+        });         
+        $("#dialogEliminarCategoriaReglas").dialog({
+            autoOpen: false,
+            width: 400,
+            modal: true,
+            buttons: [
+                {
+                    text: "SI",
+                    click: function () {
+                        var action = "{{ path('categoriareglas_delete_all_categoria',{'idcategoria':'_idcategoria_','idevento':idevento})}}";
+                        action = action.replace('_idcategoria_',$("#dialogEliminarCategoriaReglas").data('id'));
+                        window.open(action, "_self");                        
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "NO",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]             
+        });         
+        
+    });    
+    
+    function openGuardarForm(id){
+        $({{formCategoriaReglas.idcategoria.vars.id}}).val(id);
+        var url_action="{{ path('categoriareglas_create')}}";
+        //$("#formularioCategoriaReglas").val($("#dialogformGuardarCategoriaReglas").data('id'));
+        $("#formularioCategoriaReglas").attr('action',url_action);                        
+        $("#dialogformGuardarCategoriaReglas").dialog({ title: "Crear Regla" });
+        $("#dialogformGuardarCategoriaReglas").data('id',id).dialog("open");
+    }
+
+    function openDialogEliminar(id){
+        $("#dialogEliminarCategoriaReglas").dialog({ title: "Eliminar Reglas" });
+        $("#dialogEliminarCategoriaReglas").data('id',id).dialog("open");
+    }
+
+    function format ( d ) {
+        var valor2='';
+        var html="";
+        html+='<table id="tabla_reglas" class="display row-border hover">'+
+            '<thead><tr>'+
+                '<th>Atributos</th><th>Tipo</th><th>Valor 1</th><th>Valor 2</th><th>Opciones</th>'+
+            '</tr></thead><tbody>';
+        for(i=0;i<d.data.length;i++){
+            valor2=(d.data[i].valor2!=null)?d.data[i].valor2:''
+            html+='<tr><td>'+d.data[i].atributo+'</td>'
+                    +'<td>'+d.data[i].tipo+'</td>'
+                    +'<td>'+d.data[i].valor1+'</td>'
+                    +'<td>'+valor2+'</td>';
+            html+='<td><ul id="icons" class="ui-widget ui-helper-clearfix">' +
+                        '<a href="">' +
+                            '<li class="ui-state-default ui-corner-all" title="Editar Regla"><span class="ui-icon ui-icon-pencil"></span></li>' +
+                        '</a>' +
+                        '<a href="">' +
+                            '<li class="ui-state-default ui-corner-all" title="Eliminar Regla"><span class="ui-icon ui-icon-close"></span></li>' +
+                        '</a>' +
+                    '</ul></td></tr>';
+        }
+        html+='<tbody></table>';
+        return(html);
+    }        
+   
+</script>    
+{% endblock %}

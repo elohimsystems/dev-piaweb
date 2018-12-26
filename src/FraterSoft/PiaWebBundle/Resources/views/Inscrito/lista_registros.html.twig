@@ -1,0 +1,145 @@
+{% extends '::base.html.twig' %}
+{% block javascripts %}
+    <script type="text/javascript" language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" language="javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script type="text/javascript" language="javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>      
+    <script type="text/javascript" language="javascript" src="//cdn.datatables.net/plug-ins/1.10.16/dataRender/datetime.js"></script>  
+    <script>
+        var idinscrito = 0;
+        $(document).ready(function () {
+            url="{{ path('inscrito_lista_registrosajax',{'idevento': idevento,'email':email }) }}";
+            var table = $('#tablaInscritos').DataTable({
+                "dom": 'Bflit<"bottom"Bl<"clear">p>',
+                processing: true,
+                serverSide: false, 
+                ajax: url,                
+		buttons: [  
+                    {extend: 'excelHtml5',
+                        text: 'Exportar',
+                        title: 'ListadoRegistros'
+                    }, 
+                    { extend: 'print', text: 'Imprimir' },
+                ],
+                'select': {
+                    style: 'os',   
+                    rows: "%d filas marcadas",
+                },                
+                "language": {
+                    "loadingRecords": "Espere - cargando...",
+                    "emptyTable": "No hay datos para mostrar",
+                    "lengthMenu": "Muestra _MENU_ registros",
+                    "info": "Mostrando _START_ de _END_ de _TOTAL_ registros",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                    "select": {
+                        style: 'os',
+                        rows: "%d filas marcadas"
+                    },                    
+                },
+                'scrollX': true,
+                columns: [
+                    { title: "Sec.", data: "secuencia" },
+                    { title: "Competencia", data: "idcompetencia.descripcion" },
+                    { title: "Numero", data: "numero" },
+                    {% for atributo in atributos %}
+                    { 
+                        title: {% if atributo.etiqueta is null=='S' %}"{{ atributo.idatributo.nombre|title }}"{% else %}"{{ atributo.etiqueta }}"{% endif %}, 
+                        data: "idpia.{{atributo.idatributo.nombre|lower}}",
+                        {% if atributo.idatributo.tipodato=='S' %}          //string
+                        render: function(data){return data==null?"":data.toUpperCase();} 
+                        {% elseif  atributo.idatributo.tipodato=='D' %}     //fecha
+                        render: function(data){
+                            var formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
+                            return formatted;
+                        }                                    
+                        {% elseif  atributo.idatributo.tipodato=='I' %}     //imagen
+                        render: function(data){
+                            var url = "{{asset('bundles/fratersoftpiaweb/fine-uploader/files/')}}" + data;
+                            if(data)
+                                return "<a href='"+url+"' target='_blank'><img id='imagen_foto' src='"+url+"'/></a>";
+                            else
+                                return "<img id='imagen_foto' src='{{asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}'/></a>";
+                        }                                    
+                        {% elseif  atributo.idatributo.tipodato=='F' %}     //files
+                        render: function(data){
+                            var url = "{{asset('bundles/fratersoftpiaweb/fine-uploader/files/')}}" + data;
+                            return "<a href='"+url+"' target='_blank'><img id='imagen_archivo' src='{{asset('bundles/fratersoftpiaweb/images/pdf.png')}}'/></a>";
+                        }                                    
+                        {% elseif  atributo.idatributo.tipodato=='E' %}     //entidad
+                        render: function(data){
+                            return "Entidad";
+                        }                                    
+                        {% elseif  atributo.idatributo.tipodato=='N' %}     //numerico
+                        render: function(data){
+                            return data;
+                        }                                    
+                        {%else%}
+                        render: function(data){return data==null?"":data.toUpperCase();} 
+                        {% endif %}},            
+                    {% endfor %}
+                    { title: "Categoria", data: "idcategoria.descripcion" },
+                    { title: "Acciones", data:"id",render:
+                                function(data, type, row){
+                                    var urlshow="{{ path('inscrito_show', { 'id': '_id_' }) }}";
+                                    urlshow = urlshow.replace('_id_', data);
+                                    var urledit="{{ path('inscrito_edit', { 'id': '_id_' }) }}";
+                                    urledit = urledit.replace('_id_', data);
+                                    var html=
+                                        "<ul id='icons' class='ui-widget ui-helper-clearfix'>"
+                                        + "<a href='" + urlshow + "'>"
+                                        + "<li class='ui-state-default ui-corner-all' title='Ver'><span class='ui-icon ui-icon-search'></span></li>"
+                                        + "</a>"
+                                        + "<a href='"+urledit+"' >"
+                                        + "<li class='ui-state-default ui-corner-all' title='Editar'><span class='ui-icon ui-icon-pencil'></span></li>"
+                                        + "</a></ul>"                                            
+                                    return html;
+                                },
+                        "width": "98px","orderable": false
+                    }, 
+                ],
+                "columnDefs": [ //Oculta las columnas en la tabla
+                    {% set target=3 %}
+                    {% for atributo in atributos %}
+                    {% if atributo.idatributo.tipo=='U' %}
+                    { "visible": false, "targets": {{ target }} },
+                    {% endif %}
+                    {% set target=target+1 %}
+                    {% endfor %}
+                ],             
+            });
+        });
+    </script>           
+{% endblock %} 
+{% block style %}
+<style type="text/css">
+    td,th{
+        font-size: 10px;
+    }
+    .ui-icon {
+        -ms-transform: scale(0.7); /* IE 9 */
+        -webkit-transform: scale(0.7); /* Chrome, Safari, Opera */
+        transform: scale(0.7);
+    }        
+    .dataTables_length,.dataTables_filter{
+        margin-top: 3px;
+    }
+    select{
+        width: 50px;
+    }
+    img#imagen_foto,img#imagen_archivo {
+        height: 16px;
+    }    
+</style>
+{% endblock %}  
+{% block body -%}
+    <div id="tabs">
+        <table id="tablaInscritos" class="display row-border hover">
+        </table>     
+        <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+    </div>
+{% endblock %}

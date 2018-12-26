@@ -1,0 +1,123 @@
+frater_soft_pia_web_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: FraterSoftPiaWebBundle:Default:index }
+    
+frater_soft_pia_web_parametros:
+    pattern:  /parametros
+    defaults: { _controller: FraterSoftPiaWebBundle:Default:parametros }    
+    
+frater_soft_pia_web_enviar:
+    pattern:  /enviar
+    defaults: { _controller: FraterSoftPiaWebBundle:Default:eviaremail }
+    
+frater_soft_pia_web_jqueryui:
+    path:  /jqueryui
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    FraterSoftPiaWebBundle:Default:jqueryui.html.twig
+
+frater_soft_pia_web_jqueryui_smoothness:
+    path:  /jqueryui-smoothness
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    FraterSoftPiaWebBundle:Default:jqueryui-smoothness.html.twig
+        
+frater_soft_pia_web_jquery_validator:
+    path:  /jqvalidator
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    FraterSoftPiaWebBundle:Default:jqvalidator.html.twig        
+
+frater_soft_pia_web_jquery_ajax:
+    path:  /jqueryajax
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    FraterSoftPiaWebBundle:Default:ajax.html.twig  
+
+frater_soft_pia_web_jqueryui_dialog:
+    path:  /dialog
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    FraterSoftPiaWebBundle:Default:dialog.html.twig    
+        
+frater_soft_pia_web_sessions:
+    pattern:  /sessions
+    defaults: { _controller: "FraterSoftPiaWebBundle:Default:sessions" }
+        
+        
+FraterSoftPiaWebBundle_inscrito:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/inscrito.yml"
+    prefix:   /inscrito
+
+FraterSoftPiaWebBundle_competidor:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/competidor.yml"
+    prefix:   /competidor
+    
+inscrito_selcategoria:
+    pattern:  /selcategoria/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:seleccionaCategorias" }    
+    
+FraterSoftPiaWebBundle_pago:
+        resource: "@FraterSoftPiaWebBundle/Resources/config/routing/pago.yml"
+        prefix:   /pago    
+        
+FraterSoftPiaWebBundle_evento:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/evento.yml"
+    prefix:   /evento        
+    
+FraterSoftPiaWebBundle_preciosevento:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/preciosevento.yml"
+    prefix:   /preciosevento    
+    
+FraterSoftPiaWebBundle_numeracion:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/numeracion.yml"
+    prefix:   /numeracion      
+    
+FraterSoftPiaWebBundle_eventoatributos:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/eventoatributos.yml"
+    prefix:   /eventoatributos 
+    
+FraterSoftPiaWebBundle_competencia:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/competencia.yml"
+    prefix:   /competencia    
+    
+FraterSoftPiaWebBundle_categoria:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/categoria.yml"
+    prefix:   /categoria    
+    
+FraterSoftPiaWebBundle_categoriareglas:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/categoriareglas.yml"
+    prefix:   /categoriareglas    
+    
+FraterSoftPiaWebBundle_listasevento:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/listasevento.yml"
+    prefix:   /listasevento    
+    
+FraterSoftPiaWebBundle_formaspago:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/formaspago.yml"
+    prefix:   /formaspago
+    
+FraterSoftPiaWebBundle_formaspagoevento:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/formaspagoevento.yml"
+    prefix:   /formaspagoevento    
+    
+FraterSoftPiaWebBundle_campeonato:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/campeonato.yml"
+    prefix:   /campeonato
+
+FraterSoftPiaWebBundle_campeonatoclubes:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/campeonatoclubes.yml"
+    prefix:   /campeonatoclubes
+    
+FraterSoftPiaWebBundle_club:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/club.yml"
+    prefix:   /club
+    
+FraterSoftPiaWebBundle_campeonatocompetidores:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/campeonatocompetidores.yml"
+    prefix:   /campeonatocompetidores    
+
+FraterSoftPiaWebBundle_clubcompetidores:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/clubcompetidores.yml"
+    prefix:   /clubcompetidores
+    

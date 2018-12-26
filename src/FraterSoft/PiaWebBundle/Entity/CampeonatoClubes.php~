@@ -1,0 +1,139 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * CampeonatoClubes
+ */
+class CampeonatoClubes
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var integer
+     */
+    private $idcampeonato;
+
+    /**
+     * @var string
+     */
+    private $club;
+
+    /**
+     * @var boolean
+     */
+    private $pordefecto;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Club
+     */
+    private $idclub;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set idcampeonato
+     *
+     * @param integer $idcampeonato
+     * @return CampeonatoClubes
+     */
+    public function setIdcampeonato($idcampeonato)
+    {
+        $this->idcampeonato = $idcampeonato;
+
+        return $this;
+    }
+
+    /**
+     * Get idcampeonato
+     *
+     * @return integer 
+     */
+    public function getIdcampeonato()
+    {
+        return $this->idcampeonato;
+    }
+
+    /**
+     * Set club
+     *
+     * @param string $club
+     * @return CampeonatoClubes
+     */
+    public function setClub($club)
+    {
+        $this->club = $club;
+
+        return $this;
+    }
+
+    /**
+     * Get club
+     *
+     * @return string 
+     */
+    public function getClub()
+    {
+        return $this->club;
+    }
+
+    /**
+     * Set pordefecto
+     *
+     * @param boolean $pordefecto
+     * @return CampeonatoClubes
+     */
+    public function setPordefecto($pordefecto)
+    {
+        $this->pordefecto = $pordefecto;
+
+        return $this;
+    }
+
+    /**
+     * Get pordefecto
+     *
+     * @return boolean 
+     */
+    public function getPordefecto()
+    {
+        return $this->pordefecto;
+    }
+
+    /**
+     * Set idclub
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Club $idclub
+     * @return CampeonatoClubes
+     */
+    public function setIdclub(\FraterSoft\PiaWebBundle\Entity\Club $idclub = null)
+    {
+        $this->idclub = $idclub;
+
+        return $this;
+    }
+
+    /**
+     * Get idclub
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Club 
+     */
+    public function getIdclub()
+    {
+        return $this->idclub;
+    }
+}

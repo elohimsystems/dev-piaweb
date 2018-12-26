@@ -1,0 +1,84 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    
+
+    <table class="record_properties" align="center" border="0">
+        <tbody>
+            <tr>
+                <td colspan="2" align="center">
+                    <h1>Informaci&oacute;n Inscripci&oacute;n</h1>
+                </td>
+            </tr>            
+            <tr><th>Id</th><td>{{ entity.id }}</td></tr>
+            <tr><th>Secuencia</th><td>{{ entity.secuencia }}</td></tr>
+            <tr><th>N&uacute;mero</th><td>{{ entity.numero }}</td></tr>
+            <tr><th>C&eacute;dula</th><td>{{ entity.idpia.iddocumento }}</td></tr>
+            <tr><th>Apellido</th><td>{{ entity.idpia.apellido|upper }}</td></tr>
+            <tr><th>Nombre</th><td>{{ entity.idpia.nombre|upper }}</td></tr>
+            <tr><th>Fecha de Nacimiento</th><td>{{ entity.idpia.fechanacimiento|date('d-m-Y') }}</td></tr>
+            <tr><th>Sexo</th><td>{{ entity.idpia.sexo }}</td></tr>
+            <tr><th>Club</th><td>{{ entity.idpia.equipo|upper }}</td></tr>
+            <tr><th>Estado</th><td>{{ entity.idpia.idestado.estado }}</td></tr>
+            <tr><th>Email</th><td>{{ entity.idpia.email|lower }}</td></tr>
+            <tr><th>Telefono</th><td>{{ entity.idpia.telefono }}</td></tr>
+            <tr><th>Categor&iacute;a</th><td>{{ entity.idcategoria.descripcion }}</td></tr>            
+            <tr>
+                <th>Inscrito el</th>
+                <td>{{ entity.fechahora|date('d-m-Y H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Punto</th>
+                <td>{{ entity.punto }}</td>
+            </tr>
+            {% if(entity.idpago.conciliado) %}
+                <tr>
+                    <th colspan="2" align="center">
+                        Informacion de Pago
+                    </th>
+                </tr>
+                <tr><th>Conciliado el</th><td>{{ entity.idpago.conciliadoel|date('d-m-Y H:i:s') }}</td></tr>                
+                <tr>
+                    <th>Tipo</th>
+                    <td>
+                        {% if entity.idpago.tipo == 3 %} TARJETA DE CREDITO 
+                        {% elseif entity.idpago.tipo == 2 or entity.idpago.tipo == 'Transferencia' %} TRANSFERENCIA
+                        {% elseif entity.idpago.tipo == 1 or entity.idpago.tipo == 'Deposito'%} DEPOSITO {% endif %}
+                    </td></tr>
+                {% if entity.idpago.tipo != 3 %}
+                    <tr><th>Banco</th><td>{{ entity.idpago.banco }}</td></tr>
+                {% endif %}
+                <tr>
+                    {% if entity.idpago.tipo == 3 %}
+                        <th>Comprobante</th>
+                    {% else %}
+                        <th>Referencia</th>
+                    {% endif %}
+                    {% if entity.idpago.tipo == 3 %}
+                        <td>{{ entity.idpago.comprobante }}</td>
+                    {% else %}
+                        <td>{{ entity.idpago.referencia }}</td>
+                    {% endif %}
+                </tr>
+            {% endif %} 
+            </tr>    
+            <tr>
+                <td colspan="2" align="center">
+                    {# {{ form(delete_form) }} #}
+                </td>
+            </tr>                 
+            <tr>
+                <td colspan="2" align="center">
+                    <a href="{{ app.request.headers.get('referer') }}">Regresar</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+
+    <li>
+        
+    </li>
+    <li></li>
+</ul>
+{% endblock %}

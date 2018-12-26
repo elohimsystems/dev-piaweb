@@ -1,0 +1,50 @@
+{% extends '::base.html.twig' %}
+{% block style %}    
+    {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}
+    <style type="text/css">
+        #tabs{
+            display: none;
+        }
+        #contentAtributos,#contentComptencias,#contentCategoria,#contentListas{
+            width: 700px;
+            margin: 10px;
+        }    
+    </style>
+{% endblock %}  
+{% block body -%}
+    <div id="tabs">    
+        {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
+        <div id="tabs-2">      
+            <fieldset>    
+                <div id="botones_configurarinscripciones">
+                    <button id="boton_atributos">Atributos</button>
+                    <button id="boton_competencias">Competencias</button>
+                    <button id="boton_categorias">Categorias</button>
+                    <button id="boton_listas">Listas</button>
+                    <button id="boton_formaspago">Formas de Pago</button>
+                    <button id="boton_precios">Precios</button>
+                </div>
+            </fieldset>    
+        {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
+                <h3>Atributos</h3>
+                <div id="contentAtributos">
+                    {{ render(controller('FraterSoftPiaWebBundle:EventoAtributos:new',{'idevento':idevento})) }}
+                </div>
+        <a href="{{ urllistaeventos }}"><button id="button">Regresar</button></a>                       
+    </div>
+{% endblock %}
+{% block javascripts -%}
+    <script>
+        $(document).ready(function () { 
+            $( "#b1" ).button({
+              //disabled: true
+            });
+            $( "#boton_atributos" ).click(function() {
+                $(location).attr('href', '{{ path('eventoatributos_new',{'idevento':idevento}) }}')
+                {#{{ render(controller('FraterSoftPiaWebBundle:Competencia:new',{'idevento':idevento})) }}#}
+                    {#{{ render(controller('FraterSoftPiaWebBundle:Categoria:new',{'idevento':idevento})) }}#}
+                        {#{{ render(controller('FraterSoftPiaWebBundle:Listasevento:gestion',{'idevento':idevento})) }}#}
+            });	            
+        });
+    </script>
+{% endblock-%}  

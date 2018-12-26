@@ -1,0 +1,29 @@
+competencia:
+    pattern:  /
+    defaults: { _controller: "FraterSoftPiaWebBundle:Competencia:index" }
+
+competencia_listaajax:
+    pattern:  /{idevento}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Competencia:listaajax" }
+
+competencia_new:
+    pattern:  /new/{idevento}/{estado}
+    defaults: { _controller: FraterSoftPiaWebBundle:Competencia:new,estado:null }
+
+competencia_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Competencia:create" }
+    requirements: { _method: post }
+
+competencia_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Competencia:edit" }
+
+competencia_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Competencia:update" }
+    requirements: { _method: post|put }
+
+competencia_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Competencia:delete" }

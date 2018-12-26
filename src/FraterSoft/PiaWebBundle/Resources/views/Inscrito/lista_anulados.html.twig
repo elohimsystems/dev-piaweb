@@ -1,0 +1,143 @@
+{% extends '::base.html.twig' %}
+{% block javascripts %}
+    <script type="text/javascript" language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" language="javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script type="text/javascript" language="javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>      
+    <script>
+        var idinscrito = 0;
+        function anular(id) {
+            idinscrito = id;
+            $("#dialog").dialog("open");
+        }
+
+        $(document).ready(function () {
+            $('#tablaAnulados').dataTable({
+                "dom": 'Bf<"top"li>rt<"bottom"Blp><"clear">',
+                //'scrollX': true,
+                buttons: [
+                    {extend: 'excelHtml5',
+                        text: 'Exportar',
+                        title: 'Anulados'
+                    }, 
+                    { extend: 'print', text: 'Imprimir' }
+                ],
+                "language": {
+                    "emptyTable": "No hay datos para mostrar",
+                    "lengthMenu": "Muestra _MENU_ registros",
+                    "info": "Mostrando _START_ de _END_ de _TOTAL_ registros",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                }
+            });
+        });
+
+        $(function () {
+            $("#tabs").tabs();
+            $('#tabs a[href="#tabs-3"]').click();
+            $('#tabs a[href="#tabs-1"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento,'email':email}) }}')
+            });
+            $('#tabs a[href="#tabs-2"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
+            });
+            //Redireccion a la pagina de los operaciones TCD al hacer click en el tab
+            $('#tabs a[href="#tabs-4"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
+            });                 
+            $('#tabs a[href="#tabs-5"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
+            });             
+        });
+    </script>           
+{% endblock %}    
+{% block style %}
+<style type="text/css">
+    td,th{
+        font-size: 10px;
+    }
+    .ui-icon {
+        -ms-transform: scale(0.7); /* IE 9 */
+        -webkit-transform: scale(0.7); /* Chrome, Safari, Opera */
+        transform: scale(0.7);
+    }        
+    table.dataTable tbody th, table.dataTable tbody td{
+        padding: 0;
+    } 
+    .dataTables_length,.dataTables_filter{
+        margin-top: 3px;
+    }
+    select{
+        width: 50px;
+    }
+    #evento{
+        border: 1px solid #d8dcdf;
+        padding: 5px;
+        margin-bottom: 3px;
+        border-radius: 6px;
+        font-weight: bold;        
+    }    
+</style>
+{% endblock %}  
+{% block body -%}
+    <div id="evento">{{nombreevento}}</div>
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Pre-Inscritos</a></li>
+            <li><a href="#tabs-2">Inscritos</a></li>
+            <li><a href="#tabs-3">Anulados</a></li>
+            <li><a href="#tabs-4">Operaciones TDC</a></li>
+            <li><a href="#tabs-5">Estadisticas</a></li>    
+        </ul>
+        <div id="tabs-1"></div>
+        <div id="tabs-2"></div>  
+        <div id="tabs-4"></div>        
+        <div id="tabs-5"></div>  
+        <div id="tabs-3">
+            <table id="tablaAnulados" class="display row-border hover">
+                <thead>
+                    <tr>
+                        <th>Nro</th>
+                        <th>Competencia</th>                
+                        <th>Cedula</th>                
+                        <th>Apellido</th>
+                        <th>Nombre</th>
+                        <th>Sexo</th>
+                        <th>Equipo</th>
+                        <th>Estado</th>
+                        <th>Categoria</th>
+                        <th>Punto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for anulada in anuladas %}
+                        <tr>
+                            <td>{{ anulada.secuencia }}</a></td>
+                            <td>{{ anulada.idcompetencia.descripcion }}</td>
+                            <td>{{ anulada.idpia.iddocumento }}</td>
+                            <td>{{ anulada.idpia.apellido|upper }}</td>
+                            <td>{{ anulada.idpia.nombre|upper }}</td>
+                            <td>{{ anulada.idpia.sexo }}</td>
+                            <td>{{ anulada.idpia.equipo|upper }}</td>
+                            <td>{{ anulada.idpia.idestado.estado }}</td>
+                            <td>{{ anulada.idcategoria.descripcion }}</td>
+                            <td>{{ anulada.punto }}</td>
+                            <td>
+                                <ul id="icons" class="ui-widget ui-helper-clearfix">      
+                                    <a href="{{ path('inscrito_show', { 'id': anulada.id }) }}">
+                                        <li class="ui-state-default ui-corner-all" title="Ver"><span class="ui-icon ui-icon-search"></span></li>
+                                    </a>
+                                </ul>                                
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>      
+            <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,63 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <table class="records_list" align="center" border="0">
+        <tr>
+            <td align="center">
+                <a href="{{ path('inscrito_showcompetidor', { 'idevento': entity.idevento.id,'idpia': entity.idpia.id}) }}">
+                    Estado de tu Inscripción
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+            <h1>Competidores en la {{ entity.idcategoria.descripcion }}</h1>
+            </td>
+        </tr>
+    </table>
+    <table class="records_list" align="center" border="0">
+        <thead>
+            <tr>
+                <th>Nro</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Equipo</th>
+                <th>Edad</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% set i=1 %}
+        {% for rival in rivales %}
+            {% if(entity.idpia.id!=rival.idpia.id) %}
+                <tr>
+                    <td>{{ i }}</td>
+                    <td>{{ rival.idpia.nombre|upper }}</td>
+                    <td>{{ rival.idpia.apellido|upper }}</td>
+                    <td>{{ rival.idpia.equipo|upper }}</td>
+                    <td>{{ rival.idpia.edad }}</td>
+                    <td>{{ rival.idpia.idestado.estado }}</td>
+                </tr>
+            {% else %}
+                <tr style="color:red">
+                    <td>{{ i }}</td>
+                    <td>{{ rival.idpia.nombre|upper }}</td>
+                    <td>{{ rival.idpia.apellido|upper }}</td>
+                    <td>{{ rival.idpia.equipo|upper }}</td>
+                    <td>{{ rival.idpia.edad }}</td>
+                    <td>{{ rival.idpia.idestado.estado }}</td>
+                </tr>
+            {% endif %}
+            {% set i=i+1 %}
+        {% endfor %}
+        <tr>
+            <td colspan="6" align="center">
+                <a href="{{ path('evento_listacompetidor', { 'email': entity.idpia.email}) }}">
+                    Regresar
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    {% endblock %}

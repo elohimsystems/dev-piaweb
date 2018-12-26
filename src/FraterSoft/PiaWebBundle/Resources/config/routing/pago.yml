@@ -1,0 +1,50 @@
+pago:
+    pattern:  /
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:index" }
+
+pago_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:show" }
+
+pago_new:
+    pattern:  /new/{idinscripcion}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:new" }
+
+pago_newtdc:
+    pattern:  /newtdc/{idinscripcion}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:newtdc" }
+
+pago_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:create" }
+    requirements: { _method: post }
+
+pago_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:edit" }
+
+pago_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:update" }
+    requirements: { _method: post|put }
+
+pago_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:delete" }
+    requirements: { _method: post|delete } 
+
+pago_validartc:
+    pattern:  /validartc/{idpago}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:validartc" }    
+    
+pago_tdcnoconciliado:    
+    pattern:  /tdcnoconciliado/{id}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:tdcnoconciliado" }      
+    
+pago_conciliar_lote:    
+    pattern:  /conciliarlote/{data_json}/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:conciliarlote" }      
+    
+pago_email_tdcnoconciliados:    
+    pattern:  /emailtdcnoconciliados/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:emailtdcnoconciliados" }        

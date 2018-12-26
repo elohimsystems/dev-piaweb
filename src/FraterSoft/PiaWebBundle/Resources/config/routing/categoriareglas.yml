@@ -1,0 +1,42 @@
+categoriareglas:
+    pattern:  /
+    defaults: { _controller: "FraterSoftPiaWebBundle:CategoriaReglas:index" }
+
+categoriareglas_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "FraterSoftPiaWebBundle:CategoriaReglas:show" }
+
+categoriareglas_new:
+    pattern:  /new
+    defaults: { _controller: "FraterSoftPiaWebBundle:CategoriaReglas:new" }
+
+categoriareglas_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:CategoriaReglas:create" }
+    requirements: { _method: post }
+
+categoriareglas_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:CategoriaReglas:edit" }
+
+categoriareglas_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:CategoriaReglas:update" }
+    requirements: { _method: post|put }
+
+categoriareglas_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:CategoriaReglas:delete" }
+
+categoriareglas_delete_all_categoria:
+    pattern:  /{idcategoria}/deleteallcategoria
+    defaults: { _controller: "FraterSoftPiaWebBundle:CategoriaReglas:deleteallcategoria" }
+
+categoriareglas_gestion:
+    pattern:  /{idcategoria}/gestion
+    defaults: { _controller: "FraterSoftPiaWebBundle:CategoriaReglas:gestion" }
+    
+categoriareglas_listarajax:
+    pattern:  /{idcategoria}/listarajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:CategoriaReglas:listarajax" }
+    

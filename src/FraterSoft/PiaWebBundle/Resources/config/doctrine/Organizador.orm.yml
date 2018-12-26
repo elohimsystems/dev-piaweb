@@ -1,0 +1,84 @@
+FraterSoft\PiaWebBundle\Entity\Organizador:
+    type: entity
+    table: piaaccess.tmorganizadores
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: piaaccess.tmorganizadores_id_sq
+                allocationSize: 100
+                initialValue: 1                    
+                
+    fields:
+        nombre:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        abreviado:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        logo:
+            type: string
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        email:
+            type: string
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        banco:
+            type: string
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        tipocuenta:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: 'Posibles Valores: 1 Corriente, 2 Ahorros'
+        numerocuenta:
+            type: string
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        rif:
+            type: string
+            nullable: true
+            length: 10
+            fixed: false
+            comment: ''
+        contacto:
+            type: string
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        telefonocontacto:
+            type: string
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        emailcontacto:
+            type: string
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+    lifecycleCallbacks: {  }

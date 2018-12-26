@@ -1,0 +1,71 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Competidor list</h1>
+
+    <table class="records_list">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Iddocumento</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Foto</th>
+                <th>Fechanacimiento</th>
+                <th>Sexo</th>
+                <th>Equipo</th>
+                <th>Edad</th>
+                <th>Peso</th>
+                <th>Condicion</th>
+                <th>Email</th>
+                <th>Telefono</th>
+                <th>Idestado</th>
+                <th>Idpais</th>
+                <th>Tallafranela</th>
+                <th>Certificado</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('competidor_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{{ entity.iddocumento }}</td>
+                <td>{{ entity.nombre }}</td>
+                <td>{{ entity.apellido }}</td>
+                <td>{{ entity.foto }}</td>
+                <td>{% if entity.fechanacimiento %}{{ entity.fechanacimiento|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{{ entity.sexo }}</td>
+                <td>{{ entity.equipo }}</td>
+                <td>{{ entity.edad }}</td>
+                <td>{{ entity.peso }}</td>
+                <td>{{ entity.condicion }}</td>
+                <td>{{ entity.email }}</td>
+                <td>{{ entity.telefono }}</td>
+                <td>{{ entity.idestado }}</td>
+                <td>{{ entity.idpais }}</td>
+                <td>{{ entity.tallafranela }}</td>
+                <td>{{ entity.certificado }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('competidor_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('competidor_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+        <ul>
+        <li>
+            <a href="{{ path('competidor_new') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
+    {% endblock %}

@@ -1,0 +1,45 @@
+FraterSoft\PiaWebBundle\Entity\CampeonatoClubes:
+    type: entity
+    table: piaaccess.trcampeonatosclubes
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\CampeonatoClubesRepository
+    indexes:
+        IDX_A0AC5B496B21C9D2:
+            columns:
+                - idclub
+        IDX_A0AC5B49BF84A5F0:
+            columns:
+                - idcampeonato
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        pordefecto:
+            type: boolean
+            nullable: true
+            comment: ''
+    manyToOne:
+        idcampeonato:
+            targetEntity: Campeonato
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idcampeonato:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idclub:
+            targetEntity: Club
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idclub:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

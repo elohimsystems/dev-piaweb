@@ -1,0 +1,129 @@
+FraterSoft\PiaWebBundle\Entity\CompetidorOld:
+    type: entity
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\CompetidorRepository    
+    table: piaaccess.tmcompetidores  
+    indexes:
+        IDX_AAAA86342E04C4F:
+            columns:
+                - idestado
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: piaaccess.tmcompetidores_id_sq
+                allocationSize: 100
+                initialValue: 1                    
+    fields:
+        iddocumento:
+            type: string
+            nullable: true
+            length: 20
+            fixed: false
+            comment: ''
+        nombre:
+            type: string
+            nullable: true
+            length: 30
+            fixed: false
+            comment: ''
+        apellido:
+            type: string
+            nullable: true
+            length: 30
+            fixed: false
+            comment: ''
+        foto:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''
+        fechanacimiento:
+            type: datetime
+            nullable: true
+            comment: ''
+        sexo:
+            type: string
+            nullable: true
+            length: 1
+            fixed: false
+            comment: ''
+        equipo:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''
+        edad:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+        peso:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            comment: ''
+        condicion:
+            type: string
+            nullable: true
+            length: 1
+            fixed: false
+            comment: ''
+        email:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        telefono:
+            type: string
+            nullable: true
+            length: 15
+            fixed: false
+            comment: ''
+        idpais:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+        tallafranela:
+            type: string
+            nullable: true
+            length: 5
+            fixed: false
+            comment: ''
+        certificado:
+            type: boolean
+            nullable: true
+            comment: ''
+        idrepresentante:
+            type: string
+            nullable: true
+            length: 20
+            fixed: false
+            comment: ''    
+        nombrerepresentante:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''    
+    manyToOne:
+        idestado:
+            targetEntity: Estado
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idestado:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

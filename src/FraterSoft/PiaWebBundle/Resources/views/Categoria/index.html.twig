@@ -1,0 +1,16 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Categoria list</h1>
+
+    <table class="records_list">
+    </table>
+
+        <ul>
+        <li>
+            <a href="{{ path('categoria_new') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
+    {% endblock %}

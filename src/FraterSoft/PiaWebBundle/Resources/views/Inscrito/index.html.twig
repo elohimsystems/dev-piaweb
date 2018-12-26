@@ -1,0 +1,242 @@
+{% extends '::base.html.twig' %}
+{% block javascripts %}
+    <script>
+        var idinscrito=0;
+        function anular(id){          
+            idinscrito=id;
+            $( "#dialog" ).dialog( "open" );
+        }
+        
+        $(document).ready(function() {
+                $('#tablaPreInscritos').dataTable( {   
+                  "language": {
+                    "emptyTable":     "No hay datos para mostrar",
+                    "lengthMenu":     "Muestra _MENU_ registros",
+                    "info":           "Mostrando _START_ de _END_ de _TOTAL_ registros",
+                    "search":         "Buscar:",
+                    "paginate": {
+                        "first":      "Primero",
+                        "last":       "Ultimo",
+                        "next":       "Siguiente",
+                        "previous":   "Anterior"
+                    },
+                  }
+                } );          
+            } );  
+        
+        $(function() {
+            $( "#dialog" ).dialog({
+                autoOpen: false,
+                width: 400,
+                buttons: [
+                    {
+                        text: "SI",
+                        click: function() {
+                            url="{{ path('inscrito_anular', { 'id':'_idinscrito_'}) }}";
+                            url=url.replace('_idinscrito_',idinscrito);
+                            window.open(url, "_self")
+                            $( this ).dialog( "close" );
+                        }
+                    },
+                    {
+                        text: "NO",
+                        click: function() {
+                            $( this ).dialog( "close" );
+                        }
+                    }
+                ]
+            });    
+            
+            $("#btnExportPreinscritos").click(function (e) {
+                $(".records_list_preinscritos").table2excel({
+                        exclude: ".noExl",
+                        name: "Excel Document Name",
+                        filename: "myFileName"
+                });
+            });            
+            $("#btnExportInscritos").click(function (e) {
+                $(".records_list_inscritos").table2excel({
+                        exclude: ".noExl",
+                        name: "Excel Document Name",
+                        filename: "myFileName"
+                });
+            });            
+            $("#btnExportAnulados").click(function (e) {
+                $(".records_list_anulados").table2excel({
+                        exclude: ".noExl",
+                        name: "Excel Document Name",
+                        filename: "myFileName"
+                });
+            });            
+        });    
+    </script>           
+{% endblock %}     
+{% block body -%}
+
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Pre-Inscritos</a></li>
+            <li><a href="#tabs-2">Inscritos</a></li>
+            <li><a href="#tabs-3">Anulados</a></li>
+        </ul>
+        <div id="tabs-1">
+            <table id="tablaPreInscritos" class="display row-border hover">
+                <thead>
+                    <tr>
+                        <th>Nro</th>
+                        <th>Competencia</th>
+                        <th>Banco</th>                
+                        <th>Tipo</th>
+                        <th>Referencia</th>
+                        <th>Fecha</th>
+                        <th>IdDocumento</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Categoria</th>
+                        <th>Punto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entity in entities %}
+                        <tr>
+                            <td>{{ entity.secuencia }}</a></td>
+                            <td>{{ entity.idcompetencia.descripcion }}</td>
+                            <td>{{ entity.idpago.banco }}</td>
+                            <td>{{ entity.idpago.tipo|upper }}</td>
+                            <td>{{ entity.idpago.referencia|upper }}</td>
+                            <td>{{ entity.idpago.fechahora|date('d-m-Y') }}</td>
+                            <td>{{ entity.idpia.iddocumento }}</td>
+                            <td>{{ entity.idpia.nombre|upper }}</td>
+                            <td>{{ entity.idpia.apellido|upper }}</td>
+                            {% if(entity.idcategoria) %}
+                                <td>{{ entity.idcategoria.descripcion }}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                            <td>{{ entity.punto }}</td>
+                            <td>
+                                <ul id="icons" class="ui-widget ui-helper-clearfix">
+                                    <a href="{{ path('inscrito_show', { 'id': entity.id }) }}">
+                                        <li class="ui-state-default ui-corner-all" title="Ver"><span class="ui-icon ui-icon-search"></span></li>
+                                    </a>
+                                    <a href="{{ path('pago_edit', { 'id': entity.idpago.id }) }}">
+                                        <li class="ui-state-default ui-corner-all" title="Conciliar"><span class="ui-icon ui-icon-check"></span></li>
+                                    </a>
+                                    {#{{ path('inscrito_anular', { 'id': entity.id }) }}#}
+                                    <a class="dialog-link" href="" onclick="anular({{ entity.id }});return false;">
+                                        <li class="ui-state-default ui-corner-all" title="Anular"><span class="ui-icon ui-icon-closethick"></span></li>
+                                    </a>    
+                                </ul>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <p>Total Pre-Inscritos: {{ entities|length }}</p>  
+            <input type="button" id="btnExportPreinscritos" value=" Exportar a Excel " />            
+            <a href="{{ path('evento_listemail',{'email':emailcontacto}) }}"><button id="button">Regresar</button></a>        </div>
+        <div id="tabs-2">
+            <table class="records_list_inscritos">
+                <thead>
+                    <tr>
+                        <th>Nro</th>
+                        <th>Competencia</th>
+                            {#<th>Numero</th>#}
+                        <th>Cedula</th>                
+                        <th>Apellido</th>
+                        <th>Nombre</th>
+                        <th>Nacido el</th>
+                        <th>Sexo</th>
+                        <th>Equipo</th>
+                        <th>Estado</th>
+                        <th>Talla</th>
+                        <th>Categoria</th>
+                        <th>Punto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for conciliada in conciliadas %}
+                        <tr>
+                            <td>{{ conciliada.secuencia }}</a></td>
+                            <td>{{ conciliada.idcompetencia.descripcion }}</td>
+                            <td>{{ conciliada.idpia.iddocumento }}</td>
+                            <td>{{ conciliada.idpia.apellido|upper }}</td>
+                            <td>{{ conciliada.idpia.nombre|upper }}</td>
+                            <td>{{ conciliada.idpia.fechanacimiento|date('d-m-Y') }}</td>
+                            <td>{{ conciliada.idpia.sexo }}</td>
+                            <td>{{ conciliada.idpia.equipo|upper }}</td>
+                            <td>{{ conciliada.idpia.idestado.estado }}</td>
+                            <td>{{ conciliada.idpia.tallafranela }}</td>
+                            <td>{{ conciliada.idcategoria.descripcion }}</td>
+                            <td>{{ conciliada.punto }}</td>
+                            <td>
+                                <ul id="icons" class="ui-widget ui-helper-clearfix">      
+                                    <a href="{{ path('inscrito_show', { 'id': conciliada.id }) }}">
+                                        <li class="ui-state-default ui-corner-all" title="Ver"><span class="ui-icon ui-icon-search"></span></li>
+                                    </a>
+                                </ul>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>     
+            <p>Total Inscritos: {{ conciliadas|length }}</p>
+            <input type="button" id="btnExportInscritos" value=" Exportar a Excel " />   
+            <a href="{{ path('evento_listemail',{'email':emailcontacto}) }}"><button id="button">Regresar</button></a>
+                
+        </div>
+        <div id="tabs-3">
+            <table class="records_list_anulados">
+                <thead>
+                    <tr>
+                        <th>Nro</th>
+                        <th>Competencia</th>                
+                        <th>Cedula</th>                
+                        <th>Apellido</th>
+                        <th>Nombre</th>
+                        <th>Nacido el</th>
+                        <th>Sexo</th>
+                        <th>Equipo</th>
+                        <th>Estado</th>
+                        <th>Categoria</th>
+                        <th>Punto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for anulada in anuladas %}
+                        <tr>
+                            <td>{{ anulada.secuencia }}</a></td>
+                            <td>{{ anulada.idcompetencia.descripcion }}</td>
+                            <td>{{ anulada.idpia.iddocumento }}</td>
+                            <td>{{ anulada.idpia.apellido|upper }}</td>
+                            <td>{{ anulada.idpia.nombre|upper }}</td>
+                            <td>{{ anulada.idpia.fechanacimiento|date('d-m-Y') }}</td>
+                            <td>{{ anulada.idpia.sexo }}</td>
+                            <td>{{ anulada.idpia.equipo|upper }}</td>
+                            <td>{{ anulada.idpia.idestado.estado }}</td>
+                            <td>{{ anulada.idcategoria.descripcion }}</td>
+                            <td>{{ anulada.punto }}</td>
+                            <td>
+                                <ul id="icons" class="ui-widget ui-helper-clearfix">      
+                                    <a href="{{ path('inscrito_show', { 'id': anulada.id }) }}">
+                                        <li class="ui-state-default ui-corner-all" title="Ver"><span class="ui-icon ui-icon-search"></span></li>
+                                    </a>
+                                </ul>                                
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>     
+            <p>Total Anulados: {{ anuladas|length }}</p>    
+            <input type="button" id="btnExportAnulados" value=" Exportar a Excel " />   
+            <a href="{{ path('evento_listemail',{'email':emailcontacto}) }}"><button id="button">Regresar</button></a>        </div>
+    </div>
+
+<!-- ui-dialog -->
+<div id="dialog" title="Advertencia!!!">
+	<p>Esta seguro que desea anular esta inscripcion?</p>
+</div>
+{% endblock %}

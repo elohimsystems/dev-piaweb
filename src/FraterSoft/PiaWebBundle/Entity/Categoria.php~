@@ -1,0 +1,177 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Categoria
+ */
+class Categoria
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var integer
+     */
+    private $idevento;
+
+    /**
+     * @var integer
+     */
+    private $idcompetencia;
+
+    /**
+     * @var string
+     */
+    private $descripcion;
+
+    /**
+     * @var string
+     */
+    private $sexo;
+
+    /**
+     * @var float
+     */
+    //private $precioinscripcion;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set idevento
+     *
+     * @param integer $idevento
+     * @return Categoria
+     */
+    public function setIdevento($idevento)
+    {
+        $this->idevento = $idevento;
+
+        return $this;
+    }
+
+    /**
+     * Get idevento
+     *
+     * @return integer 
+     */
+    public function getIdevento()
+    {
+        return $this->idevento;
+    }
+
+    /**
+     * Set idcompetencia
+     *
+     * @param integer $idcompetencia
+     * @return Categoria
+     */
+    public function setIdcompetencia($idcompetencia)
+    {
+        $this->idcompetencia = $idcompetencia;
+
+        return $this;
+    }
+
+    /**
+     * Get idcompetencia
+     *
+     * @return integer 
+     */
+    public function getIdcompetencia()
+    {
+        return $this->idcompetencia;
+    }
+
+    /**
+     * Set descripcion
+     *
+     * @param string $descripcion
+     * @return Categoria
+     */
+    public function setDescripcion($descripcion)
+    {
+        $this->descripcion = $descripcion;
+
+        return $this;
+    }
+
+    /**
+     * Get descripcion
+     *
+     * @return string 
+     */
+    public function getDescripcion()
+    {
+        return $this->descripcion;
+    }
+
+    /**
+     * Set sexo
+     *
+     * @param string $sexo
+     * @return Categoria
+     */
+    public function setSexo($sexo)
+    {
+        $this->sexo = $sexo;
+
+        return $this;
+    }
+
+    /**
+     * Get sexo
+     *
+     * @return string 
+     */
+    public function getSexo()
+    {
+        return $this->sexo;
+    }
+
+    /**
+     * Set precioinscripcion
+     *
+     * @param float $precioinscripcion
+     * @return Categoria
+     */
+    /*public function setPrecioinscripcion($precioinscripcion)
+    {
+        $this->precioinscripcion = $precioinscripcion;
+
+        return $this;
+    }*/
+
+    /**
+     * Get precioinscripcion
+     *
+     * @return float 
+     */
+    /*
+    public function getPrecioinscripcion()
+    {
+        return $this->precioinscripcion;
+    }*/
+    
+    /**
+     * to string
+     *
+     * @return string 
+     */
+    public function __toString() {
+        return $this->descripcion;
+    }       
+}

@@ -1,0 +1,185 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Controller;
+
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+use Doctrine\ORM\EntityRepository;
+
+use FraterSoft\PiaWebBundle\Entity\Formaspagoevento;
+use FraterSoft\PiaWebBundle\Form\FormaspagoeventoType;
+
+/**
+ * Formaspagoevento controller.
+ *
+ */
+class FormaspagoeventoController extends commonPIAClass
+{
+
+    /**
+     * Creates a new Formaspagoevento entity.
+     *
+     */
+    public function createAction(Request $request)
+    {
+        $entity = new Formaspagoevento();
+        $form = $this->createCreateForm($entity);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($entity);
+            $em->flush();
+            
+            return $this->redirect($this->generateUrl('formaspagoevento_new', array(
+                'idevento' => $entity->getIdevento()->getId(),
+                'estado' => 2
+            )));            
+            
+        }
+        
+        $errors=$this->getErrorMessages($editForm);
+        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => null,
+                    'texto' => json_encode($errors),
+                    'tema' => $entity->getIdevento()->getTema()
+        ));        
+
+    }
+
+    /**
+    * Creates a form to create a Formaspagoevento entity.
+    *
+    * @param Formaspagoevento $entity The entity
+    *
+    * @return \Symfony\Component\Form\Form The form
+    */
+    private function createCreateForm(Formaspagoevento $entity)
+    {
+        $form = $this->createForm(new FormaspagoeventoType(), $entity, array(
+            'method' => 'POST',
+        ));
+        return $form;
+    }
+
+    /**
+     * Displays a form to create a new Formaspago entity.
+     *
+     */
+    public function newAction($idevento,$estado)
+    {
+        $entity = new Formaspagoevento();
+        $form   = $this->createCreateForm($entity);
+
+        $em = $this->getDoctrine()->getManager();        
+        
+        //llena el Select con el evento y Oculta el control
+        $form->add('idevento','entity',array(
+                'class' => 'FraterSoftPiaWebBundle:Evento',
+                'query_builder' => function (EntityRepository $er) use ( $idevento ) {
+                    return $er->createQueryBuilder('e')
+                            ->where('e.id=:idevento')
+                            ->setParameter('idevento',$idevento);
+                },
+            ));        
+        
+        return $this->render('FraterSoftPiaWebBundle:Formaspagoevento:new.html.twig', array(
+            'entity' => $entity,
+            'form'   => $form->createView(),
+            'idevento' => $idevento,
+            'campos' => $this->getCampos($em,'Formaspagoevento'),            
+            'estado' => $estado,            
+        ));
+    }
+
+    public function listaAjaxAction($idevento){
+        $encoders = array(new XmlEncoder(), new JsonEncoder());
+        $normalizers = array(new GetSetMethodNormalizer());  
+        $serializer = new Serializer($normalizers, $encoders);  
+        
+        $em = $this->getDoctrine()->getManager();
+        $entities = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')->arrayFormapagoEvento($idevento);
+
+        $jsonContent = $serializer->serialize(array(
+            "recordsTotal"=> count($entities),
+            "data"=>$entities)
+                , 'json');
+        
+        return new response($jsonContent);                    
+    }
+
+    /**
+    * Creates a form to edit a Formaspagoevento entity.
+    *
+    * @param Formaspagoevento $entity The entity
+    *
+    * @return \Symfony\Component\Form\Form The form
+    */
+    private function createEditForm(Formaspagoevento $entity)
+    {
+        $form = $this->createForm(new FormaspagoeventoType(), $entity, array(
+            'method' => 'POST',
+        ));
+        return $form;
+    }
+    /**
+     * Edits an existing Formaspagoevento entity.
+     *
+     */
+    public function updateAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Formaspagoevento entity.');
+        }
+
+        $editForm = $this->createEditForm($entity);
+        $editForm->handleRequest($request);
+
+        if ($editForm->isValid()) {
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('formaspagoevento_new', array(
+                'idevento' => $entity->getIdevento()->getId(),
+                'estado' => 3
+            )));            
+        }
+        
+        $errors=$this->getErrorMessages($editForm);
+        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => null,
+                    'texto' => json_encode($errors),
+                    'tema' => $entity->getIdevento()->getTema()
+        ));        
+
+    }
+    /**
+     * Deletes a Formaspagoevento entity.
+     *
+     */
+    public function deleteAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Formaspagoevento entity.');
+        }
+        $em->remove($entity);
+        $em->flush();
+        return $this->redirect($this->generateUrl('formaspagoevento_new', array(
+            'idevento' => $entity->getIdevento()->getId(),
+            'estado' => 1
+        )));            
+    }
+
+}

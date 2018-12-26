@@ -1,0 +1,253 @@
+{% extends '::base.html.twig' %}
+{% block javascripts %}
+    <script type="text/javascript" language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" language="javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script type="text/javascript" language="javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>      
+    <script>
+//- Funciones Ready Jquiery ----------------------------------------------------        
+        $(document).ready(function () {
+//- Configuracion DataTable ---------------------------------------------------
+            var tabla = $('#tablaOperacionesTDC').dataTable({
+                "dom": 'Bf<"top"li>rt<"bottom"Blp>',        
+                fixedHeader: true,
+                buttons: [
+                    {extend: 'excelHtml5',
+                        text: 'Exportar',
+                        title: 'ListadoOperacionesTDC'
+                    }, 
+                    { extend: 'print', text: 'Imprimir' },
+                    { text: 'Notificar' ,
+                        action: function (e, dt, node, config) {
+                            $("#dialog").dialog("open");
+                        }
+                    },
+                    { text: 'Anular' ,
+                        action: function (e, dt, node, config) {
+                            $("#anular").dialog("open");
+                        }
+                    },             
+                ],
+                "columnDefs": [
+                    { "visible": false, "targets": 4 },
+                    { "visible": false, "targets": 8 },
+                ],           
+                "language": {
+                    "emptyTable": "No hay datos para mostrar",
+                    "lengthMenu": "Muestra _MENU_ registros",
+                    "info": "Mostrando _START_ de _END_ de _TOTAL_ registros",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                },        
+            });
+            
+//- Muestra la ventana de dialogo ----------------------------------------------
+            $("#dialog").dialog({
+                autoOpen: false,
+                width: 400,
+                buttons: [
+                    {
+                        text: "SI",
+                        click: function () {
+                            url = "{{ path('pago_email_tdcnoconciliados', { 'idevento':idevento}) }}";
+                            window.open(url, "_self");
+                            $(this).dialog("close");
+                        }
+                    },
+                    {
+                        text: "NO",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                ]
+            });
+            //Muestra la ventana de dialogo
+            $("#anular").dialog({
+                autoOpen: false,
+                width: 400,
+                buttons: [
+                    {
+                        text: "SI",
+                        click: function () {
+                            url = "{{ path('inscrito_anular_tdcnoconciliados', { 'idevento':idevento}) }}";
+                            window.open(url, "_self");
+                            $(this).dialog("close");
+                        }
+                    },
+                    {
+                        text: "NO",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                ]
+            });
+        });
+//- Fin Funciones Ready Jquery ------------------------------------------------        
+
+        $(function () {
+            $("#tabs").tabs();
+            $('#tabs a[href="#tabs-4"]').click();
+            $('#tabs a[href="#tabs-1"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento,'email':email}) }}')
+            });
+            $('#tabs a[href="#tabs-2"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
+            });
+            $('#tabs a[href="#tabs-3"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
+            });     
+            $('#tabs a[href="#tabs-5"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
+            });   
+        });
+    </script>           
+{% endblock %}     
+{% block style %}
+<style type="text/css">
+    td,th{
+        font-size: 10px;
+    }
+    .ui-icon {
+        -ms-transform: scale(0.7); /* IE 9 */
+        -webkit-transform: scale(0.7); /* Chrome, Safari, Opera */
+        transform: scale(0.7);
+    }        
+    table.dataTable tbody th, table.dataTable tbody td{
+        padding: 0;
+    } 
+    .dataTables_length,.dataTables_filter{
+        margin-top: 3px;
+    }
+    select{
+        width: 50px;
+    }
+    table.dataTable tfoot th{
+        padding: 0;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }  
+    #evento{
+        border: 1px solid #d8dcdf;
+        padding: 5px;
+        margin-bottom: 3px;
+        border-radius: 6px;
+        font-weight: bold;        
+    }    
+</style>
+{% endblock %}  
+{% block body -%}
+    <div id="evento">{{nombreevento}}</div>
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Pre-Inscritos</a></li>
+            <li><a href="#tabs-2">Inscritos</a></li>
+            <li><a href="#tabs-3">Anulados</a></li>
+            <li><a href="#tabs-4">Operaciones TDC</a></li>
+            <li><a href="#tabs-5">Estadisticas</a></li>              
+        </ul>
+        <div id="tabs-1"></div>
+        <div id="tabs-2"></div>
+        <div id="tabs-3"></div>  
+        <div id="tabs-5"></div>
+        <div id="tabs-4">
+            <table id="tablaOperacionesTDC" class="display stripe row-border hover">
+                <thead>
+                    <tr>
+                        <th>Nro</th>
+                        <th>Cedula</th>                
+                        <th>Apellido</th>
+                        <th>Nombre</th>
+                        <th>Inscrito el</th>
+                        <th>Precio</th>
+                        <th>Conciliado</th>
+                        <th>Fecha</th>
+                        <th>Comprobante</th>
+                        <th>Liquidado</th>
+                        <th>Notificado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set total_conciliados=0 %}
+                    {% set total_no_conciliados=0 %}
+                    {% set total_operaciones=0 %}
+                    {% set total_liquidadas=0 %}
+                    {% for operaciontdc in operacionestdc %}
+                        <tr>
+                            <td>{{ operaciontdc.secuencia }}</td>
+                            <td>{{ operaciontdc.idpia.iddocumento }}</td>
+                            <td>{{ operaciontdc.idpia.apellido|upper }}</td>
+                            <td>{{ operaciontdc.idpia.nombre|upper }}</td>
+                            <td>{{ operaciontdc.fechahora | date('d-m-Y') }}</td>
+                            <td>{{ operaciontdc.precio | number_format(2, '.', ',') }}</td>
+                            <td>
+                                {% if operaciontdc.idpago.conciliado == TRUE %}
+                                    SI
+                                    {% set total_conciliados = total_conciliados + operaciontdc.precio %}
+                                {% else %}
+                                    NO
+                                    {% set total_no_conciliados = total_no_conciliados + operaciontdc.precio %}
+                                {% endif %}
+                            </td>
+                            <td>{{ operaciontdc.idpago.conciliadoel|date('d-m-Y')}}</td>
+                            <td>{{ operaciontdc.idpago.comprobante }}</td>
+                            <td>
+                                {% if not operaciontdc.idpago.idliquidacion is null %}
+                                    {% set total_liquidadas = total_liquidadas + operaciontdc.precio %}
+                                    SI
+                                {% else %}
+                                    NO
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if operaciontdc.idpago.notificado is null %} NO
+                                {% else %} SI
+                                {% endif %}                                
+                            </td>
+                            <td>
+                                <ul id="icons" class="ui-widget ui-helper-clearfix">      
+                                    <a href="{{ path('inscrito_show', { 'id': operaciontdc.id }) }}">
+                                        <li class="ui-state-default ui-corner-all" title="Ver"><span class="ui-icon ui-icon-search"></span></li>
+                                    </a>
+                                </ul>                                
+                            </td>
+                        </tr>
+                        {% set total_operaciones = total_operaciones + operaciontdc.precio %}
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2"> 
+                            TOTALES
+                        </th>
+                        <th colspan="2"> 
+                            CONCILIADOS: {{ total_conciliados | number_format(2, ',', '.') }} 
+                        </th>
+                        <th colspan="2">                             
+                            NO CONCILIADOS: {{ total_no_conciliados | number_format(2, ',', '.')}} 
+                        </th>
+                        <th colspan="2">                             
+                            OPERACIONES: {{ total_operaciones | number_format(2, ',', '.') }} 
+                        </th>                               
+                        <th colspan="3">                             
+                            LIQUIDADAS: {{ total_liquidadas | number_format(2, ',', '.') }} 
+                        </th>                      
+                    </tr>                    
+                </tfoot>
+            </table>      
+            <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>        
+        </div>
+    </div>
+    <div id="dialog" title="Advertencia!!!">
+        <p>Esta seguro que desea enviar las notificaciones de los pagos con TDC no conciliados?</p>
+    </div>            
+    <div id="anular" title="Advertencia!!!">
+        <p>Se anularan las operaciones sin pago que ya han sido notificadas, desea continuar?</p>
+    </div>                       
+{% endblock %}

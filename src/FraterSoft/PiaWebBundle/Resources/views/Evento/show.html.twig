@@ -1,0 +1,114 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Evento</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ entity.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Logo</th>
+                <td>{{ entity.logo }}</td>
+            </tr>
+            <tr>
+                <th>Fecha</th>
+                <td>{{ entity.fecha|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Hora</th>
+                <td>{{ entity.hora|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Lugar</th>
+                <td>{{ entity.lugar }}</td>
+            </tr>
+            <tr>
+                <th>Ruta</th>
+                <td>{{ entity.ruta }}</td>
+            </tr>
+            <tr>
+                <th>Organizador</th>
+                <td>{{ entity.organizador }}</td>
+            </tr>
+            <tr>
+                <th>Nombrecontacto</th>
+                <td>{{ entity.nombrecontacto }}</td>
+            </tr>
+            <tr>
+                <th>Telefonocontacto</th>
+                <td>{{ entity.telefonocontacto }}</td>
+            </tr>
+            <tr>
+                <th>Puntoinscripcion</th>
+                <td>{{ entity.puntoinscripcion }}</td>
+            </tr>
+            <tr>
+                <th>Fechacierre</th>
+                <td>{{ entity.fechacierre|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Fechacierreefectivo</th>
+                <td>{{ entity.fechacierreefectivo|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Horacierre</th>
+                <td>{{ entity.horacierre|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Equipo</th>
+                <td>{{ entity.equipo }}</td>
+            </tr>
+            <tr>
+                <th>Rifa</th>
+                <td>{{ entity.rifa }}</td>
+            </tr>
+            <tr>
+                <th>Tipo</th>
+                <td>{{ entity.tipo }}</td>
+            </tr>
+            <tr>
+                <th>Cupocontrol</th>
+                <td>{{ entity.cupocontrol }}</td>
+            </tr>
+            <tr>
+                <th>Cupomaximo</th>
+                <td>{{ entity.cupomaximo }}</td>
+            </tr>
+            <tr>
+                <th>Activo</th>
+                <td>{{ entity.activo }}</td>
+            </tr>
+            <tr>
+                <th>Idcampeonato</th>
+                <td>{{ entity.idcampeonato }}</td>
+            </tr>
+            <tr>
+                <th>Criteriocalculoedad</th>
+                <td>{{ entity.criteriocalculoedad }}</td>
+            </tr>
+            <tr>
+                <th>Controlamenores16</th>
+                <td>{{ entity.controlamenores16 }}</td>
+            </tr>
+            <tr>
+                <th>Emailcontacto</th>
+                <td>{{ entity.emailcontacto }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul class="record_actions">
+        <li>
+            <a href="{{ path('evento_listemail',{'email':email}) }}">
+                Back to the list
+            </a>
+        </li>
+    </ul>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends '::base.html.twig' %}
+{% block javascripts %}
+<script>
+    function datediff(fromDate,toDate,interval) { 
+        /*
+         * DateFormat month/day/year hh:mm:ss
+         * ex.
+         * datediff('01/01/2011 12:00:00','01/01/2011 13:30:00','seconds');
+         */
+        var dias=0,horas=0,minutos=0,segundos=0;
+        var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7; 
+        fromDate = new Date(fromDate); 
+        toDate = new Date(toDate); 
+        var timediff = toDate - fromDate; 
+        if (isNaN(timediff)) return NaN; 
+        switch (interval) { 
+            case "years": return toDate.getFullYear() - fromDate.getFullYear(); 
+            case "months": return ( 
+                ( toDate.getFullYear() * 12 + toDate.getMonth() ) 
+                - 
+                ( fromDate.getFullYear() * 12 + fromDate.getMonth() ) 
+            ); 
+            case "weeks"  : return Math.floor(timediff / week); 
+            case "days"   : return Math.floor(timediff / day);  
+            case "hours"  : return Math.floor(timediff / hour);  
+            case "minutes": return Math.floor(timediff / minute); 
+            case "seconds": return Math.floor(timediff / second); 
+            case "dd:hh:mm:ss": 
+                dias=Math.floor(timediff / day); 
+                timediff=timediff-(dias * day);
+                horas=Math.floor(timediff / hour); 
+                timediff=timediff-(horas * hour);
+                minutos=Math.floor(timediff / minute);
+                timediff=timediff-(minutos * minute);
+                segundos=Math.floor(timediff / second);
+                //Completa con ceros si es necesario y retorna el string dd:hh:mm:ss
+                return ("0" + dias.toString()).slice(-2) + ":" +
+                        ("0" + horas.toString()).slice(-2) + ":" +
+                        ("0" + minutos.toString()).slice(-2) + ":" +
+                        ("0" + segundos.toString()).slice(-2);
+            default: return undefined; 
+        } 
+    }
+    $().ready(function() {  
+
+    });
+    
+    $(function(){
+        var currentdate = new Date('{{ "now"|date("m/d/Y H:i:s", evento.zonahoraria) }}');
+        var fechacierre = '{{ evento.fechainicio|date("m/d/Y  H:i:s", evento.zonahoraria) }}';
+        var now = 
+            (currentdate.getMonth()+1) + "/" + 
+            currentdate.getDate() + "/"+ 
+            currentdate.getFullYear() + " " + 
+            currentdate.getHours() + ":" + 
+            currentdate.getMinutes() + ":" + 
+            currentdate.getSeconds();       
+        $('#counter').countdown({
+            image: '{{ asset('bundles/fratersoftpiaweb/images') }}/digits.png',
+            startTime: datediff(now,fechacierre,"dd:hh:mm:ss")
+        });
+    });
+</script>
+{% endblock %}
+{% block style %}
+<style type="text/css">
+    br { clear: both; }
+    .cntSeparator {
+      font-size: 54px;
+      margin: 10px 7px;
+      color: #000;
+    }   
+    .desc { 
+        margin: 0 0;
+        width: 536px;
+        
+    }
+    .desc div {
+      float: left;
+      font-family: Arial;
+      text-align: center;
+      width: 131px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #000;
+    }
+    .centrar {
+        width: 536px;
+    }
+
+</style>
+{% endblock %}    
+{% block body -%}  
+    <table align="center" width="100%" border="0">
+        <tr>
+            <td align="center">
+                <H1>Las inscripciones inician el:</H1><br>
+                <H1>{{ evento.fechainicio|date("d/m/Y  H:i:s", evento.zonahoraria) }}</H1>
+            </td>
+        </tr>          
+        <tr>
+            <td align="center">
+                <H1>SOLO FALTAN!!!</H1>
+                <div class="centrar">
+                    <div id="counter"></div>
+                    <div class="desc">
+                        <div>Días</div>
+                        <div>Horas</div>
+                        <div>Minutos</div>
+                        <div>Segundos</div>
+                    </div>  
+                </div>
+            </td>
+        </tr>           
+        <tr>
+            <td align="center">
+                <p>Para cualquier soporte o consulta puede comunicarse al 0424-964.29.82</p>
+            </td>
+        </tr>          
+    </table> 
+{% endblock %}

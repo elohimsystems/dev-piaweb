@@ -1,0 +1,22 @@
+listasevento_gestion:
+    pattern:  /{idevento}/gestion
+    defaults: { _controller: "FraterSoftPiaWebBundle:Listasevento:gestion" }
+    
+listasevento_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Listasevento:create" }
+    requirements: { _method: post }
+
+listasevento_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Listasevento:update" }
+    requirements: { _method: post|put }
+
+listasevento_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Listasevento:delete" }
+    
+listasevento_listaajax:
+    pattern:  /{idevento}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Listasevento:listaajax" }
+    

@@ -1,0 +1,7 @@
+parameters:
+#    frater_soft_pia_web.example.class: FraterSoft\PiaWebBundle\Example
+
+services:
+#    frater_soft_pia_web.example:
+#        class: %frater_soft_pia_web.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

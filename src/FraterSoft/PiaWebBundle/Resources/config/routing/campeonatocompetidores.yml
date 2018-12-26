@@ -1,0 +1,33 @@
+campeonatocompetidores:
+    pattern:  /{usuario}/lista
+    defaults: { _controller: "FraterSoftPiaWebBundle:CampeonatoCompetidores:index" }
+
+campeonatocompetidores_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "FraterSoftPiaWebBundle:CampeonatoCompetidores:show" }
+
+campeonatocompetidores_new:
+    pattern:  /new/{idcampeonato}/{estado}
+    defaults: { _controller: FraterSoftPiaWebBundle:CampeonatoCompetidores:new,estado:null }    
+    
+campeonatocompetidores_listaajax:
+    pattern:  /{idcampeonato}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:CampeonatoCompetidores:listaajax" }    
+
+campeonatocompetidores_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:CampeonatoCompetidores:create" }
+    requirements: { _method: post }
+
+campeonatocompetidores_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:CampeonatoCompetidores:edit" }
+
+campeonatocompetidores_update:
+    pattern:  /{idcampeonato}/{idcompetidor}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:CampeonatoCompetidores:update" }
+    requirements: { _method: post|put }
+
+campeonatocompetidores_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:CampeonatoCompetidores:delete" }

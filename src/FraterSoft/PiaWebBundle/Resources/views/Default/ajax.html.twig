@@ -1,0 +1,45 @@
+{% extends '::base.html.twig' %}
+{% block javascripts %}
+<script>
+$(document).ready(function(){
+    $("button").click(function(){
+        $.ajax(
+                {
+                    type: "GET",
+                    data: "sexo=" + $('#sexo').val() + "&edad=" + $('#edad').val() + "&idevento=" + $('#idevento').val(),
+                    url:  "{{ path('inscrito_categorias') }}",                      
+                    dataType: "json",
+                    success: function(datos)
+                    {
+                        $("#categorias").empty();
+                        $("#categorias").append('<option selected>Seleccione Categoria</option>');
+                        $.each(datos['values'], function( key, value ) {
+                            $('#categorias').append($('<option>', {
+                                value: value.id,
+                                text: value.descripcion
+                            }));                            
+                          });
+                        $('#fin').html("termine");
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) 
+                    {
+                        alert( "error: " + jqXHR.responseText);
+                    }
+                }
+            );
+    });
+});
+</script>
+{% endblock %}
+{% block body -%}
+Id Evento <input type="text" name="idevento" id="idevento">
+Edad <input type="text" name="edad" id="edad">
+Sexo <input type="text" name="sexo" id="sexo">
+
+<button>Boton</button>
+
+<select id="categorias" name="categorias">
+</select>
+
+<div id="fin"></div>
+{% endblock %}

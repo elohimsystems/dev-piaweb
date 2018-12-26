@@ -1,0 +1,12 @@
+services:
+    app.inscrito_controller:
+        class: FraterSoft\PiaWebBundle\Controller\InscritoController
+        
+    app.numeracion_controller:        
+        class: FraterSoft\PiaWebBundle\Controller\NumeracionController
+        calls:
+            - [setContainer, ["@service_container"]]
+            
+    app.mail_controller:
+        class: FraterSoft\PiaWebBundle\Controller\MailController
+        arguments: [@mailer]

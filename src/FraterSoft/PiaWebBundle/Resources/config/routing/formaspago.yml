@@ -1,0 +1,21 @@
+formaspago_listaajax:
+    pattern:  /{idevento}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:listaajax" }
+
+formaspago_new:
+    pattern:  /new/{idevento}/{estado}
+    defaults: { _controller: FraterSoftPiaWebBundle:Formaspago:new,estado:null }
+
+formaspago_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:create" }
+    requirements: { _method: post }
+
+formaspago_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:update" }
+    requirements: { _method: post|put }
+
+formaspago_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:delete" }

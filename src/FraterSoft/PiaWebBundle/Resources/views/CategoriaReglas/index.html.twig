@@ -1,0 +1,47 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>CategoriaReglas list</h1>
+
+    <table class="records_list">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Atributo</th>
+                <th>Tipo</th>
+                <th>Valor1</th>
+                <th>Valor2</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('categoriareglas_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{{ entity.atributo }}</td>
+                <td>{{ entity.tipo }}</td>
+                <td>{{ entity.valor1 }}</td>
+                <td>{{ entity.valor2 }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('categoriareglas_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('categoriareglas_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+        <ul>
+        <li>
+            <a href="{{ path('categoriareglas_new') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
+    {% endblock %}

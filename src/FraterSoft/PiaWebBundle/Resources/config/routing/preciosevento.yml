@@ -1,0 +1,30 @@
+preciosevento:
+    pattern:  /
+    defaults: { _controller: "FraterSoftPiaWebBundle:Preciosevento:index" }
+
+preciosevento_listaajax:
+    pattern:  /{idevento}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Preciosevento:listaajax" }
+
+preciosevento_new:
+    pattern:  /new/{idevento}/{estado}
+    defaults: { _controller: FraterSoftPiaWebBundle:Preciosevento:new,estado:null }
+
+preciosevento_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Preciosevento:create" }
+    requirements: { _method: post }
+
+preciosevento_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Preciosevento:edit" }
+
+preciosevento_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Preciosevento:update" }
+    requirements: { _method: post|put }
+
+preciosevento_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Preciosevento:delete" }
+    requirements: { _method: post|delete }

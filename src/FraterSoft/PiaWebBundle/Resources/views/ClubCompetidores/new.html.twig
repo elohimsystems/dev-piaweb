@@ -1,0 +1,75 @@
+{% extends '::base.html.twig' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
+<style type="text/css">
+    #tabs{  /* Oculta el tabs para que se muestre luego de cargar todo el html */
+        display: none;
+    }
+    #formulario > div:nth-child(1){
+        /*display: none;*/
+    }
+</style>
+{% endblock %}  
+{% block body -%}
+    <div id="tabs">    
+        {{ include("FraterSoftPiaWebBundle:Club:tabs.html.twig") }}
+        <div id="tabs-1">     
+            <div id="titulotabla"><h3>Afiliar Clubes</h3></div>
+            <table id="clubcompetidores" class="display row-border hover">
+            </table>    
+        </div>
+        <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistaclubcompetidores')}}');">Regresar</button>
+        <div id="dialogformGuardar" title="Afiliar club">
+            {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+            {{ form_end(form) }} 
+        </div>          
+        <div id="dialogelimiar" title="Advertencia!!!">
+            ¿Esta seguro que desea desafiliar el club <strong id="eliminar"></strong>?
+        </div> 
+        <div id="dialog-message" title="Mensaje">
+        </div>                
+    </div> 
+{% endblock %}
+{% block javascripts -%}
+{{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}
+<script>
+    $(document).ready(function () { 
+        $("#tabs").css("display","block");            
+        $('#tabs a[href="#tabs-2"]').click();        
+        $('#tabs a[href="#tabs-1"]').on("click", function () {
+            $(location).attr('href', '{{ app.session.get('urllistaclubes') }}');
+        });            
+                        
+        tablaDatos(
+                $('#formulario'), //Se usa para llenar lo campos del formulario
+                {{campos|json_encode|raw}}, //json con los atributos de la entidad y sus caracteristicas
+                'Clubes Afiliados', //Usada para el titulo 
+                "{{ path('clubcompetidores_create')}}", //Url para crear
+                "{{ path('clubcompetidores_update',{'id':'_id_'})}}", //Url para editar
+                "{{ path('clubcompetidores_listaajax') }}", //Url para buscar los datos a listar
+                [{posicion:3, config:{title:"Nombre",data:"nombre"}}] //Agrega una columna a la tabla en la posicion indicada
+        );
+        dialogGuardar($('#formulario'),{{campos|json_encode|raw}});
+        dialogEliminar('{{ path('clubcompetidores_delete',{'id':'_id_'})}}');
+        dialogMensaje();
+                
+        {% if estado is defined %}
+            {% if estado == 1 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>El Club fue DESAFILIADO satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+            {% if estado == 2 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>El Club fue AFILIADO satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+            {% if estado == 3 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>La afiliacion fue ACTUALIZADA satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+        {% endif %}        
+    });    
+</script>    
+{% endblock %}

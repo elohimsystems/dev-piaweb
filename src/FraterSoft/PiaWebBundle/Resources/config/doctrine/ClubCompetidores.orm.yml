@@ -1,0 +1,50 @@
+FraterSoft\PiaWebBundle\Entity\ClubCompetidores:
+    type: entity
+    table: piaaccess.trclubescompetidores
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\ClubCompetidoresRepository
+    indexes:
+        IDX_D71DC9A06B21C9D2:
+            columns:
+                - idclub
+        IDX_D71DC9A03C3F6B05:
+            columns:
+                - idpia
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        afiliadoel:
+            type: datetimetz
+            nullable: true
+            comment: ''
+        rol:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+    manyToOne:
+        idclub:
+            targetEntity: Club
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idclub:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idpia:
+            targetEntity: Competidor
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idpia:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

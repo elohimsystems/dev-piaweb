@@ -1,0 +1,70 @@
+FraterSoft\PiaWebBundle\Entity\Numeracion:
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\NumeracionRepository        
+    type: entity
+    table: piaaccess.tmnumeracion
+    indexes:
+        IDX_55AA35FB233BA6A9:
+            columns:
+                - idevento
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        atributo:
+            type: string
+            nullable: true
+            length: 100            
+            fixed: false
+            comment: ''
+        automatica:
+            type: boolean
+            nullable: true
+            comment: ''
+        inicio:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        fin:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        siguiente:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        ordenarpor:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''       
+        secuencial:
+            type: boolean
+            nullable: true
+            comment: ''            
+    #manyToOne:
+    #    idevento:
+    #        targetEntity: Evento
+    #        cascade: {  }
+    #        mappedBy: null
+    #        inversedBy: null
+    #        joinColumns:
+    #            idevento:
+    #                referencedColumnName: id
+    #        orphanRemoval: false
+    oneToOne:
+      idevento:
+        targetEntity: Evento
+        joinColumn:
+          name: idevento
+          referencedColumnName: id       
+    lifecycleCallbacks: {  }

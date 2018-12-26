@@ -1,0 +1,75 @@
+{% extends '::base.html.twig' %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+            var data=[
+                {#{% if inicial | length == 1 %}
+                    ["CANTIDAD DE NUMEROS ASIGNADOS",{{ numerados[0] }}],
+                    ["NUMERO INICIAL ASIGNADO",{{inicial[0]}}],
+                    ["NUMERO FINAL ASIGNADO",{{final[0]}}]
+                {% else %}#}
+                    {% for key, item in numerados %}
+                        ["CANTIDAD NUMEROS ASIGNADOS A {{key}}",{{item}}],
+                    {% endfor %}
+                    {% for key, item in inicial %}
+                        ["NUMERO INICIAL ASIGNADO A {{key}}",{{item}}],
+                    {% endfor %}
+                    {% for key, item in final %}
+                        ["NUMERO FINAL ASIGNADO A {{key}}",{{item}}],
+                    {% endfor %}
+                {#{% endif %}#}
+            ]; 
+            $('#tablaReporte').DataTable({
+                dom: "t",
+                data: data,
+                ordering: false,
+                columns: [
+                    { title: "" },
+                    { title: "" },
+                ],       
+                "columnDefs": [ //centra el contenido de la columna
+                    {"className": "dt-right", "targets":1},
+                ],  
+            });
+            $("#tablaReporte").append("<caption><b>REPORTE DE ASIGNACION DE NUMEROS</b></caption>");
+        });
+    </script>           
+{% endblock %}     
+{% block style %}
+<style type="text/css">
+    div.container
+    {     
+        width: 400px;
+        margin: auto;
+        text-align: center;
+    }    
+    #boton{
+        text-align: center;
+    }
+    #mensaje{
+        margin: auto;            
+        text-align: center;
+        font-size: 16px;
+        width: 400px
+    }    
+</style>
+{% endblock %} 
+{% block body %}
+    <div class="container">
+    {% if numerados | length > 0 %}
+        <table id="tablaReporte" class="display"></table>
+    {% else %}
+        <div id='mensaje'>
+            <p>No existen inscritos por numerar</p>
+        </div>
+    {% endif %}
+        <br>
+        <div id='boton'>
+            {#<a href="{{ path('inscrito_lista_inscritos', { 'idevento': idevento }) }}">#}
+            <a href="{{ app.request.headers.get('referer') }}">
+                <button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">Regresar</button>
+            </a>         
+        </div>
+    </div>
+   
+{% endblock %}

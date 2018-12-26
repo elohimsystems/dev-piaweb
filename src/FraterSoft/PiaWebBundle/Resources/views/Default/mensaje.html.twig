@@ -1,0 +1,35 @@
+{% extends '::base.html.twig' %}
+{% if tema is defined and tema is not null %}{% set temastyle=tema.styles %}{% endif %} 
+{% block style %}
+    <style type="text/css">         
+        #mensaje{
+            margin: auto;            
+            text-align: center;
+            font-size: 16px;
+            /*width: 400px*/
+        }
+        #botonera{
+            margin-top: 30px;
+            text-align: center;
+        }        
+    </style>
+{% endblock %} 
+{% block body %}
+    <div class="contenido">
+        <p id="mensaje">{{ texto | raw }}</p>
+        <div id="botonera">
+            <a href="{{ url }}">
+                <button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                        Regresar
+                </button> 
+            </a>
+            {% if urlcontinuar is defined %}
+                <a href="{{ urlcontinuar }}">
+                    <button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                        Continuar
+                    </button>             
+                </a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}    

@@ -1,0 +1,70 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <table class="record_properties" align="center" border="0">
+        <tbody>
+            <tr align="center">
+                <td colspan="2">
+                    <a href="{{ path('inscrito_listarrivales',
+                                    { 'idevento': entity.idevento.id,
+                                    'idpia': entity.idpia.id}) }}">
+                        Competidores en tu Categoría
+                    </a>                    
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <h1>ESTADO DE INSCRIPCION</h1>
+                    {% if(entity.idpago.conciliado) %} 
+                        CONCILIADA 
+                    {% else %} 
+                        SIN CONCILIAR 
+                    {% endif %}
+                </td>
+            </tr>     
+            <tr>
+                <th colspan="2" align="center">
+                    {{ entity.idevento.nombre }}
+                </th>
+            </tr>     
+            <tr><th>Id</th><td>{{ entity.id }}</td></tr>
+            <tr><th>Secuencia</th><td>{{ entity.secuencia }}</td></tr>
+            <tr><th>Numero</th><td>{{ entity.numero }}</td></tr>
+            <tr><th>Cedula</th><td>{{ entity.idpia.iddocumento }}</td></tr>
+            <tr><th>Apellido</th><td>{{ entity.idpia.apellido|upper }}</td></tr>
+            <tr><th>Nombre</th><td>{{ entity.idpia.nombre|upper }}</td></tr>
+            <tr><th>Fecha de Nacimiento</th><td>{{ entity.idpia.fechanacimiento|date('d-m-Y') }}</td></tr>
+            <tr><th>Sexo</th><td>{{ entity.idpia.sexo }}</td></tr>
+            <tr><th>Equipo</th><td>{{ entity.idpia.equipo|upper }}</td></tr>
+            <tr><th>Estado</th><td>{{ entity.idpia.idestado.estado }}</td></tr>
+            <tr><th>Email</th><td>{{ entity.idpia.email|lower }}</td></tr>
+            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>            
+            <tr>
+                <th>Inscrito el</th>
+                <td>{{ entity.fechahora|date('d-m-Y H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Punto</th>
+                <td>{{ entity.punto }}</td>
+            </tr>
+            {% if(entity.idpago.conciliado) %}
+                <tr>
+                    <th colspan="2" align="center">
+                        Informacion de Pago
+                    </th>
+                </tr>
+                <tr><th>Conciliado el</th><td>{{ entity.idpago.conciliadoel|date('d-m-Y H:i:s') }}</td></tr>                
+                <tr><th>Tipo</th><td>{{ entity.idpago.tipo }}</td></tr>
+                <tr><th>Banco</th><td>{{ entity.idpago.banco }}</td></tr>
+                <tr><th>Referencia</th><td>{{ entity.idpago.referencia }}</td></tr>
+            {% endif %}            
+            <tr>
+                <td colspan="2" align="center">
+                    <a href="{{ path('evento_listacompetidor', { 'email': entity.idpia.email}) }}">
+                        Regresar
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

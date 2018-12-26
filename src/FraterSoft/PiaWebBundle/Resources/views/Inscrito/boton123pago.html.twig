@@ -1,0 +1,121 @@
+{% extends '::base.html.twig' %}
+{% if entity.idevento.tema is defined and entity.idevento.tema is not null %}{% set temastyle=entity.idevento.tema.styles %}{% endif %}
+{% block javascripts %}
+    <script>
+        function validapago() {
+            window.open("{{ path('pago_validartc',{'idpago':entity.idpago.id}) }}", "_self")
+        }
+        function regresar() {
+            window.open("{{ path('competidor_find',{'idevento':entity.idevento.id}) }}", "_self")
+        }
+        $().ready(function () {
+
+            $("#mensaje").append("<b>Una vez haya finalizado el preceso de pago. Haga clic en Finalizar.</b>");
+
+            var surl = new String();
+            surl = $("#url").val();
+            if (surl)
+                if (surl.indexOf('190.153.48.117') >= 0)
+                    $("#ambiente").append("CUIDADO!!!...EL BOTON DE PAGO ESTA CONFIGURADO EN AMBIENTE DE DESARROLLO");
+
+            var botonerror = new String();
+            botonerror = $("#go123pago > div > div > div:nth-child(1)").html();
+            if (botonerror){
+                if (botonerror.indexOf(' Encontramos un problema en el registro de sus datos en el sistema de pago.') >= 0) {
+                    $("#regresar").append("<button type='button' onclick='regresar()' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'>" +
+                            "<span class='ui-button-text'>Regresar</span></button>");
+                    $("#mensaje").hide();
+                }
+            }
+
+            $("#go123pago > div > div > a").click(function () {
+                $("#codigo123pago").remove();
+                $("#btnfinalizar").html("<button type='button' onclick='validapago()' class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'>" +
+                        "<span class='ui-button-text'>Finalizar</span></button>");
+            });
+
+            //"<div style='border:1px #666 solid;padding: 3px;'> Encontramos un problema en el registro de sus datos en el sistema de pago.</div>"
+        });
+    </script>   
+{% endblock %}    
+{% block style %}
+    <style type="text/css">
+        th{
+            text-align: left;
+        }
+
+        table {
+            margin: auto;
+            border: 0px solid black;
+        }        
+        #titulo{
+            text-align: center;
+            margin:10px 0 10px 0;
+        }
+        #regresar{
+            text-align: center;            
+        }
+        #btnfinalizar{
+            text-align: center;
+        }
+        #ambiente{
+            text-align: center;
+            color: red;
+            font-size: 14px;
+        }
+        #mensaje{
+            text-align: center;
+        }
+    </style>
+{% endblock %}      
+{% block body -%}
+    <div class="contenido">
+    <table>
+        <tbody>
+            <tr>
+                {#<td colspan="2"><p id="titulo"><strong>Informaci&oacute;n de Inscripci&oacute;n</strong></p></td>#}
+                <td colspan="2"><h1 id="titulo"><strong>Informaci&oacute;n de Inscripci&oacute;n</strong></h1></td>
+            </tr>            
+            <tr><th>C&eacute;dula</th><td>{{ entity.idpia.iddocumento }}</td></tr>
+            <tr><th>Apellido</th><td>{{ entity.idpia.apellido|upper }}</td></tr>
+            <tr><th>Nombre</th><td>{{ entity.idpia.nombre|upper }}</td></tr>
+            <tr><th>Fecha de Nacimiento</th><td>{{ entity.idpia.fechanacimiento|date('d-m-Y') }}</td></tr>
+            <tr><th>Sexo</th><td>{{ entity.idpia.sexo }}</td></tr>
+            <tr><th>Club</th><td>{{ entity.idpia.equipo|upper }}</td></tr>
+            <tr><th>Estado</th><td>{{ entity.idpia.idestado.estado }}</td></tr>
+            <tr><th>Email Personal</th><td>{{ entity.idpia.emailpersonal|lower }}</td></tr>
+            <tr><th>Precio</th><td>{{( entity.precio * (1 + (incremento/100)))|round(2, 'floor') }}</td></tr>
+            <tr><th>Categor&iacute;a</th><td>{{ entity.idcategoria.descripcion }}</td></tr>            
+            <tr>
+                <th>Inscrito el</th>
+                <td>{{ entity.fechahora|date('d-m-Y H:i:s') }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <div id="codigo123pago">{{ boton123Pago | raw }}</div>
+                </td>
+            </tr>              
+            <tr>
+                <td colspan="2">
+                    <div id="mensaje"></div>
+                </td>
+            </tr>        
+            <tr>
+                <td colspan="2">
+                    <div id="regresar"></div>
+                </td>
+            </tr>              
+            <tr>
+                <td colspan="2">
+                    <div id="btnfinalizar"></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="ambiente"></div>
+                </td>
+            </tr>         
+        </tbody>
+    </table>
+    </div>
+{% endblock %}

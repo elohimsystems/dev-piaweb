@@ -1,0 +1,101 @@
+{% extends '::base.html.twig' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
+<style type="text/css">
+    #tabs{  /* Oculta el tabs para que se muestre luego de cargar todo el html */
+        display: none;
+    }
+    #formulario > div:nth-child(1){
+        /*display: none;*/
+    }
+</style>
+{% endblock %}  
+{% block body -%}
+    <div id="titulo_padre">{{campeonato.nombre}} {{campeonato.anio}}</div>
+    <div id="tabs">    
+        {{ include("FraterSoftPiaWebBundle:Campeonato:tabs.html.twig") }}
+        <div id="tabs-3">     
+            <div id="titulotabla"><h3>Afiliar Atletas</h3></div>
+            <table id="campeonatocompetidores" class="display row-border hover">
+            </table>    
+        </div>
+        <div id="dialogformGuardar" title="Afiliar Atleta">
+            {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+            {{ form_end(form) }} 
+        </div>  
+        <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistacampeonatos')}}');">Regresar</button>
+        <div id="dialogelimiar" title="Advertencia!!!">
+            ¿Esta seguro que desea desafiliar el Atleta <strong id="eliminar"></strong>?
+        </div> 
+        <div id="dialog-message" title="Mensaje">
+        </div>                
+    </div> 
+{% endblock %}
+{% block javascripts -%}
+{{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}
+<link href="{{asset('bundles/fratersoftpiaweb/css/jquery.datetimepicker.css')}}" rel="stylesheet" type="text/css"/>
+<script src="{{asset('bundles/fratersoftpiaweb/js/jquery.datetimepicker.full.js')}}" type="text/javascript"></script>  
+<script>
+    $(document).ready(function () { 
+        $("#tabs").css("display","block");   
+        $('#tabs a[href="#tabs-1"]').on("click", function () {
+            $(location).attr('href', '{{ path('campeonatoclubes_new',{'idcampeonato':campeonato.id}) }}')
+        });           
+        $('#tabs a[href="#tabs-2"]').on("click", function () {
+            $(location).attr('href', '{{ path('categoria_campeonato_new',{'idcampeonato':campeonato.id}) }}');
+        });            
+        $('#tabs a[href="#tabs-3"]').click();                  
+        var table=tablaDatos(
+                $('#formulario'), //Se usa para llenar lo campos del formulario
+                {{campos|json_encode|raw}}, //json con los atributos de la entidad y sus caracteristicas
+                'Atletas Afiliados', //Usada para el titulo 
+                "{{ path('campeonatocompetidores_create')}}", //Url para crear
+                "{{ path('campeonatocompetidores_update',{'idcompetidor':'_id_','idcampeonato':campeonato.id})}}", //Url para editar
+                "{{ path('campeonatocompetidores_listaajax',{'idcampeonato': campeonato.id }) }}", //Url para buscar los datos a listar
+                [ //Agrega una columna a la tabla en la posicion indicada
+                    {posicion:0, config:{title:"Id",data:"id"}},
+                    {posicion:4, config:{title:"Cedula",data:"iddocumento"}},
+                    {posicion:5, config:{title:"Nombre",data:"nombre",width:"250"}},
+                    {posicion:6, config:{title:"Apellido",data:"apellido",width:"250"}},
+                    {posicion:7, config:{title:"Categoria",data:"categoria",width:"250"}},
+                    {posicion:8, config:{title:"Club",data:"club",width:"850"}},
+
+                ],                        
+        );
+        table.button().add(3, {
+            action: function ( e, dt, button, config ) {
+                $(location).attr('href', '{{ path('competidor_importar_encampeonato',{'idcampeonato':campeonato.id}) }}');
+            },
+            text: 'Importar'
+        } );
+
+        dialogGuardar($('#formulario'),{{campos|json_encode|raw}});
+        dialogEliminar('{{ path('campeonatocompetidores_delete',{'id':'_id_'})}}');
+        dialogMensaje();
+                
+        {% if estado is defined %}
+            {% if estado == 1 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>El Atleta fue DESAFILIADO satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+            {% if estado == 2 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>El Atleta fue AFILIADO satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+            {% if estado == 3 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>La afiliacion fue ACTUALIZADA satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+        {% endif %}   
+            
+        $("#{{form.afiliadoel.vars.id}}").datetimepicker({
+            format: "d/m/Y H:i",
+            defaultSelect: true,
+            lang: 'es',
+        });              
+    });    
+</script>    
+{% endblock %}

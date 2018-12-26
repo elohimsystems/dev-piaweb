@@ -1,0 +1,26 @@
+FraterSoft\PiaWebBundle\Entity\Pais:
+    type: entity
+    table: piaaccess.tmpaises
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nombre:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        codigo:
+            type: string
+            nullable: true
+            length: 2
+            fixed: false
+            comment: ''
+    lifecycleCallbacks: {  }

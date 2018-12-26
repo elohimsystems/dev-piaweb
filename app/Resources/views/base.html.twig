@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- <meta charset="UTF-8" /> -->
+        <!-- <link rel="icon" type="image/x-icon" href="{# {{ asset('favicon.ico') }} #}" /> -->
+
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>{% block title %}PIA{% endblock %}</title>
+        {% block stylesheets %}{% endblock %}
+        <link rel="shortcut icon" href="{{ asset('images/logopiaft.png') }}" />
+	<link type="text/css" href="{{ asset('bundles/fratersoftpiaweb/js/jquery-ui-1.12.1.custom/jquery-ui.css') }}" rel="stylesheet">             
+        <link type="text/css" href="{{ asset('bundles/fratersoftpiaweb/css/datatable/jquery.dataTables.min.css') }}" rel="stylesheet">
+        <link type="text/css" href="{{ asset('bundles/fratersoftpiaweb/css/datatable/select.dataTables.min.css') }}" rel="stylesheet">
+        <link type="text/css" href="{{ asset('bundles/fratersoftpiaweb/css/datatable/buttons.dataTables.min.css') }}" rel="stylesheet">
+        
+	<style>
+        {% if temastyle is defined  %}
+            {{ temastyle | raw}}
+        {% else %}
+	body{
+            font: 92.5% "Trebuchet MS", sans-serif;
+	}
+        {% endif %}
+	.demoHeaders {
+		margin-top: 2em;
+	}
+	#dialog-link {
+		padding: .4em 1em .4em 20px;
+		text-decoration: none;
+		position: relative;
+	}
+	#dialog-link span.ui-icon {
+		margin: 0 5px 0 0;
+		position: absolute;
+		left: .2em;
+		top: 50%;
+		margin-top: -8px;
+	}
+	#icons {
+		margin: 0;
+		padding: 0;
+	}
+	#icons li {
+		margin: 2px;
+		position: relative;
+		padding: 4px 0;
+		cursor: pointer;
+		float: left;
+		list-style: none;
+	}
+	#icons span.ui-icon {
+		float: left;
+		margin: 0 4px;
+	}
+	select {
+		width: 200px;
+	}
+        #titulo_padre{
+            font-weight: bold;
+            padding:10px;
+            font-size: 20px;
+        }        
+	</style>
+        
+        <script src="{{ asset('bundles/fratersoftpiaweb/js/jquery-1.11.2.min.js') }}"></script>
+
+	<script src="{{ asset('bundles/fratersoftpiaweb/js/jquery-validation-1.14.0/dist/jquery.validate.js') }}"></script>        
+	<script src="{{ asset('bundles/fratersoftpiaweb/js/jquery-validation-1.14.0/dist/additional-methods.js') }}"></script>                
+        <script src="{{ asset('bundles/fratersoftpiaweb/js/jquery.maskedinput.js') }}"></script>
+        <script src="{{ asset('bundles/fratersoftpiaweb/js/jquery.table2excel.js') }}"></script>
+        <script src="{{ asset('bundles/fratersoftpiaweb/js/Verimail.js-master/src/verimail.jquery.js') }}"></script>
+
+        <script src="{{ asset('bundles/fratersoftpiaweb/js/jquery-ui-1.12.1.custom/jquery-ui.js') }}"></script>   
+        <script src="{{ asset('bundles/fratersoftpiaweb/js/jquery.countdown.js') }}" type="text/javascript" charset="utf-8"></script>    
+        <script src="{{ asset('bundles/fratersoftpiaweb/js/datatable/jquery.dataTables.min.js') }}" type="text/javascript" charset="utf-8"></script>    
+        <script src="{{ asset('bundles/fratersoftpiaweb/js/datatable/dataTables.select.min.js') }}" type="text/javascript" charset="utf-8"></script>    
+        <script src="{{ asset('bundles/fratersoftpiaweb/js/datatable/dataTables.buttons.min.js') }}" type="text/javascript" charset="utf-8"></script>    
+        <script src="{{ asset('bundles/fratersoftpiaweb/js/datatable/buttons.flash.min.js') }}" type="text/javascript" charset="utf-8"></script>    
+        <script src="{{ asset('bundles/fratersoftpiaweb/js/datatable/buttons.html5.min.js') }}" type="text/javascript" charset="utf-8"></script>    
+        <script src="{{ asset('bundles/fratersoftpiaweb/js/datatable/buttons.print.min.js') }}" type="text/javascript" charset="utf-8"></script>    
+        {% block jsQuery %}    
+        {% endblock %}             
+        
+        {% block style %}    
+        {% endblock %}
+
+        <script>
+            $(function() {
+                $( "#tabs" ).tabs();     
+                $( "button" ).button();
+            });
+        </script>   
+        {% block javascripts %}
+        {% endblock %} 
+
+        
+        <!-- FIN DE BLOQUE -->
+    </head>
+    <body style="font-family: Droid Sans, arial, serif">
+        {% block poweredby %}
+        <div id="poweredby" style="text-align: center;margin: 10px 20px 30px;border: 1px">
+            <a href="http://www.sistemapia.com" target="_blank" style="text-decoration:none">
+                <b style="font-size: 9px">
+                    V-{{ asset('')|slice(7,asset('')|length-5-7) }}
+                </b><br>
+                <strong>
+                powered by
+                <img width="40" align="center" 
+                     src="{{asset('bundles/fratersoftpiaweb/images/logopiaft.png')}}"/>
+                </strong>
+            </a>
+        </div>
+        {% endblock %}
+        {% block body %}{% endblock %}
+    </body>
+</html>
+<!--
+
+favicon.ico
+-->

@@ -1,0 +1,84 @@
+{% extends '::base.html.twig' %}
+{% block poweredby %}
+<div style="text-align: center">
+    <a href="{{app.request.getSchemeAndHttpHost() }}" target="_blank">
+        <p style="font-family:verdana;font-size:11px">
+        powered by
+        <img width="40" align="center" 
+             src="{{app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/images/') }}logopiaft.png"/>
+        </p>
+    </a>
+</div>
+{% endblock %}
+{% block style %}
+<style type="text/css">
+    th{
+        text-align:left;
+    }
+    table{
+        width:650px;        
+        border: 1px solid black;
+    }
+</style>
+{% endblock %}
+{% block body -%}
+    <table align="center">
+        <tbody>
+            {% if inscrito.idevento.idorganizador.logo is not null %}
+            <tr>
+                <td colspan='3' align='center'>
+                    <img width="300 px" 
+                         src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/images/') ~ inscrito.idevento.idorganizador.logo }}">                    
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td colspan='3' align='center'>
+                    <h1>Confirmaci&oacute;n de Inscripci&oacute;n</h1>
+                </td>
+            </tr>
+            {% if inscrito.numero != null %}
+            <tr>
+                <td colspan='3' align='center'><h1>Dorsal Numero: {{ inscrito.numero }}</h1></td>
+            </tr>
+            {% endif %}            
+            <tr>
+                <td rowspan="13">
+                    <img width="300 px" 
+                         src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ inscrito.idevento.logo }}">
+                </td>
+            </tr>            
+            <tr><th>Cedula</th><td>{{ inscrito.idpia.iddocumento }}</td></tr>
+            <tr><th>Apellido</th><td>{{ inscrito.idpia.apellido }}</td></tr>
+            <tr><th>Nombre</th><td>{{ inscrito.idpia.nombre }}</td></tr>
+            <tr><th>Fecha de Nacimiento</th><td>{{ inscrito.idpia.fechanacimiento|date('d-m-Y') }}</td></tr>
+            <tr><th>Sexo</th><td>{{ inscrito.idpia.sexo }}</td></tr>
+            <tr><th>Equipo</th><td>{{ inscrito.idpia.equipo }}</td></tr>
+            <tr><th>Estado</th><td>{{ inscrito.idpia.idestado.estado }}</td></tr>
+            <tr><th>Categoria</th><td>{{ inscrito.idcategoria.descripcion }}</td></tr>            
+            <tr>
+                <th>PreInscrito el</th>
+                <td>{{ inscrito.fechahora|date('d-m-Y H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Punto</th>
+                <td>{{ inscrito.punto }}</td>
+            </tr>
+            <tr>
+                <th>Conciliado el</th>
+                <td>{{ inscrito.idpago.conciliadoel|date('d-m-Y H:i:s') }}</td>
+            </tr>            
+            <tr>
+                <th>Precio</th>
+                <td>{{ inscrito.precio|number_format(2,',','.') }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" align="center">
+                    <p>El Pago de su Pre-Inscripci&oacute;n fu&eacute; certificado. 
+                    Usted est&aacute; inscrito oficialmente en el <br>
+                    <b>{{ inscrito.idevento.nombre }}</b></p>.
+                </td>
+            </tr>  
+        </tbody>
+    </table>
+{% endblock %}

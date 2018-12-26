@@ -1,0 +1,32 @@
+{% extends '::base.html.twig' %}
+
+{% block poweredby %}
+<div style="text-align: center">
+    <a href="{{app.request.getSchemeAndHttpHost() }}" target="_blank">
+        <p style="font-family:verdana;font-size:11px">
+        powered by
+        <img width="40" align="center" 
+             src="{{app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/images/') }}logopiaft.png"/>
+        </p>
+    </a>
+</div>
+{% endblock %}
+{% block body -%}
+    <table class="record_properties" align="center" border="0">
+        <tr>
+            <td colspan="2" align="center">
+                <h1>Pago con Tarjeta de Credito No Conciliado</h1>
+            </td>
+        </tr>            
+        <tr>
+            <td><img width="40" align="center" 
+             src="{{app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/images/') ~ operaciontdc.idevento.logo}}"/></td>
+            <td>
+                Hemos encontrado una pre-inscripcion a su nombre pendiente de pago para el evento {{operaciontdc.idevento.nombre}}.
+                Vaya al formulario de inscripcion y cambien su forma de pago o intente nuevamente con
+                Tarjeta de Credito, de lo contrario esta pre-inscripcion sera anulada.
+                De cualquier forma podra realizar una nueva pre-inscripcion. No garantizamos precios ni cupos.
+            </td>
+        </tr>                           
+    </table>
+{% endblock %}

@@ -1,0 +1,51 @@
+FraterSoft\PiaWebBundle\Entity\Formaspagoevento:
+    type: entity
+    table: piaaccess.trformaspagoevento
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\FormaspagoeventoRepository      
+    indexes:
+        IDX_7DF486AE233BA6A9:
+            columns:
+                - idevento
+        IDX_7DF486AEF4F43B:
+            columns:
+                - idformapago
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        status:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        incremento:
+            type: float
+            nullable: true
+            unsigned: false
+            comment: ''
+    manyToOne:
+        idevento:
+            targetEntity: Evento
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idevento:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idformapago:
+            targetEntity: Formaspago
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idformapago:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,6 @@
+FraterSoft\PiaWebBundle\Entity\Competidor:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: emailpersonal
+    properties:
+        emailpersonal:
+            - Emailpersonal: ~
