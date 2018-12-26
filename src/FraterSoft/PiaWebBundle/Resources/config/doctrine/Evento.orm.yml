@@ -1,0 +1,233 @@
+FraterSoft\PiaWebBundle\Entity\Evento:
+    type: entity
+    table: piaaccess.tmeventos
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\EventoRepository       
+    indexes:
+        IDX_1B29C54D6FAFBFF6:
+            columns:
+                - idorganizador
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: piaaccess.tmeventos_id_sq
+                allocationSize: 100
+                initialValue: 1                    
+    fields:
+        nombre:
+            type: string
+            nullable: true
+            length: 40
+            fixed: false
+            comment: ''
+        logo:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''
+        fecha:
+            type: datetime
+            nullable: true
+            comment: ''
+        hora:
+            type: datetime
+            nullable: true
+            comment: ''
+        lugar:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        ruta:
+            type: blob
+            nullable: true
+            length: null
+            fixed: false
+            comment: ''
+        organizador:
+            type: string
+            nullable: true
+            length: 30
+            fixed: false
+            comment: ''
+        nombrecontacto:
+            type: string
+            nullable: true
+            length: 30
+            fixed: false
+            comment: ''
+        telefonocontacto:
+            type: string
+            nullable: true
+            length: 30
+            fixed: false
+            comment: ''
+        puntoinscripcion:
+            type: string
+            nullable: true
+            length: 35
+            fixed: false
+            comment: ''
+        fechacierre:
+            type: datetime
+            nullable: true
+            comment: ''
+        fechacierreefectivo:
+            type: datetime
+            nullable: true
+            comment: ''
+        horacierre:
+            type: datetime
+            nullable: true
+            comment: ''
+        equipo:
+            type: string
+            nullable: true
+            length: 20
+            fixed: false
+            comment: ''
+        rifa:
+            type: boolean
+            nullable: true
+            comment: ''
+        tipo:
+            type: string
+            nullable: true
+            length: 1
+            fixed: false
+            comment: ''
+        cupocontrol:
+            type: boolean
+            nullable: true
+            comment: ''
+        cupomaximo:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+        activo:
+            type: boolean
+            nullable: true
+            comment: ''
+        criteriocalculoedad:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        controlamenores16:
+            type: boolean
+            nullable: true
+            comment: ''
+        emailcontacto:
+            type: string
+            nullable: true
+            length: 200
+            fixed: false
+            comment: ''
+        fechainicio:
+            type: datetimetz
+            nullable: true
+            comment: ''
+        zonahoraria:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        inforepresentante:
+            type: boolean
+            nullable: true
+            comment: 'Activa solicitar Info del Representante, esto para eventos de solo ninos' 
+        proceso:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''         
+        mapalugar:
+            type: string
+            nullable: true
+            length: 200
+            fixed: false
+            comment: ''            
+        rutamapa:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''   
+        rutaperfil:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''   
+        rutavideo:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''               
+        externo:
+            type: boolean
+            nullable: true
+            comment: ''               
+        url:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: '' 
+        clasificacion:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: '' 
+        inforepresentante:    
+            type: boolean
+            nullable: true
+            comment: ''               
+    manyToOne:
+        idorganizador:
+            targetEntity: Organizador
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idorganizador:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idcampeonato:
+            targetEntity: Campeonato
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idcampeonato:
+                    referencedColumnName: id
+            orphanRemoval: false            
+        idciudad:
+            targetEntity: Ciudad
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idciudad:
+                    referencedColumnName: id
+            orphanRemoval: false            
+    oneToOne:
+      tema:
+        targetEntity: Tema
+        mappedBy: idevento            
+      numeracion:
+        targetEntity: Numeracion
+        mappedBy: idevento  
+    lifecycleCallbacks: {  }

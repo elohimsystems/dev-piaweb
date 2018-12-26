@@ -1,0 +1,182 @@
+{% extends '::base.html.twig' %}
+{% if inscrito.idevento.tema is defined and inscrito.idevento.tema is not null %}{% set temastyle=inscrito.idevento.tema.styles %}{% endif %}
+{% block javascripts %}
+    <script>
+        $().ready(function () {
+                        
+            $("#mensajepago").hide();
+            $("#mensajepagotarjeta").hide();
+            $("#{{ edit_form.tipo.vars.id }}").find("[value='0']").remove();
+
+            $("#{{ edit_form.monto.vars.id }}").val({{inscrito.precio}});
+
+            //Se limpia la forma de pago, para que el usuario decida nuevamente
+            $("#{{ edit_form.tipo.vars.id }}").val('');
+
+            //Habilita el campo del banco justo antes de enviar el formulario
+            $("form#inscrito-form").submit(function (event) {
+                if ($("#{{ edit_form.tipo.vars.id }}").val() == '1')
+                    $("#{{ edit_form.banco.vars.id }}").removeAttr("disabled");
+            });
+
+            $("#{{ edit_form.tipo.vars.id }}").change(function () {
+                switch ($("#{{ edit_form.tipo.vars.id }}").val()) {
+                    case '':
+                        $("#{{ edit_form.banco.vars.id }}").val(null);
+                        $("#codigo123pago").remove();
+                        $("#mensajepagotarjeta").hide();
+                        $("#{{ edit_form.referencia.vars.id }}").removeAttr("readonly");
+                        $("#{{ edit_form.banco.vars.id }}").removeAttr("disabled");
+                        $("#mensajepago").hide();
+                        $("#{{ edit_form.submit.vars.id }}").html('<span class="ui-button-text">Guardar</span>')
+                        break;
+                    case '1': //Selecciono Deposito
+                        $("#{{ edit_form.submit.vars.id }}").show();
+                        $("#{{ edit_form.banco.vars.id }}").val("{{ inscrito.idevento.idorganizador.banco }}");
+                        $("#{{ edit_form.referencia.vars.id }}").prop("disabled", false)
+                        $("#{{ edit_form.banco.vars.id }}").prop("disabled", true);
+                        $("#mensajepago").show();
+                        $("#mensajepagotarjeta").hide();
+                        $("#codigo123pago").remove();
+                        $("#{{ edit_form.submit.vars.id }}").html('<span class="ui-button-text">Guardar</span>')
+                        break;
+                    case '2': //Selecciono Transferencia
+                        $("#{{ edit_form.submit.vars.id }}").show();
+                        $("#{{ edit_form.banco.vars.id }}").val("");
+                        $("#{{ edit_form.referencia.vars.id }}").prop("disabled", false)                        
+                        $("#{{ edit_form.banco.vars.id }}").removeAttr("disabled");
+                        $("#mensajepago").show();
+                        $("#mensajepagotarjeta").hide();
+                        $("#{{ edit_form.submit.vars.id }}").html('<span class="ui-button-text">Guardar</span>');
+                        break;
+                    case '3': //Selecciono Tarjeta de Credito
+                        if ($("#{{ edit_form.monto.vars.id }}").val() == 0)
+                            alert("Error el precio no puede ser 0");
+                        else {
+                            $("#mensajepago").hide();
+                            $("#{{ edit_form.banco.vars.id }}").prop("disabled", true)
+                            $("#{{ edit_form.referencia.vars.id }}").prop("disabled", true)
+                            $("#{{ edit_form.submit.vars.id }}").html('<span class="ui-button-text">Continuar</span>');
+                            $("#mensajepagotarjeta").show();
+                        }
+                        $("#incremento").html({{incremento[3]}});
+                        break;
+                }
+            });
+        });
+    </script>
+{% endblock %}
+{% block style %}
+    <style type="text/css">
+        th{
+            text-align: left;
+        }
+        table {
+            margin: auto;
+            border: 0px solid black;
+            width: 400px;
+        }        
+        #titulo{
+            text-align: center;
+            font-size: 24px;
+        }
+        #botonera{
+            text-align: center;
+        }
+
+        #mensajepago{
+            text-align: center;
+        }
+
+        #mensajepagotarjeta{
+            text-align: center;
+        }
+    </style>
+{% endblock %}  
+{% block body -%}
+    <div class="contenido">
+    {{ form_start(edit_form) }}
+    <table>       
+        <tr>
+            <td colspan="2"><p id="titulo"><strong>Pago con TDC no conciliado</strong></p></td>
+        </tr>        
+        <tr>
+            <td colspan="2">{{ form_errors(edit_form) }}</td>
+        </tr>              
+        <tr>
+            <th>Evento</th>
+            <td>{{inscrito.idevento.nombre}}</td>
+        </tr>          
+        <tr>
+            <th>Competencia</th>
+            <td>{{inscrito.idcompetencia.descripcion}}</td>
+        </tr>         
+        <tr>
+            <th>Cedula</th>
+            <td>{{inscrito.idpia}}</td>
+        </tr>        
+        <tr>
+            <th>Nombre</th>
+            <td>{{inscrito.idpia.nombre}}</td>
+        </tr>        
+        <tr>
+            <th>Apellido</th>
+            <td>{{inscrito.idpia.apellido}}</td>
+        </tr>        
+        <tr>
+            <th>Club</th>
+            <td>{{inscrito.idpia.equipo}}</td>
+        </tr>          <tr>
+        <tr>
+            <th>Categor&iacute;a</th>
+            <td>{{inscrito.idcategoria.descripcion}}</td>
+        </tr>          
+        <tr>
+            <th>{{form_label(edit_form.monto)}}</td>
+            <td>{{form_widget(edit_form.monto, {'read_only': true })}}</td>
+        </tr>        
+        <tr>
+            <th>{{form_label(edit_form.tipo)}}</td>
+            <td>{{form_widget(edit_form.tipo)}}</td>
+        </tr>        
+        <tr>
+            <th>{{form_label(edit_form.referencia)}}</td>
+            <td>{{form_widget(edit_form.referencia )}}</td>
+        </tr>        
+        <tr>
+            <th>{{form_label(edit_form.banco)}}</td>
+            <td>{{form_widget(edit_form.banco)}}</td>
+        </tr>                        
+        <tr>
+            <td colspan="2">
+                <div id="mensajepago">
+                    <p><strong>
+                            RECUERDA QUE DEBES REALIZAR PRIMERO LA TRANSFERENCIA O <br>
+                            DEPOSITO ANTES DE REGISTRAR LA PRE-INSCRIPCION
+                        </strong></p>
+                </div>
+                <div id="mensajepagotarjeta">
+                    <p><strong>
+                        POR EL USO DE TARJETA DE CREDITO PARA EL PAGO,<br>
+                        SE HARA UN <strong style="color:red;">RECARGO DEL <span id="incremento"></span>%</strong> <br>
+                        SOBRE EL PRECIO DE LA INSCRIPCION<br>
+                    </strong></p>
+                </div>
+            </td>
+        </tr>              
+        <tr>
+            <td colspan="2">
+                <div id="botonera">
+                    <button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                        <a href="{{ path('competidor_find',{'idevento':inscrito.idevento.id}) }}">
+                            Regresar
+                        </a>
+                    </button>                
+                    {{ form_widget(edit_form.submit) }} 
+                </div>
+            </td>
+        </tr>
+    </table>
+    {{ form_end(edit_form) }}  
+    </div>
+{% endblock %}

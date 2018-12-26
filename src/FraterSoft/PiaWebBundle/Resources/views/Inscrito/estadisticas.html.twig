@@ -1,0 +1,765 @@
+{% extends '::base.html.twig' %}
+{% block jsQuery %} 
+    <script src="{{ asset('bundles/fratersoftpiaweb/js/chart/Chart.bundle.min.js') }}" type="text/javascript" charset="utf-8"></script>    
+    <script src="{{ asset('bundles/fratersoftpiaweb/js/chart/Chart.min.js') }}" type="text/javascript" charset="utf-8"></script>    
+    <script src="{{ asset('bundles/fratersoftpiaweb/js/chart/utils.js') }}" type="text/javascript" charset="utf-8"></script>    
+{% endblock %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+            var arrayColors = [
+                    'rgb(255, 159, 64)', //orange
+                    'rgb(54, 162, 235)', //blue
+                    'rgb(255, 99, 132)', //red
+                    'rgb(255, 205, 86)', //yellow
+                    'rgb(75, 192, 192)', //green
+                    'rgb(153, 102, 255)', //purple
+                    'rgb(201, 203, 207)', //grey    
+            ];            
+//- Fincion Generica para generar las tablas -----------------------------------                   
+            function GenerarTabla(nombretabla,caption,tcantidad,tporcentaje){
+                $(nombretabla).append("<tfoot><tr><th></th><th></th><th></th></tr></tfoot>");
+                $(nombretabla).DataTable({ 
+                    dom: "t",
+                    data: data,
+                    "pageLength": 50,
+                    columns: [
+                        { title: "Descripcion" },
+                        { title: "Cantidad" },
+                        { title: "%" },
+                    ],
+                    "columnDefs": [ //centra el contenido de la columna
+                      {"className": "dt-center", "targets": 1},
+                      {"className": "dt-right", "targets": 2}
+                    ],
+                    order: [[1,'DES']],
+                    "footerCallback": function ( row, data, start, end, display ) {    
+                        var api = this.api();
+                        $(api.column( 0 ).footer()).html("TOTAL");
+                        $(api.column( 1 ).footer()).html(tcantidad);
+                        $(api.column( 2 ).footer()).html(tporcentaje);
+                    }                
+                });
+                $(nombretabla).append("<caption><b>" + caption + "</b></caption>");
+            }           
+
+//- Carga la data que se mostrara en la tabla ----------------------------------
+            var data=[
+                {% set total_inscritos=0 %}
+                {% set total_cantidad=0 %}
+                {% set total_porcentaje=0 %}
+                {% for row in insxstatus %}
+                    {% if row.conciliado is null and row.tipo!='3' %}
+                        ["PRE-INSCRITOS","{{ row.cantidad }}","{{ ((row.cantidad/total)*100) | number_format(2,',','.') }}"],
+                    {% elseif row.conciliado is null and row.tipo=='3'%}
+                        ["TDC NO CONCILIADOS","{{ row.cantidad }}","{{ ((row.cantidad/total)*100) | number_format(2,',','.') }}"],
+                    {% else %}
+                        {% set total_inscritos=total_inscritos+row.cantidad %}
+                    {% endif %}
+                    {% set total_cantidad = total_cantidad + row.cantidad %}
+                    {% set total_porcentaje = total_porcentaje + ((row.cantidad/total)*100) %}
+                {% endfor %}
+                {% if total_inscritos>0 %}
+                ["INSCRITOS","{{ total_inscritos }}","{{ ((total_inscritos/total)*100) | number_format(2,',','.') }}"]
+                {% endif %}
+            ];  
+            GenerarTabla(
+                    '#tablaInscritosGeneral',
+                    'INSCRITOS POR STATUS',
+                    {{ total_cantidad }},
+                    {{ total_porcentaje | number_format(2,'.',',') }}
+            );            
+//- Configura el grafico de torta a mostrar ------------------------------------
+            var grafInscritosGeneral=[];
+            var levelsgrafInscritosGeneral=[];
+            {% set total_inscritos=0 %}
+            {% for row in insxstatus %}
+                {% if row.conciliado is null and row.tipo!='3' %}
+                    grafInscritosGeneral.push({{ ((row.cantidad/total)*100) | number_format(2,'.','') }});
+                    levelsgrafInscritosGeneral.push("% PRE-INSCRITOS");
+                {% elseif row.conciliado is null and row.tipo=='3' %}
+                    grafInscritosGeneral.push({{ ((row.cantidad/total)*100) | number_format(2,'.','') }});
+                    levelsgrafInscritosGeneral.push("% TDC NO CONCILIADOS");  
+                {% else %}
+                    {% set total_inscritos=total_inscritos+row.cantidad %}
+                {% endif %}
+            {% endfor %}
+            {% if total_inscritos>0 %}
+                grafInscritosGeneral.push({{ ((total_inscritos/total)*100) | number_format(2,'.','') }});
+                levelsgrafInscritosGeneral.push("% INSCRITOS");
+            {% endif %}            
+            var config = {
+                type: 'pie',
+                data: {
+                    datasets: [{
+                        data: grafInscritosGeneral,
+                        backgroundColor: [
+                            window.chartColors.orange,
+                            window.chartColors.green,
+                            window.chartColors.blue,                            
+                        ],
+                    }],
+                    labels: levelsgrafInscritosGeneral
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 10,
+                        }                        
+                    },
+                    title: {
+                        display: true,
+                        text: 'INSCRITOS POR STATUS'
+                    }                    
+                }
+            };
+            var ctx = document.getElementById("grafInscritosGeneral").getContext("2d");
+            window.myPie = new Chart(ctx, config);
+            $("#grafInscritosGeneral").hide();
+//- Generar tabla y grafico a m mostrar ---------------------------------------------
+            var data=[
+                {% set total_cantidad=0 %}
+                {% set total_porcentaje=0 %}
+                {% for row in insxcomp %}
+                    ["{{ row.descripcion }}",
+                    "{{ row.cantidad }}",
+                    "{{ ((row.cantidad/total)*100) | number_format(2,'.',',') }}"],
+                    {% set total_cantidad = total_cantidad + row.cantidad %}
+                    {% set total_porcentaje = total_porcentaje + ((row.cantidad/total)*100) %}
+                {% endfor %}  
+            ];            
+            GenerarTabla(
+                    '#tablaInscritosPorCompetencia',
+                    'INSCRITOS POR COMPETENCIA',
+                    {{ total_cantidad }},
+                    {{ total_porcentaje | number_format(2,'.',',') }}
+            );
+//- Configura el grafico de torta a mostrar ------------------------------------
+            var graInscritosPorCompetencia=[];
+            var levelsgraInscritosPorCompetencia=[];
+            {% for row in insxcomp %}
+                graInscritosPorCompetencia.push({{ ((row.cantidad/total)*100) | number_format(2,'.','') }});
+                levelsgraInscritosPorCompetencia.push('{{ row.descripcion }}');
+            {% endfor %}          
+            var config = {
+                type: 'pie',
+                data: {
+                    datasets: [{
+                        data: graInscritosPorCompetencia,
+                        backgroundColor: [
+                            window.chartColors.orange,
+                            window.chartColors.green,
+                            window.chartColors.gray,
+                            window.chartColors.blue,      
+                            window.chartColors.red,
+                            window.chartColors.yellow,                            
+                        ],
+                    }],
+                    labels: levelsgraInscritosPorCompetencia
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 10,
+                        }                        
+                    },
+                    title: {
+                        display: true,
+                        text: 'INSCRITOS POR COMPETENCIA'
+                    }                      
+                }
+            };
+            var ctx = document.getElementById("grafInscritosPorCompetencia").getContext("2d");
+            window.myPie = new Chart(ctx, config);
+            $("#grafInscritosPorCompetencia").hide();            
+//------------------------------------------------------------------------------            
+//- Generar tabla por Formas De Pago ---------------------------------------------
+            var data=[      
+                {% set total_cantidad=0 %}
+                {% set total_porcentaje=0 %}
+                {% for row in insxformapago %}
+                    [{% if row.tipo == "1"%}
+                        'DEPOSITOS'
+                    {% elseif row.tipo == "2" %} 
+                        'TRANSFERECIAS'
+                    {% elseif row.tipo == "3"  %} 
+                        'TARJETA DE CREDITO'
+                    {% elseif row.tipo == "5"  %} 
+                        'CORTESIA'
+                    {% elseif row.tipo == "6"  %} 
+                        'PUNTO'
+                    {% elseif row.tipo == null  %} 
+                        'EXONERADO'
+                    {% elseif row.tipo == "0"  %} 
+                        'GRATIS'
+                    {% endif %},
+                    "{{ row.cantidad }}",
+                    "{{ ((row.cantidad/total)*100) | number_format(2,'.',',') }}"],
+                    {% set total_cantidad = total_cantidad + row.cantidad %}
+                    {% set total_porcentaje = total_porcentaje + ((row.cantidad/total)*100) %}
+                {% endfor %}  
+            ];      
+            GenerarTabla(
+                    '#tablaInscritosPorFormasDePago',
+                    'INSCRITOS POR FORMAS DE PAGO',
+                    {{ total_cantidad }},
+                    {{ total_porcentaje | number_format(2,'.',',') }}
+            );
+//- Configura el grafico de torta a mostrar ------------------------------------
+            var graInscritosPorFormasDePago=[];
+            var levelsgraInscritosPorFormasDePago=[];
+            var colores=[];
+            for(var i=0;i<{{insxcategoria|length}};i++){
+                colores.push(arrayColors[i]);            
+            }            
+            {% for row in insxformapago %}
+                graInscritosPorFormasDePago.push({{ ((row.cantidad/total)*100) | number_format(2,'.','') }});
+                levelsgraInscritosPorFormasDePago.push(
+                    {% if row.tipo == "1"%}
+                        'DEPOSITOS'
+                    {% elseif row.tipo == "2" %} 
+                        'TRANSFERECIAS'
+                    {% elseif row.tipo == "3"  %} 
+                        'TARJETA DE CREDITO'
+                    {% elseif row.tipo == null  %}
+                        'EXONERADO'
+                    {% elseif row.tipo == "0"  %} 
+                        'GRATIS'
+                    {% endif %}
+               );
+            {% endfor %}          
+            var config = {
+                type: 'pie',
+                data: {
+                    datasets: [{
+                        data: graInscritosPorFormasDePago,
+                        backgroundColor: colores,
+                    }],
+                    labels: levelsgraInscritosPorFormasDePago
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 10,
+                        }                        
+                    },
+                    title: {
+                        display: true,
+                        text: 'INSCRITOS POR FORMAS DE PAGO'
+                    }                     
+                }
+            };
+            var ctx = document.getElementById("grafInscritosPorFormasDePago").getContext("2d");
+            window.myPie = new Chart(ctx, config);
+            $("#grafInscritosPorFormasDePago").hide();            
+//------------------------------------------------------------------------------            
+//- Generar tabla por Sexo -----------------------------------------------------
+            var data=[      
+                {% set total_cantidad=0 %}
+                {% set total_porcentaje=0 %}
+                {% for row in insxsexo %}
+                    [{% if row.sexo == "M"%} 'MASCULINO'  {% else %} 'FEMENINO' {% endif %},
+                    "{{ row.cantidad }}",
+                    "{{ ((row.cantidad/total)*100) | number_format(2,'.',',') }}"],
+                    {% set total_cantidad = total_cantidad + row.cantidad %}
+                    {% set total_porcentaje = total_porcentaje + ((row.cantidad/total)*100) %}
+                {% endfor %}  
+            ];      
+            GenerarTabla(
+                    '#tablaInscritosPorSexo',
+                    'INSCRITOS POR SEXO',
+                    {{ total_cantidad }},
+                    {{ total_porcentaje | number_format(2,'.',',') }}
+            );
+//- Configura el grafico de torta a mostrar ------------------------------------
+            var graInscritosPorSexo=[];
+            var levelsgraInscritosPorSexo=[];
+            {% for row in insxsexo %}
+                graInscritosPorSexo.push({{ ((row.cantidad/total)*100) | number_format(2,'.','') }});
+                levelsgraInscritosPorSexo.push(
+                    {% if row.sexo == "M"%} 'MASCULINO'  {% else %} 'FEMENINO' {% endif %} 
+               );
+            {% endfor %}          
+            var config = {
+                type: 'pie',
+                data: {
+                    datasets: [{
+                        data: graInscritosPorSexo,
+                        backgroundColor: [
+                            window.chartColors.orange,
+                            window.chartColors.green,
+                        ],
+                        label: 'Dataset 1'
+                    }],
+                    labels: levelsgraInscritosPorSexo
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 10,
+                        }                        
+                    },
+                    title: {
+                        display: true,
+                        text: 'INSCRITOS POR SEXO'
+                    },
+                }
+            };
+            var ctx = document.getElementById("grafInscritosPorSexo").getContext("2d");
+            window.myPie = new Chart(ctx, config);
+            $("#grafInscritosPorSexo").hide();            
+//------------------------------------------------------------------------------            
+//- Generar tabla por Categorias -----------------------------------------------
+            var data=[      
+                {% set total_cantidad=0 %}
+                {% set total_porcentaje=0 %}
+                {% for row in insxcategoria %}
+                    ["{{ row.descripcion }} - ({{ row.sexo }})",        
+                    "{{ row.cantidad }}",
+                    "{{ ((row.cantidad/total)*100) | number_format(2,'.',',') }}"],
+                    {% set total_cantidad = total_cantidad + row.cantidad %}
+                    {% set total_porcentaje = total_porcentaje + ((row.cantidad/total)*100) %}
+                {% endfor %}  
+            ];     
+            GenerarTabla(
+                    '#tablaInscritosPorCategoria',
+                    'INSCRITOS POR CATEGORIA',
+                    {{ total_cantidad }},
+                    {{ total_porcentaje | number_format(2,'.',',') }}
+            );
+//- Configura el grafico de torta a mostrar ------------------------------------
+            var graInscritosPorCategoria=[];
+            var levelsgraInscritosPorCategoria=[];
+            {% for row in insxcategoria %}
+                {#graInscritosPorCategoria.push({{ ((row.cantidad/total)*100) | number_format(2,'.','') }});#}
+                graInscritosPorCategoria.push({{ row.cantidad }});
+                levelsgraInscritosPorCategoria.push('{{ row.descripcion }} - ({{ row.sexo }})');
+
+            {% endfor %}
+            var config = {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: graInscritosPorCategoria,
+                        backgroundColor: arrayColors[0],
+                    }],
+                    labels: levelsgraInscritosPorCategoria
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'INSCRITOS POR CATEGORIAS'
+                    },
+                    legend: {
+                        display: false,                    
+                    }, 
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }                    
+                }
+            };
+            var ctx = document.getElementById("grafInscritosPorCategoria").getContext("2d");
+            window.myPie = new Chart(ctx, config);
+            $("#grafInscritosPorCategoria").hide();            
+//------------------------------------------------------------------------------                        
+//- Generar tabla por Estado ---------------------------------------------------
+            var data=[      
+                {% set total_cantidad=0 %}
+                {% set total_porcentaje=0 %}
+                {% for row in insxestado %}
+                    ["{{ row.estado }}",
+                    "{{ row.cantidad }}",
+                    "{{ ((row.cantidad/total)*100) | number_format(2,'.',',') }}"],
+                    {% set total_cantidad = total_cantidad + row.cantidad %}
+                    {% set total_porcentaje = total_porcentaje + ((row.cantidad/total)*100) %}
+                {% endfor %}  
+            ];      
+            GenerarTabla(
+                    '#tablaInscritosPorEstado',
+                    'INSCRITOS POR ESTADO',
+                    {{ total_cantidad }},
+                    {{ total_porcentaje | number_format(2,'.',',') }}
+            );
+//- Configura el grafico de torta a mostrar ------------------------------------
+            var graInscritosPorEstado=[];
+            var levelsgraInscritosPorEstado=[];
+            var colores=[];
+            for(var i=0;i<{{insxestado|length}};i++){
+                colores.push(window.chartColors.orange);            
+            }
+            {% for row in insxestado %}
+                graInscritosPorEstado.push({{ ((row.cantidad/total)*100) | number_format(2,'.','') }});
+                levelsgraInscritosPorEstado.push('{{ row.estado }}');
+            {% endfor %}   
+            var config = {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: graInscritosPorEstado,
+                        backgroundColor: colores,
+                    }],
+                    labels: levelsgraInscritosPorEstado
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'INSCRITOS POR ESTADO'
+                    },
+                    legend: {
+                        display: false,                    
+                    },   
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }                     
+                }
+            };
+            var ctx = document.getElementById("grafInscritosPorEstado").getContext("2d");
+            window.myPie = new Chart(ctx, config);
+            $("#grafInscritosPorEstado").hide();            
+//------------------------------------------------------------------------------                    
+//- Generar tabla por Precio ---------------------------------------------------
+            var data=[      
+                {% set total_cantidad=0 %}
+                {% set total_porcentaje=0 %}
+                {% for row in insxprecio %}
+                    ["{% if row.precio == null %} 0 {% else %} {{row.precio}} {% endif %}",
+                    "{{ row.cantidad }}",
+                    "{{ ((row.cantidad/total)*100) | number_format(2,'.',',') }}"],
+                    {% set total_cantidad = total_cantidad + row.cantidad %}
+                    {% set total_porcentaje = total_porcentaje + ((row.cantidad/total)*100) %}
+                {% endfor %}  
+            ];      
+            GenerarTabla(
+                    '#tablaInscritosPorPrecio',
+                    'INSCRITOS POR PRECIO',
+                    {{ total_cantidad }},
+                    {{ total_porcentaje | number_format(2,'.',',') }}
+            );
+//- Configura el grafico de torta a mostrar ------------------------------------
+            var graInscritosPorPrecio=[];
+            var levelsgraInscritosPorPrecio=[];
+            var colores=[];
+            for(var i=0;i<{{insxprecio|length}};i++){
+                colores.push(window.chartColors.orange);            
+            }
+            {% for row in insxprecio %}
+                graInscritosPorPrecio.push({{ ((row.cantidad/total)*100) | number_format(2,'.','') }});
+                levelsgraInscritosPorPrecio.push('{{ row.precio }}');
+            {% endfor %}   
+            var config = {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: graInscritosPorPrecio,
+                        backgroundColor: colores,
+                    }],
+                    labels: levelsgraInscritosPorPrecio
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'INSCRITOS POR PRECIO'
+                    },
+                    legend: {
+                        display: false,                    
+                    },   
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }                     
+                }
+            };
+            var ctx = document.getElementById("grafInscritosPorPrecio").getContext("2d");
+            window.myPie = new Chart(ctx, config);
+            $("#grafInscritosPorPrecio").hide();            
+//------------------------------------------------------------------------------                    
+//- Generar tabla por Fecha ---------------------------------------------------
+            var data=[      
+                {% set total_cantidad=0 %}
+                {% set total_porcentaje=0 %}
+                {% for row in insxfechahora %}
+                    ["{% if row.fechahora == null %} "" {% else %} {{row.fechahora|date('d-m-Y')}} {% endif %}",
+                    "{{ row.cantidad }}",
+                    "{{ ((row.cantidad/total)*100) | number_format(2,'.',',') }}"],
+                    {% set total_cantidad = total_cantidad + row.cantidad %}
+                    {% set total_porcentaje = total_porcentaje + ((row.cantidad/total)*100) %}
+                {% endfor %}  
+            ];      
+            GenerarTabla(
+                    '#tablaInscritosPorFecha',
+                    'INSCRITOS POR FECHA',
+                    {{ total_cantidad }},
+                    {{ total_porcentaje | number_format(2,'.',',') }}
+            );
+//- Configura el grafico de torta a mostrar ------------------------------------
+            var graInscritosPorFechahora=[];
+            var levelsgraInscritosPorFechahora=[];
+            var colores=[];
+            for(var i=0;i<{{insxfechahora|length}};i++){
+                colores.push(window.chartColors.orange);            
+            }
+            {% for row in insxfechahora %}
+                graInscritosPorFechahora.push({{ ((row.cantidad/total)*100) | number_format(2,'.','') }});
+                levelsgraInscritosPorFechahora.push('{{ row.fechahora|date('d-m-Y') }}');
+            {% endfor %}   
+            var config = {
+                type: 'bar',
+                data: {
+                    datasets: [{
+                        data: graInscritosPorFechahora,
+                        backgroundColor: colores,
+                    }],
+                    labels: levelsgraInscritosPorFechahora
+                },
+                options: {
+                    responsive: true,
+                    title: {
+                        display: true,
+                        text: 'INSCRITOS POR PRECIO'
+                    },
+                    legend: {
+                        display: false,                    
+                    },   
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero:true
+                            }
+                        }]
+                    }                     
+                }
+            };
+            var ctx = document.getElementById("grafInscritosPorFecha").getContext("2d");
+            window.myPie = new Chart(ctx, config);
+            $("#grafInscritosPorFecha").hide();            
+//------------------------------------------------------------------------------                    
+
+            $("#tabs").tabs();
+            $('#tabs a[href="#tabs-5"]').click();            
+            //Redireccion a la pagina de los inscritos al hacer click en el tab
+            $('#tabs a[href="#tabs-1"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento,'email':email}) }}')
+            });            //Redireccion a la pagina de los inscritos al hacer click en el tab
+            $('#tabs a[href="#tabs-2"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
+            });
+            //Redireccion a la pagina de los anulados al hacer click en el tab
+            $('#tabs a[href="#tabs-3"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
+            });
+            //Redireccion a la pagina de los operaciones TCD al hacer click en el tab
+            $('#tabs a[href="#tabs-4"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
+            });   
+
+            $("#vergraficos").click(function(){
+                $("#grafInscritosGeneral").show();
+                $("#tablaInscritosGeneral").hide();
+                $("#grafInscritosPorCompetencia").show();
+                $("#tablaInscritosPorCompetencia").hide();
+                $("#grafInscritosPorFormasDePago").show();
+                $("#tablaInscritosPorFormasDePago").hide();
+                $("#grafInscritosPorSexo").show();
+                $("#tablaInscritosPorSexo").hide();                
+                $("#grafInscritosPorCategoria").show();
+                $("#tablaInscritosPorCategoria").hide();    
+                $("#grafInscritosPorEstado").show();
+                $("#tablaInscritosPorEstado").hide(); 
+                $("#grafInscritosPorPrecio").show();
+                $("#tablaInscritosPorPrecio").hide(); 
+                $("#grafInscritosPorFecha").show();
+                $("#tablaInscritosPorFecha").hide(); 
+            });
+
+            $("#vertablas").click(function(){
+                $("#tablaInscritosGeneral").show();
+                $("#grafInscritosGeneral").hide();
+                $("#tablaInscritosPorCompetencia").show();
+                $("#grafInscritosPorCompetencia").hide();
+                $("#tablaInscritosPorFormasDePago").show();
+                $("#grafInscritosPorFormasDePago").hide();
+                $("#tablaInscritosPorSexo").show();
+                $("#grafInscritosPorSexo").hide();                
+                $("#tablaInscritosPorCategoria").show();
+                $("#grafInscritosPorCategoria").hide();  
+                $("#tablaInscritosPorEstado").show();
+                $("#grafInscritosPorEstado").hide();  
+                $("#tablaInscritosPorPrecio").show();
+                $("#grafInscritosPorPrecio").hide();  
+                $("#tablaInscritosPorFecha").show();
+                $("#grafInscritosPorFecha").hide();  
+            });            
+
+
+        });
+    </script>           
+    {% endblock %}    
+{% block style %}
+<style type="text/css">
+    div.containerInscritosGeneral, 
+    div.containerInscritosPorCompetencia,
+    div.containerInscritosPorFormaDePago,
+    div.containerInscritosPorSexo,
+    div.containerInscritosPorCategoria,
+    div.containerInscritosPorEstado,
+    div.containerInscritosPorPrecio
+    {     
+        width: 90%;
+        margin: 10px;
+    }    
+    #evento{
+        border: 1px solid #d8dcdf;
+        padding: 5px;
+        margin-bottom: 3px;
+        border-radius: 6px;
+        font-weight: bold;        
+    }
+</style>
+{% endblock %}    
+    {% block body -%}
+    <div id="evento">{{nombreevento}}</div>
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Pre-Inscritos</a></li>
+            <li><a href="#tabs-2">Inscritos</a></li>
+            <li><a href="#tabs-3">Anulados</a></li>
+            <li><a href="#tabs-4">Operaciones TDC</a></li>
+            <li><a href="#tabs-5">Estadisticas</a></li>            
+        </ul>
+        <div id="tabs-2"></div>
+        <div id="tabs-3"></div>  
+        <div id="tabs-4"></div>        
+        <div id="tabs-1"></div>    
+        <div id="tabs-5">
+            <table id="tablaEstadisticas" width=100% class="display" border="0">
+                <tr>
+                    <td align="center"><button id="vertablas">VER TABLAS</button></td>
+                    <td align="center"><button id="vergraficos">VER GRAFICOS</button></td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="containerInscritosGeneral">
+                            <table id="tablaInscritosGeneral" class="display"></table> 
+                        </div>                                    
+                    </td>
+                    <td>
+                        <div class="containerInscritosPorCompetencia">
+                            <table id="tablaInscritosPorCompetencia" class="display"></table>   
+                        </div>                                    
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="containerInscritosPorFormaDePago">
+                            <table id="tablaInscritosPorFormasDePago" class="display"></table>   
+                        </div>
+                    </td>
+                    <td>
+                        <div class="containerInscritosPorSexo">
+                            <table id="tablaInscritosPorSexo" class="display"></table>   
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="containerInscritosPorCategoria">
+                            <table id="tablaInscritosPorCategoria" class="display"></table>   
+                        </div>
+                    </td>
+                    <td>
+                        <div class="containerInscritosPorEstado">
+                            <table id="tablaInscritosPorEstado" class="display"></table>   
+                        </div>
+                        <div class="containerInscritosPorPrecio">
+                            <table id="tablaInscritosPorPrecio" class="display"></table>   
+                        </div>                    
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div class="containerInscritosPorFecha">
+                            <table id="tablaInscritosPorFecha" class="display"></table>   
+                        </div>
+                    </td>
+                    <td>
+                    </td>
+                </tr>
+            </table> 
+            <table id="graficos" width=100% class="display" border="0">
+                <tr>
+                    <td align="center">
+                        <div id="canvas-holder" style="width:50%">
+                            <canvas id="grafInscritosGeneral" />
+                        </div>                                                      
+                    </td>
+                    <td align="center">
+                        <div id="canvas-holder" style="width:50%">
+                            <canvas id="grafInscritosPorCompetencia" />
+                        </div>                                                             
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center">
+                        <div id="canvas-holder" style="width:50%">
+                            <canvas id="grafInscritosPorFormasDePago" />
+                        </div>                         
+                    </td>
+                    <td align="center">
+                        <div id="canvas-holder" style="width:50%">
+                            <canvas id="grafInscritosPorSexo" />
+                        </div>                           
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <div id="canvas-holder" style="width:90%">
+                            <canvas id="grafInscritosPorCategoria" />
+                        </div>                         
+                        <div id="canvas-holder" style="width:90%">
+                            <canvas id="grafInscritosPorEstado" />
+                        </div>                         
+                        <div id="canvas-holder" style="width:90%">
+                            <canvas id="grafInscritosPorPrecio" />
+                        </div>                         
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <div id="canvas-holder" style="width:90%">
+                            <canvas id="grafInscritosPorFecha" />
+                        </div>                         
+                    </td>
+                </tr>
+            </table> 
+        </div>     
+        <p align="center">
+            <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+        </p>
+    </div>       
+    {% endblock %}

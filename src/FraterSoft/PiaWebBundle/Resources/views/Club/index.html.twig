@@ -1,0 +1,103 @@
+{% extends '::base.html.twig' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
+<style type="text/css">
+    #tabs{  /* Oculta el tabs para que se muestre luego de cargar todo el html */
+        display: none;
+    }
+    #tablaDatos_wrapper{
+        width: 600px;
+        margin-left: 0px;
+    }
+    #tablaDatos_length > label > select{
+        width: 90px;
+    }
+</style>
+{% endblock %}  
+{% block body -%}
+    <div id="tabs">    
+        {{ include("FraterSoftPiaWebBundle:Club:tabs.html.twig") }}
+        <div id="tabs-1">     
+            <table id="tablaDatos" class="compact">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Logo</th>
+                        <th>Nombre</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for entity in entities %}
+                    <tr>
+                        <td>{{ entity.id }}</td>
+                        <td>{{ entity.logo }}</td>
+                        <td>{{ entity.nombre }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="dialogelimiar" title="Advertencia!!!">
+            ¿Esta seguro que desea elimar el campeonato <strong id="eliminar"></strong>?
+        </div> 
+    </div> 
+    {% endblock %}
+{% block javascripts -%}
+{{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}
+<script>
+    $(document).ready(function () {                 
+        $("#tabs").css("display","block");            
+        $('#tabs a[href="#tabs-2"]').on("click", function () {
+            $(location).attr('href', '{{ path('clubcompetidores_new') }}');
+        });            
+        dialogEliminar('{{ path('club_delete',{'id':'_id_'})}}');
+        var table = $("#tablaDatos").DataTable({ 
+            "dom": 'B<"top"<"#length"lf>>rt<"clear">p',
+            buttons: [
+                {text: 'Nuevo',
+                    action: function (e, dt, node, config) {
+                        window.open("{{ path('club_new') }}", "_self");                        
+                }},                 
+                {text: 'Editar',
+                    action: function (e, dt, node, config) {
+                        var rows = table.rows({selected: true}).data();
+                        if (rows.length == 1) {
+                            var url = "{{ path('club_edit', { 'id': '__id__' }) }}";
+                            url = url.replace('__id__',rows[0][0]);
+                            window.open(url, "_self");
+                        }
+                }},
+                {text: 'Eliminar',
+                    action: function (e, dt, node, config) {
+                        rows = table.rows({selected: true}).data();
+                        $("#eliminar").html("");
+                        if (rows.length == 1) {
+                            $("#eliminar").append(rows[0][1]);
+                            $("#dialogelimiar").data('id',rows[0][0]).dialog("open");                            
+                        }
+                        else
+                            alert("Debe seleccionar el campeonato a eliminar");
+                }},                 
+                {text: 'Afiliarse',
+                    action: function (e, dt, node, config) {
+                        rows = table.rows({selected: true}).data();
+                        $("#eliminar").html("");
+                        if (rows.length == 1) {
+                            $("#eliminar").append(rows[0][1]);
+                            $("#dialogelimiar").data('id',rows[0][0]).dialog("open");                            
+                        }
+                        else
+                            alert("Debe seleccionar el campeonato a eliminar");
+                }},                 
+            ],
+            'select': {
+                style: 'os',   
+                rows: "%d filas seleccionadas",
+            },               
+            "language": {
+                "emptyTable": "No hay datos para mostrar",
+            },
+        });
+    });    
+</script>    
+{% endblock %}

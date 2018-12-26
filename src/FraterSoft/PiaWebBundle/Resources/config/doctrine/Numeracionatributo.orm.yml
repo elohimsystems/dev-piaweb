@@ -1,0 +1,49 @@
+FraterSoft\PiaWebBundle\Entity\Numeracionatributo:
+    type: entity
+    table: piaaccess.trnumeracionatributo
+    indexes:
+        IDX_A6343A94D1B707F:
+            columns:
+                - idnumeracion
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        valoratributo:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        inicio:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        fin:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        siguiente:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+    manyToOne:
+        idnumeracion:
+            targetEntity: Numeracion
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idnumeracion:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,34 @@
+{% extends '::base.html.twig' %}
+{% block javascripts %}
+<script>
+    $.validator.setDefaults({
+            submitHandler: function() {
+                    alert("submitted!");
+            }
+    });
+
+    $().ready(function() {
+            // validate the form when it is submitted
+            $("#competidor-form").validate({
+                rules: {
+                    '{{ form.nombre.vars.full_name }}': {
+                        minlength: 5
+                    }
+                }
+            });
+    });   
+</script>   
+{% endblock %}
+{% block body -%}
+    <h1>Competidor creation</h1>
+
+    {{ form(form) }}
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('competidor') }}">
+            Back to the list
+        </a>
+    </li>
+</ul>
+{% endblock %}

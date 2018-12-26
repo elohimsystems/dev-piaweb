@@ -1,0 +1,29 @@
+campeonato:
+    pattern:  /{usuario}/lista
+    defaults: { _controller: "FraterSoftPiaWebBundle:Campeonato:index" }
+
+campeonato_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "FraterSoftPiaWebBundle:Campeonato:show" }
+
+campeonato_new:
+    pattern:  /new
+    defaults: { _controller: "FraterSoftPiaWebBundle:Campeonato:new" }
+
+campeonato_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Campeonato:create" }
+    requirements: { _method: post }
+
+campeonato_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Campeonato:edit" }
+
+campeonato_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Campeonato:update" }
+    requirements: { _method: post|put }
+
+campeonato_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Campeonato:delete" }

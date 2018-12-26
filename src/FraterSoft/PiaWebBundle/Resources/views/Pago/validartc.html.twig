@@ -1,0 +1,71 @@
+{% extends '::base.html.twig' %}
+{% if entity.idevento.tema is defined and entity.idevento.tema is not null %}{% set temastyle=entity.idevento.tema.styles %}{% endif %}
+{% block style %}
+    <style type="text/css">
+        table, th, td {
+            border: 0px solid black;
+            border-collapse: collapse;
+        }  
+        #mensaje{
+            align:"justify";
+        }
+    </style>
+{% endblock %}  
+{% block body -%}
+    <div class="contenido">
+    <DIV align="center"><h1>Validaci&oacute;n de Pago con Tarjeta de Cr&eacute;dito</h1></DIV>
+
+    {% if entity.idpago.conciliado %}
+        <table class="record_properties" align="center">
+            <tbody>
+                <tr>
+                    <td colspan="2"><p align="center"><strong>Su pago fu&eacute; registrado de forma 
+                                satisfactoria.</strong></p></th>
+                </tr>                
+                <tr>
+                    <th>Fecha y hora</th>
+                    <td>{{ entity.idpago.fechahora|date('Y-m-d H:i:s') }}</td>
+                </tr>
+                <tr>
+                    <th>Comprobante</th>
+                    <td>{{ entity.idpago.comprobante }}</td>
+                </tr>
+                <tr>      
+                    <td align="center" colspan="2"><br>
+                        <a href="{{ path('competidor_find',{'idevento':entity.idevento.id}) }}">
+                            Regresar
+                        </a>
+                    </td>
+                </tr>                  
+            </tbody>
+        </table>
+    {% else %}
+        <table align="center">
+            <tbody>
+                <tr>  
+                    <td><h3>Mensaje Importante</h3></td> 
+                </tr>
+                <tr>      
+                    <td>
+                        <p align="justify"><strong> El pago de su inscripci&oacute;n 
+                                con Tarjeta de Cr&eacute;dito ha sido rechazado, 
+                                Puede intentar nuevamente o cambiar la forma de pago
+                                haciendo click en regresar e ingresando su cedula. De lo contrario su
+                                pre-inscripcion sera anulada, 
+                                en las proximas 12 horas</strong></p>
+                    </td>
+                </tr>
+                <tr>      
+                    <td align="center">
+                        <a href="{{ path('competidor_find', { 'idevento': entity.idevento.id }) }}">            
+                            <button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+                                Regresar
+                            </button> 
+                        </a>                        
+                    </td>
+                </tr>            
+            </tbody>
+        </table>
+    {%endif%}
+    </div>
+{% endblock %}

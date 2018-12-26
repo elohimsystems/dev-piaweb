@@ -1,0 +1,113 @@
+FraterSoft\PiaWebBundle\Entity\Club:
+    type: entity
+    table: piaaccess.tmclubes
+    indexes:
+        IDX_C5D8FB9AEA3BA832:
+            columns:
+                - idciudad
+        IDX_C5D8FB9ABF7A371C:
+            columns:
+                - iddisciplina
+        IDX_C5D8FB9A42E04C4F:
+            columns:
+                - idestado
+        IDX_C5D8FB9AAD92DF5F:
+            columns:
+                - idpais
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nombre:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        tipoIdentificacion:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+            column: tipo_identificacion
+        numIdentificacion:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+            column: num_identificacion
+        email:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        logonombre:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''
+        logoarchivo:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''
+        logo:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''
+        usuario:
+            type: string
+            nullable: true
+            length: 254
+            fixed: false
+            comment: ''
+    manyToOne:
+        idciudad:
+            targetEntity: Ciudad
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idciudad:
+                    referencedColumnName: id
+            orphanRemoval: false
+        iddisciplina:
+            targetEntity: Disciplina
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                iddisciplina:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idestado:
+            targetEntity: Estado
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idestado:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idpais:
+            targetEntity: Pais
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idpais:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,44 @@
+FraterSoft\PiaWebBundle\Entity\Competencia:
+    type: entity
+    table: piaaccess.tmcompetencias
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\CompetenciaRepository       
+    indexes:
+        IDX_9114694233BA6A9:
+            columns:
+                - idevento
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        descripcion:
+            type: string
+            nullable: true
+            length: 30
+            fixed: false
+            comment: ''
+        fechacierre:
+            type: datetime
+            nullable: true
+            comment: ''
+        cupomaximo:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+    manyToOne:
+        idevento:
+            targetEntity: Evento
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idevento:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

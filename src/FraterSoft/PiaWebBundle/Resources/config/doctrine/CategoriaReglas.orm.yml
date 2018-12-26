@@ -1,0 +1,57 @@
+FraterSoft\PiaWebBundle\Entity\CategoriaReglas:
+    type: entity
+    table: piaaccess.tmcategoriasreglas
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\CategoriaReglasRepository
+    indexes:
+        IDX_B88B7685300BBBD8:
+            columns:
+                - idcategoria
+    uniqueConstraints:
+        tdReglasCategoria_id_key:
+            columns:
+                - id
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        atributo:
+            type: string
+            nullable: true
+            length: 20
+            fixed: false
+            comment: ''
+        tipo:
+            type: string
+            nullable: true
+            length: 1
+            fixed: false
+            comment: 'Indica los tipos de valores que usa regla. Pueden ser R: rango y V: Valor'
+        valor1:
+            type: string
+            nullable: true
+            length: 10
+            fixed: false
+            comment: ''
+        valor2:
+            type: string
+            nullable: true
+            length: 10
+            fixed: false
+            comment: ''
+    manyToOne:
+        idcategoria:
+            targetEntity: Categoria
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idcategoria:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

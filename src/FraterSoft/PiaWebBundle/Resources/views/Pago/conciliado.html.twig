@@ -1,0 +1,56 @@
+{% extends '::base.html.twig' %}
+{% block poweredby %}
+<div style="text-align: center">
+    <a href="http://www.sistemapia.com" target="_blank">
+        <p style="font-family:verdana;font-size:11px">
+        powered by
+        <img width="40" align="center" 
+             src="http://www.sistemapia.com/piaweb/web/bundles/fratersoftpiaweb/images/logopiaft.png"/>
+        </p>
+    </a>
+</div>
+{% endblock %}
+{% block body -%}
+    
+
+    <table class="record_properties" align="center" border="0">
+        <tbody>
+            <tr>
+                <td colspan="2" align="center">
+                    <h1>Inscripci&oacute;n Conciliada</h1>
+                </td>
+            </tr>            
+            <tr><th>Id</th><td>{{ inscrito.id }}</td></tr>
+            {#<tr><th>Secuencia</th><td>{{ inscrito.secuencia }}</td></tr>#}
+            <tr><th>Numero</th><td>{{ inscrito.numero }}</td></tr>
+            <tr><th>Cedula</th><td>{{ inscrito.idpia.iddocumento }}</td></tr>
+            <tr><th>Apellido</th><td>{{ inscrito.idpia.apellido }}</td></tr>
+            <tr><th>Nombre</th><td>{{ inscrito.idpia.nombre }}</td></tr>
+            <tr><th>Fecha de Nacimiento</th><td>{{ inscrito.idpia.fechanacimiento|date('d-m-Y') }}</td></tr>
+            <tr><th>Sexo</th><td>{{ inscrito.idpia.sexo }}</td></tr>
+            <tr><th>Equipo</th><td>{{ inscrito.idpia.equipo }}</td></tr>
+            <tr><th>Estado</th><td>{{ inscrito.idpia.idestado.estado }}</td></tr>
+            <tr><th>Categoria</th><td>{{ inscrito.idcategoria.descripcion }}</td></tr>            
+            <tr>
+                <th>Fecha y Hora</th>
+                <td>{{ inscrito.fechahora|date('d-m-Y H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Punto</th>
+                <td>{{ inscrito.punto }}</td>
+            </tr>
+            <tr>
+                <th>Conciliado el</th>
+                <td>{{ inscrito.idpago.conciliadoel|date('d-m-Y H:i:s') }}</td>
+            </tr>            
+            <tr align="center">
+                <td colspan="2">
+                     <p></p>
+                    <a href="{{ app.request.headers.get('referer') }}">
+                        Regresar
+                    </a>
+                </td>
+            </tr>                          
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,185 @@
+<style>
+    #length{
+        float: right
+    }
+    #competencias_length > label > select{
+        width: 50px;
+    }
+    #formcompetencia > div:nth-child(n+0) > label{
+        display: inline-block;
+        width: 130px;
+        text-align: left;   
+        vertical-align: middle;
+    }
+    #formcompetencia > div:nth-child(n+0) > input[type="checkbox"]{
+        vertical-align: middle;
+        margin-left: 0;
+    }
+    #formcompetencia > div:nth-child(n+0) > input[type="text"],input[type="number"] {
+        vertical-align: middle;
+        width: 196px;
+    }
+    #formcompetencia > div:nth-child(n+0) > select {
+        height: 21px;
+    }
+    #formcompetencia > div:nth-child(n+0){
+        margin: 5px;
+    }    
+</style> 
+{% block body -%}
+    <table id="competencias" class="display row-border hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Idevento</th>
+                <th>Descripcion</th>
+                <th>Cierre</th>
+                <th>Cupo Maximo</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.id }}</td>
+                <td>{{ entity.idevento.id }}</td>
+                <td>{{ entity.descripcion }}</td>
+                <td>{% if entity.fechacierre %}{{ entity.fechacierre|date('d/m/Y H:i:s') }}{% endif %}</td>
+                <td>{{ entity.cupomaximo }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div id="dialogElimiarCompetencia" title="Advertencia!!!">
+        ¿Esta seguro que desea elimar la Competencia <strong id="eliminarCompetencia"></strong>?
+    </div>         
+    <div id="dialogformCompetencia" title="X">
+        {{ form_start(form,{'attr': {'id': 'formcompetencia'}}) }}
+        {{ form_end(form) }} 
+    </div> 
+{% endblock %}
+<link href="{{asset('bundles/fratersoftpiaweb/css/jquery.datetimepicker.css')}}" rel="stylesheet" type="text/css"/>
+<script src="{{asset('bundles/fratersoftpiaweb/js/jquery.datetimepicker.full.js')}}" type="text/javascript"></script>  
+<script>
+    $(document).ready(function () { 
+        var table;
+        var arraycampos;
+        var rows=null;
+        //crea un array javascript con el aaray twig enviado co los campos de la entidad
+        arraycampos = {{ campos|json_encode|raw }};
+        table = $('#competencias').DataTable({
+            "dom": 'B<"top"<"#length"l>>rt<"clear">p',
+            "order": [[1,'ASC']],
+            "autoWidth": false,
+            buttons: [
+                {text: 'Nuevo',
+                    action: function (e, dt, node, config) {
+                        $('#formcompetencia').attr('action','{{ path('competencia_create')}}'); 
+
+                        //limpia la informacion del formulario
+                        $("#{{form.idevento.vars.id}}").val({{idevento}});
+                        for(i=2;i<arraycampos.length;i++){
+                            $("#fratersoft_piawebbundle_competencia_" + arraycampos[i]).val("");
+                        }
+                        $("#dialogformCompetencia").dialog({ title: "Nueva Competencia" });
+                        $("#dialogformCompetencia").dialog("open");
+                }},                 
+                {text: 'Editar',
+                    action: function (e, dt, node, config) {
+                        var rows = table.rows({selected: true}).data();
+                        if (rows.length == 1) {
+                            
+                            //contruye la ruta del action del formulario
+                            var action = '{{ path('competencia_update',{'id':'_id_'})}}';
+                            action = action.replace('_id_',rows[0][0]);
+                            $('#formcompetencia').attr('action',action);
+                            
+                            //carga la informacion seleccionada de la tabla en el formulario
+                            for(i=1;i<arraycampos.length;i++){
+                                $("#fratersoft_piawebbundle_competencia_" + arraycampos[i]).val(rows[0][i]);
+                            }
+                            
+                            //configura el titulo y abre el formulario
+                            $("#dialogformCompetencia").dialog({ title: "Editar Competencia" });
+                            $("#dialogformCompetencia").dialog("open");
+                        }
+                        else
+                            alert("Debe seleccionar la competencia a editar");                        
+                }},                 
+                {text: 'Eliminar',
+                    action: function (e, dt, node, config) {
+                        $("#dialogformCompetencia").dialog({ title: "Editar Competencia" });
+                        rows = table.rows({selected: true}).data();
+                        $("#eliminarCompetencia").html("");
+                        if (rows.length == 1) {
+                            $("#eliminarCompetencia").append(rows[0][2]);                            
+                            $("#dialogElimiarCompetencia").dialog("open");                            
+                        }
+                        else
+                            alert("Debe seleccionarla Competencia a eliminar");
+
+                }},                 
+            ],
+            'select': {
+                style: 'os',   
+                rows: "%d filas seleccionadas",
+            },               
+            "language": {
+                "emptyTable": "No hay datos para mostrar",
+            },
+            "columnDefs": [ //Oculta las columnas en la tabla
+                { "visible": false, "targets": 0 },
+                { "visible": false, "targets": 1 },
+            ],            
+        });    
+        //Muestra la ventana de confirmacion
+        $("#dialogElimiarCompetencia").dialog({
+            autoOpen: false,
+            width: 400,
+            modal: true,
+            buttons: [
+                {
+                    text: "SI",
+                    click: function () {
+                        var action = '{{ path('competencia_delete',{'id':'_id_'})}}';
+                        action = action.replace('_id_',rows[0][0]);
+                        window.open(action, "_self");                        
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "NO",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });
+        //Muestra la ventana de confirmacion
+        $("#dialogformCompetencia").dialog({
+            autoOpen: false,
+            width: 400,
+            modal: true,
+            buttons: [
+                {
+                    text: "Guardar",
+                    click: function () {
+                        $("#formcompetencia").submit();
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "Carrar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]             
+        });  
+        $("#{{form.fechacierre.vars.id}}").datetimepicker({
+            format: "d/m/Y H:i",
+            defaultSelect: true,
+            lang: 'es',
+        });          
+
+    });    
+</script>    

@@ -1,0 +1,30 @@
+club:
+    pattern:  /{usuario}/lista
+    defaults: { _controller: "FraterSoftPiaWebBundle:Club:index" }
+
+club_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "FraterSoftPiaWebBundle:Club:show" }
+
+club_new:
+    pattern:  /new
+    defaults: { _controller: "FraterSoftPiaWebBundle:Club:new" }
+
+club_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Club:create" }
+    requirements: { _method: post }
+
+club_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Club:edit" }
+
+club_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Club:update" }
+    requirements: { _method: post|put }
+
+club_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Club:delete" }
+    requirements: { _method: post|delete }

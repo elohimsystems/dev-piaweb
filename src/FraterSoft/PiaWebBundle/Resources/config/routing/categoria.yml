@@ -1,0 +1,52 @@
+categoria:
+    pattern:  /
+    defaults: { _controller: "FraterSoftPiaWebBundle:Categoria:index" }
+
+categoria_listaajax:
+    pattern:  /{idevento}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Categoria:listaajax" }
+
+categoria_new:
+    pattern:  /new/{idevento}/{estado}
+    defaults: { _controller: FraterSoftPiaWebBundle:Categoria:new,estado:null }
+    
+categoria_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Categoria:create" }
+    requirements: { _method: post }
+
+categoria_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Categoria:edit" }
+
+categoria_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Categoria:update" }
+    requirements: { _method: post|put }
+
+categoria_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Categoria:delete" }
+    
+categoria_campeonato_new:
+    pattern:  /encampeonatonew/{idcampeonato}/{estado}
+    defaults: { _controller: FraterSoftPiaWebBundle:Categoria:encampeonatonew,estado:null }
+    
+categoria_campeonato_listaajax:
+    pattern:  /{idcampeonato}/listaajaxcampeonato
+    defaults: { _controller: "FraterSoftPiaWebBundle:Categoria:listaajaxcampeonato" }
+
+categoria_campeonato_create:
+    pattern:  /encampeonatocreate
+    defaults: { _controller: "FraterSoftPiaWebBundle:Categoria:encampeonatocreate" }
+    requirements: { _method: post }
+
+categoria_campeonato_update:
+    pattern:  /{id}/encampeonatoupdate
+    defaults: { _controller: "FraterSoftPiaWebBundle:Categoria:encampeonatoupdate" }
+    requirements: { _method: post|put }
+
+categoria_campeonato_delete:
+    pattern:  /{id}/encampeonatodelete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Categoria:encampeonatodelete" }
+    

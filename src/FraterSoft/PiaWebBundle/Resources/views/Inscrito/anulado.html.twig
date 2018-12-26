@@ -1,0 +1,61 @@
+{% extends '::base.html.twig' %}
+{% block style %}
+    <style type="text/css">
+        th{
+            text-align: left;
+        }
+        table {
+            margin: auto;
+            border: 0px solid black;
+            width: 400px;
+        }        
+        #titulo{
+            text-align: center;
+            font-size: 24px;
+        }
+        #evento{
+            text-align: center;
+            font-size: 24px;
+        }        
+    </style>
+{% endblock %}  
+{% block body -%}
+    <table>
+        <tbody>
+            <tr>
+                <td colspan="2" align="center"><p id="titulo"><strong>PRE-INSCRIPCION ANULADA</strong></p></td>
+            </tr>        
+            <tr>
+                <td colspan="2" align="center"><p id="evento"><strong>{{ inscrito.idevento.nombre }}</strong></p></td>
+            </tr>        
+            <tr><th>Id</th><td>{{ inscrito.id }}</td></tr>
+            <tr><th>Secuencia</th><td>{{ inscrito.secuencia }}</td></tr>
+            <tr><th>Numero</th><td>{{ inscrito.numero }}</td></tr>
+            <tr><th>Cedula</th><td>{{ inscrito.idpia.iddocumento }}</td></tr>
+            <tr><th>Apellido</th><td>{{ inscrito.idpia.apellido }}</td></tr>
+            <tr><th>Nombre</th><td>{{ inscrito.idpia.nombre }}</td></tr>
+            <tr><th>Fecha de Nacimiento</th><td>{{ inscrito.idpia.fechanacimiento|date('d-m-Y') }}</td></tr>
+            <tr><th>Sexo</th><td>{{ inscrito.idpia.sexo }}</td></tr>
+            <tr><th>Equipo</th><td>{{ inscrito.idpia.equipo }}</td></tr>
+            <tr><th>Estado</th><td>{{ inscrito.idpia.idestado.estado }}</td></tr>
+            <tr><th>Categoria</th><td>{{ inscrito.idcategoria.descripcion }}</td></tr>            
+            <tr>
+                <th>Fecha y Hora</th>
+                <td>{{ inscrito.fechahora|date('d-m-Y H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Punto</th>
+                <td>{{ inscrito.punto }}</td>
+            </tr>           
+            <tr>
+                <td colspan="2" align="center">
+                    El Organizador ha decido anular esta pre-inscripci&oacute;n. Para mayor
+                    informaci&oacute;n al respecto, comunicarse con {{ inscrito.idevento.idorganizador.contacto }} 
+                    al n&uacute;mero {{ inscrito.idevento.idorganizador.telefonocontacto }} o al correo
+                    {{ inscrito.idevento.idorganizador.emailcontacto }}
+                </td>
+            </tr>               
+            </tr>                  
+        </tbody>
+    </table>
+{% endblock %}

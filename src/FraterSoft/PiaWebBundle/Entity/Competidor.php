@@ -1,0 +1,1082 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Competidor
+ */
+class Competidor
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $iddocumento;
+
+    /**
+     * @var string
+     */
+    private $nombre;
+
+    /**
+     * @var string
+     */
+    private $apellido;
+
+    /**
+     * @var string
+     */
+    private $foto;
+
+    /**
+     * @var \DateTime
+     */
+    private $fechanacimiento;
+
+    /**
+     * @var string
+     */
+    private $sexo;
+
+    /**
+     * @var string
+     */
+    private $equipo;
+
+    /**
+     * @var integer
+     */
+    private $edad;
+
+    /**
+     * @var float
+     */
+    private $peso;
+
+    /**
+     * @var string
+     */
+    private $email;
+
+    /**
+     * @var string
+     */
+    private $telefono;
+
+    /**
+     * @var integer
+     */
+    private $idpais;
+
+    /**
+     * @var string
+     */
+    private $tallafranela;
+
+    /**
+     * @var boolean
+     */
+    private $certificado;
+
+    /**
+     * @var integer
+     */
+    private $publicado;
+
+    /**
+     * @var \DateTime
+     */
+    private $fechapublicacion;
+
+    /**
+     * @var string
+     */
+    private $idrepresentante;
+
+    /**
+     * @var string
+     */
+    private $nombrerepresentante;
+
+    /**
+     * @var string
+     */
+    private $emailpersonal;
+
+    /**
+     * @var string
+     */
+    private $estadocivil;
+
+    /**
+     * @var float
+     */
+    private $estatura;
+
+    /**
+     * @var string
+     */
+    private $gruposanguineo;
+
+    /**
+     * @var string
+     */
+    private $alergicoa;
+
+    /**
+     * @var string
+     */
+    private $direccion;
+
+    /**
+     * @var string
+     */
+    private $tallamono;
+
+    /**
+     * @var string
+     */
+    private $tallazapatos;
+
+    /**
+     * @var string
+     */
+    private $tallachaqueta;
+
+    /**
+     * @var string
+     */
+    private $tallachemis;
+
+    /**
+     * @var string
+     */
+    private $tallaguantes;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Estado
+     */
+    private $idestado;
+
+    /**
+     * @var string
+     */
+    private $textodorsal;
+
+    /**
+     * @var string
+     */
+    private $telefonoemergencia;
+
+    /**
+     * @var string
+     */
+    private $seguromedico;
+
+    /**
+     * to string
+     *
+     * @return string 
+     */
+    public function __toString() {
+        return $this->nombre;
+    }        
+
+    /**
+     * Get certificado
+     *
+     * @return boolean 
+     */
+    public function getValorCampo($campo)
+    {
+        return $this->$campo;
+    }    
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set iddocumento
+     *
+     * @param string $iddocumento
+     * @return Competidor
+     */
+    public function setIddocumento($iddocumento)
+    {
+        $this->iddocumento = $iddocumento;
+
+        return $this;
+    }
+
+    /**
+     * Get iddocumento
+     *
+     * @return string 
+     */
+    public function getIddocumento()
+    {
+        return $this->iddocumento;
+    }
+
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     * @return Competidor
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string 
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    /**
+     * Set apellido
+     *
+     * @param string $apellido
+     * @return Competidor
+     */
+    public function setApellido($apellido)
+    {
+        $this->apellido = $apellido;
+
+        return $this;
+    }
+
+    /**
+     * Get apellido
+     *
+     * @return string 
+     */
+    public function getApellido()
+    {
+        return $this->apellido;
+    }
+
+    /**
+     * Set foto
+     *
+     * @param string $foto
+     * @return Competidor
+     */
+    public function setFoto($foto)
+    {
+        $this->foto = $foto;
+
+        return $this;
+    }
+
+    /**
+     * Get foto
+     *
+     * @return string 
+     */
+    public function getFoto()
+    {
+        return $this->foto;
+    }
+
+    /**
+     * Set fechanacimiento
+     *
+     * @param \DateTime $fechanacimiento
+     * @return Competidor
+     */
+    public function setFechanacimiento($fechanacimiento)
+    {
+        $this->fechanacimiento = $fechanacimiento;
+
+        return $this;
+    }
+
+    /**
+     * Get fechanacimiento
+     *
+     * @return \DateTime 
+     */
+    public function getFechanacimiento()
+    {
+        return $this->fechanacimiento;
+    }
+
+    /**
+     * Set sexo
+     *
+     * @param string $sexo
+     * @return Competidor
+     */
+    public function setSexo($sexo)
+    {
+        $this->sexo = $sexo;
+
+        return $this;
+    }
+
+    /**
+     * Get sexo
+     *
+     * @return string 
+     */
+    public function getSexo()
+    {
+        return $this->sexo;
+    }
+
+    /**
+     * Set equipo
+     *
+     * @param string $equipo
+     * @return Competidor
+     */
+    public function setEquipo($equipo)
+    {
+        $this->equipo = $equipo;
+
+        return $this;
+    }
+
+    /**
+     * Get equipo
+     *
+     * @return string 
+     */
+    public function getEquipo()
+    {
+        return $this->equipo;
+    }
+
+    /**
+     * Set edad
+     *
+     * @param integer $edad
+     * @return Competidor
+     */
+    public function setEdad($edad)
+    {
+        $this->edad = $edad;
+
+        return $this;
+    }
+
+    /**
+     * Get edad
+     *
+     * @return integer 
+     */
+    public function getEdad()
+    {
+        return $this->edad;
+    }
+
+    /**
+     * Set peso
+     *
+     * @param float $peso
+     * @return Competidor
+     */
+    public function setPeso($peso)
+    {
+        $this->peso = $peso;
+
+        return $this;
+    }
+
+    /**
+     * Get peso
+     *
+     * @return float 
+     */
+    public function getPeso()
+    {
+        return $this->peso;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     * @return Competidor
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string 
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set telefono
+     *
+     * @param string $telefono
+     * @return Competidor
+     */
+    public function setTelefono($telefono)
+    {
+        $this->telefono = $telefono;
+
+        return $this;
+    }
+
+    /**
+     * Get telefono
+     *
+     * @return string 
+     */
+    public function getTelefono()
+    {
+        return $this->telefono;
+    }
+
+    /**
+     * Set idpais
+     *
+     * @param integer $idpais
+     * @return Competidor
+     */
+    public function setIdpais($idpais)
+    {
+        $this->idpais = $idpais;
+
+        return $this;
+    }
+
+    /**
+     * Get idpais
+     *
+     * @return integer 
+     */
+    public function getIdpais()
+    {
+        return $this->idpais;
+    }
+
+    /**
+     * Set tallafranela
+     *
+     * @param string $tallafranela
+     * @return Competidor
+     */
+    public function setTallafranela($tallafranela)
+    {
+        $this->tallafranela = $tallafranela;
+
+        return $this;
+    }
+
+    /**
+     * Get tallafranela
+     *
+     * @return string 
+     */
+    public function getTallafranela()
+    {
+        return $this->tallafranela;
+    }
+
+    /**
+     * Set certificado
+     *
+     * @param boolean $certificado
+     * @return Competidor
+     */
+    public function setCertificado($certificado)
+    {
+        $this->certificado = $certificado;
+
+        return $this;
+    }
+
+    /**
+     * Get certificado
+     *
+     * @return boolean 
+     */
+    public function getCertificado()
+    {
+        return $this->certificado;
+    }
+
+    /**
+     * Set publicado
+     *
+     * @param integer $publicado
+     * @return Competidor
+     */
+    public function setPublicado($publicado)
+    {
+        $this->publicado = $publicado;
+
+        return $this;
+    }
+
+    /**
+     * Get publicado
+     *
+     * @return integer 
+     */
+    public function getPublicado()
+    {
+        return $this->publicado;
+    }
+
+    /**
+     * Set fechapublicacion
+     *
+     * @param \DateTime $fechapublicacion
+     * @return Competidor
+     */
+    public function setFechapublicacion($fechapublicacion)
+    {
+        $this->fechapublicacion = $fechapublicacion;
+
+        return $this;
+    }
+
+    /**
+     * Get fechapublicacion
+     *
+     * @return \DateTime 
+     */
+    public function getFechapublicacion()
+    {
+        return $this->fechapublicacion;
+    }
+
+    /**
+     * Set idrepresentante
+     *
+     * @param string $idrepresentante
+     * @return Competidor
+     */
+    public function setIdrepresentante($idrepresentante)
+    {
+        $this->idrepresentante = $idrepresentante;
+
+        return $this;
+    }
+
+    /**
+     * Get idrepresentante
+     *
+     * @return string 
+     */
+    public function getIdrepresentante()
+    {
+        return $this->idrepresentante;
+    }
+
+    /**
+     * Set nombrerepresentante
+     *
+     * @param string $nombrerepresentante
+     * @return Competidor
+     */
+    public function setNombrerepresentante($nombrerepresentante)
+    {
+        $this->nombrerepresentante = $nombrerepresentante;
+
+        return $this;
+    }
+
+    /**
+     * Get nombrerepresentante
+     *
+     * @return string 
+     */
+    public function getNombrerepresentante()
+    {
+        return $this->nombrerepresentante;
+    }
+
+    /**
+     * Set emailpersonal
+     *
+     * @param string $emailpersonal
+     * @return Competidor
+     */
+    public function setEmailpersonal($emailpersonal)
+    {
+        $this->emailpersonal = $emailpersonal;
+
+        return $this;
+    }
+
+    /**
+     * Get emailpersonal
+     *
+     * @return string 
+     */
+    public function getEmailpersonal()
+    {
+        return $this->emailpersonal;
+    }
+
+    /**
+     * Set estadocivil
+     *
+     * @param string $estadocivil
+     * @return Competidor
+     */
+    public function setEstadocivil($estadocivil)
+    {
+        $this->estadocivil = $estadocivil;
+
+        return $this;
+    }
+
+    /**
+     * Get estadocivil
+     *
+     * @return string 
+     */
+    public function getEstadocivil()
+    {
+        return $this->estadocivil;
+    }
+
+    /**
+     * Set estatura
+     *
+     * @param float $estatura
+     * @return Competidor
+     */
+    public function setEstatura($estatura)
+    {
+        $this->estatura = $estatura;
+
+        return $this;
+    }
+
+    /**
+     * Get estatura
+     *
+     * @return float 
+     */
+    public function getEstatura()
+    {
+        return $this->estatura;
+    }
+
+    /**
+     * Set gruposanguineo
+     *
+     * @param string $gruposanguineo
+     * @return Competidor
+     */
+    public function setGruposanguineo($gruposanguineo)
+    {
+        $this->gruposanguineo = $gruposanguineo;
+
+        return $this;
+    }
+
+    /**
+     * Get gruposanguineo
+     *
+     * @return string 
+     */
+    public function getGruposanguineo()
+    {
+        return $this->gruposanguineo;
+    }
+
+    /**
+     * Set alergicoa
+     *
+     * @param string $alergicoa
+     * @return Competidor
+     */
+    public function setAlergicoa($alergicoa)
+    {
+        $this->alergicoa = $alergicoa;
+
+        return $this;
+    }
+
+    /**
+     * Get alergicoa
+     *
+     * @return string 
+     */
+    public function getAlergicoa()
+    {
+        return $this->alergicoa;
+    }
+
+    /**
+     * Set direccion
+     *
+     * @param string $direccion
+     * @return Competidor
+     */
+    public function setDireccion($direccion)
+    {
+        $this->direccion = $direccion;
+
+        return $this;
+    }
+
+    /**
+     * Get direccion
+     *
+     * @return string 
+     */
+    public function getDireccion()
+    {
+        return $this->direccion;
+    }
+
+    /**
+     * Set tallamono
+     *
+     * @param string $tallamono
+     * @return Competidor
+     */
+    public function setTallamono($tallamono)
+    {
+        $this->tallamono = $tallamono;
+
+        return $this;
+    }
+
+    /**
+     * Get tallamono
+     *
+     * @return string 
+     */
+    public function getTallamono()
+    {
+        return $this->tallamono;
+    }
+
+    /**
+     * Set tallazapatos
+     *
+     * @param string $tallazapatos
+     * @return Competidor
+     */
+    public function setTallazapatos($tallazapatos)
+    {
+        $this->tallazapatos = $tallazapatos;
+
+        return $this;
+    }
+
+    /**
+     * Get tallazapatos
+     *
+     * @return string 
+     */
+    public function getTallazapatos()
+    {
+        return $this->tallazapatos;
+    }
+
+    /**
+     * Set tallachaqueta
+     *
+     * @param string $tallachaqueta
+     * @return Competidor
+     */
+    public function setTallachaqueta($tallachaqueta)
+    {
+        $this->tallachaqueta = $tallachaqueta;
+
+        return $this;
+    }
+
+    /**
+     * Get tallachaqueta
+     *
+     * @return string 
+     */
+    public function getTallachaqueta()
+    {
+        return $this->tallachaqueta;
+    }
+
+    /**
+     * Set tallachemis
+     *
+     * @param string $tallachemis
+     * @return Competidor
+     */
+    public function setTallachemis($tallachemis)
+    {
+        $this->tallachemis = $tallachemis;
+
+        return $this;
+    }
+
+    /**
+     * Get tallachemis
+     *
+     * @return string 
+     */
+    public function getTallachemis()
+    {
+        return $this->tallachemis;
+    }
+
+    /**
+     * Set tallaguantes
+     *
+     * @param string $tallaguantes
+     * @return Competidor
+     */
+    public function setTallaguantes($tallaguantes)
+    {
+        $this->tallaguantes = $tallaguantes;
+
+        return $this;
+    }
+
+    /**
+     * Get tallaguantes
+     *
+     * @return string 
+     */
+    public function getTallaguantes()
+    {
+        return $this->tallaguantes;
+    }
+
+    /**
+     * Set idestado
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Estado $idestado
+     * @return Competidor
+     */
+    public function setIdestado(\FraterSoft\PiaWebBundle\Entity\Estado $idestado = null)
+    {
+        $this->idestado = $idestado;
+
+        return $this;
+    }
+
+    /**
+     * Get idestado
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Estado 
+     */
+    public function getIdestado()
+    {
+        return $this->idestado;
+    }
+    /**
+     * @var string
+     */
+    private $entrenador;
+
+    /**
+     * @var string
+     */
+    private $fileiddocumento;
+
+    /**
+     * @var string
+     */
+    private $filepartidanacimiento;
+
+    /**
+     * @var string
+     */
+    private $filecertificadodeportivo;
+
+
+    /**
+     * Set entrenador
+     *
+     * @param string $entrenador
+     * @return Competidor
+     */
+    public function setEntrenador($entrenador)
+    {
+        $this->entrenador = $entrenador;
+
+        return $this;
+    }
+
+    /**
+     * Get entrenador
+     *
+     * @return string 
+     */
+    public function getEntrenador()
+    {
+        return $this->entrenador;
+    }
+
+    /**
+     * Set fileiddocumento
+     *
+     * @param string $fileiddocumento
+     * @return Competidor
+     */
+    public function setFileiddocumento($fileiddocumento)
+    {
+        $this->fileiddocumento = $fileiddocumento;
+
+        return $this;
+    }
+
+    /**
+     * Get fileiddocumento
+     *
+     * @return string 
+     */
+    public function getFileiddocumento()
+    {
+        return $this->fileiddocumento;
+    }
+
+    /**
+     * Set filepartidanacimiento
+     *
+     * @param string $filepartidanacimiento
+     * @return Competidor
+     */
+    public function setFilepartidanacimiento($filepartidanacimiento)
+    {
+        $this->filepartidanacimiento = $filepartidanacimiento;
+
+        return $this;
+    }
+
+    /**
+     * Get filepartidanacimiento
+     *
+     * @return string 
+     */
+    public function getFilepartidanacimiento()
+    {
+        return $this->filepartidanacimiento;
+    }
+
+    /**
+     * Set filecertificadodeportivo
+     *
+     * @param string $filecertificadodeportivo
+     * @return Competidor
+     */
+    public function setFilecertificadodeportivo($filecertificadodeportivo)
+    {
+        $this->filecertificadodeportivo = $filecertificadodeportivo;
+
+        return $this;
+    }
+
+    /**
+     * Get filecertificadodeportivo
+     *
+     * @return string 
+     */
+    public function getFilecertificadodeportivo()
+    {
+        return $this->filecertificadodeportivo;
+    }
+    
+    /**
+     * Set textodorsal
+     *
+     * @param string $textodorsal
+     * @return Competidor
+     */
+    public function setTextodorsal($textodorsal)
+    {
+        $this->textodorsal = $textodorsal;
+
+        return $this;
+    }
+
+    /**
+     * Get textodorsal
+     *
+     * @return string 
+     */
+    public function getTextodorsal()
+    {
+        return $this->textodorsal;
+    }
+
+    /**
+     * Set telefonoemergencia
+     *
+     * @param string $telefonoemergencia
+     * @return Competidor
+     */
+    public function setTelefonoemergencia($telefonoemergencia)
+    {
+        $this->telefonoemergencia = $telefonoemergencia;
+
+        return $this;
+    }
+
+    /**
+     * Get telefonoemergencia
+     *
+     * @return string 
+     */
+    public function getTelefonoemergencia()
+    {
+        return $this->telefonoemergencia;
+    }
+
+    /**
+     * Set seguromedico
+     *
+     * @param string $seguromedico
+     * @return Competidor
+     */
+    public function setSeguromedico($seguromedico)
+    {
+        $this->seguromedico = $seguromedico;
+
+        return $this;
+    }
+
+    /**
+     * Get seguromedico
+     *
+     * @return string 
+     */
+    public function getSeguromedico()
+    {
+        return $this->seguromedico;
+    }
+    
+}

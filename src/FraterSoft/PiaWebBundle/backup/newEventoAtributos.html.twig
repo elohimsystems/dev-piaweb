@@ -1,0 +1,128 @@
+<style>
+    #length{
+        float: right
+    }
+    #atributos_length > label > select{
+        width: 50px;
+    }
+</style> 
+{% block body -%}
+    <table id="atributos" class="display row-border hover">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Idevento</th>
+                <th>Idatributo</th>
+                <th>Orden</th>
+                <th>Atributo</th>
+                <th>Etiqueta</th>
+                <th>Criterio</th>
+                <th>Busqueda</th>
+                <th>Requerido</th>
+                <th>Mascara</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for atributos in entities %}
+            <tr>
+                <td>{{ atributos.id }}</td>
+                <td>{{ atributos.idevento.id }}</td>
+                <td>{{ atributos.idatributo.id }}</td>
+                <td>{{ atributos.orden }}</td>
+                <td>{{ atributos.idatributo.nombre }}</a></td>
+                <td>{{ atributos.etiqueta }}</td>
+                <td>{{ atributos.criterio }}</td>
+                <td>{{ atributos.busqueda }}</td>
+                <td>{{ atributos.requerido }}</td>
+                <td>{{ atributos.mascara }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>    
+    <div id="dialoGuardar" title="Crear atributo">
+        {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+        {{ form_end(form) }} 
+    </div>          
+    <div id="dialogelimiar" title="Advertencia!!!">
+        ¿Esta seguro que desea elimar el atributo <strong id="eliminar"></strong>?
+    </div> 
+{% endblock %}
+{{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}
+<script>
+    $(document).ready(function () { 
+        var mayor=1;
+        var orden;
+        function nextorden(){
+            var rows = table.rows().data();
+            for(i=0;i<rows.length;i++){
+                mayor=parseInt(rows[i][3])>=mayor?parseInt(rows[i][3])+1:mayor;
+            }
+            return mayor;
+        }
+        function reordenar(valor){
+            var rows = table.rows().data();
+            for(i=0;i<rows.length;i++){
+                rows[i][3]=4;
+            }
+            return 1;
+        }
+        
+        tablaDatos('#atributos',$('#formulario'),{{campos|json_encode|raw}});
+        
+        //Muestra la ventana de confirmacion
+        $("#dialogelimiar").dialog({
+            autoOpen: false,
+            width: 400,
+            modal: true,
+            buttons: [
+                {
+                    text: "SI",
+                    click: function () {
+                        var action = '{{ path('eventoatributos_delete',{'id':'_id_'})}}';
+                        action = action.replace('_id_',rows[0][0]);
+                        window.open(action, "_self");                        
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "NO",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });
+        //Muestra la ventana de confirmacion
+        $("#dialogform").dialog({
+            autoOpen: false,
+            width: 400,
+            modal: true,
+            buttons: [
+                {
+                    text: "Guardar",
+                    click: function () {
+                        $("#formulario").submit();
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "Carrar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]             
+        });  
+        //Valida que no se ingrese un orden mayor al ultimo que existe
+        $("#{{form.orden.vars.id}}").blur(function () {
+            if($("#{{form.orden.vars.id}}").val()>mayor){
+                alert("No puede ingresar un orden mayor a " + (nextorden()-1));
+                $("#{{form.orden.vars.id}}").val(orden);
+                $("#{{form.orden.vars.id}}").focus();
+            }
+            else
+                reordenar($("#{{form.orden.vars.id}}").val());
+        });
+    });    
+</script>    
+

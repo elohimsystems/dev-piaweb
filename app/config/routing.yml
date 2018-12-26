@@ -1,0 +1,4 @@
+frater_soft_pia_web:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing.yml"
+    prefix:   /
+

@@ -1,0 +1,48 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Pago</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Fechahora</th>
+                <td>{{ entity.fechahora|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Monto</th>
+                <td>{{ entity.monto }}</td>
+            </tr>
+            <tr>
+                <th>Moneda</th>
+                <td>{{ entity.moneda }}</td>
+            </tr>
+            <tr>
+                <th>Referencia</th>
+                <td>{{ entity.referencia }}</td>
+            </tr>
+            <tr>
+                <th>Comprobante</th>
+                <td>{{ entity.comprobante }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('pago') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('pago_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+{% endblock %}

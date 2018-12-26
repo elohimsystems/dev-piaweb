@@ -1,0 +1,9 @@
+{% extends '::base.html.twig' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}    
+{% endblock %}  
+{% block body -%}
+    <h1>Editar Club</h1>
+    {{ form_start(edit_form,{'attr': {'id': 'formulario'}}) }}
+    {{ form_end(edit_form) }} 
+{% endblock %}

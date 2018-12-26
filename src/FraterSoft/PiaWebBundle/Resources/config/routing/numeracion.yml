@@ -1,0 +1,8 @@
+numeracion_asignar:
+    pattern:  /asignar/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Numeracion:asignar" }
+    
+numeracion_resetear:
+    pattern:  /resetear/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Numeracion:resetear" }    
+    

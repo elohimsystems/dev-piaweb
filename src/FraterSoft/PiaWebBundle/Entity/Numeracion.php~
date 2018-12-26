@@ -1,0 +1,250 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Numeracion
+ */
+class Numeracion
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $idatributo;
+
+    /**
+     * @var boolean
+     */
+    private $automatica;
+
+    /**
+     * @var integer
+     */
+    private $inicio;
+
+    /**
+     * @var integer
+     */
+    private $fin;
+
+    /**
+     * @var integer
+     */
+    private $siguiente;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Evento
+     */
+    private $idevento;
+
+    /**
+     * @var string
+     */
+    private $ordenarpor;
+    
+    /**
+     * @var boolean
+     */
+    private $secuencial;    
+    
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set idatributo
+     *
+     * @param string $idatributo
+     * @return Numeracion
+     */
+    public function setIdatributo($idatributo)
+    {
+        $this->idatributo = $idatributo;
+
+        return $this;
+    }
+
+    /**
+     * Get idatributo
+     *
+     * @return string 
+     */
+    public function getIdatributo()
+    {
+        return $this->idatributo;
+    }
+
+    /**
+     * Set automatica
+     *
+     * @param boolean $automatica
+     * @return Numeracion
+     */
+    public function setAutomatica($automatica)
+    {
+        $this->automatica = $automatica;
+
+        return $this;
+    }
+
+    /**
+     * Get automatica
+     *
+     * @return boolean 
+     */
+    public function getAutomatica()
+    {
+        return $this->automatica;
+    }
+
+    /**
+     * Set inicio
+     *
+     * @param integer $inicio
+     * @return Numeracion
+     */
+    public function setInicio($inicio)
+    {
+        $this->inicio = $inicio;
+
+        return $this;
+    }
+
+    /**
+     * Get inicio
+     *
+     * @return integer 
+     */
+    public function getInicio()
+    {
+        return $this->inicio;
+    }
+
+    /**
+     * Set fin
+     *
+     * @param integer $fin
+     * @return Numeracion
+     */
+    public function setFin($fin)
+    {
+        $this->fin = $fin;
+
+        return $this;
+    }
+
+    /**
+     * Get fin
+     *
+     * @return integer 
+     */
+    public function getFin()
+    {
+        return $this->fin;
+    }
+
+    /**
+     * Set siguiente
+     *
+     * @param integer $siguiente
+     * @return Numeracion
+     */
+    public function setSiguiente($siguiente)
+    {
+        $this->siguiente = $siguiente;
+
+        return $this;
+    }
+
+    /**
+     * Get siguiente
+     *
+     * @return integer 
+     */
+    public function getSiguiente()
+    {
+        return $this->siguiente;
+    }
+
+    /**
+     * Set idevento
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Evento $idevento
+     * @return Numeracion
+     */
+    public function setIdevento(\FraterSoft\PiaWebBundle\Entity\Evento $idevento = null)
+    {
+        $this->idevento = $idevento;
+
+        return $this;
+    }
+
+    /**
+     * Get idevento
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Evento 
+     */
+    public function getIdevento()
+    {
+        return $this->idevento;
+    }
+    
+    /**
+     * Set ordenarpor
+     *
+     * @param string $ordenarpor
+     * @return Numeracion
+     */
+    public function setOrdenarpor($ordenarpor)
+    {
+        $this->ordenarpor = $ordenarpor;
+
+        return $this;
+    }
+
+    /**
+     * Get ordenarpor
+     *
+     * @return string 
+     */
+    public function getOrdenarpor()
+    {
+        return $this->ordenarpor;
+    }    
+    
+    /**
+     * Set secuencial
+     *
+     * @param boolean $secuencial
+     * @return Numeracion
+     */
+    public function setSecuencial($secuencial)
+    {
+        $this->secuencial = $secuencial;
+
+        return $this;
+    }
+
+    /**
+     * Get secuencial
+     *
+     * @return boolean 
+     */
+    public function getSecuencial()
+    {
+        return $this->secuencial;
+    }    
+}

@@ -1,0 +1,89 @@
+{% extends '::base.html.twig' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
+<style type="text/css">
+    /*table.dataTable{
+        width: 50%;
+        margin-left: 0px;
+    }*/
+</style>
+{% endblock %}  
+{% block body -%}
+    <table id="tablaCompetencia">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Logo</th>
+                <th>Nombre</th>
+                <th>Año</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td>{{ entity.id }}</td>
+                <td></td>
+                <td>{{ entity.nombre }}</td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div id="dialogelimiar" title="Advertencia!!!">
+        ¿Esta seguro que desea elimar el campeonato <strong id="eliminar"></strong>?
+    </div> 
+        
+    {% endblock %}
+{% block javascripts -%}
+{{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}
+<script>
+    $(document).ready(function () {                 
+        dialogEliminar('{{ path('campeonato_delete',{'id':'_id_'})}}');
+        var table = $("#tablaCompetencia").DataTable({ 
+            "dom": 'B<"top"<"#length"l>>rt<"clear">p',
+            buttons: [
+                {text: 'Nuevo',
+                    action: function (e, dt, node, config) {
+                        window.open("{{ path('campeonato_new') }}", "_self");                        
+                }},                 
+                {text: 'Editar',
+                    action: function (e, dt, node, config) {
+                        var rows = table.rows({selected: true}).data();
+                        if (rows.length == 1) {
+                            var url = "{{ path('campeonato_edit', { 'id': '__id__' }) }}";
+                            url = url.replace('__id__',rows[0][0]);
+                            window.open(url, "_self");
+                        }
+                }},
+                {text: 'Eliminar',
+                    action: function (e, dt, node, config) {
+                        rows = table.rows({selected: true}).data();
+                        $("#eliminar").html("");
+                        if (rows.length == 1) {
+                            $("#eliminar").append(rows[0][1]);
+                            $("#dialogelimiar").data('id',rows[0][0]).dialog("open");                            
+                        }
+                        else
+                            alert("Debe seleccionar el campeonato a eliminar");
+                }},                 
+                {text: 'Configurar',
+                    action: function (e, dt, node, config) {
+                        var rows = table.rows({selected: true}).data();
+                        if (rows.length == 1) {
+                            var url = "{{ path('campeonatoclubes_new', { 'idcampeonato': '__idcampeonato__' }) }}";
+                            url = url.replace('__idcampeonato__',rows[0][0]);
+                            window.open(url, "_self");
+                        }
+                }},                 
+            ],
+            'select': {
+                style: 'os',   
+                rows: "%d filas seleccionadas",
+            },               
+            "language": {
+                "emptyTable": "No hay datos para mostrar",
+            },
+        });
+    });    
+</script>    
+{% endblock %}

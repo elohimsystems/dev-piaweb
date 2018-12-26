@@ -1,0 +1,29 @@
+eventoatributos:
+    pattern:  /
+    defaults: { _controller: "FraterSoftPiaWebBundle:EventoAtributos:index" }
+
+eventoatributos_listaajax:
+    pattern:  /{idevento}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:EventoAtributos:listaajax" }
+
+eventoatributos_new:
+    pattern:  /new/{idevento}/{estado}
+    defaults: { _controller: FraterSoftPiaWebBundle:EventoAtributos:new,estado:null }
+
+eventoatributos_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:EventoAtributos:create" }
+    requirements: { _method: post }
+
+eventoatributos_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:EventoAtributos:edit" }
+
+eventoatributos_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:EventoAtributos:update" }
+    requirements: { _method: post|put }
+
+eventoatributos_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:EventoAtributos:delete" }

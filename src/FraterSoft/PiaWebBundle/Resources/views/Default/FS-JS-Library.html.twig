@@ -1,0 +1,570 @@
+<script>
+    //Abre una ventana de dialogo para cargar la imagen, ajustando el tamano del dialogo a la imagen cargada
+    function cargar_imagen(input,image,maxAncho,maxAlto,tipo){
+        var uuid = null;
+        var file = null;
+        var ini=input[0].name.lastIndexOf("[")+1;
+        var fin=input[0].name.lastIndexOf("]");
+        var nombrecampo=input[0].name.substring(ini,fin);
+        var tipobase;
+        if(!tipo)
+            tipobase="jpg";
+        else
+            tipobase=tipo;
+        if(input.val()!=''){
+            var rutamapa = input.val().split('/');
+            uuid = rutamapa[0];
+            file = rutamapa[1];
+            var img = document.getElementById(image.attr("id"));
+            $("#uploadimage").dialog({width: img.naturalWidth+59,height:img.naturalHeight+193});
+        }
+        else{
+            uuid = null;
+            file = null;
+            $("#uploadimage").dialog({width: 300,height:150});
+        }
+    
+        var url="{{asset('bundles/fratersoftpiaweb/fine-uploader/')}}";
+        var uploader = new qq.FineUploader({
+            debug: false,
+            element: document.getElementById('fine-uploader'),
+                        //autoUpload: false,
+            session : {
+                endpoint: url + "/files.php?file=" + file + "&uuid=" + uuid,  
+            },
+            request: {
+                endpoint: url + "/endpoint.php"
+            },
+            deleteFile: {
+                enabled: true,
+                endpoint: url + "/endpoint.php",
+                forceConfirm: true,
+            },
+            scaling: {
+                customResizer: [
+                    {name: "small", maxSize: 100},
+                    {name: "medium", maxSize: 200}
+                ]
+            },
+            validation: {
+                image: {
+                    maxHeight: maxAlto,
+                    maxWidth: maxAncho,
+                    //minHeight: 300,
+                },                           
+                allowedExtensions: [tipobase],
+            }, 
+            messages: {
+                maxHeightImageError: "El alto maximo de la imagen debe de ser " + maxAlto + " pixeles",
+                maxWidthImageError: "El ancho maximo de la imagen debe de ser " + maxAncho + " pixeles",
+                minWidthImageError: "El alto minimo de la imagen debe de ser 300 pixeles",
+            },
+            chunking: {
+                enabled: true,
+                concurrent: {
+                        enabled: true
+                },
+                success: {
+                        endpoint: url + "/endpoint.php?done"
+                }
+            },
+			
+            resume: {
+                    enabled: true
+            },	
+            callbacks: {
+                onSessionRequestComplete: function(id, name, response) {
+                    var uploads = uploader.getUploads();
+                    if(uploads.length>0){
+                        var picture = document.getElementsByClassName("qq-thumbnail-wrapper");
+                        if(id[0].name.endsWith(tipo)){
+                            var src = "{{asset('bundles/fratersoftpiaweb/images/__tipo__-128.png')}}";
+                            src = src.replace('__tipo__',tipo)
+                            picture[0].firstElementChild.src = src;
+                        }
+                        else
+                            picture[0].firstElementChild.src = url + "files/" + id[0].uuid + "/" + id[0].name;
+                        $('#namefile_'+nombrecampo).val(name);
+                        var botoncargar = document.getElementsByClassName("qq-upload-button-selector qq-upload-button");
+                        botoncargar[0].style.visibility = 'hidden';
+                    }
+                    else{
+                        {#var picture = document.getElementsByClassName("#fine-uploader > div > ul");
+                        picture[0].firstElementChild.addVar() = url + "/files/placeholders/not_available-generic.png";    #} 
+                    }
+                },
+                onComplete: function(id, name, resp) {
+                    var uuid = uploader.getUuid(id);
+                    var urlfile="{{asset('bundles/fratersoftpiaweb/fine-uploader/files/')}}" + uuid + '/' + name;
+                    input.val(uuid + '/' + name);
+                    var botoncargar = document.getElementsByClassName("qq-upload-button-selector qq-upload-button");
+                    botoncargar[0].style.visibility = 'hidden';
+                    if(name.endsWith(tipo)){
+                        var src = "{{asset('bundles/fratersoftpiaweb/images/__tipo__-128.png')}}";
+                        src = src.replace('__tipo__',tipo)                        
+                        image.attr("src",src);
+                        image.wrap("<a href='"+urlfile+"' target='_blank'>");
+                    }
+                    else
+                        image.attr("src","{{asset('bundles/fratersoftpiaweb/fine-uploader/files/')}}" + uuid + '/' + name);
+                    $('#namefile_'+nombrecampo).val(name);
+                    var img = new Image();
+                    img.onload = function() {
+                        $("#uploadimage").dialog({width: this.width+59,height:this.height+193});
+                    }
+                    img.src = "{{asset('bundles/fratersoftpiaweb/fine-uploader/files/')}}" + uuid + '/' + name;
+                },
+                onDeleteComplete: function(id,xhr,iserror) {
+                    var botoncargar = document.getElementsByClassName("qq-upload-button-selector qq-upload-button");
+                    botoncargar[0].style.visibility = 'visible';
+                    input.val('');
+                    image.attr("src","{{asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}");
+                    $("#uploadimage").dialog({width: 300,height:150});                    
+                    $('#namefile_'+nombrecampo).val('');
+                }
+            }
+        });        
+        $("#uploadimage").dialog("open");
+    }
+    
+    function controlLoadFile(formcampo,tipo){
+        var ini=formcampo[0].name.lastIndexOf("[")+1;
+        var fin=formcampo[0].name.lastIndexOf("]");
+        var nombrecampo=formcampo[0].name.substring(ini,fin);
+        var idcampo=formcampo.selector;
+        var idboton="btn_"+nombrecampo;
+        var idimagen="imagen_"+nombrecampo;
+        formcampo.attr("type","hidden");
+        var url = "{{asset('bundles/fratersoftpiaweb/fine-uploader/files/') }}" + $(idcampo).val();
+        var nombrearchivo = url.substring(url.lastIndexOf("/")+1,url.length);
+        var rutaiconfile="{{asset('bundles/fratersoftpiaweb/images/__tipo__-128.png')}}";
+        rutaiconfile=rutaiconfile.replace('__tipo__',tipo);
+        $(idcampo).prop('readonly', true);
+        $(idcampo).parent().append(
+            "<button type='button' id='"+idboton+"'></button>"
+        );    
+        $("<input id='namefile_"+nombrecampo+"' type='text' value='' readonly>").insertAfter($(idcampo));
+        if(formcampo.val()=="")
+            $("<img id='"+idimagen+"' src='{{asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}' sytle='height:21px'/>" ).insertBefore($(idcampo));
+        else{
+            $("<a href='"+url+"' target='_blank'><img id='"+idimagen+"' src='"+rutaiconfile+"'/></a>" ).insertBefore($(idcampo));
+            $("#namefile_"+nombrecampo).val(nombrearchivo);
+        }
+        $('#'+idboton).append("<img id='icon-"+nombrecampo+"' src='{{asset('bundles/fratersoftpiaweb/images/cargar-archivo.png')}}'/>").button();
+        $("#"+idboton).on('click', function() {
+            cargar_imagen($(idcampo),$("#"+idimagen),350,600,tipo);
+        });            
+    }
+
+    function validaEmailPersonal(emailoriginal,campo){
+        //console.log(emailoriginal+ ' ' + campo);
+        if(campo.val()!=""){
+            if(emailoriginal!=campo.val()){
+                var url="{{ path('competidor_valida_emailpersonal_ajax',{'email':'_email_'}) }}";
+                url=url.replace('_email_',campo.val());
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    //async: false,
+                    dataType: "json",
+                    success: function (datos){
+                        if(datos.recordsTotal==1){
+                            alert('Email ya esta asignado a otro competidor y no puede repetirse. Ingrese un nuevo Email Personal o dejelo en blanco y use el Email Secundario');
+                            campo.val("");
+                            campo.focus();
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown){
+                        alert("PIA Ajax Error: " + jqXHR.responseText);
+                    }
+                });
+            }
+        }
+    }
+    
+    function validaRequiredHidden(campo){
+        if($(campo).attr("required")=="required")
+            var ini=campo.attr("name").lastIndexOf("[")+1;
+            var fin=campo.attr("name").lastIndexOf("]");
+            var nombrecampo=campo.attr("name").substring(ini,fin);
+            if($(campo).val()==""){
+                alert("El campo " + nombrecampo + " no puede estar vacio");
+                return false;
+            }
+            else
+                return true;
+    }
+    
+    function filtrarTabla(columna,select){
+        $.fn.dataTable.ext.search.push(
+            function( settings, data, dataIndex ) {
+                var valor_index = select.val();
+                var row = data[columna] || 0; // use data for the age column
+
+                if (valor_index==row){
+                    return true;
+                }
+                return false;
+            }        
+        );
+        
+    }
+    
+    /*
+    * Construye una tabla de datos
+
+     * @param {type} action
+     * @param {type} rows
+     * @param {type} urldatostabla: se deben especificar en el Repository los campos 
+     * detalladamente que se desean mostrar en la tabla
+     * @returns {undefined}     */
+    function tablaDatos(formulario,arraycampos,caption, url_action_new,url_action_edit,urldatostabla,customcolums,actions,valorselect){
+        var table;
+        var rows=null;
+        var entidad = formulario.prop('name').substring(formulario.prop('name').lastIndexOf("_")+1,formulario.prop('name').length);
+        
+        /*
+         * Aqui se construte el array con la configuracion de las comunas de la tabla
+         * El orden de las columnas a mosrrat esta dado por el orden que tangan 
+         * los campos en el archivo de mapeo de doctrine
+         */
+        var configcols=[];
+        var i=0;
+        //console.log(arraycampos);
+        $.each(arraycampos, function( key, value ) {
+            if(key!='entity'){
+                switch(value['constraint']){
+                    case 'primarykey':
+                        configcols[i]={ title: value['nombre'], data: key, visible: true  };
+                        break;
+                    case 'foreingkey':
+                        configcols[i]={ title: value['nombre'], data: key, visible: true  };
+                        break;
+                    default:
+                        configcols[i]={ title: toTitleCase(value['nombre']), data: key };
+                        break;
+                }
+                if(value['tipo']=='boolean')
+                    configcols[i]['render']=function(data){
+                        return(data==true?"<spam class='ui-icon ui-icon-check'></spam>":"");
+                    };
+                if(value['tipo']=='datetime')
+                    configcols[i]['render']=function(data){
+                        //var formatted=(data!=null)?$.datepicker.formatDate("d/m/Y H:i", data):data;
+                        var formatted=(data!=null)?getFormattedTimestamp(data.timestamp):data;
+                        //console.log(data);
+                        return formatted;
+                    };
+                i++;
+            }
+        });
+        //console.log(configcols);
+        /*
+         * Agregar las comulnas independientes en la posicion indicada. El data del la
+         * columna debe venir en la data devuelta del ajax
+         */
+        if(customcolums)
+            for(i=0;i<customcolums.length;i++) {
+                configcols.splice(customcolums[i].posicion,0,customcolums[i].config);
+            }
+        //console.log(actions);
+        table = $('#'+entidad).DataTable({
+            "dom": 'B<"top"<"#length"lf>>rt<"clear">p',
+            processing: true,
+            serverSide: false, 
+            ajax: urldatostabla,            
+            autoWidth: false,
+            scrollX: true,            
+            buttons: [
+                {text: 'Nuevo',
+                    action: function (e, dt, node, config) {
+                        formulario.attr('action',url_action_new);     
+                        var rows = table.rows().data();
+                        $.each(arraycampos, function( key, value ) {
+                            if(key!='entity' && key!='id'){ //No hace nada para el elemento entity del array ni para el elemento id
+                                if(value['tipo']=='boolean')
+                                    $("#fratersoft_piawebbundle_"+ entidad + "_" + key).prop('checked',false);
+                                else
+                                    $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val("");
+                                if(value['constraint']=='foreingkey'){
+                                    if($("#fratersoft_piawebbundle_"+ entidad + "_" + key + " option").length==1){
+                                        $("#fratersoft_piawebbundle_"+ entidad + "_" + key).prop('selectedIndex', 0);
+                                        $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',true);
+                                    }
+                                    else{
+                                        if(valorselect){
+                                            $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val(valorselect.val());
+                                            $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',true);
+                                        }
+                                        else{
+                                            if($("#fratersoft_piawebbundle_"+ entidad + "_" + key).prop('disabled')==true)
+                                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',false);                                        
+                                            for(i=0;i<rows.length;i++){
+                                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).find('[value="'+rows[i][key]+'"]').hide();
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        $("#dialogformGuardar").dialog({ title: "Crear " + caption });
+                        $("#dialogformGuardar").dialog("open");
+                }},                 
+                {text: 'Editar',
+                    action: function (e, dt, node, config) {
+                        var rows = table.rows({selected: true}).data();
+                        if (rows.length == 1) {
+                            url_action_edit=url_action_edit.replace('_id_',rows[0].id)
+                            formulario.attr('action',url_action_edit);
+                            //carga la informacion seleccionada de la tabla en el formulario                            
+                            $.each(arraycampos, function( key, value ) {
+                                if($("#fratersoft_piawebbundle_"+ entidad + "_" + key).prop('disabled')==true)
+                                    $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',false);
+                                if(key!='entity' && key!='id'){ //No hace nada para el elemento entity del array ni para el elemento id
+                                    switch(value['tipo']){
+                                        case 'boolean':
+                                            $("#fratersoft_piawebbundle_"+ entidad + "_" + key).prop('checked',rows[0][key]);
+                                            break;
+                                        case 'datetime':
+                                            $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val((rows[0][key]!=null)?getFormattedTimestamp(rows[0][key].timestamp):rows[0][key]);
+                                            break;
+                                        default:
+                                            if(value['constraint']=='foreingkey'){ //Si es foreingkey es un select
+                                                if($("#fratersoft_piawebbundle_"+ entidad + "_" + key + " option").length>1){
+                                                    $.each($("#fratersoft_piawebbundle_"+ entidad + "_" + key + " option"), function(i) {
+                                                        $("#fratersoft_piawebbundle_"+ entidad + "_" + key).find('[value="'+$(this).val()+'"]').show();
+                                                    });
+                                                }
+                                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val(rows[0][key]);
+                                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',true);
+                                            }
+                                            else
+                                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val(rows[0][key]);
+                                    }
+                                    /*if(value['tipo']=='boolean')
+                                        $("#fratersoft_piawebbundle_"+ entidad + "_" + key).prop('checked',rows[0][key]);
+                                    else{
+                                        if(value['constraint']=='foreingkey'){ //Si es foreingkey es un select
+                                            if($("#fratersoft_piawebbundle_"+ entidad + "_" + key + " option").length>1)
+                                                $.each($("#fratersoft_piawebbundle_"+ entidad + "_" + key + " option"), function(i) {
+                                                    $("#fratersoft_piawebbundle_"+ entidad + "_" + key).find('[value="'+$(this).val()+'"]').show();
+                                                });
+                                            $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val(rows[0][key]);
+                                            $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',true);
+                                        }
+                                        else
+                                            $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val(rows[0][key]);
+                                    }*/
+                                }
+                            });
+                            $("#dialogformGuardar").dialog({ title: "Editar " + caption });
+                            $("#dialogformGuardar").dialog("open");
+                        }
+                        else
+                            alert("Debe seleccionar el " + caption + " a editar");
+
+                }},
+                {text: 'Eliminar',
+                    action: function (e, dt, node, config) {
+                        rows = table.rows({selected: true}).data();
+                        $("#eliminar").html("");
+                        if (rows.length == 1) {
+                            $("#eliminar").append(rows[0].etiqueta?rows[0].etiqueta:rows[0].atributo);
+                            $("#dialogelimiar").data('id',rows[0].id).dialog("open");                            
+                        }
+                        else
+                            alert("Debe seleccionar el " + caption + " a eliminar");
+                }},                 
+            ],
+            'select': {
+                style: 'os',   
+                rows: "%d filas seleccionadas",
+            },               
+            "language": {
+                "emptyTable": "No hay datos para mostrar",
+            },
+            columns: configcols,
+            columnDefs:[
+                { 
+                    "targets": (actions)?actions[0].posicion:null,  
+                    "title": (actions)?actions[0].titulo:null,
+                    "render": function ( data, type, row, meta ) {
+                        var html='';
+                        if(actions){
+                            html="<ul id='icons' class='ui-widget'>";
+                            for(i=0;i<actions[0].botones.length;i++){
+                                var ini=actions[0].botones[i].onclick.lastIndexOf("(")+1;
+                                var fin=actions[0].botones[i].onclick.lastIndexOf(")");
+                                var nombrecampo=actions[0].botones[i].onclick.substring(ini,fin);
+                                var ocfun=actions[0].botones[i].onclick;
+                                ocfun=ocfun.replace(nombrecampo,row[nombrecampo]);
+                                //console.log(ocfun);
+                                html+="<a onClick='"+ocfun+"'>"
+                                + "<li class='ui-state-default ui-corner-all' title='"+actions[0].botones[i].title+"'>"
+                                + "<span class='ui-icon "+actions[0].botones[i].icon+"'></span></li>"
+                                + "</a>";                            
+
+                            }
+                            html+="</ul>";
+                        }
+                        return html;
+                    }
+                }    
+            ]
+        }); 
+        return(table);
+    }
+    
+    /*
+    * Configura la venta de dialogo del formulario para crear o editar un elemento
+    * pasado en el formulario. Habilitael campos desactivados antes del submit
+    * del formulario
+     */
+    function dialogGuardar(formulario,arraycampos){
+        var entidad = formulario.prop('name').substring(formulario.prop('name').lastIndexOf("_")+1,formulario.prop('name').length);
+        $("#dialogformGuardar").dialog({
+            autoOpen: false,
+            width: 400,
+            modal: true,
+            buttons: [
+                {
+                    text: "Guardar",
+                    click: function () {
+                        $.each(arraycampos, function( key, value ) {
+                            if(value['constraint']=='foreingkey'){
+                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',false);
+                            }
+                        });                        
+                        formulario.submit();
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "Carrar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]             
+        });          
+    }
+    
+    function dialogEliminar(action){
+        //Muestra la ventana de confirmacion
+        $("#dialogelimiar").dialog({
+            autoOpen: false,
+            width: 400,
+            modal: true,
+            buttons: [
+                {
+                    text: "SI",
+                    click: function () {
+                        action = action.replace('_id_',$("#dialogelimiar").data('id'));
+                        window.open(action, "_self");                        
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "NO",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });        
+    }
+
+    function dialogMensaje(){
+        $("#dialog-message").dialog({
+            autoOpen: false,
+            width: 400,
+            modal: true,
+            buttons: [
+                {
+                    text: "OK",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                },
+            ]
+        });        
+    }
+
+    function toTitleCase(str) {
+        if(str != undefined && str != null)
+            return str.replace(/(?:^|\s)\w/g, function(match) {
+                return match.toUpperCase();
+            });
+        else
+            return("");
+    }    
+    
+    function getFormattedTimestamp(tiempo) {
+        var date = new Date(tiempo*1000);
+
+        var month = date.getMonth() + 1;
+        var day = date.getDate();
+        var hour = date.getHours();
+        var min = date.getMinutes();
+
+        month = (month < 10 ? "0" : "") + month;
+        day = (day < 10 ? "0" : "") + day;
+        hour = (hour < 10 ? "0" : "") + hour;
+        min = (min < 10 ? "0" : "") + min;
+
+        var str = date.getFullYear() + "-" + month + "-" + day + " " +  hour + ":" + min ;
+
+        /*alert(str);*/
+
+        return str;
+    }    
+
+    {% if idevento is defined and idevento != null %}
+    function menuConfInscripcionesControl(entidad){
+        $('#tabs a[href="#tabs-2"]').click();
+        $('#tabs a[href="#tabs-1"]').on("click", function () {
+            $(location).attr('href', '{{ path('evento_edit',{'id':idevento}) }}')
+        });                    
+        
+        $( "#boton_" + entidad ).button({
+          disabled: true
+        });
+        $( "#boton_eventoatributos" ).click(function() {
+            $(location).attr('href', '{{ path('eventoatributos_new',{'idevento':idevento}) }}');
+        });	      
+        $( "#boton_competencias" ).click(function() {
+            $(location).attr('href', '{{ path('competencia_new',{'idevento':idevento}) }}');
+        });	      
+        $( "#boton_categorias" ).click(function() {
+            $(location).attr('href', '{{ path('categoria_new',{'idevento':idevento}) }}');
+        });	      
+        $( "#boton_formaspagoevento" ).click(function() {
+            $(location).attr('href', '{{ path('formaspagoevento_new',{'idevento':idevento}) }}');
+        });	      
+        $( "#boton_preciosevento" ).click(function() {
+            $(location).attr('href', '{{ path('preciosevento_new',{'idevento':idevento}) }}');
+        });	      
+        $( "#boton_listasevento" ).click(function() {
+            $(location).attr('href', '{{ path('listasevento_gestion',{'idevento':idevento}) }}');
+        });	      
+    }
+    {% endif %}
+
+    function checklogin(){
+        if(parent.document.location=='http://localhost/drupal-7.53/setsession')
+            alert("Lamada ok");
+        else
+            alert("Llamada sin login");
+        return(parent.document.location);
+    }
+    
+    function TextoFormaPago(valor){
+        switch(valor){
+            case 1: return("DEPOSITO");
+            case 2: return("TRANFERECIA");
+            case 3: return("TARJETA DE CREDITO");
+            case 5: return("OTROS");
+            case 6: return("PUNTO");
+        }
+    }    
+</script>

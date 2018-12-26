@@ -1,0 +1,58 @@
+FraterSoft\PiaWebBundle\Entity\Listasevento:
+    type: entity
+    table: piaaccess.tmlistaseventos
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\ListaseventoRepository        
+    indexes:
+        IDX_87E29F4E233BA6A9:
+            columns:
+                - idevento
+        IDX_87E29F4E4C122F87:
+            columns:
+                - idatributo
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        codigo:
+            type: string
+            nullable: true
+            length: 20
+            fixed: false
+            comment: ''
+        valor:
+            type: string
+            nullable: true
+            length: 20
+            fixed: false
+            comment: ''
+        limite:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''            
+    manyToOne:
+        idevento:
+            targetEntity: Evento
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idevento:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idatributo:
+            targetEntity: Atributo
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idatributo:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

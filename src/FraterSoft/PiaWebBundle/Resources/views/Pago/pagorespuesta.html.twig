@@ -1,0 +1,22 @@
+{% extends '::base.html.twig' %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        function CloseWindow()
+        {
+            window.close();
+        }
+    </script>   
+{% endblock %} 
+{% block body -%}
+    <div align="center">
+        <h1>Pago se realizado satisfactoriamente</h1>
+
+        <table class="record_properties">
+
+        </table>
+        <input type="button" name="backButton" value="Cerrar" 
+               style="background-color:#245f91; color:#fff;font-weight:bold;" 
+               onclick="CloseWindow();">
+    </div>
+    {% endblock %}

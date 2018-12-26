@@ -1,0 +1,127 @@
+FraterSoft\PiaWebBundle\Entity\Inscrito:
+    type: entity
+    table: piaaccess.tminscritos
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\InscritoRepository    
+    indexes:
+        IDX_9AF78616300BBBD8:
+            columns:
+                - idcategoria
+        IDX_9AF7861642ED3925:
+            columns:
+                - idcompetencia
+        IDX_9AF78616233BA6A9:
+            columns:
+                - idevento
+        IDX_9AF786163C3F6B05:
+            columns:
+                - idpia
+        IDX_9AF786162710AE9E:
+            columns:
+                - idpago
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+            #sequenceGenerator:
+            #    sequenceName: piaaccess.tminscritos_id_sq
+            #    allocationSize: 100
+            #    initialValue: 1                  
+    fields:
+        numero:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        fechahora:
+            type: datetime
+            nullable: true
+            comment: ''
+        punto:
+            type: string
+            nullable: true
+            length: 30
+            fixed: false
+            comment: ''
+        equipo:
+            type: string
+            nullable: true
+            length: 30
+            fixed: false
+            comment: ''
+        precio:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            comment: ''
+        status:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        publicado:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        secuencia:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+        notificado:
+            type: boolean
+            nullable: true
+            comment: 'Es verdadero si se envio el correo de confirmacion manual masivo'            
+    manyToOne:
+        idcategoria:
+            targetEntity: Categoria
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idcategoria:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idcompetencia:
+            targetEntity: Competencia
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idcompetencia:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idevento:
+            targetEntity: Evento
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idevento:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idpia:
+            targetEntity: Competidor
+            cascade: { }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idpia:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idpago:
+            targetEntity: Pago
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idpago:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

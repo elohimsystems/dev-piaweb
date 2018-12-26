@@ -1,0 +1,38 @@
+FraterSoft\PiaWebBundle\Entity\Campeonato:
+    type: entity
+    table: piaaccess.tmcampeonatos
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        logo:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''
+        nombre:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        usuario:
+            type: string
+            nullable: true
+            length: 254
+            fixed: false
+            comment: ''
+        anio:
+            type: integer
+            nullable: true
+            fixed: false
+            comment: ''
+            
+    lifecycleCallbacks: {  }

@@ -1,0 +1,70 @@
+FraterSoft\PiaWebBundle\Entity\EventoAtributos:
+    type: entity
+    table: piaaccess.treventosatributos
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\EventoAtributosRepository      
+    indexes:
+        IDX_E9F9EBEE233BA6A9:
+            columns:
+                - idevento
+        IDX_E9F9EBEE4C122F87:
+            columns:
+                - idatributo
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        orden:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        etiqueta:
+            type: string
+            nullable: true
+            length: 30
+            fixed: false
+            comment: ''
+        criterio:
+            type: boolean
+            nullable: true
+            comment: ''
+        busqueda:
+            type: boolean
+            nullable: true
+            comment: ''
+        requerido:
+            type: boolean
+            nullable: true
+            comment: ''   
+        mascara:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''            
+    manyToOne:
+        idevento:
+            targetEntity: Evento
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idevento:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idatributo:
+            targetEntity: Atributo
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idatributo:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

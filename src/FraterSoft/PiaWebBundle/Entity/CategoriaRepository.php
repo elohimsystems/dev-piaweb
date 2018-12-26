@@ -1,0 +1,107 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\EntityRepository;
+
+class CategoriaRepository extends EntityRepository
+{
+    public function listaCategorias($idevento)
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'select ca from FraterSoftPiaWebBundle:Evento ev inner join FraterSoftPiaWebBundle:Competencia co WITH ev.id = co.idevento inner join FraterSoftPiaWebBundle:Categoria ca WITH co.id = ca.idcompetencia
+where ev.id=' . $idevento
+            )
+            ->getResult();
+    }
+
+    public function listaCategoriasCampeonato($idcampeonato)
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'select ca from FraterSoftPiaWebBundle:Categoria ca 
+where ca.idcampeonato=' . $idcampeonato
+            )
+            ->getResult();
+    }
+    
+    public function arrayCategorias($idcompetencia)
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'select ca from FraterSoftPiaWebBundle:Competencia co inner join FraterSoftPiaWebBundle:Categoria ca WITH co.id = ca.idcompetencia
+                where co.id=' . $idcompetencia
+            )
+            ->getArrayResult();
+    }
+
+    public function arrayLista($idevento)
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'select ca.id,co.id as idcompetencia,ca.idcampeonato, ca.descripcion  '
+                    . 'from FraterSoftPiaWebBundle:Competencia co inner join FraterSoftPiaWebBundle:Categoria ca WITH co.id = ca.idcompetencia
+                    where co.idevento=' . $idevento
+            )
+            ->getResult();
+    }
+
+    public function arrayListaCampeonato($idcampeonato)
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'select ca.id,0 as idcompetencia,ca.idcampeonato,ca.descripcion  '
+                    . 'from FraterSoftPiaWebBundle:Categoria ca 
+                    where ca.idcampeonato=' . $idcampeonato
+            )
+            ->getResult();
+    }
+
+    public function listadoPorEvento($idevento, array $criterios)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $atributoscriterios = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')->atributosCriterios($idevento);
+        if($atributoscriterios){
+            foreach ($atributoscriterios as $atruibutocriterio) {
+                $valor = $competidor->getValorCampo(strtolower($atruibutocriterio->getIdatributo()->getNombre()));
+                if ($valor) {
+                    $criterios[$atruibutocriterio->getIdatributo()->getNombre()] = $valor;
+                }
+            }
+
+            $categoriasselect = new ArrayCollection();
+
+            $categorias = $this->listaCategorias($idevento);
+
+            foreach ($categorias as $categoria) {
+                $reglas = $em->getRepository('FraterSoftPiaWebBundle:CategoriaReglas')->findBy(array(
+                    'idcategoria' => $categoria->getId()
+                ));
+                $parametrok = false;
+                foreach ($reglas as $regla) {
+                    $parametrok = false;
+                    if ($regla->getTipo() == 'R') {
+                        if ($regla->getValor1() <= $criterios[$regla->getAtributo()] &&
+                                $regla->getValor2() >= $criterios[$regla->getAtributo()])
+                            $parametrok = true;
+                    }
+                    else {
+                        if ($regla->getValor1() == $criterios[$regla->getAtributo()])
+                            $parametrok = true;
+                    }
+                    if (!$parametrok)
+                        break;
+                }
+                if ($parametrok) {
+                    $categoriasselect->add($categoria);
+                    $parametrok = false;
+                }
+            }
+            return $categoriasselect;
+        }else{
+            return null;
+        }
+
+    }
+}

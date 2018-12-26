@@ -1,0 +1,38 @@
+FraterSoft\PiaWebBundle\Entity\Atributo:
+    type: entity
+    table: piaaccess.tmatributos
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\AtributoRepository       
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nombre:
+            type: string
+            nullable: true
+            length: 30
+            fixed: false
+            comment: ''
+        tipodato:
+            type: string
+            nullable: true
+            length: 1
+            fixed: false
+            comment: 'Indica el tipo de dato del atributo. Posibles valores: N -> Numerico, S -> Cadena de texto, F -> Fecha, H => Hora, T -> Fecha Hora, B -> Buleano, D -> Decimal'
+        longitud:
+            type: smallint
+            nullable: true
+            unsigned: false
+            comment: ''
+        tipo:
+            type: string
+            nullable: true
+            length: null
+            fixed: true
+            comment: 'Indica si el atributo es de Sistema o de Usuario. Posibles valores: S-> Sistema, U->Usuario'
+    lifecycleCallbacks: {  }

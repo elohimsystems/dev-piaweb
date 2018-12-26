@@ -1,0 +1,20 @@
+FraterSoft\PiaWebBundle\Entity\Disciplina:
+    type: entity
+    table: piaaccess.tmdisciplinas
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nombre:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+    lifecycleCallbacks: {  }

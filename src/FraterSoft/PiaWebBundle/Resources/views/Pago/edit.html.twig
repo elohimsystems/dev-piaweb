@@ -1,0 +1,71 @@
+{% extends '::base.html.twig' %}
+{% block body -%}
+    {{ form_start(edit_form) }}
+    <table border="0" align="center">       
+        <tr align="center">
+            <td colspan="2"><h1>Conciliar Pago</h1></td>
+        </tr>        
+        <tr>
+            <td colspan="2">{{ form_errors(edit_form) }}</td>
+        </tr>        
+        <tr>
+            <th align="left">Comprobante</th>
+            <td>{{inscrito.secuencia}}</td>
+        </tr>        
+        <tr>
+            <th align="left">Cedula</th>
+            <td>{{inscrito.idpia}}</td>
+        </tr>        
+        <tr>
+            <th align="left">Nombre</th>
+            <td>{{inscrito.idpia.nombre}}</td>
+        </tr>        
+        <tr>
+            <th align="left">Apellido</th>
+            <td>{{inscrito.idpia.apellido}}</td>
+        </tr>        
+        <tr>
+            <td>{{form_label(edit_form.fechahora)}}</td>
+            <td>{{form_widget(edit_form.fechahora)}}</td>
+        </tr>        
+        <tr>
+            <td>{{form_label(edit_form.referencia)}}</td>
+            <td>{{form_widget(edit_form.referencia, {'read_only': true })}}</td>
+        </tr>        
+        <tr>
+            <td>{{form_label(edit_form.tipo)}}</td>
+            <td>{{form_widget(edit_form.tipo, {'read_only': true })}}</td>
+        </tr>        
+        <tr>
+            <td>{{form_label(edit_form.banco)}}</td>
+            <td>{{form_widget(edit_form.banco, {'read_only': true })}}</td>
+        </tr>        
+        <tr>
+            <td>{{form_label(edit_form.conciliado)}}</td>
+            <td>{{form_widget(edit_form.conciliado)}}</td>
+        </tr>     
+        <tr>
+            <td>{{form_label(edit_form.conciliadoel)}}</td>
+            <td>{{form_widget(edit_form.conciliadoel)}}</td>
+        </tr>            
+        <tr>
+        <tr align="center">
+            <td colspan="2"> {{ form_errors(edit_form.conciliadoel) }} </td>
+        </tr>        
+        <tr align="center">
+            <td colspan="2"> {{ form_widget(edit_form.submit) }} </td>
+        </tr>
+        <tr align="center">
+            <td colspan="2">
+                 <p></p>
+                <a href="{{ app.request.headers.get('referer') }}">
+                    Regresar
+                </a>
+            </td>
+        </tr>         
+        
+    </table>
+    {{ form_end(edit_form) }}  
+
+
+{% endblock %}

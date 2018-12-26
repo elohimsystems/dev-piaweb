@@ -1,0 +1,40 @@
+FraterSoft\PiaWebBundle\Entity\Categoria:
+    type: entity
+    table: piaaccess.tmcategorias
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\CategoriaRepository           
+    indexes:
+        IDX_CB87DBD242ED3925:
+            columns:
+                - idcompetencia
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        idcampeonato:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+        descripcion:
+            type: string
+            nullable: true
+            length: 30
+            fixed: false
+            comment: ''
+    manyToOne:
+        idcompetencia:
+            targetEntity: Competencia
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idcompetencia:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

@@ -1,0 +1,129 @@
+inscrito:
+    pattern:  /{idevento}/listado
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:index" }
+
+inscrito_lista_preinscritos:
+    pattern:  /{idevento}/{email}/lista_preinscritos
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listapreinscritos" }
+    
+inscrito_lista_preinscritosajax:
+    pattern:  /{idevento}/lista_preinscritosajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listapreinscritosajax" }      
+    
+inscrito_lista_registros:
+    pattern:  /{idevento}/{email}/lista_registros
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listaregistros" }
+    
+inscrito_lista_registrosajax:
+    pattern:  /{idevento}/{email}/lista_registrosajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listaregistrosajax" }
+    
+inscrito_lista_inscritos:
+    pattern:  /{idevento}/{email}/lista_inscritos
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listainscritos" }
+    
+inscrito_lista_inscritosajax:
+    pattern:  /{idevento}/lista_inscritosajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listainscritosajax" }    
+
+inscrito_lista_anulados:
+    pattern:  /{idevento}/{email}/lista_anulados
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listaanulados" }
+
+inscrito_lista_operacionestdc:
+    pattern:  /{idevento}/{email}/lista_operacionestdc
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listaoperacionestdc" }
+    
+inscrito_lista_auditoria:
+    pattern:  /{idevento}/{email}/lista_auditoria
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listaauditoria" }
+    
+inscrito_lista_auditoriaajax:
+    pattern:  /{idevento}/lista_auditoriaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listaauditoriaajax" }      
+    
+inscrito_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:show" }
+    
+inscrito_showcompetidor:
+    pattern:  /{idevento}/{idpia}/showcompetidor
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:showcompetidor" }    
+    
+inscrito_listarrivales:
+    pattern:  /{idevento}/{idpia}/listarrivales
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listarrivales" }        
+
+inscrito_confirmacion:
+    pattern:  /{id}/confirmacion
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:confirmacion" }
+
+inscrito_new:
+    pattern:  /new/{idevento}/{idcompetidor}/{iddocumento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:new" }
+
+inscrito_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:create" }
+    requirements: { _method: post }
+
+inscrito_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:edit" }
+
+inscrito_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:update" }
+    requirements: { _method: post|put }
+
+inscrito_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:delete" }
+    requirements: { _method: post|delete }
+    
+inscrito_cargarxml:
+    pattern:  /cargarxml
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:cargarXML" }    
+    
+#Routing para llamar a un twig sin controlador
+inscrito_email:
+    path:  /email
+    defaults:
+        _controller: FrameworkBundle:Template:template
+        template:    FraterSoftPiaWebBundle:Inscrito:emailok2.html.twig  
+
+inscrito_categorias:
+    pattern:  /categorias
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:categorias" }          
+    
+inscrito_anular:
+    pattern:  /anular/{id}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:anular" }    
+    
+inscrito_boton123pago:
+    pattern:  /{id}/{incremento}/boton123pago
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:boton123pago" }
+    
+inscrito_precio:
+    pattern:  /buscarprecioajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:buscarprecioajax" }    
+    
+inscrito_estadisticas:
+    pattern:  /{idevento}/{email}/estadisticas
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:estadisticas" }       
+
+inscrito_anular_tdcnoconciliados:
+    pattern:  /anulartdcnoconciliados/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:anulartdcnoconciliados" }         
+    
+inscrito_notificar_confirmacion_lote:
+    pattern:  /notificarconfirmacionlote/{data_json}/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:notificarconfirmacionlote" }     
+    
+inscrito_notificar_confirmacion_todos:
+    pattern:  /notificarconfirmacionlote/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:notificarconfirmaciontodos" }     
+    
+inscrito_importar:
+    pattern:  /importar/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:importar" }        

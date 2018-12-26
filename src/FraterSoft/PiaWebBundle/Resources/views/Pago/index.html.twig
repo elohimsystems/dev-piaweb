@@ -1,0 +1,49 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Pago list</h1>
+
+    <table class="records_list">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Fechahora</th>
+                <th>Monto</th>
+                <th>Moneda</th>
+                <th>Referencia</th>
+                <th>Comprobante</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('pago_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{% if entity.fechahora %}{{ entity.fechahora|date('Y-m-d H:i:s') }}{% endif %}</td>
+                <td>{{ entity.monto }}</td>
+                <td>{{ entity.moneda }}</td>
+                <td>{{ entity.referencia }}</td>
+                <td>{{ entity.comprobante }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('pago_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('pago_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+        <ul>
+        <li>
+            <a href="{{ path('pago_new') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
+    {% endblock %}

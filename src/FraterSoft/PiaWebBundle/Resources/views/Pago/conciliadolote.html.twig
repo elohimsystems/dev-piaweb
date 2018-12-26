@@ -1,0 +1,67 @@
+{% extends '::base.html.twig' %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+            $("#titulo" ).append("<h1>Pre-Inscripciones Conciliadas</h1>");
+            $("#botonera" ).append("<button class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'>" +
+                "<a href='{{ app.request.headers.get('referer') }}'>Regresar</a></button>");
+            $("#espere" ).hide();   
+            var dataSet = [ 
+                {% for inscrito in inscritos %}            
+                        ["{{ inscrito.secuencia }}",
+                        "{{ inscrito.idpia.iddocumento }}",
+                        "{{ inscrito.idpia.apellido }}",
+                        "{{ inscrito.idpia.nombre }}",
+                        "{{ inscrito.idpia.fechanacimiento|date('d-m-Y') }}",
+                        "{{ inscrito.idpia.sexo }}",
+                        "{{ inscrito.idpia.equipo }}",
+                        "{{ inscrito.idpia.idestado.estado }}",
+                        "{{ inscrito.idcategoria.descripcion }}"],
+                {% endfor %}                
+            ];
+            $('#datos').DataTable( {
+                dom: "t",
+                data: dataSet,
+                columns: [
+                    { title: "Secuencia" },
+                    { title: "Cedula" },
+                    { title: "Apellido" },
+                    { title: "Nombre" },
+                    { title: "Nacido el" },
+                    { title: "Sexo" },
+                    { title: "Equipo" },
+                    { title: "Estado" },
+                    { title: "Categoria" },
+                ]
+            } );
+        });
+    </script>           
+{% endblock %}     
+
+{% block style %}
+    <style type="text/css">  
+        #espere{
+            margin: auto;            
+            text-align: center;
+            font-size: 16px;
+            width: 400px
+        }
+        #botonera{
+            margin-top: 30px;
+            text-align: center;
+        }              
+        .ui-button{
+            padding: 9px;
+        }
+    </style>
+{% endblock %} 
+{% block body -%}
+    <p id="espere">
+        <img width="50px" src="{{ asset('bundles/fratersoftpiaweb/images/') ~ 'loading.gif' }}"><br>
+        Espera mientras se procesa la operacion...
+    </p>
+    <div id="titulo" align="center"></div>
+    <table id="datos" class="display compact" width="50%"></table>
+    <div id="botonera">
+    </div>    
+{% endblock %}

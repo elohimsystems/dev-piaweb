@@ -1,0 +1,252 @@
+{% extends '::base.html.twig' %}
+{% if evento.tema is defined and evento.tema is not null%}{% set temastyle=evento.tema.styles %}{% endif %} 
+{% block javascripts %}
+<script>
+    function datediff(fromDate,toDate,interval) { 
+        /*
+         * DateFormat month/day/year hh:mm:ss
+         * ex.
+         * datediff('01/01/2011 12:00:00','01/01/2011 13:30:00','seconds');
+         */
+        var dias=0,horas=0,minutos=0,segundos=0;
+        var second=1000, minute=second*60, hour=minute*60, day=hour*24, week=day*7; 
+        fromDate = new Date(fromDate); 
+        toDate = new Date(toDate); 
+        var timediff = toDate - fromDate; 
+        if (isNaN(timediff)) return NaN; 
+        switch (interval) { 
+            case "years": return toDate.getFullYear() - fromDate.getFullYear(); 
+            case "months": return ( 
+                ( toDate.getFullYear() * 12 + toDate.getMonth() ) 
+                - 
+                ( fromDate.getFullYear() * 12 + fromDate.getMonth() ) 
+            ); 
+            case "weeks"  : return Math.floor(timediff / week); 
+            case "days"   : return Math.floor(timediff / day);  
+            case "hours"  : return Math.floor(timediff / hour);  
+            case "minutes": return Math.floor(timediff / minute); 
+            case "seconds": return Math.floor(timediff / second); 
+            case "dd:hh:mm:ss": 
+                dias=Math.floor(timediff / day); 
+                timediff=timediff-(dias * day);
+                horas=Math.floor(timediff / hour); 
+                timediff=timediff-(horas * hour);
+                minutos=Math.floor(timediff / minute);
+                timediff=timediff-(minutos * minute);
+                segundos=Math.floor(timediff / second);
+                //Completa con ceros si es necesario y retorna el string dd:hh:mm:ss
+                return ("0" + dias.toString()).slice(-2) + ":" +
+                        ("0" + horas.toString()).slice(-2) + ":" +
+                        ("0" + minutos.toString()).slice(-2) + ":" +
+                        ("0" + segundos.toString()).slice(-2);
+            default: return undefined; 
+        } 
+    }
+    $().ready(function() {  
+{% if form.siniddocumento is defined %}
+        var url;
+        var tabla;
+        //Evento al salor del input a buscar
+        $("#{{form.buscar.vars.id}}").blur(function () {
+            if($("#{{form.siniddocumento.vars.id}}").is(':checked') && $("#{{form.buscar.vars.id}}").val()!=""){
+                generarTabla();
+                $("#representados").dialog("open");
+            }
+        });
+
+        //Evento al salor del input a buscar
+        $("#{{form.siniddocumento.vars.id}}").click(function () {
+            if($("#{{form.siniddocumento.vars.id}}").is(':checked') && $("#{{form.buscar.vars.id}}").val()!=""){
+                generarTabla();
+                $("#representados").dialog("open");
+            }
+        });
+        
+        //Muestra la ventana de confirmacion
+        $("#representados").dialog({
+            autoOpen: false,
+            width: 400,
+            modal: true,
+            buttons: [
+                {
+                    text: "Buscar",
+                    id: "buscar",
+                    click: function () {
+                        var row = tabla.rows({selected: true}).data();
+                        if(row.length!=0){
+                            url = "{{ path('inscrito_new', {'idevento':evento.id, 'idcompetidor':'__idcompetidor__','iddocumento':'__iddocumento__'}) }}";
+                            url = url.replace('__idcompetidor__', row[0]['id']);
+                            url = url.replace('__iddocumento__', row[0]['iddocumento']);
+                            //alert(JSON.stringify(row[0]['id']));
+                            //alert(url);
+                            window.open(url, "_self");          
+                            $(this).dialog("close");
+                        }
+                        else{
+                            alert("Debe seleccionar una fila");
+                        }
+                        tabla.destroy();
+                    }
+                },
+                {
+                    text: "Nuevo",
+                    click: function () {
+                        
+                        url = "{{ path('inscrito_new', {'idevento':evento.id, 'idcompetidor':'0','iddocumento':'__iddocumento__'}) }}";
+                        url = url.replace('__iddocumento__',$("#{{form.buscar.vars.id}}").val()+'-'+(tabla.rows().count()+1));
+                        window.open(url, "_self");  
+                        tabla.destroy();
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "Cerrar",
+                    click: function () {
+                        tabla.destroy();
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });
+        
+        function generarTabla(){
+            url="{{ path('competidor_asociadosajax',{'iddocumento':'__iddocumento__'}) }}";
+            url=url.replace('__iddocumento__',$("#{{form.buscar.vars.id}}").val());                 
+            tabla = $('#tablaasociados').DataTable({
+                dom: 't',
+                processing: true,
+                serverSide: false, 
+                padding: 0,
+                ajax: url,
+                "columnDefs": [
+                    { "visible": false, "targets": 0 },
+                ],  
+                language: {
+                   "loadingRecords": "Espere - cargando...",
+                   "emptyTable": "No hay Asociados para la {{ form.buscar.vars.label }} ingresada." + 
+                        "<br>Haga click en NUEVO para agregar un Asociado",
+                },    
+                select: {
+                    style: 'single'
+                },                
+                columns: [
+                    { title: "Id", data: "id" },
+                    { title: "{{ form.buscar.vars.label }}", data: "iddocumento" },
+                    { title: "Nombre", data: "nombre" },
+                    { title: "Apellido", data: "apellido" },               
+                ]                    
+            });         
+        }
+{% endif %}
+    });
+    
+    $(function(){
+        var currentdate = new Date('{{ "now"|date("m/d/Y H:i:s", evento.zonahoraria) }}');
+        var fechacierre = '{{ evento.fechacierre|date("m/d/Y  H:i:s", evento.zonahoraria) }}';
+        var now = 
+            (currentdate.getMonth()+1) + "/" + 
+            currentdate.getDate() + "/"+ 
+            currentdate.getFullYear() + " " + 
+            currentdate.getHours() + ":" + 
+            currentdate.getMinutes() + ":" + 
+            currentdate.getSeconds();       
+        $('#counter').countdown({
+            image: '{{ asset('bundles/fratersoftpiaweb/images') }}/digits.png',
+            startTime: datediff(now,fechacierre,"dd:hh:mm:ss")
+        });
+    });
+</script>
+{% endblock %}
+{% block style %}
+<style type="text/css">   
+    .ui-widget-header{
+        background: grey;
+    }
+    br { clear: both; }
+    .cntSeparator {
+      font-size: 54px;
+      margin: 10px 7px;
+      color: #000;
+    }   
+    .desc { 
+        margin: 0 0;
+        width: 536px;
+        
+    }
+    .desc div {
+      float: left;
+      font-family: Arial;
+      text-align: center;
+      width: 131px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #000;
+    }
+    .centrar {
+        width: 536px;
+    }
+    #mensaje{
+        margin: auto;            
+        text-align: center;
+        font-size: 16px;
+        width: 500px
+    }
+</style>
+{% endblock %}    
+{% block body -%}  
+    
+    
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {% set etiquetabuscar = form_label(form.buscar) %}
+    <table align="center" width="100%" border="0">
+        <tr>
+            <td align="center">
+                <h1>PROCESO DE INSCRIPCION CERRADO</h1>
+            </td>
+        </tr>        
+        <tr>
+            <td align="center">
+                <h1>Consulta el estatus de tu {% if evento.proceso == 1 %}Inscripción{% else %}Pre-Inscripción{% endif %}</h1>
+            </td>
+        </tr>
+        <tr>
+            <td align="center">{{ form_label(form.atributo) }}{{ form_widget(form.atributo) }}</td>
+        </tr>
+        {% if form.siniddocumento is defined %}
+        <tr>
+            <td align="center">No posee {{form_label(form.buscar)}}?, marque aqui:{{form_widget(form.siniddocumento)}} e ingrese {{form_label(form.buscar)}} del Representante</td>
+        </tr>
+        {% endif %}
+        <tr>
+            <td align="center"> {{ form_widget(form.buscar) }} {{ form_widget(form.Buscar) }}</td>       
+        </tr>       
+        {% if mensaje is defined and mensaje is not null %}
+        <tr>
+            <td>
+                <div id="mensaje"><p>{{ mensaje|raw}}</p></div>
+            </td>
+        </tr>         
+        {% endif %}
+        {% if numero is defined and numero is not null %}
+        <tr>
+            <td align="center">
+                <div id="mensaje"><h3>Su Numero de Participacion es el {{ numero }}</h3></div>
+            </td>
+        </tr>         
+        {% endif %}        
+        <tr>
+            <td align="center">
+                <div class="soporte">Para cualquier soporte o consulta puede comunicarse al <br><b>0424-964.29.82</b></div>
+                Mejor con: <img width="24" align="center" src="{{asset('bundles/fratersoftpiaweb/images/cromo.png')}}"/>
+                <img width="24" align="center" src="{{asset('bundles/fratersoftpiaweb/images/opera.png')}}"/>
+                <img width="24" align="center" src="{{asset('bundles/fratersoftpiaweb/images/mozilla.png')}}"/>                
+            </td>
+        </tr>       
+    </table>
+{{ form_end(form) }}   
+<div id="representados" title="Seleccione o Cree la {{ form.buscar.vars.label }} Asociada">
+    <table id="tablaasociados" class="display compact row-border hover" width="100%">
+    </table>
+</div> 
+{% endblock %}

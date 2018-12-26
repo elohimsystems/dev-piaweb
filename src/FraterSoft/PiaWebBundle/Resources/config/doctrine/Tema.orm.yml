@@ -1,0 +1,30 @@
+FraterSoft\PiaWebBundle\Entity\Tema:
+    type: entity
+    table: piaaccess.tmtemas
+    indexes:
+        IDX_FAE44AF233BA6A9:
+            columns:
+                - idevento
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        styles:
+            type: string
+            nullable: true
+            length: 500
+            fixed: false
+            comment: ''
+    oneToOne:
+      idevento:
+        targetEntity: Evento
+        joinColumn:
+          name: idevento
+          referencedColumnName: id            
+    lifecycleCallbacks: {  }

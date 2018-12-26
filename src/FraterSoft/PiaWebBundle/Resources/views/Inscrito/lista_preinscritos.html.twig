@@ -1,0 +1,309 @@
+{% extends '::base.html.twig' %}
+{% block javascripts %}
+    <script type="text/javascript" language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script type="text/javascript" language="javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
+    <script type="text/javascript" language="javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>      
+    <script>
+        var data_json;
+        var idinscrito = 0;
+        function anular(id, secuencia) {
+        idinscrito = id;
+                $("#sec").html("");
+                $("#sec").append(secuencia);
+                $("#dialog").dialog("open");
+        }
+
+        $(document).ready(function () {
+            url="{{ path('inscrito_lista_preinscritosajax',{'idevento': idevento }) }}";
+            //Configura la tabla de datos
+            var table = $('#tablaPreInscritos').DataTable({
+                "dom": 'Bflit<"bottom"Blp>',
+                processing: true,
+                serverSide: false, 
+                ajax: url,    
+                columns: [
+                    { title: "Sec.", data: "secuencia" },
+                    { title: "Competencia", data: "idcompetencia.descripcion" },
+                    {% if atributos[0].idevento.proceso==1 %}
+                    { title: "Banco", data: "idpago.banco",render: function(data){return data==null?"":data;}},
+                    { title: "Tipo", data: "idpago.tipo",
+                        render: function(data){
+                            var valor;
+                            if(data!=null)
+                                switch (data){
+                                    case "1":
+                                        valor="DEP";
+                                        break;
+                                    case "2":
+                                        valor="TRA";
+                                        break;
+                                    case "5":
+                                        valor="COR";
+                                        break;
+                                }
+                            else valor="";
+                            return valor;
+                        }
+                    },
+                    { title: "Referencia", data: "idpago.referencia",render: function(data){return data==null?"":data;}},
+                    { title: "Fecha", data: "idpago.fechahora",
+                        render: function(data){
+                            var formatted=(data!=null)?$.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000)):"";
+                            return formatted;
+                        }
+                    },
+                    { title: "Precio", data: "precio" },                    
+                    {% endif %}
+                    {% for atributo in atributos %}
+                    { 
+                        title: {% if atributo.etiqueta is null=='S' %}"{{ atributo.idatributo.nombre }}"{% else %}"{{ atributo.etiqueta }}"{% endif %}, 
+                        visible:{% if atributo.idatributo.tipo=='U' %} false {% else %}true{% endif %},
+                        data: "idpia.{{atributo.idatributo.nombre|lower}}",
+                        {% if atributo.idatributo.tipodato=='S' %} 
+                        render: function(data){return data==null?"":data.toUpperCase();} 
+                        {% elseif  atributo.idatributo.tipodato=='D' %} 
+                        render: function(data){
+                            console.log(data);
+                            var formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
+                            return formatted;
+                        }         
+                        {% elseif  atributo.idatributo.tipodato=='N' %} 
+                        render: function(data){
+                            return data;
+                        }         
+                        {% elseif  atributo.idatributo.tipodato=='E' %} 
+                        render: function(data){
+                            return data;
+                        }         
+                        {% elseif  atributo.idatributo.tipodato=='I' %} 
+                        render: function(data){
+                            if(data){
+                                var url = "{{asset('bundles/fratersoftpiaweb/fine-uploader/files/')}}" + data;
+                                return "<a href='"+url+"' target='_blank'><img id='imagen_foto' src='"+url+"'/></a>";
+                            }
+                            else{
+                                var url = "{{asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}";
+                                return "<img id='imagen_foto' src='"+url+"'/></a>";
+                            }
+                        }         
+                        {% else %}
+                        render: function(data){return data==null?"":data.toUpperCase();} 
+                        {% endif %}
+                    },            
+                    {% endfor %}
+                    { title: "Acciones", data:"id",render:
+                                function(data, type, row){
+                                    var urlshow="{{ path('inscrito_show', { 'id': '_id_' }) }}";
+                                    urlshow = urlshow.replace('_id_', data);
+                                    var urledit="{{ path('inscrito_edit', { 'id': '_id_' }) }}";
+                                    urledit = urledit.replace('_id_', data);
+                                    var html=
+                                        "<ul id='icons' class='ui-widget ui-helper-clearfix'>"
+                                        + "<a href='" + urlshow + "'>"
+                                        + "<li class='ui-state-default ui-corner-all' title='Ver'><span class='ui-icon ui-icon-search'></span></li>"
+                                        + "</a>"
+                                        + "<a href='" + urledit + "' >"
+                                        + "<li class='ui-state-default ui-corner-all' title='Editar'><span class='ui-icon ui-icon-pencil'></span></li>"
+                                        + "</a>"
+                                        + "<a href='' onclick='anular(" + data + "," + row.secuencia + ");return false;'>"
+                                        + "<li class='ui-state-default ui-corner-all' title='Anular'><span class='ui-icon ui-icon-closethick'></span></li>"
+                                        + "</a></ul>"                                            
+                                    return html;
+                                },
+                        "width": "98px","orderable": false
+                    }, 
+                ],             
+                buttons: [
+                    {extend: 'excelHtml5',
+                        text: 'Exportar',
+                        title: 'ListadoPreInscritos'
+                    }, 
+                    {extend: 'print',
+                        text: 'Imprimir'},
+                    {% if atributos[0].idevento.proceso==1 %}                    
+                    {text: 'Conciliar',
+                        action: function (e, dt, node, config) {
+                            var countelement = 0;
+                            var counttacr = 0;
+                            var separador;
+                            var rows = table.rows({selected: true}).data();
+                            if (rows.length > 0) {
+                                var id = new Object();
+                                $("#ids").html("");
+                                $("#tacr").html("");
+                                for (var i = 0; i < rows.length; i++) {
+                                    separador = (countelement == 0) ? "" : ",";
+                                    $("#ids").append(separador + rows[i].secuencia);
+                                    id[countelement] = rows[i].secuencia;
+                                    countelement++;
+                                }
+                                //Muestra u oculta el mensaje de TACR
+                                if(counttacr==0) $("#msgtacr").hide(); else $("#msgtacr").show();
+                                //Muestra u oculta el mensaje de secuencias a conciliar
+                                if(countelement==0) $("#msgconc").hide(); else $("#msgconc").show();
+                                if(countelement>0){
+                                    data_json = JSON.stringify(id);
+                                    $("#confirmacion").dialog("open");
+                                }
+                                else{
+                                    alert("Debe seleccionar por lo menos una pre-inscripcion distinta de TACR")
+                                }
+                            }
+                            else
+                                alert("Seleccione las pre-inscripciones que desea coinciliar");
+                        }},
+                    {% endif %}
+                ],
+                'scrollX': true,
+                'select': {
+                    style: 'os',    
+                    rows: "%d filas marcadas",
+                    selector: 'td:nth-child(1),td:nth-child(2),td:nth-child(3),td:nth-child(4),td:nth-child(5),td:nth-child(6),td:nth-child(7),td:nth-child(8),td:nth-child(9),td:nth-child(10)'
+                              
+                },
+                "language": {
+                    "emptyTable": "No hay datos para mostrar",
+                    "lengthMenu": "Muestra _MENU_ registros",
+                    "info": "Mostrando _START_ de _END_ de _TOTAL_ registros",
+                    "search": "Buscar:",
+                    "infoFiltered":   "(filtradas de _MAX_ registros)",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                    "select": {
+                        rows: "%d filas marcadas"
+                    },
+                },
+
+            });
+
+                //Muestra la ventana de confirmacion
+                $("#confirmacion").dialog({
+                    autoOpen: false,
+                    width: 400,
+                    modal:true,
+                    buttons: [
+                        {
+                            text: "SI",
+                            click: function () {
+                                url = "{{ path('pago_conciliar_lote', { 'data_json':'_data_json_','idevento':idevento}) }}";
+                                url = url.replace('_data_json_', data_json);
+                                //alert(data_json);
+                                window.open(url, "_self");
+                                $(this).dialog("close");
+                            }
+                        },
+                        {
+                            text: "NO",
+                            click: function () {
+                                $(this).dialog("close");
+                            }
+                        }
+                    ]
+                });
+        });
+        
+                $(function () {
+                    $("#tabs").tabs();
+                        //Redireccion a la pagina de los inscritos al hacer click en el tab
+                        $('#tabs a[href="#tabs-2"]').on("click", function () {
+                            $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
+                        });
+                        //Redireccion a la pagina de los anulados al hacer click en el tab
+                        $('#tabs a[href="#tabs-3"]').on("click", function () {
+                            $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
+                        });
+                        //Redireccion a la pagina de los operaciones TCD al hacer click en el tab
+                        $('#tabs a[href="#tabs-4"]').on("click", function () {
+                            $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
+                        });                        
+                        $('#tabs a[href="#tabs-5"]').on("click", function () {
+                            $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
+                        });                         
+                        //Muestra la ventana de dialogo
+                        $("#dialog").dialog({
+                            autoOpen: false,
+                            width: 400,
+                            buttons: [
+                                {
+                                    text: "SI",
+                                    click: function () {
+                                        url = "{{ path('inscrito_anular', { 'id':'_idinscrito_'}) }}";
+                                        url = url.replace('_idinscrito_', idinscrito);
+                                        window.open(url, "_self")
+                                        $(this).dialog("close");
+                                    }
+                                },
+                                {
+                                    text: "NO",
+                                    click: function () {
+                                        $(this).dialog("close");
+                                    }
+                                }
+                            ]
+                        });
+                    });
+    </script>           
+    {% endblock %}    
+{% block style %}
+<style type="text/css">
+    td,th{
+        font-size: 10px;
+    }
+    .ui-icon {
+        -ms-transform: scale(0.7); /* IE 9 */
+        -webkit-transform: scale(0.7); /* Chrome, Safari, Opera */
+        transform: scale(0.7);
+    }        
+    table.dataTable tbody th, table.dataTable tbody td{
+        padding: 1px;
+    } 
+    .dataTables_length,.dataTables_filter{
+        margin-top: 3px;
+    }
+    select{
+        width: 50px;
+    }
+    img#imagen_foto,img#imagen_archivo {
+        height: 16px;
+    }
+    #evento{
+        border: 1px solid #d8dcdf;
+        padding: 5px;
+        margin-bottom: 3px;
+        border-radius: 6px;
+        font-weight: bold;        
+    }
+</style>
+{% endblock %}     
+    {% block body -%}
+    <div id="evento">{{nombreevento}}</div>
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Pre-Inscritos</a></li>
+            <li><a href="#tabs-2">Inscritos</a></li>
+            <li><a href="#tabs-3">Anulados</a></li>
+            <li><a href="#tabs-4">Operaciones TDC</a></li>
+            <li><a href="#tabs-5">Estadisticas</a></li>            
+        </ul>
+        <div id="tabs-2"></div>
+        <div id="tabs-3"></div>  
+        <div id="tabs-4"></div>        
+        <div id="tabs-5"></div>    
+        <div id="tabs-1">
+            <table id="tablaPreInscritos" class="display row-border hover">
+            </table>        
+            <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+        </div>
+        <div id="dialog" title="Advertencia!!!">
+            <p>Esta seguro que desea anular inscripcion con la secuencia <b id="sec"></b> ?</p>
+        </div>
+        <div id="confirmacion" title="Advertencia!!!">
+            <p id="msgconc">Esta seguro que desea conciliar las siguiente secuencias de insripciones: <div id="ids"></div></p>
+            <p id="msgtacr">Las secuencias de las pre-inscripciones: <b id="tacr"></b> no seran conciliadas, ya que son tipo TACR (Tarjetas de Credito)</p>
+        </div>            
+    </div>
+    {% endblock %}

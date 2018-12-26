@@ -1,0 +1,50 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    {% for entity in entities %}
+        {% if(loop.index == 1) %}
+            <table class="records_list">
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Fecha y Hora</th>
+                        <th>Cierre</th>
+                        {% if(loop.length == 1) %}
+                            <th>Actions</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><img width="40" src="{{asset('bundles/fratersoftpiaweb/images/' ~ entity.idevento.logo)}}"/></td>                
+                        <td>{{ entity.idevento.nombre }}</td>
+                        <td>{% if entity.idevento.fecha %}{{ entity.idevento.fecha|date('Y-m-d H:i:s') }}{% endif %}</td>
+                        <td>{% if entity.idevento.fechacierre %}{{ entity.idevento.fechacierre|date('Y-m-d H:i:s') }}{% endif %}</td>
+                        {% if(loop.length == 1) %}
+                        <td>
+                            <a href="{{ path('inscrito_showcompetidor', { 'idevento': entity.idevento.id,'idpia': entity.idpia.id}) }}">
+                                Ver
+                            </a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                </tbody>
+            </table>
+        {% endif %}
+        {% if(loop.length != 1) %}
+            <table class="records_list" align="center" width="600px">
+                <tr>
+                    <td>{{ entity.idpia.iddocumento }}</td>
+                    <td  width="200px">{{ entity.idpia.nombre|upper }}</td>
+                    <td  width="200px">{{ entity.idpia.Apellido|upper }}</td>
+                    <td>
+                        <a href="{{ path('inscrito_showcompetidor', { 'idevento': entity.idevento.id,'idpia': entity.idpia.id}) }}">
+                            Ver
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

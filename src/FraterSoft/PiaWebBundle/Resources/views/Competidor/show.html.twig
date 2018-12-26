@@ -1,0 +1,92 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Competidor</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Iddocumento</th>
+                <td>{{ entity.iddocumento }}</td>
+            </tr>
+            <tr>
+                <th>Nombre</th>
+                <td>{{ entity.nombre }}</td>
+            </tr>
+            <tr>
+                <th>Apellido</th>
+                <td>{{ entity.apellido }}</td>
+            </tr>
+            <tr>
+                <th>Foto</th>
+                <td>{{ entity.foto }}</td>
+            </tr>
+            <tr>
+                <th>Fechanacimiento</th>
+                <td>{{ entity.fechanacimiento|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Sexo</th>
+                <td>{{ entity.sexo }}</td>
+            </tr>
+            <tr>
+                <th>Equipo</th>
+                <td>{{ entity.equipo }}</td>
+            </tr>
+            <tr>
+                <th>Edad</th>
+                <td>{{ entity.edad }}</td>
+            </tr>
+            <tr>
+                <th>Peso</th>
+                <td>{{ entity.peso }}</td>
+            </tr>
+            <tr>
+                <th>Condicion</th>
+                <td>{{ entity.condicion }}</td>
+            </tr>
+            <tr>
+                <th>Email</th>
+                <td>{{ entity.email }}</td>
+            </tr>
+            <tr>
+                <th>Telefono</th>
+                <td>{{ entity.telefono }}</td>
+            </tr>
+            <tr>
+                <th>Idestado</th>
+                <td>{{ entity.idestado }}</td>
+            </tr>
+            <tr>
+                <th>Idpais</th>
+                <td>{{ entity.idpais }}</td>
+            </tr>
+            <tr>
+                <th>Tallafranela</th>
+                <td>{{ entity.tallafranela }}</td>
+            </tr>
+            <tr>
+                <th>Certificado</th>
+                <td>{{ entity.certificado }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('competidor') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('competidor_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+{% endblock %}

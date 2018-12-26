@@ -1,0 +1,117 @@
+{% extends '::base.html.twig' %}
+{% if entity.idevento.tema is defined and entity.idevento.tema is not null %}{% set temastyle=entity.idevento.tema.styles %}{% endif %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+            $('#tablaReporte').DataTable({
+                dom: "t",
+                ordering: false,
+                pageLength: 30,
+                columns: [
+                    { title: "" },
+                    { title: "" },
+                ],       
+                "columnDefs": [ //centra el contenido de la columna
+                    {"className": "dt-right", "targets":0},
+                    {"className": "dt-left", "targets":1},
+                ],  
+            });
+            $("#tablaReporte").append("<caption><b>DATOS DE PRE-INSCRIPCI&Oacute;N</b></caption>");
+        });
+    </script>           
+{% endblock %} 
+{% block style %}
+<style type="text/css">
+    div.container
+    {     
+        width: 400px;
+        margin: auto;
+        text-align: center;
+    }    
+    #boton{
+        text-align: center;
+    }
+    #mensaje{
+        margin: auto;            
+        text-align: center;
+        font-size: 16px;
+        width: 400px
+    }    
+    img#imagen_foto,img#imagen_archivo {
+        height: 16px;
+    }      
+</style>
+{% endblock %} 
+{% block body -%}
+    <div class="container">
+    <table id="tablaReporte" class="display">
+        <tbody>          
+            <tr><th>Competencia</th><td>{{ entity.idcompetencia.descripcion }}</td></tr>
+            {%if entity.numero is not null%}<tr><th>Numero</th><td>{{ entity.numero }}</td></tr>{%endif%}
+            {% for atributo in atributos %}
+            {% for key, dato in entity.idpia %}
+            {%if atributo.idatributo.nombre|lower==key %}
+            {%if atributo.idatributo.tipodato=='D' %}
+            <tr><th>{% if atributo.etiqueta is null %}{{ key|title }}{% else %}{{atributo.etiqueta}}{% endif %}</th><td>{{ entity.idpia[atributo.idatributo.nombre|lower]['timestamp']|date('d-m-Y') }}</td></tr>
+            {%elseif atributo.idatributo.tipodato=='E' %}
+            <tr><th>{% if atributo.etiqueta is null %}{{ key|title }}{% else %}{{atributo.etiqueta}}{% endif %}</th><td>{{ entity.idpia.idestado.nombre }}</tr>
+            {%elseif atributo.idatributo.tipodato=='I' %}
+            <tr>
+                <th>{% if atributo.etiqueta is null %}{{ key|title }}{% else %}{{atributo.etiqueta}}{% endif %}</th>
+                {% if entity.idpia[atributo.idatributo.nombre|lower] %}
+                <td>
+                    <a href='{{asset('bundles/fratersoftpiaweb/fine-uploader/files/')~entity.idpia[atributo.idatributo.nombre|lower]}}' target='_blank'>
+                    <img id='imagen_{{atributo.idatributo.nombre|lower}}' src='{{asset('bundles/fratersoftpiaweb/fine-uploader/files/')~entity.idpia[atributo.idatributo.nombre|lower]}}'/></a>
+                </td>
+                {% else %}
+                <td>
+                    <img id='imagen_{{atributo.idatributo.nombre|lower}}' src='{{asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}'/></a>
+                </td>
+                {% endif %}
+            </tr>
+            {%elseif atributo.idatributo.tipodato=='F' %}
+            <tr>
+                <th>{% if atributo.etiqueta is null %}{{ key|title }}{% else %}{{atributo.etiqueta}}{% endif %}</th>
+                {% if entity.idpia[atributo.idatributo.nombre|lower] %}
+                <td>
+                    <a href='{{asset('bundles/fratersoftpiaweb/fine-uploader/files/')~entity.idpia[atributo.idatributo.nombre|lower]}}' target='_blank'>
+                    <img id='imagen_archivo' src='{{asset('bundles/fratersoftpiaweb/images/pdf-128.png')}}'/></a>
+                </td>
+                {% else %}
+                <td>
+                    <img id='imagen_archivo' src='{{asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}'/></a>
+                </td>
+                {% endif %}
+            </tr>
+            {%else%}
+            <tr><th>{% if atributo.etiqueta is null %}{{ key|title }}{% else %}{{atributo.etiqueta}}{% endif %}</th><td>{{ entity.idpia[atributo.idatributo.nombre|lower] }}</td></tr>
+            {%endif%}
+            {%endif%}
+            {%endfor%}                
+            {%endfor%}
+            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr> 
+            {% if entity.idevento.proceso == 1 %}
+            {% if entity.idpago is not null %}
+            <tr><th>Precio</th><td>{{ entity.precio }}</td></tr>  
+            <tr><th>Forma de Pago</th><td>{{ entity.idpago.tipo }}</td></tr>  
+            <tr><th>Banco</th><td>{{ entity.idpago.banco }}</td></tr>  
+            <tr><th>Referencia</th><td>{{ entity.idpago.referencia }}</td></tr>  
+            {%endif%}
+            {% endif %}
+            <tr><th>Fecha y Hora</th><td>{{ entity.fechahora.timestamp|date('d-m-Y H:i:s') }}</td></tr>                        
+        </tbody>
+    </table>
+    <div id='mensaje'>
+        {% if entity.idevento.proceso == 1 %}
+        <p>Su incripci&oacute;n ser&aacute; certificada una vez verifiquemos los datos del pago.</p>
+        {% endif %}
+    </div>               
+    <div id='boton'><p>
+    <a href="{{ app.request.server.get('HTTP_REFERER') }}">            
+        <button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+            Regresar
+        </button> 
+    </a></p>
+    </div>    
+    </div>
+{% endblock %}

@@ -1,0 +1,6 @@
+{{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}
+<script>
+var url=checklogin();    
+console.log(url);
+</script>
+Session en drupal:{%if user is defined %}{{user}}{% endif %}

@@ -1,0 +1,35 @@
+clubcompetidores:
+    pattern:  /
+    defaults: { _controller: "FraterSoftPiaWebBundle:ClubCompetidores:index" }
+
+clubcompetidores_show:
+    pattern:  /{id}/show
+    defaults: { _controller: "FraterSoftPiaWebBundle:ClubCompetidores:show" }
+
+clubcompetidores_new:
+    pattern:  /new/{estado}
+    defaults: { _controller: FraterSoftPiaWebBundle:ClubCompetidores:new,estado:null }
+    
+clubcompetidores_listaajax:
+    pattern:  /listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:ClubCompetidores:listaajax" }
+    
+
+clubcompetidores_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:ClubCompetidores:create" }
+    requirements: { _method: post }
+
+clubcompetidores_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:ClubCompetidores:edit" }
+
+clubcompetidores_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:ClubCompetidores:update" }
+    requirements: { _method: post|put }
+
+clubcompetidores_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:ClubCompetidores:delete" }
+    requirements: { _method: post|delete }

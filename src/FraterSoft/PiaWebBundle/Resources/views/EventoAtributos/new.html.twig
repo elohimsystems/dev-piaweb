@@ -1,0 +1,103 @@
+{% extends '::base.html.twig' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
+<style type="text/css">
+    #tabs{  /* Oculta el tabs para que se muestre luego de cargar todo el html */
+        display: none;
+    }
+    #formulario > div:nth-child(1){
+        display: none;
+    }
+</style>
+{% endblock %}  
+{% block body -%}
+    <div id="tabs">    
+        {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
+        <div id="tabs-2">     
+            {{ include("FraterSoftPiaWebBundle:Evento:menu_conf_inscripciones.html.twig") }}
+            <div id="titulotabla"><h3>Atributos Configurados</h3></div>
+            <table id="eventoatributos" class="display row-border hover">
+            </table>    
+        </div> 
+        <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistaeventos')}}');">Regresar</button>
+        <div id="dialogformGuardar" title="Crear atributo">
+            {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+            {{ form_end(form) }} 
+        </div>          
+        <div id="dialogelimiar" title="Advertencia!!!">
+            ¿Esta seguro que desea elimar el atributo <strong id="eliminar"></strong>?
+        </div> 
+        <div id="dialog-message" title="Mensaje">
+        </div>        
+    </div> 
+{% endblock %}
+{% block javascripts -%}
+{{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':idevento}) }}
+<script>
+    $(document).ready(function () { 
+        $("#tabs").css("display","block");            
+        $( "#botonera" ).controlgroup();          
+        
+        var mayor=1;
+        var orden;
+        function nextorden(){
+            var rows = table.rows().data();
+            for(i=0;i<rows.length;i++){
+                mayor=parseInt(rows[i][3])>=mayor?parseInt(rows[i][3])+1:mayor;
+            }
+            return mayor;
+        }
+        function reordenar(valor){
+            var rows = table.rows().data();
+            for(i=0;i<rows.length;i++){
+                rows[i][3]=4;
+            }
+            return 1;
+        }
+                
+        tablaDatos(
+                $('#formulario'), //Se usa para llenar lo campos del formulario
+                {{campos|json_encode|raw}}, //json con los atributos de la entidad y sus caracteristicas
+                'Atributo', //Usada para el titulo 
+                "{{ path('eventoatributos_create')}}", //Url para crear
+                "{{ path('eventoatributos_update',{'id':'_id_'})}}", //Url para editar
+                "{{ path('eventoatributos_listaajax',{'idevento': idevento }) }}", //Url para buscar los datos a listar
+                [{posicion:4, config:{title:"Atributo",data:"atributo"}}]
+        );
+        dialogGuardar($('#formulario'),{{campos|json_encode|raw}});
+        dialogEliminar('{{ path('eventoatributos_delete',{'id':'_id_'})}}');
+        dialogMensaje();
+ 
+        //Valida que no se ingrese un orden mayor al ultimo que existe
+        $("#{{form.orden.vars.id}}").blur(function () {
+            if($("#{{form.orden.vars.id}}").val()>mayor){
+                alert("No puede ingresar un orden mayor a " + (nextorden()-1));
+                $("#{{form.orden.vars.id}}").val(orden);
+                $("#{{form.orden.vars.id}}").focus();
+            }
+            else
+                reordenar($("#{{form.orden.vars.id}}").val());
+        });
+        
+        menuConfInscripcionesControl('eventoatributos');
+        
+        {% if estado is defined %}
+            {% if estado == 1 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>El Atrubuto fue ELIMINADO satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+            {% if estado == 2 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>El Atrubuto fue CREADO satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+            {% if estado == 3 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>El Atrubuto fue ACTUALIZADO satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+        {% endif %}        
+    });    
+</script>    
+{% endblock %}
