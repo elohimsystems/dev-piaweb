@@ -1359,15 +1359,22 @@ class InscritoController extends commonPIAClass {
      */
     public function estadisticasAction($idevento, $email) {
         $em = $this->getDoctrine()->getManager();
+        
+        //Busca los atributos del evento y los envia al formulario
+        $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')
+                ->atributosEvento($idevento);
+        if (!$atributos) {
+            return new response("No hay atributos configurados para este evento");
+        }            
 
-        $insxcomp = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorCompetencia($idevento);
+        /*$insxcomp = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorCompetencia($idevento);
         $insxstatus = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorEstatus($idevento);        
         $insxformapago = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorFormaPago($idevento);        
         $insxsexo = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorSexo($idevento);        
         $insxcategoria = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorCategoria($idevento);        
         $insxestado = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorEstado($idevento);     
         $insxprecio = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorPrecio($idevento);  
-        $insxfecha = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorFecha($idevento);  
+        $insxfecha = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorFecha($idevento);  */
 
         $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idevento);
         
@@ -1376,7 +1383,7 @@ class InscritoController extends commonPIAClass {
             $total+=$row['cantidad'];
         } 
         return $this->render('FraterSoftPiaWebBundle:Inscrito:estadisticas.html.twig', array(
-                    'insxcomp' => $insxcomp,
+                    /*'insxcomp' => $insxcomp,
                     'insxstatus' => $insxstatus,
                     'insxformapago' => $insxformapago,
                     'insxsexo' => $insxsexo,
@@ -1386,8 +1393,9 @@ class InscritoController extends commonPIAClass {
                     'insxfechahora' => $insxfecha,                    
                     'idevento' => $idevento,
                     'email' => $email,            
-                    'total' => $total,
-                    'nombreevento'=>$evento->getNombre()
+                    'total' => $total,*/
+                    'atributos'=>$atributos,
+                    'nombreevento'=>$evento->getNombre(),
         ));
     }    
 
