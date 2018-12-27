@@ -468,5 +468,26 @@ class InscritoRepository extends EntityRepository
                         . 'i.secuencia ASC'                    
             )
             ->getArrayResult();
+    }   
+    
+    public function estadisticas($idevento,$entity)
+    {
+        $em = $this->getEntityManager();
+        //Busca el tipo del atributo configurado por evento
+        //$ordenarpor=(is_null($ordenarpor))?"":"order by " . $ordenarpor;
+        //$clasificador=($clasificador!=null)?" and " . $clasificador:"";
+        $sql = "select piaaccess.".$entity." as valor, count(piaaccess.".$entity.") as cantidad from piaaccess.tminscritos "
+                . "inner join piaaccess.tmcompetidores on tmcompetidores.id = tminscritos.idpia "
+                . "inner join piaaccess.tmpagos on tmpagos.id = tminscritos.idpago "
+                . "left join piaaccess.tmcategorias on tmcategorias.id = tminscritos.idcategoria "
+                . "left join piaaccess.tmcompetencias on tmcompetencias.id = tminscritos.idcompetencia "
+                . "where tminscritos.idevento=" . $idevento . " and tmpagos.conciliado=true " //. $clasificador
+                . "group by piaaccess.".$entity
+                //. $ordenarpor
+                ;
+        $stmt = $em->getConnection()->prepare($sql);
+        $stmt->execute(); 
+        //print_r($stmt->fetchAll());
+        return $stmt->fetchAll();              
     }     
 }

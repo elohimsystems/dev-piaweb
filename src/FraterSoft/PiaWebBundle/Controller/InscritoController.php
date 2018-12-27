@@ -1379,9 +1379,9 @@ class InscritoController extends commonPIAClass {
         $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idevento);
         
         $total=0;
-        foreach($insxstatus as $row){
+        /*foreach($insxstatus as $row){
             $total+=$row['cantidad'];
-        } 
+        } */
         return $this->render('FraterSoftPiaWebBundle:Inscrito:estadisticas.html.twig', array(
                     /*'insxcomp' => $insxcomp,
                     'insxstatus' => $insxstatus,
@@ -1390,13 +1390,38 @@ class InscritoController extends commonPIAClass {
                     'insxcategoria' => $insxcategoria,
                     'insxestado' => $insxestado,
                     'insxprecio' => $insxprecio,                    
-                    'insxfechahora' => $insxfecha,                    
+                    'insxfechahora' => $insxfecha,                    */
                     'idevento' => $idevento,
                     'email' => $email,            
-                    'total' => $total,*/
+                    'total' => $total,
                     'atributos'=>$atributos,
                     'nombreevento'=>$evento->getNombre(),
         ));
+    }    
+    
+    public function estadisticasAjaxAction() {
+        $encoders = array(new XmlEncoder(), new JsonEncoder());
+        $normalizers = array(new GetSetMethodNormalizer());
+        $precioselect = new ArrayCollection();
+
+        $serializer = new Serializer($normalizers, $encoders);
+
+        $idevento = $this->get('request')->query->get('idevento');
+        $entity = $this->get('request')->query->get('entity');
+
+        $em = $this->getDoctrine()->getManager();
+        $estadisticas = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
+                ->estadisticas($idevento,$entity);
+        
+        $jsonContent = $serializer->serialize(array(
+            "recordsTotal"=> count($estadisticas),
+            "data"=>$estadisticas)
+                , 'json');
+        return new response($jsonContent);          
+        /*    $precioselect->add($precio);
+            $jsonContent = $serializer->serialize($precioselect, 'json');
+            return new response($jsonContent);
+        return new response(0);*/
     }    
 
     public function anulartdcnoconciliadosAction($idevento) {

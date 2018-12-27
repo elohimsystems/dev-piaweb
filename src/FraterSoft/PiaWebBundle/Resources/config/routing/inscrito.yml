@@ -110,7 +110,11 @@ inscrito_precio:
     
 inscrito_estadisticas:
     pattern:  /{idevento}/{email}/estadisticas
-    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:estadisticas" }       
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:estadisticas" }    
+    
+inscrito_estadisticasajax:
+    pattern:  /estadisticasajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:estadisticasajax" }     
 
 inscrito_anular_tdcnoconciliados:
     pattern:  /anulartdcnoconciliados/{idevento}
