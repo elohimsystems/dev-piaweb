@@ -6,6 +6,34 @@
 {% endblock %}
 {% block javascripts %}
     <script>
+//- Fincion Generica para generar las tablas -----------------------------------    
+        var arraydatos=[];
+        var data=[];
+        function GenerarTabla(nombretabla,caption,tcantidad,tporcentaje){
+            $(nombretabla).append("<tfoot><tr><th></th><th></th><th></th></tr></tfoot>");
+            $(nombretabla).DataTable({ 
+                dom: "t",
+                data: data,
+                "pageLength": 50,
+                columns: [
+                    { title: "Descripcion" },
+                    { title: "Cantidad" },
+                    //{ title: "%" },
+                ],
+                "columnDefs": [ //centra el contenido de la columna
+                  {"className": "dt-center", "targets": 1},
+                  {"className": "dt-right", "targets": 2}
+                ],
+                order: [[1,'DES']],
+                "footerCallback": function ( row, data, start, end, display ) {    
+                    var api = this.api();
+                    $(api.column( 0 ).footer()).html("TOTAL");
+                    $(api.column( 1 ).footer()).html(tcantidad);
+                    $(api.column( 2 ).footer()).html(tporcentaje);
+                }                
+            });
+            $(nombretabla).append("<caption><b>" + caption + "</b></caption>");
+        } 
         $(document).ready(function () {
             var arrayColors = [
                     'rgb(255, 159, 64)', //orange
@@ -16,32 +44,9 @@
                     'rgb(153, 102, 255)', //purple
                     'rgb(201, 203, 207)', //grey    
             ];            
-//- Fincion Generica para generar las tablas -----------------------------------                   
-            function GenerarTabla(nombretabla,caption,tcantidad,tporcentaje){
-                $(nombretabla).append("<tfoot><tr><th></th><th></th><th></th></tr></tfoot>");
-                $(nombretabla).DataTable({ 
-                    dom: "t",
-                    data: data,
-                    "pageLength": 50,
-                    columns: [
-                        { title: "Descripcion" },
-                        { title: "Cantidad" },
-                        { title: "%" },
-                    ],
-                    "columnDefs": [ //centra el contenido de la columna
-                      {"className": "dt-center", "targets": 1},
-                      {"className": "dt-right", "targets": 2}
-                    ],
-                    order: [[1,'DES']],
-                    "footerCallback": function ( row, data, start, end, display ) {    
-                        var api = this.api();
-                        $(api.column( 0 ).footer()).html("TOTAL");
-                        $(api.column( 1 ).footer()).html(tcantidad);
-                        $(api.column( 2 ).footer()).html(tporcentaje);
-                    }                
-                });
-                $(nombretabla).append("<caption><b>" + caption + "</b></caption>");
-            }           
+         
+            
+           
 
 
             $("#tabs").tabs();
@@ -63,8 +68,8 @@
             });   
             
             $("#select_atributos_opcion").change(function () {
-                var criterios = "idevento=" + {{ idevento }} + "&entity='" + $("#select_atributos_opcion").val()+"'";
-                console.log(criterios);
+                var criterios = "idevento=" + {{ idevento }} + "&entity=" + $("#select_atributos_opcion").val()+"";
+                
                 $.ajax({
                     type: "GET",
                     data: criterios,
@@ -72,12 +77,19 @@
                     dataType: "json",
                     success: function (datos)
                     {
-                        $.each(datos['values'][0]['values'], function (key, value) {
-                            if(value.precio!=-1){
-                            }
-                            else{
-                            }
-                        });             
+                        data=datos.data;
+                        GenerarTabla(
+                                '#tablaestadistica',
+                                'TITULO XXXXX',
+                                10,
+                                92.36
+                        );                         
+                        
+                        //$.each(datos['values'][0]['values'], function (key, value) {
+                        $.each(datos, function (key, value) {
+                            arraydatos.push([value.valor,value.cantidad]);
+                        });
+                        console.log(datos);
                     },
                     error: function (jqXHR, textStatus, errorThrown)
                     {
@@ -88,41 +100,11 @@
             });            
 
             $("#vergraficos").click(function(){
-                $("#grafInscritosGeneral").show();
-                $("#tablaInscritosGeneral").hide();
-                $("#grafInscritosPorCompetencia").show();
-                $("#tablaInscritosPorCompetencia").hide();
-                $("#grafInscritosPorFormasDePago").show();
-                $("#tablaInscritosPorFormasDePago").hide();
-                $("#grafInscritosPorSexo").show();
-                $("#tablaInscritosPorSexo").hide();                
-                $("#grafInscritosPorCategoria").show();
-                $("#tablaInscritosPorCategoria").hide();    
-                $("#grafInscritosPorEstado").show();
-                $("#tablaInscritosPorEstado").hide(); 
-                $("#grafInscritosPorPrecio").show();
-                $("#tablaInscritosPorPrecio").hide(); 
-                $("#grafInscritosPorFecha").show();
-                $("#tablaInscritosPorFecha").hide(); 
+
             });
 
             $("#vertablas").click(function(){
-                $("#tablaInscritosGeneral").show();
-                $("#grafInscritosGeneral").hide();
-                $("#tablaInscritosPorCompetencia").show();
-                $("#grafInscritosPorCompetencia").hide();
-                $("#tablaInscritosPorFormasDePago").show();
-                $("#grafInscritosPorFormasDePago").hide();
-                $("#tablaInscritosPorSexo").show();
-                $("#grafInscritosPorSexo").hide();                
-                $("#tablaInscritosPorCategoria").show();
-                $("#grafInscritosPorCategoria").hide();  
-                $("#tablaInscritosPorEstado").show();
-                $("#grafInscritosPorEstado").hide();  
-                $("#tablaInscritosPorPrecio").show();
-                $("#grafInscritosPorPrecio").hide();  
-                $("#tablaInscritosPorFecha").show();
-                $("#grafInscritosPorFecha").hide();  
+ 
             });            
 
 
@@ -170,7 +152,7 @@
                 Estadisticas por:  
                 <select id="select_atributos_opcion">
                 <option value="tminscritos.idcompetencia">Competencia</option>
-                <option value="tminscritos.idcategoria">Categoria</option>
+                <option value="tmcategorias.descripcion">Categoria</option>
                 <option value="tminscritos.fechahora">Inscritos por Dia</option>
                 <option value="tminscritos.fechahora">Inscritos por Mes</option>
                 <option value="tminscritos.punto">Punto</option>
@@ -188,7 +170,10 @@
                 <option value="tmpagos.moneda">Monneda</option>
                 <option value="tmpagos.conciliado">Conciliado</option>
                 </select>
-            </div>          
+            </div>
+            <div>
+                <table id="tablaestadistica" width=100% class="display" border="0"></table>
+            </div>
             <table id="tablaEstadisticas" width=100% class="display" border="0">
                 <tr>
                     <td align="center"><button id="vertablas">VER TABLAS</button></td>
