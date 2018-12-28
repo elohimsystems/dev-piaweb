@@ -3,17 +3,8 @@
     <script>
         $(document).ready(function () {
             //Configura la tabla de datos
-            var table = $('#tablaListaEventos').DataTable({
-                "dom": 'Bflit<"bottom"Blp>',  
-                "columns": [
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  null,
-                  { "width": "107px" }
-                ],                 
+            $('#listaEnProceso').DataTable({
+                "dom": 'Bflit<"bottom"Blp>',                
                 buttons: [                       
                     {text: 'Nuevo',
                         action : function(e) {
@@ -38,7 +29,34 @@
                     [3,"ASC"],[5,"DES"]
                 ]
             });
-        });
+            $('#listaEjecutados').DataTable({
+                "dom": 'Bflit<"bottom"Blp>',                  
+                buttons: [                       
+                    {text: 'Nuevo',
+                        action : function(e) {
+                            alert("Crear evento");
+                        }
+                    },                 
+                ],
+                "language": {
+                    "emptyTable": "No hay datos para mostrar",
+                    "lengthMenu": "Muestra _MENU_ registros",
+                    "info": "Mostrando _START_ de _END_ de _TOTAL_ registros",
+                    "search": "Buscar:",
+                    "infoFiltered":   "(filtradas de _MAX_ registros)",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Ultimo",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    },
+                },
+                order: [
+                    [3,"ASC"],[5,"DES"]
+                ]
+            });
+
+    });
     </script>   
 {% endblock %}    
 {% block style %}
@@ -64,69 +82,140 @@
 {% endblock %} 
 {% block body -%}
     <h1>Lista de Eventos</h1>
-    <table id="tablaListaEventos" class="display row-border hover compact">
-        <thead>
-            <tr>
-                <th>Logo</th>
-                <th>Nombre</th>
-                <th>Apertura</th>
-                <th>Cierre</th>
-                <th>Cupos</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for entity in entities %}
-            <tr>
-                <td>
-                    {#<img width="32" src="{{ asset('bundles/fratersoftpiaweb/images/') ~ entity.logo }}">#}
-                    {% if entity.logo is null %}
-                    <img width="32" src="{{ asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}">
-                    {% else %}
-                    <img width="32" src="{{asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ entity.logo}}">
-                    {% endif %}
-                </td>
-                <td>{{ entity.nombre }}</td>
-                <td>{% if entity.fecha %}{{ entity.fecha|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{% if entity.fechacierre %}{{ entity.fechacierre|date('Y-m-d H:i:s') }}{% endif %}</td>
-                <td>{{ entity.cupomaximo }}</td>
-                <td>
-                    {% if entity.activo == 1%}
-                        {% if email=='admin'%}
-                            <span class="ui-icon ui-icon-play" title="Estus: Activo. Pulse para Detener"></span>
-                        {% else %}
-                            <span class="ui-icon ui-icon-play" title="Estus: Activo. Pulse para Detener"></span>
-                        {% endif %}
-                    {% else %}
-                        {% if email=='admin'%}                                
-                            <span class="ui-icon ui-icon-stop" title="Estus: Detenido. Pulse para Activar"></span>
-                        {% else %}
-                            <span class="ui-icon ui-icon-stop" title="Estus: Detenido. Pulse para Activar"></span>
-                        {% endif %}                                    
-                    {% endif %}           
-                </td>
-                <td>
-                <ul id="icons" class="ui-widget ui-helper-clearfix">                 
-                    <li class="ui-state-default ui-corner-all" title="Ver">
-                        <a href="{{ path('evento_show', { 'id': entity.id, 'email': email }) }}"><span class="ui-icon ui-icon-search"></span></a>
-                    </li>
-                    <li class="ui-state-default ui-corner-all {% if email=='admina'%} ui-state-disabled {% endif %}" title="Editar" >
-                        {% if email != 'admina'%}
-                        <a href="{{ path('evento_edit', { 'id': entity.id }) }}"><span class="ui-icon ui-icon-pencil"></span></a>
-                        {% else %}
-                        <span class="ui-icon ui-icon-pencil "></span>
-                        {% endif %}
-                    </li>
-                    <li class="ui-state-default ui-corner-all" title="Panel">
-                        <a href="{{ path('inscrito_lista_preinscritos', { 'idevento': entity.id,'email':email }) }}"><span class="ui-icon ui-icon-gear"></span></a>
-                    </li>
-                </ul>
-                </td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div id="tabs">
+      <ul>
+        <li><a href="#tabs-1">En Proceso</a></li>
+        <li><a href="#tabs-2">Ejecutados</a></li>
+      </ul>
+        <div id="tabs-1">
+            <table id="listaEnProceso" class="display row-border hover compact">
+                <thead>
+                    <tr>
+                        <th>Logo</th>
+                        <th>Nombre</th>
+                        <th>Realizacion</th>
+                        <th>Cierre</th>
+                        <th>Cupos</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for entity in entities %}
+                    <tr>
+                        <td>
+                            {% if entity.logo is null %}
+                            <img width="32" src="{{ asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}">
+                            {% else %}
+                            <img width="32" src="{{asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ entity.logo}}">
+                            {% endif %}
+                        </td>
+                        <td>{{ entity.nombre }}</td>
+                        <td>{% if entity.fecha %}{{ entity.fecha|date('Y-m-d H:i:s') }}{% endif %}</td>
+                        <td>{% if entity.fechacierre %}{{ entity.fechacierre|date('Y-m-d H:i:s') }}{% endif %}</td>
+                        <td>{{ entity.cupomaximo }}</td>
+                        <td>
+                            {% if entity.activo == 1%}
+                                {% if email=='admin'%}
+                                    <span class="ui-icon ui-icon-play" title="Estus: Activo. Pulse para Detener"></span>
+                                {% else %}
+                                    <span class="ui-icon ui-icon-play" title="Estus: Activo. Pulse para Detener"></span>
+                                {% endif %}
+                            {% else %}
+                                {% if email=='admin'%}                                
+                                    <span class="ui-icon ui-icon-stop" title="Estus: Detenido. Pulse para Activar"></span>
+                                {% else %}
+                                    <span class="ui-icon ui-icon-stop" title="Estus: Detenido. Pulse para Activar"></span>
+                                {% endif %}                                    
+                            {% endif %}           
+                        </td>
+                        <td>
+                        <ul id="icons" class="ui-widget ui-helper-clearfix">                 
+                            <li class="ui-state-default ui-corner-all" title="Ver">
+                                <a href="{{ path('evento_show', { 'id': entity.id, 'email': email }) }}"><span class="ui-icon ui-icon-search"></span></a>
+                            </li>
+                            <li class="ui-state-default ui-corner-all {% if email=='admina'%} ui-state-disabled {% endif %}" title="Editar" >
+                                {% if email != 'admina'%}
+                                <a href="{{ path('evento_edit', { 'id': entity.id }) }}"><span class="ui-icon ui-icon-pencil"></span></a>
+                                {% else %}
+                                <span class="ui-icon ui-icon-pencil "></span>
+                                {% endif %}
+                            </li>
+                            <li class="ui-state-default ui-corner-all" title="Panel">
+                                <a href="{{ path('inscrito_lista_preinscritos', { 'idevento': entity.id,'email':email }) }}"><span class="ui-icon ui-icon-gear"></span></a>
+                            </li>
+                        </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="tabs-2">
+          <table id="listaEjecutados" class="display row-border hover compact">
+                <thead>
+                    <tr>
+                        <th>Logo</th>
+                        <th>Nombre</th>
+                        <th>Realizacion</th>
+                        <th>Cierre</th>
+                        <th>Cupos</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for entity in ejecutados %}
+                    <tr>
+                        <td>
+                            {% if entity.logo is null %}
+                            <img width="32" src="{{ asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}">
+                            {% else %}
+                            <img width="32" src="{{asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ entity.logo}}">
+                            {% endif %}
+                        </td>
+                        <td>{{ entity.nombre }}</td>
+                        <td>{% if entity.fecha %}{{ entity.fecha|date('Y-m-d H:i:s') }}{% endif %}</td>
+                        <td>{% if entity.fechacierre %}{{ entity.fechacierre|date('Y-m-d H:i:s') }}{% endif %}</td>
+                        <td>{{ entity.cupomaximo }}</td>
+                        <td>
+                            {% if entity.activo == 1%}
+                                {% if email=='admin'%}
+                                    <span class="ui-icon ui-icon-play" title="Estus: Activo. Pulse para Detener"></span>
+                                {% else %}
+                                    <span class="ui-icon ui-icon-play" title="Estus: Activo. Pulse para Detener"></span>
+                                {% endif %}
+                            {% else %}
+                                {% if email=='admin'%}                                
+                                    <span class="ui-icon ui-icon-stop" title="Estus: Detenido. Pulse para Activar"></span>
+                                {% else %}
+                                    <span class="ui-icon ui-icon-stop" title="Estus: Detenido. Pulse para Activar"></span>
+                                {% endif %}                                    
+                            {% endif %}           
+                        </td>
+                        <td>
+                        <ul id="icons" class="ui-widget ui-helper-clearfix">                 
+                            <li class="ui-state-default ui-corner-all" title="Ver">
+                                <a href="{{ path('evento_show', { 'id': entity.id, 'email': email }) }}"><span class="ui-icon ui-icon-search"></span></a>
+                            </li>
+                            <li class="ui-state-default ui-corner-all {% if email!='admin'%} ui-state-disabled {% endif %}" title="Editar" >
+                                {% if email != 'admin'%}
+                                <a href="{{ path('evento_edit', { 'id': entity.id }) }}"><span class="ui-icon ui-icon-pencil"></span></a>
+                                {% else %}
+                                <span class="ui-icon ui-icon-pencil "></span>
+                                {% endif %}
+                            </li>
+                            <li class="ui-state-default ui-corner-all" title="Panel">
+                                <a href="{{ path('inscrito_lista_preinscritos', { 'idevento': entity.id,'email':email }) }}"><span class="ui-icon ui-icon-gear"></span></a>
+                            </li>
+                        </ul>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>                
+    </div>    
 
     {% endblock %}
 

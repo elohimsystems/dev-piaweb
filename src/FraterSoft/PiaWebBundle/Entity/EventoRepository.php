@@ -43,5 +43,28 @@ class EventoRepository extends EntityRepository
 where ev.id=' . $idevento . ')'
             )
             ->getResult()[0][1];
-    }     
+    }    
+    
+    public function enproceso($email)
+    {
+        $currentdate = new \Datetime("now");   
+        $sql='';
+        if($email=='admin')
+            $sql='SELECT e FROM FraterSoftPiaWebBundle:Evento e WHERE e.fecha >= \'' . $currentdate->format('Y-m-d H:i:s') . '\'';
+        else
+            $sql='SELECT e FROM FraterSoftPiaWebBundle:Evento e WHERE e.fecha >= \'' . $currentdate->format('Y-m-d H:i:s') . '\' and e.emailcontacto =\'' . $email . '\'';
+        return $this->getEntityManager()->createQuery($sql)->getResult();
+    } 
+
+    public function ejecutados($email)
+    {
+        $currentdate = new \Datetime("now");   
+        $sql='';
+        if($email=='admin')
+            $sql='SELECT e FROM FraterSoftPiaWebBundle:Evento e WHERE e.fecha < \'' . $currentdate->format('Y-m-d H:i:s') . '\'';
+        else
+            $sql='SELECT e FROM FraterSoftPiaWebBundle:Evento e WHERE e.fecha < \'' . $currentdate->format('Y-m-d H:i:s') . '\' and e.emailcontacto =\'' . $email . '\'';
+        return $this->getEntityManager()->createQuery($sql)->getResult();
+    } 
+    
 }
