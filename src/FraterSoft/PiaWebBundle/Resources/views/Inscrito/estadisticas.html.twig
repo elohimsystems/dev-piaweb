@@ -9,16 +9,20 @@
 //- Fincion Generica para generar las tablas -----------------------------------    
         var arraydatos=[];
         var data=[];
-        function GenerarTabla(nombretabla,caption,tcantidad,tporcentaje){
+        var total=[];
+        var datosgrafico=[];
+        var etiquetasgrafico=[];
+        function GenerarTabla(nombretabla,caption,tcantidad,tporcentaje){            
             $(nombretabla).append("<tfoot><tr><th></th><th></th><th></th></tr></tfoot>");
             $(nombretabla).DataTable({ 
-                dom: "t",
+                dom: "itp",
                 data: data,
+                retrieve: true,
                 "pageLength": 50,
                 columns: [
                     { title: "Descripcion" },
                     { title: "Cantidad" },
-                    //{ title: "%" },
+                    { title: "%" },
                 ],
                 "columnDefs": [ //centra el contenido de la columna
                   {"className": "dt-center", "targets": 1},
@@ -29,11 +33,44 @@
                     var api = this.api();
                     $(api.column( 0 ).footer()).html("TOTAL");
                     $(api.column( 1 ).footer()).html(tcantidad);
-                    $(api.column( 2 ).footer()).html(tporcentaje);
+                    $(api.column( 2 ).footer()).html(tporcentaje.toFixed(2));
                 }                
             });
-            $(nombretabla).append("<caption><b>" + caption + "</b></caption>");
+            if($("#tablaestadistica > caption").length==0)
+                $(nombretabla).append("<caption><b>" + caption + "</b></caption>");
         } 
+        function Graficar(titulo){
+            var config = {
+                type: 'pie',
+                data: {
+                    datasets: [{
+                        data: datosgrafico,
+                        backgroundColor: [
+                            window.chartColors.orange,
+                            window.chartColors.green,
+                            window.chartColors.blue,                            
+                        ],
+                    }],
+                    labels: etiquetasgrafico
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 10,
+                        }                        
+                    },
+                    title: {
+                        display: true,
+                        text: titulo
+                    }                    
+                }
+            };
+            var ctx = document.getElementById("grafico").getContext("2d");
+            window.myPie = new Chart(ctx, config);
+        }
         $(document).ready(function () {
             var arrayColors = [
                     'rgb(255, 159, 64)', //orange
@@ -44,10 +81,6 @@
                     'rgb(153, 102, 255)', //purple
                     'rgb(201, 203, 207)', //grey    
             ];            
-         
-            
-           
-
 
             $("#tabs").tabs();
             $('#tabs a[href="#tabs-5"]').click();            
@@ -77,19 +110,23 @@
                     dataType: "json",
                     success: function (datos)
                     {
-                        data=datos.data;
-                        GenerarTabla(
-                                '#tablaestadistica',
-                                'TITULO XXXXX',
-                                10,
-                                92.36
-                        );                         
-                        
-                        //$.each(datos['values'][0]['values'], function (key, value) {
-                        $.each(datos, function (key, value) {
-                            arraydatos.push([value.valor,value.cantidad]);
+                        var totalporcentaje=0;
+                        var porcentaje=0;
+                        $.each(datos.data, function (key, value) {
+                            porcentaje=(value.cantidad/datos.sumaCantidad)*100;
+                            arraydatos.push([value.valor,value.cantidad,porcentaje.toFixed(2)]);
+                            totalporcentaje+=porcentaje;
+                            datosgrafico.push(porcentaje.toFixed(2));
+                            etiquetasgrafico.push(value.valor);
                         });
-                        console.log(datos);
+                        data=arraydatos;
+                        GenerarTabla(
+                            '#tablaestadistica',
+                            'Estadisticas por ' + $("#select_atributos_opcion option:selected").text(),
+                            datos.sumaCantidad,
+                            totalporcentaje
+                        );
+                        Graficar('Estadisticas por ' + $("#select_atributos_opcion option:selected").text());
                     },
                     error: function (jqXHR, textStatus, errorThrown)
                     {
@@ -174,106 +211,11 @@
             <div>
                 <table id="tablaestadistica" width=100% class="display" border="0"></table>
             </div>
-            <table id="tablaEstadisticas" width=100% class="display" border="0">
-                <tr>
-                    <td align="center"><button id="vertablas">VER TABLAS</button></td>
-                    <td align="center"><button id="vergraficos">VER GRAFICOS</button></td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="containerInscritosGeneral">
-                            <table id="tablaInscritosGeneral" class="display"></table> 
-                        </div>                                    
-                    </td>
-                    <td>
-                        <div class="containerInscritosPorCompetencia">
-                            <table id="tablaInscritosPorCompetencia" class="display"></table>   
-                        </div>                                    
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="containerInscritosPorFormaDePago">
-                            <table id="tablaInscritosPorFormasDePago" class="display"></table>   
-                        </div>
-                    </td>
-                    <td>
-                        <div class="containerInscritosPorSexo">
-                            <table id="tablaInscritosPorSexo" class="display"></table>   
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="containerInscritosPorCategoria">
-                            <table id="tablaInscritosPorCategoria" class="display"></table>   
-                        </div>
-                    </td>
-                    <td>
-                        <div class="containerInscritosPorEstado">
-                            <table id="tablaInscritosPorEstado" class="display"></table>   
-                        </div>
-                        <div class="containerInscritosPorPrecio">
-                            <table id="tablaInscritosPorPrecio" class="display"></table>   
-                        </div>                    
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="containerInscritosPorFecha">
-                            <table id="tablaInscritosPorFecha" class="display"></table>   
-                        </div>
-                    </td>
-                    <td>
-                    </td>
-                </tr>
-            </table> 
-            <table id="graficos" width=100% class="display" border="0">
-                <tr>
-                    <td align="center">
-                        <div id="canvas-holder" style="width:50%">
-                            <canvas id="grafInscritosGeneral" />
-                        </div>                                                      
-                    </td>
-                    <td align="center">
-                        <div id="canvas-holder" style="width:50%">
-                            <canvas id="grafInscritosPorCompetencia" />
-                        </div>                                                             
-                    </td>
-                </tr>
-                <tr>
-                    <td align="center">
-                        <div id="canvas-holder" style="width:50%">
-                            <canvas id="grafInscritosPorFormasDePago" />
-                        </div>                         
-                    </td>
-                    <td align="center">
-                        <div id="canvas-holder" style="width:50%">
-                            <canvas id="grafInscritosPorSexo" />
-                        </div>                           
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="center">
-                        <div id="canvas-holder" style="width:90%">
-                            <canvas id="grafInscritosPorCategoria" />
-                        </div>                         
-                        <div id="canvas-holder" style="width:90%">
-                            <canvas id="grafInscritosPorEstado" />
-                        </div>                         
-                        <div id="canvas-holder" style="width:90%">
-                            <canvas id="grafInscritosPorPrecio" />
-                        </div>                         
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2" align="center">
-                        <div id="canvas-holder" style="width:90%">
-                            <canvas id="grafInscritosPorFecha" />
-                        </div>                         
-                    </td>
-                </tr>
-            </table> 
+            <div>
+                <div id="canvas-holder" style="width:50%">
+                    <canvas id="grafico" />
+                </div> 
+            </div>
         </div>     
         <p align="center">
             <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>

@@ -1413,15 +1413,17 @@ class InscritoController extends commonPIAClass {
         $estadisticas = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
                 ->estadisticas($idevento,$entity);
         
+        $sumaCantidad=0;
+        foreach($estadisticas as $estadistica){
+            $sumaCantidad+=$estadistica['cantidad'];
+        }
+        
         $jsonContent = $serializer->serialize(array(
             "recordsTotal"=> count($estadisticas),
+            "sumaCantidad"=>$sumaCantidad,
             "data"=>$estadisticas)
                 , 'json');
         return new response($jsonContent);          
-        /*    $precioselect->add($precio);
-            $jsonContent = $serializer->serialize($precioselect, 'json');
-            return new response($jsonContent);
-        return new response(0);*/
     }    
 
     public function anulartdcnoconciliadosAction($idevento) {
