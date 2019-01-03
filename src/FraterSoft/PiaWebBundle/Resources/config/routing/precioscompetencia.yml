@@ -1,0 +1,30 @@
+precioscompetencia:
+    pattern:  /
+    defaults: { _controller: "FraterSoftPiaWebBundle:Precioscompetencia:index" }
+
+precioscompetencia_listaajax:
+    pattern:  /{idevento}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Precioscompetencia:listaajax" }
+
+precioscompetencia_new:
+    pattern:  /new/{idevento}/{estado}
+    defaults: { _controller: FraterSoftPiaWebBundle:Precioscompetencia:new,estado:null }
+
+precioscompetencia_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Precioscompetencia:create" }
+    requirements: { _method: post }
+
+precioscompetencia_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Precioscompetencia:edit" }
+
+precioscompetencia_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Precioscompetencia:update" }
+    requirements: { _method: post|put }
+
+precioscompetencia_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Precioscompetencia:delete" }
+    requirements: { _method: post|delete }

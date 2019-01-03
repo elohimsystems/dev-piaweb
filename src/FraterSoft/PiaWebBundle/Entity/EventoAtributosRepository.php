@@ -32,7 +32,7 @@ class EventoAtributosRepository extends EntityRepository
     {
         $query = $this->getEntityManager()
             ->createQuery(
-                'SELECT ea.id,a.id as idatributo,e.id as idevento,ea.orden,a.nombre as atributo,ea.etiqueta,ea.requerido,ea.criterio,ea.busqueda,ea.mascara '
+                'SELECT ea.id,a.id as idatributo,e.id as idevento,ea.orden,a.nombre as atributo,ea.etiqueta,ea.requerido,ea.criterio,ea.busqueda,ea.mascara,ea.estadistica '
                     . 'FROM FraterSoftPiaWebBundle:EventoAtributos ea ' 
                     . 'JOIN ea.idatributo a '                  
                     . 'JOIN ea.idevento e '                  
@@ -51,5 +51,18 @@ class EventoAtributosRepository extends EntityRepository
             );
          return $query->getResult();
     }          
+
+    public function atributosEstadistica($idevento)
+    {
+        $query = $this->getEntityManager()
+            ->createQuery(
+                'SELECT ea,a FROM FraterSoftPiaWebBundle:EventoAtributos ea ' 
+                    . 'JOIN ea.idatributo a '
+                    . 'WHERE ea.idevento =' . $idevento . ' and ea.estadistica = true'
+                    . ' Order by ea.orden'
+            );
+         return $query->getResult();
+    }          
+    
     
 }
