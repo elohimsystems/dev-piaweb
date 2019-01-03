@@ -542,12 +542,25 @@
             $(location).attr('href', '{{ path('formaspagoevento_new',{'idevento':idevento}) }}');
         });	      
         $( "#boton_preciosevento" ).click(function() {
-            $(location).attr('href', '{{ path('preciosevento_new',{'idevento':idevento}) }}');
+            
         });	      
-        $("#select_precios-button > span.ui-selectmenu-text").bind('DOMSubtreeModified',function() {
-            //alert($("#select_precios-button > span.ui-selectmenu-text").html());
-            alert("hola");
-        });
+        $( "#select_precios" ).selectmenu({
+            classes: {
+                "select_precios-button": "ui-button-icon-only demo-splitbutton-select"
+            },
+            change: function(){
+                switch(this.value){
+                    case "peve":
+                        $(location).attr('href', '{{ path('preciosevento_new',{'idevento':idevento}) }}');                        
+                        break;
+                    case "pcom":
+                        $(location).attr('href', '{{ path('precioscompetencia_new',{'idevento':idevento}) }}');                        
+                        break;
+                    case "pcat":
+                        break;
+                }  
+            }
+        }); 
         $( "#select_precios" ).click(function() {
             switch($( "#select_precios-button" ).val()){
                 case "peve":

@@ -92,27 +92,17 @@ class PrecioscompetenciaController extends commonPIAClass
         $entity = new Precioscompetencia();
         $form   = $this->createCreateForm($entity);
 
-        $em = $this->getDoctrine()->getManager();        
-        
-        //llena el Select con el evento y Oculta el control
-        $form
-            ->add('idevento','entity',array(
-                'class' => 'FraterSoftPiaWebBundle:Evento',
-                'query_builder' => function (EntityRepository $er) use ( $idevento ) {
-                    return $er->createQueryBuilder('e')
-                            ->where('e.id=:idevento')
-                            ->setParameter('idevento',$idevento);
-                },))
-            ;                   
+        $em = $this->getDoctrine()->getManager();                   
                 
-                
+        $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')->findBy(array('idevento'=>$idevento));                
         
         return $this->render('FraterSoftPiaWebBundle:Precioscompetencia:new.html.twig', array(
             'entity' => $entity,
             'form'   => $form->createView(),
             'idevento' => $idevento,
             'campos' => $this->getCampos($em,'Precioscompetencia'),            
-            'estado' => $estado,            
+            'estado' => $estado, 
+            'competencias' => $competencias,
         ));
     }
     
@@ -170,7 +160,7 @@ class PrecioscompetenciaController extends commonPIAClass
             $em->flush();
             
             return $this->redirect($this->generateUrl('precioscompetencia_new', array(
-                'idevento' => $entity->getIdevento()->getId(),
+                'idevento' => $entity->getIdcompetencia()->getIdevento()->getId(),
                 'estado' => 3
             )));            
         }
