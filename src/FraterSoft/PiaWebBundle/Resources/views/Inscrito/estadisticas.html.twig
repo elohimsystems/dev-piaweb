@@ -12,9 +12,23 @@
         var total=[];
         var datosgrafico=[];
         var etiquetasgrafico=[];
+        var table;
+        var arrayColors = [
+                'rgb(255, 159, 64)', //orange
+                'rgb(54, 162, 235)', //blue
+                'rgb(255, 99, 132)', //red
+                'rgb(255, 205, 86)', //yellow
+                'rgb(75, 192, 192)', //green
+                'rgb(153, 102, 255)', //purple
+                'rgb(201, 203, 207)', //grey    
+        ];            
+        
         function GenerarTabla(nombretabla,caption,tcantidad,tporcentaje){            
-            $(nombretabla).append("<tfoot><tr><th></th><th></th><th></th></tr></tfoot>");
-            $(nombretabla).DataTable({ 
+            if($(nombretabla + " > tfoot").length==0)
+                $(nombretabla).append("<tfoot><tr><th></th><th></th><th></th></tr></tfoot>");
+            if(table!=null)
+                table.destroy();
+            table = $(nombretabla).DataTable({ 
                 dom: "itp",
                 data: data,
                 retrieve: true,
@@ -36,20 +50,25 @@
                     $(api.column( 2 ).footer()).html(tporcentaje.toFixed(2));
                 }                
             });
-            if($("#tablaestadistica > caption").length==0)
+            if($(nombretabla + " > caption").length==0)
                 $(nombretabla).append("<caption><b>" + caption + "</b></caption>");
         } 
-        function Graficar(titulo){
-            var config = {
-                type: 'pie',
+        function Graficar(){
+            var tipochart;
+            var config = {};
+            var backgroudColors=[];
+            tipochart=(datosgrafico.length>5)?'bar':'pie';
+            for(var i=0;i<datosgrafico.length;i++){
+                backgroudColors.push(arrayColors[i]);            
+                if(tipochart=='bar')
+                    break;
+            }
+            config = {
+                type: tipochart,
                 data: {
                     datasets: [{
                         data: datosgrafico,
-                        backgroundColor: [
-                            window.chartColors.orange,
-                            window.chartColors.green,
-                            window.chartColors.blue,                            
-                        ],
+                        backgroundColor: backgroudColors,
                     }],
                     labels: etiquetasgrafico
                 },
@@ -61,27 +80,16 @@
                         labels: {
                             boxWidth: 10,
                         }                        
-                    },
-                    title: {
-                        display: true,
-                        text: titulo
-                    }                    
+                    },                    
                 }
             };
+            $("#canvas-holder").empty();
+            $("#canvas-holder").html("<canvas id='grafico'/>");
+            $("#canvas-holder").attr("style",(datosgrafico.length>5)?"width:80%":"width:50%");
             var ctx = document.getElementById("grafico").getContext("2d");
             window.myPie = new Chart(ctx, config);
         }
         $(document).ready(function () {
-            var arrayColors = [
-                    'rgb(255, 159, 64)', //orange
-                    'rgb(54, 162, 235)', //blue
-                    'rgb(255, 99, 132)', //red
-                    'rgb(255, 205, 86)', //yellow
-                    'rgb(75, 192, 192)', //green
-                    'rgb(153, 102, 255)', //purple
-                    'rgb(201, 203, 207)', //grey    
-            ];            
-
             $("#tabs").tabs();
             $('#tabs a[href="#tabs-5"]').click();            
             //Redireccion a la pagina de los inscritos al hacer click en el tab
@@ -112,6 +120,9 @@
                     {
                         var totalporcentaje=0;
                         var porcentaje=0;
+                        datosgrafico=[];
+                        etiquetasgrafico=[];
+                        arraydatos=[];
                         $.each(datos.data, function (key, value) {
                             porcentaje=(value.cantidad/datos.sumaCantidad)*100;
                             arraydatos.push([value.valor,value.cantidad,porcentaje.toFixed(2)]);
@@ -119,6 +130,7 @@
                             datosgrafico.push(porcentaje.toFixed(2));
                             etiquetasgrafico.push(value.valor);
                         });
+                        console.log(etiquetasgrafico);
                         data=arraydatos;
                         GenerarTabla(
                             '#tablaestadistica',
@@ -126,7 +138,8 @@
                             datos.sumaCantidad,
                             totalporcentaje
                         );
-                        Graficar('Estadisticas por ' + $("#select_atributos_opcion option:selected").text());
+                        Graficar();
+                        alert("Procesado");
                     },
                     error: function (jqXHR, textStatus, errorThrown)
                     {
@@ -135,32 +148,18 @@
                 });
 
             });            
-
-            $("#vergraficos").click(function(){
-
-            });
-
-            $("#vertablas").click(function(){
- 
-            });            
-
-
         });
     </script>           
     {% endblock %}    
 {% block style %}
 <style type="text/css">
-    div.containerInscritosGeneral, 
-    div.containerInscritosPorCompetencia,
-    div.containerInscritosPorFormaDePago,
-    div.containerInscritosPorSexo,
-    div.containerInscritosPorCategoria,
-    div.containerInscritosPorEstado,
-    div.containerInscritosPorPrecio
-    {     
-        width: 90%;
-        margin: 10px;
+    #seccionTabla{     
+        width: 70%;
+        margin: auto;
     }    
+    #canvas-holder{
+        margin: auto;
+    }
     #evento{
         border: 1px solid #d8dcdf;
         padding: 5px;
@@ -208,12 +207,12 @@
                 <option value="tmpagos.conciliado">Conciliado</option>
                 </select>
             </div>
-            <div>
-                <table id="tablaestadistica" width=100% class="display" border="0"></table>
+            <div id="seccionTabla">
+                <table id="tablaestadistica" class="display" border="0"></table>
             </div>
-            <div>
-                <div id="canvas-holder" style="width:50%">
-                    <canvas id="grafico" />
+            <div id="seccionGrafico">
+                <div id="canvas-holder" style="width:70%">
+                    <canvas id="grafico"/>
                 </div> 
             </div>
         </div>     

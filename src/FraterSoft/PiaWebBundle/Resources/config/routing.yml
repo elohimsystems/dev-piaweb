@@ -68,6 +68,10 @@ FraterSoftPiaWebBundle_evento:
 FraterSoftPiaWebBundle_preciosevento:
     resource: "@FraterSoftPiaWebBundle/Resources/config/routing/preciosevento.yml"
     prefix:   /preciosevento    
+
+FraterSoftPiaWebBundle_precioscompetencia:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/precioscompetencia.yml"
+    prefix:   /precioscompetencia
     
 FraterSoftPiaWebBundle_numeracion:
     resource: "@FraterSoftPiaWebBundle/Resources/config/routing/numeracion.yml"

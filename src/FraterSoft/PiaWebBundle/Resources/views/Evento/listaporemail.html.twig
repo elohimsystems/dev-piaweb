@@ -199,7 +199,7 @@
                                 <a href="{{ path('evento_show', { 'id': entity.id, 'email': email }) }}"><span class="ui-icon ui-icon-search"></span></a>
                             </li>
                             <li class="ui-state-default ui-corner-all {% if email!='admin'%} ui-state-disabled {% endif %}" title="Editar" >
-                                {% if email != 'admin'%}
+                                {% if email == 'admin'%}
                                 <a href="{{ path('evento_edit', { 'id': entity.id }) }}"><span class="ui-icon ui-icon-pencil"></span></a>
                                 {% else %}
                                 <span class="ui-icon ui-icon-pencil "></span>

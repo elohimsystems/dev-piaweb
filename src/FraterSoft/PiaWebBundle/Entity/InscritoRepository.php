@@ -481,7 +481,7 @@ class InscritoRepository extends EntityRepository
                 . "inner join piaaccess.tmpagos on tmpagos.id = tminscritos.idpago "
                 . "left join piaaccess.tmcategorias on tmcategorias.id = tminscritos.idcategoria "
                 . "left join piaaccess.tmcompetencias on tmcompetencias.id = tminscritos.idcompetencia "
-                . "where tminscritos.idevento=" . $idevento . " and tmpagos.conciliado=true " //. $clasificador
+                . "where tminscritos.idevento=" . $idevento . " and tmpagos.conciliado=true " 
                 . "group by piaaccess.".$entity
                 //. $ordenarpor
                 ;

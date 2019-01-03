@@ -48,6 +48,10 @@ FraterSoft\PiaWebBundle\Entity\EventoAtributos:
             length: 50
             fixed: false
             comment: ''            
+        estadistica:
+            type: boolean
+            nullable: true
+            comment: ''
     manyToOne:
         idevento:
             targetEntity: Evento

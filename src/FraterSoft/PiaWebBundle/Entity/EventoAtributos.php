@@ -55,6 +55,11 @@ class EventoAtributos
     private $mascara;    
     
     /**
+     * @var boolean
+     */
+    private $estadistica;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -247,4 +252,28 @@ class EventoAtributos
     {
         return $this->mascara;
     }      
+    
+    /**
+     * Set estadistica
+     *
+     * @param string $estadistica
+     * @return String
+     */
+    public function setEstadistica($estadistica)
+    {
+        $this->estadistica = $estadistica;
+
+        return $this;
+    }
+
+    /**
+     * Get estadistica
+     *
+     * @return String 
+     */
+    public function getEstadistica()
+    {
+        return $this->estadistica;
+    }      
+    
 }
