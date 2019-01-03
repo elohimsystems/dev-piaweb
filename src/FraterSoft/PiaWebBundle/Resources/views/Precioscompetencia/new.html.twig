@@ -8,15 +8,26 @@
     #formulario > div:nth-child(1){
         display: none;
     }
+    #sel_competencias{
+        margin: 10px 0;
+    }     
 </style>
 {% endblock %}  
-{% set entidad='preciosevento' %}
+{% set entidad='precioscompetencia' %}
 {% block body -%}
     <div id="tabs">    
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
         <div id="tabs-2">     
             {{ include("FraterSoftPiaWebBundle:Evento:menu_conf_inscripciones.html.twig") }}
-            <div id="titulotabla"><h3>{{entidad|title}}s Configuradas</h3></div>
+            <div id="titulotabla"><h3>Precios Por Competencia</h3></div>
+            <div id="sel_competencias">
+                Seleccione la Comptencia
+                <select id="select_competencias_opcion">
+                {% for competencia in competencias %}
+                    <option value="{{ competencia.id }}">{{competencia.descripcion}}</option>
+                {% endfor %}
+                </select>
+            </div>            
             <table id="{{entidad}}" class="display row-border hover">
             </table>    
             <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistaeventos')}}');">Regresar</button>
@@ -40,9 +51,12 @@
 <script>
     $(document).ready(function () { 
         var entidad = 'precioscompetencia';
-        $("#tabs").css("display","block");
-        $( "#botonera" ).controlgroup();                          
-        tablaDatos(
+        var tabla;
+        $("#tabs").css("display","block");        
+        $( "#botonera" ).controlgroup();  
+        //$('#select_precios').val("pcom");
+        //$('#select_precios').selectmenu("refresh");
+        tabla=tablaDatos(
                 $('#formulario'), //Se usa para llenar lo campos del formulario
                 {{campos|json_encode|raw}}, //json con los atributos de la entidad y sus caracteristicas
                 toTitleCase(entidad), //Usada para el titulo 
@@ -55,7 +69,7 @@
         dialogEliminar('{{ path(entidad ~ '_delete',{'id':'_id_'})}}');
         dialogMensaje();
         
-        menuConfInscripcionesControl('preciosevento');        
+        menuConfInscripcionesControl('precioscompetencia');        
         
         {% if estado is defined %}
             {% if estado == 1 %}
@@ -79,7 +93,14 @@
             format: "d/m/Y H:i",
             defaultSelect: true,
             lang: 'es',
-        });          
+        });     
+        
+        //Filtra la tabla de datos segun la opcion del select seleccionado
+        filtrarTabla(1,$("#select_competencias_opcion"));
+        
+        $("#select_competencias_opcion").change(function () {
+            tabla.draw();
+        });        
             
     });    
 </script>    

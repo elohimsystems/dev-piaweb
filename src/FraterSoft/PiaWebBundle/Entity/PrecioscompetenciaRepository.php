@@ -109,4 +109,15 @@ class PrecioscompetenciaRepository extends EntityRepository {
         return($preciosselect);
     }
     
+    public function arrayPreciosEvento($idevento)
+    {
+        $query = $this->getEntityManager()
+            ->createQuery(
+                'SELECT pc.id,c.id as idcompetencia,pc.precio,pc.cantidad,pc.hasta,pc.prioridad,pc.texto,pc.imagen,pc.moneda '
+                    . 'FROM FraterSoftPiaWebBundle:Precioscompetencia pc ' 
+                    . 'JOIN pc.idcompetencia c '                  
+                    . 'WHERE c.idevento =' . $idevento 
+            );
+         return $query->getResult();
+    }       
 }
