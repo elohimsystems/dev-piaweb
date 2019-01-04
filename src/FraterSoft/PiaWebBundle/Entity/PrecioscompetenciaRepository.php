@@ -19,41 +19,6 @@ class PrecioscompetenciaRepository extends EntityRepository {
      * cierre del evento
      * ** */
 
-//    public function buscarPrecioActivo($idcompetencia) {
-//        //Busca el precio por fecha hasta
-//        $preciocantidad = $this->getEntityManager()
-//                ->createQuery(
-//                        "select p.precio from FraterSoftPiaWebBundle:Precioscompetencia p "
-//                        . "where p.idcompetencia = " . $idcompetencia . " and p.cantidad = "
-//                        . "(SELECT min(c.cantidad) FROM FraterSoftPiaWebBundle:Precioscompetencia c "
-//                        . "WHERE c.idcompetencia = " . $idcompetencia . " AND c.cantidad > "
-//                        . "(select count(i.id) from FraterSoftPiaWebBundle:Inscrito i "
-//                        . "where i.idcompetencia=" . $idcompetencia . "))"
-//                )
-//                ->getResult();
-//
-//        $preciofecha = $this->getEntityManager()
-//                ->createQuery(
-//                        "select p.precio from FraterSoftPiaWebBundle:Precioscompetencia p "
-//                        . "where p.idcompetencia = " . $idcompetencia . " and p.hasta = "
-//                        . "(SELECT min(h.hasta) FROM FraterSoftPiaWebBundle:Precioscompetencia h "
-//                        . "WHERE h.idcompetencia = " . $idcompetencia . " AND h.hasta >= CURRENT_TIMESTAMP())"
-//                )
-//                ->getResult();
-//        
-//        if (!$preciocantidad) //Si el precio por cantidad es nulo, devuelvo precio fecha
-//            return $preciofecha;
-//        if (!$preciofecha) //Si el precio por fecha es nulo, devuelvo precio cantidad
-//            return $preciocantidad;
-//        if (!$preciocantidad && !$preciofecha) //Si ambos son nulos, devuelvo 0
-//            return null;
-//        if ($preciocantidad >= $preciofecha) //Si el precio por cantidad es mayor que el precio por fecha, devuelvo precio cantidad
-//            return $preciocantidad;
-//        if ($preciofecha >= $preciocantidad) //Si el precio por cantidad es menor que el precio por fecha, devuelvo precio cantidad
-//            return $preciofecha;
-//        return null;
-//    }
-
     public function BuscaPreciosCompetencia($idcompetencia){
         $precios = $this->getEntityManager()
             ->createQuery(
@@ -109,7 +74,7 @@ class PrecioscompetenciaRepository extends EntityRepository {
         return($preciosselect);
     }
     
-    public function arrayPreciosEvento($idevento)
+    public function arrayPrecios($idevento)
     {
         $query = $this->getEntityManager()
             ->createQuery(
