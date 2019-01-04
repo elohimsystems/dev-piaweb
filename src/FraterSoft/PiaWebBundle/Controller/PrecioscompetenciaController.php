@@ -112,7 +112,7 @@ class PrecioscompetenciaController extends commonPIAClass
         $serializer = new Serializer($normalizers, $encoders);  
         
         $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('FraterSoftPiaWebBundle:Precioscompetencia')->arrayPreciosEvento($idevento);
+        $entities = $em->getRepository('FraterSoftPiaWebBundle:Precioscompetencia')->arrayPrecios($idevento);
 
         $jsonContent = $serializer->serialize(array(
             "recordsTotal"=> count($entities),
