@@ -1363,9 +1363,9 @@ class InscritoController extends commonPIAClass {
         //Busca los atributos del evento y los envia al formulario
         $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')
                 ->atributosEstadistica($idevento);
-        if (!$atributos) {
-            return new response("No hay atributos configurados para este evento");
-        }            
+        //if (!$atributos) {
+        //    return new response("No hay atributos configurados para este evento");
+        //}            
 
         /*$insxcomp = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorCompetencia($idevento);
         $insxstatus = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorEstatus($idevento);        

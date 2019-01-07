@@ -13,37 +13,37 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 use Doctrine\ORM\EntityRepository;
 
-use FraterSoft\PiaWebBundle\Entity\Precioscompetencia;
-use FraterSoft\PiaWebBundle\Form\PrecioscompetenciaType;
+use FraterSoft\PiaWebBundle\Entity\Precioscategoria;
+use FraterSoft\PiaWebBundle\Form\PrecioscategoriaType;
 
 /**
- * Precioscompetencia controller.
+ * Precioscategoria controller.
  *
  */
-class PrecioscompetenciaController extends commonPIAClass
+class PrecioscategoriaController extends commonPIAClass
 {
 
     /**
-     * Lists all Precioscompetencia entities.
+     * Lists all Precioscategoria entities.
      *
      */
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entities = $em->getRepository('FraterSoftPiaWebBundle:Precioscompetencia')->findAll();
+        $entities = $em->getRepository('FraterSoftPiaWebBundle:Precioscategoria')->findAll();
 
-        return $this->render('FraterSoftPiaWebBundle:Precioscompetencia:index.html.twig', array(
+        return $this->render('FraterSoftPiaWebBundle:Precioscategoria:index.html.twig', array(
             'entities' => $entities,
         ));
     }
     /**
-     * Creates a new Precioscompetencia entity.
+     * Creates a new Precioscategoria entity.
      *
      */
     public function createAction(Request $request)
     {
-        $entity = new Precioscompetencia();
+        $entity = new Precioscategoria();
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
         
@@ -52,64 +52,65 @@ class PrecioscompetenciaController extends commonPIAClass
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('precioscompetencia_new', array(
-                'idevento' => $entity->getIdcompetencia()->getIdevento()->getId(),
+            return $this->redirect($this->generateUrl('precioscategoria_new', array(
+                'idevento' => $entity->getIdcategoria()->getIdcompetencia()->getIdevento()->getId(),
                 'estado' => 2
             )));            
         }
 
         $errors=$this->getErrorMessages($form);
         return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                    'url' => $this->generateUrl('precioscompetencia_new', array('idevento' => $entity->getIdcompetencia()->getIdevento()->getId())),
+                    'url' => $this->generateUrl('precioscategoria_new', array('idevento' => $entity->getIdcategoria()->getIdcompetencia()->getIdevento()->getId())),
                     'texto' => json_encode($errors),
-                    'tema' => $entity->getIdcompetencia()->getIdevento()->getTema()
+                    'tema' => $entity->getIdcategoria()->getIdcompetencia()->getIdevento()->getId()->getTema()
         ));        
     }
 
     /**
-    * Creates a form to create a Precioscompetencia entity.
+    * Creates a form to create a Precioscategoria entity.
     *
-    * @param Precioscompetencia $entity The entity
+    * @param Precioscategoria $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createCreateForm(Precioscompetencia $entity)
+    private function createCreateForm(Precioscategoria $entity)
     {
-        $form = $this->createForm(new PrecioscompetenciaType(), $entity, array(
+        $form = $this->createForm(new PrecioscategoriaType(), $entity, array(
             'method' => 'POST',
         ));
         return $form;
     }
 
     /**
-     * Displays a form to create a new Precioscompetencia entity.
+     * Displays a form to create a new Precioscategoria entity.
      *
      */
     public function newAction($idevento,$estado)
     {
-        $entity = new Precioscompetencia();
+        $entity = new Precioscategoria();
         $form   = $this->createCreateForm($entity);
 
-        $em = $this->getDoctrine()->getManager();                   
-
-        $form->add('idcompetencia','entity',array(
-                'class' => 'FraterSoftPiaWebBundle:Competencia',
-                'label' => 'Competencia',
+        $form->add('idcategoria','entity',array(
+                'class' => 'FraterSoftPiaWebBundle:Categoria',
+                'label' => 'Categoria',
                 'query_builder' => function (EntityRepository $er) use ( $idevento ) {
-                    return $er->createQueryBuilder('co')
+                    return $er->createQueryBuilder('ca')
+                            ->join('ca.idcompetencia','co')
                             ->where('co.idevento=:idevento')
                             ->setParameter('idevento',$idevento);
                             ;
                 },
             ));
         
+        $em = $this->getDoctrine()->getManager();                   
+                
         $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')->findBy(array('idevento'=>$idevento));                
         
-        return $this->render('FraterSoftPiaWebBundle:Precioscompetencia:new.html.twig', array(
+        return $this->render('FraterSoftPiaWebBundle:Precioscategoria:new.html.twig', array(
             'entity' => $entity,
             'form'   => $form->createView(),
             'idevento' => $idevento,
-            'campos' => $this->getCampos($em,'Precioscompetencia'),            
+            'campos' => $this->getCampos($em,'Precioscategoria'),            
             'estado' => $estado, 
             'competencias' => $competencias,
         ));
@@ -121,7 +122,7 @@ class PrecioscompetenciaController extends commonPIAClass
         $serializer = new Serializer($normalizers, $encoders);  
         
         $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('FraterSoftPiaWebBundle:Precioscompetencia')->arrayPrecios($idevento);
+        $entities = $em->getRepository('FraterSoftPiaWebBundle:Precioscategoria')->arrayPrecios($idevento);
 
         $jsonContent = $serializer->serialize(array(
             "recordsTotal"=> count($entities),
@@ -132,31 +133,31 @@ class PrecioscompetenciaController extends commonPIAClass
     }
     
     /**
-    * Creates a form to edit a Precioscompetencia entity.
+    * Creates a form to edit a Precioscategoria entity.
     *
-    * @param Precioscompetencia $entity The entity
+    * @param Precioscategoria $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createEditForm(Precioscompetencia $entity)
+    private function createEditForm(Precioscategoria $entity)
     {
-        $form = $this->createForm(new PrecioscompetenciaType(), $entity, array(
+        $form = $this->createForm(new PrecioscategoriaType(), $entity, array(
             'method' => 'POST',
         ));
         return $form;
     }
     /**
-     * Edits an existing Precioscompetencia entity.
+     * Edits an existing Precioscategoria entity.
      *
      */
     public function updateAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('FraterSoftPiaWebBundle:Precioscompetencia')->find($id);
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Precioscategoria')->find($id);
 
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Precioscompetencia entity.');
+            throw $this->createNotFoundException('Unable to find Precioscategoria entity.');
         }
         
         $editForm = $this->createEditForm($entity);
@@ -168,34 +169,34 @@ class PrecioscompetenciaController extends commonPIAClass
         if ($editForm->isValid()) {
             $em->flush();
             
-            return $this->redirect($this->generateUrl('precioscompetencia_new', array(
-                'idevento' => $entity->getIdcompetencia()->getIdevento()->getId(),
+            return $this->redirect($this->generateUrl('precioscategoria_new', array(
+                'idevento' => $entity->getIdcategoria()->getIdcompetencia()->getIdevento()->getId(),
                 'estado' => 3
             )));            
         }
 
         $errors=$this->getErrorMessages($editForm);
         return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                    'url' => $this->generateUrl('precioscompetencia_new', array('idevento' => $entity->getIdevento()->getId())),
+                    'url' => $this->generateUrl('precioscategoria_new', array('idevento' => $entity->getIdcategoria()->getIdcompetencia()->getIdevento()->getId())),
                     'texto' => json_encode($errors),
-                    'tema' => $entity->getIdevento()->getTema()
+                    'tema' => $entity->getIdcategoria()->getIdcompetencia()->getIdevento()->getId(),
         ));        
     }
     /**
-     * Deletes a Precioscompetencia entity.
+     * Deletes a Precioscategoria entity.
      *
      */
     public function deleteAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('FraterSoftPiaWebBundle:Precioscompetencia')->find($id);
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Precioscategoria')->find($id);
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Categoria entity.');
         }
         $em->remove($entity);
         $em->flush();
-        return $this->redirect($this->generateUrl('precioscompetencia_new', array(
-            'idevento' => $entity->getIdcompetencia()->getIdevento()->getId(),
+        return $this->redirect($this->generateUrl('precioscategoria_new', array(
+            'idevento' => $entity->getIdcategoria()->getIdcompetencia()->getIdevento()->getId(),
             'estado' => 1
         )));            
     }

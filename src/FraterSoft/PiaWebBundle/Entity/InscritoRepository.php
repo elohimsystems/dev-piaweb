@@ -470,24 +470,45 @@ class InscritoRepository extends EntityRepository
             ->getArrayResult();
     }   
     
-    public function estadisticas($idevento,$entity)
+    public function estadisticas($idevento,$entidad_atributo)
     {
         $em = $this->getEntityManager();
-        //Busca el tipo del atributo configurado por evento
-        //$ordenarpor=(is_null($ordenarpor))?"":"order by " . $ordenarpor;
-        //$clasificador=($clasificador!=null)?" and " . $clasificador:"";
-        $sql = "select piaaccess.".$entity." as valor, count(piaaccess.".$entity.") as cantidad from piaaccess.tminscritos "
-                . "inner join piaaccess.tmcompetidores on tmcompetidores.id = tminscritos.idpia "
-                . "inner join piaaccess.tmpagos on tmpagos.id = tminscritos.idpago "
-                . "left join piaaccess.tmcategorias on tmcategorias.id = tminscritos.idcategoria "
-                . "left join piaaccess.tmcompetencias on tmcompetencias.id = tminscritos.idcompetencia "
-                . "where tminscritos.idevento=" . $idevento . " and tmpagos.conciliado=true " 
-                . "group by piaaccess.".$entity
-                //. $ordenarpor
-                ;
+        $entidad=substr($entidad_atributo,0,stripos($entidad_atributo,":"));
+        $atributo=substr($entidad_atributo,stripos($entidad_atributo,":")+1,strlen($entidad_atributo));
+        $tipo=$em->getClassMetadata('FraterSoft\PiaWebBundle\Entity\\' . $entidad)->getTypeOfField($atributo);
+        $nombreTabla=$em->getClassMetadata('FraterSoft\PiaWebBundle\Entity\\' . $entidad)->getTableName();
+        $sql="";
+        if($entidad=="Inscrito" && $atributo=='status')
+            $sql = 'select valor,sum(cantidad) as cantidad from (' 
+                . 'select case when i.status=1 and p.conciliado=true then \'INSCRITOS\' ' 
+		. 'when i.status=0 then \'ANULADOS\' '
+		. 'when i.status=1 and p.conciliado is null and p.tipo<>\'3\' then \'POR CONCILIAR\' ' 
+		. 'when i.status=1 and p.conciliado is null and p.tipo=\'3\' then \'TDC SIN PAGAR\' '
+                . 'end as valor, '
+                . 'count(i) as cantidad '
+                . ' from piaaccess.tminscritos i left join piaaccess.tmpagos p on i.idpago=p.id where i.idevento= ' . $idevento
+                . 'group by p.conciliado, i.status, p.tipo) e group by valor order by cantidad desc';
+        else{
+            switch(true){
+                case ($tipo=="datetime" || $tipo=="datetimetz"):
+                    $sql = 'select valor,sum(cantidad) as cantidad from (' 
+                        . 'select to_char(i.fechahora,\'dd/mm/yyyy\') as valor,count(i) as cantidad '
+                        . 'from piaaccess.tminscritos i left join piaaccess.tmpagos p on i.idpago=p.id where p.conciliado=true and i.idevento=' . $idevento
+                        . 'group by i.fechahora) e group by valor order by valor';
+                    break;
+                default:
+                    $sql = "select " . $nombreTabla . "." .$atributo . " as valor, count(".$nombreTabla."." .$atributo .") as cantidad from piaaccess.tminscritos "
+                            . "inner join piaaccess.tmcompetidores on tmcompetidores.id = tminscritos.idpia "
+                            . "inner join piaaccess.tmpagos on tmpagos.id = tminscritos.idpago "
+                            . "left join piaaccess.tmcategorias on tmcategorias.id = tminscritos.idcategoria "
+                            . "left join piaaccess.tmcompetencias on tmcompetencias.id = tminscritos.idcompetencia "
+                            . "where tminscritos.idevento=" . $idevento . " and tmpagos.conciliado=true " 
+                            . "group by ".$nombreTabla.".".$atributo . " order by cantidad desc";
+                    break;
+            }
+        }
         $stmt = $em->getConnection()->prepare($sql);
         $stmt->execute(); 
-        //print_r($stmt->fetchAll());
         return $stmt->fetchAll();              
     }     
 }

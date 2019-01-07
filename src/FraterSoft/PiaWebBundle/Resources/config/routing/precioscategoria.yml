@@ -1,0 +1,29 @@
+precioscategoria:
+    pattern:  /
+    defaults: { _controller: "FraterSoftPiaWebBundle:Precioscategoria:index" }
+
+precioscategoria_listaajax:
+    pattern:  /{idevento}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Precioscategoria:listaajax" }
+
+precioscategoria_new:
+    pattern:  /new/{idevento}/{estado}
+    defaults: { _controller: FraterSoftPiaWebBundle:Precioscategoria:new,estado:null }
+
+precioscategoria_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Precioscategoria:create" }
+    requirements: { _method: post }
+
+precioscategoria_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Precioscategoria:edit" }
+
+precioscategoria_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Precioscategoria:update" }
+    requirements: { _method: post|put }
+
+precioscategoria_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Precioscategoria:delete" }

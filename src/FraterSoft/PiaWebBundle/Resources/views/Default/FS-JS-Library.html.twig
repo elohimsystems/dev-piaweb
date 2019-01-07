@@ -248,11 +248,10 @@
                     configcols[i]['render']=function(data){
                         return(data==true?"<spam class='ui-icon ui-icon-check'></spam>":"");
                     };
-                if(value['tipo']=='datetime')
+                if(value['tipo']=='datetime' || value['tipo']=='datetimetz')
                     configcols[i]['render']=function(data){
                         //var formatted=(data!=null)?$.datepicker.formatDate("d/m/Y H:i", data):data;
                         var formatted=(data!=null)?getFormattedTimestamp(data.timestamp):data;
-                        //console.log(data);
                         return formatted;
                     };
                 i++;
@@ -326,6 +325,9 @@
                                             $("#fratersoft_piawebbundle_"+ entidad + "_" + key).prop('checked',rows[0][key]);
                                             break;
                                         case 'datetime':
+                                            $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val((rows[0][key]!=null)?getFormattedTimestamp(rows[0][key].timestamp):rows[0][key]);
+                                            break;
+                                        case 'datetimetz':
                                             $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val((rows[0][key]!=null)?getFormattedTimestamp(rows[0][key].timestamp):rows[0][key]);
                                             break;
                                         default:
@@ -512,7 +514,8 @@
         hour = (hour < 10 ? "0" : "") + hour;
         min = (min < 10 ? "0" : "") + min;
 
-        var str = date.getFullYear() + "-" + month + "-" + day + " " +  hour + ":" + min ;
+        //var str = date.getFullYear() + "-" + month + "-" + day + " " +  hour + ":" + min ;
+        var str = day + "/" + month + "/" + date.getFullYear() + " " +  hour + ":" + min ;
 
         /*alert(str);*/
 
@@ -557,6 +560,7 @@
                         $(location).attr('href', '{{ path('precioscompetencia_new',{'idevento':idevento}) }}');                        
                         break;
                     case "pcat":
+                        $(location).attr('href', '{{ path('precioscategoria_new',{'idevento':idevento}) }}');                        
                         break;
                 }  
             }
