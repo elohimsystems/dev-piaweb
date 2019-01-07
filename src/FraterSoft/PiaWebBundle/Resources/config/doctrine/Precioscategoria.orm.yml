@@ -37,6 +37,22 @@ FraterSoft\PiaWebBundle\Entity\Precioscategoria:
             length: 15
             fixed: false
             comment: 'Determina cual de los dos factores (cantidad o fecha hasta) sera tomado primero en cuenta cuando se configuren ambos parametros'
+        texto:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+        imagen:
+            type: string
+            nullable: true
+            length: 300
+            fixed: false
+            comment: 'Se usa para mostrar las imagenes de las opciones que incluyen el precio'
+        moneda:
+            type: string
+            nullable: true
+            length: 5
+            fixed: false            
     manyToOne:
         idcategoria:
             targetEntity: Categoria

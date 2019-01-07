@@ -39,6 +39,20 @@ class Precioscategoria
      */
     private $idcategoria;
 
+    /**
+     * @var string
+     */
+    private $texto;
+
+    /**
+     * @var string
+     */
+    private $imagen;    
+    
+    /**
+     * @var string
+     */
+    private $moneda;    
 
     /**
      * Get id
@@ -164,4 +178,74 @@ class Precioscategoria
     {
         return $this->idcategoria;
     }
+    
+    /**
+     * Set texto
+     *
+     * @param string $texto
+     * @return Preciosevento
+     */
+    public function setTexto($texto)
+    {
+        $this->texto = $texto;
+
+        return $this;
+    }
+
+    /**
+     * Get texto
+     *
+     * @return string 
+     */
+    public function getTexto()
+    {
+        return $this->texto;
+    }
+    
+    /**
+     * Set imagen
+     *
+     * @param string $imagen
+     * @return Preciosevento
+     */
+    public function setImagen($imagen)
+    {
+        $this->imagen = $imagen;
+
+        return $this;
+    }
+
+    /**
+     * Get $imagen
+     *
+     * @return string 
+     */
+    public function getImagen()
+    {
+        return $this->imagen;
+    }    
+    
+    /**
+     * Set moneda
+     *
+     * @param string $moneda
+     * @return Preciosevento
+     */
+    public function setMoneda($moneda)
+    {
+        $this->moneda = $moneda;
+
+        return $this;
+    }
+
+    /**
+     * Get $moneda
+     *
+     * @return string 
+     */
+    public function getMoneda()
+    {
+        return $this->moneda;
+    }    
+    
 }

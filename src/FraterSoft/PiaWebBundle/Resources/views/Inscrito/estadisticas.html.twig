@@ -4,159 +4,23 @@
     <script src="{{ asset('bundles/fratersoftpiaweb/js/chart/Chart.min.js') }}" type="text/javascript" charset="utf-8"></script>    
     <script src="{{ asset('bundles/fratersoftpiaweb/js/chart/utils.js') }}" type="text/javascript" charset="utf-8"></script>    
 {% endblock %}
-{% block javascripts %}
-    <script>
-//- Fincion Generica para generar las tablas -----------------------------------    
-        var arraydatos=[];
-        var data=[];
-        var total=[];
-        var datosgrafico=[];
-        var etiquetasgrafico=[];
-        var table;
-        var arrayColors = [
-                'rgb(255, 159, 64)', //orange
-                'rgb(54, 162, 235)', //blue
-                'rgb(255, 99, 132)', //red
-                'rgb(255, 205, 86)', //yellow
-                'rgb(75, 192, 192)', //green
-                'rgb(153, 102, 255)', //purple
-                'rgb(201, 203, 207)', //grey    
-        ];            
-        
-        function GenerarTabla(nombretabla,caption,tcantidad,tporcentaje){            
-            if($(nombretabla + " > tfoot").length==0)
-                $(nombretabla).append("<tfoot><tr><th></th><th></th><th></th></tr></tfoot>");
-            if(table!=null)
-                table.destroy();
-            table = $(nombretabla).DataTable({ 
-                dom: "itp",
-                data: data,
-                retrieve: true,
-                "pageLength": 50,
-                columns: [
-                    { title: "Descripcion" },
-                    { title: "Cantidad" },
-                    { title: "%" },
-                ],
-                "columnDefs": [ //centra el contenido de la columna
-                  {"className": "dt-center", "targets": 1},
-                  {"className": "dt-right", "targets": 2}
-                ],
-                order: [[1,'DES']],
-                "footerCallback": function ( row, data, start, end, display ) {    
-                    var api = this.api();
-                    $(api.column( 0 ).footer()).html("TOTAL");
-                    $(api.column( 1 ).footer()).html(tcantidad);
-                    $(api.column( 2 ).footer()).html(tporcentaje.toFixed(2));
-                }                
-            });
-            if($(nombretabla + " > caption").length==0)
-                $(nombretabla).append("<caption><b>" + caption + "</b></caption>");
-        } 
-        function Graficar(){
-            var tipochart;
-            var config = {};
-            var backgroudColors=[];
-            tipochart=(datosgrafico.length>5)?'bar':'pie';
-            for(var i=0;i<datosgrafico.length;i++){
-                backgroudColors.push(arrayColors[i]);            
-                if(tipochart=='bar')
-                    break;
-            }
-            config = {
-                type: tipochart,
-                data: {
-                    datasets: [{
-                        data: datosgrafico,
-                        backgroundColor: backgroudColors,
-                    }],
-                    labels: etiquetasgrafico
-                },
-                options: {
-                    responsive: true,
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            boxWidth: 10,
-                        }                        
-                    },                    
-                }
-            };
-            $("#canvas-holder").empty();
-            $("#canvas-holder").html("<canvas id='grafico'/>");
-            $("#canvas-holder").attr("style",(datosgrafico.length>5)?"width:80%":"width:50%");
-            var ctx = document.getElementById("grafico").getContext("2d");
-            window.myPie = new Chart(ctx, config);
-        }
-        $(document).ready(function () {
-            $("#tabs").tabs();
-            $('#tabs a[href="#tabs-5"]').click();            
-            //Redireccion a la pagina de los inscritos al hacer click en el tab
-            $('#tabs a[href="#tabs-1"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento,'email':email}) }}')
-            });            //Redireccion a la pagina de los inscritos al hacer click en el tab
-            $('#tabs a[href="#tabs-2"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
-            });
-            //Redireccion a la pagina de los anulados al hacer click en el tab
-            $('#tabs a[href="#tabs-3"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
-            });
-            //Redireccion a la pagina de los operaciones TCD al hacer click en el tab
-            $('#tabs a[href="#tabs-4"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
-            });   
-            
-            $("#select_atributos_opcion").change(function () {
-                var criterios = "idevento=" + {{ idevento }} + "&entity=" + $("#select_atributos_opcion").val()+"";
-                
-                $.ajax({
-                    type: "GET",
-                    data: criterios,
-                    url: "{{ path('inscrito_estadisticasajax') }}",
-                    dataType: "json",
-                    success: function (datos)
-                    {
-                        var totalporcentaje=0;
-                        var porcentaje=0;
-                        datosgrafico=[];
-                        etiquetasgrafico=[];
-                        arraydatos=[];
-                        $.each(datos.data, function (key, value) {
-                            porcentaje=(value.cantidad/datos.sumaCantidad)*100;
-                            arraydatos.push([value.valor,value.cantidad,porcentaje.toFixed(2)]);
-                            totalporcentaje+=porcentaje;
-                            datosgrafico.push(porcentaje.toFixed(2));
-                            etiquetasgrafico.push(value.valor);
-                        });
-                        console.log(etiquetasgrafico);
-                        data=arraydatos;
-                        GenerarTabla(
-                            '#tablaestadistica',
-                            'Estadisticas por ' + $("#select_atributos_opcion option:selected").text(),
-                            datos.sumaCantidad,
-                            totalporcentaje
-                        );
-                        Graficar();
-                        alert("Procesado");
-                    },
-                    error: function (jqXHR, textStatus, errorThrown)
-                    {
-                        alert("PIA Ajax Error: " + jqXHR.responseText);
-                    }
-                });
-
-            });            
-        });
-    </script>           
-    {% endblock %}    
 {% block style %}
 <style type="text/css">
     #seccionTabla{     
-        width: 70%;
+        display: none;
+        /*width: 70%;*/
         margin: auto;
+        margin-top: 15px;
     }    
+    #seccionGrafico{     
+        display: none;
+    }
+    #seccionCargando > img{
+        width: 50px;
+    }        
+    #seccionCargando{
+        text-align: center;
+    }        
     #canvas-holder{
         margin: auto;
     }
@@ -187,14 +51,14 @@
             <div id="atributos">
                 Estadisticas por:  
                 <select id="select_atributos_opcion">
-                <option value="tminscritos.idcompetencia">Competencia</option>
-                <option value="tmcategorias.descripcion">Categoria</option>
-                <option value="tminscritos.fechahora">Inscritos por Dia</option>
-                <option value="tminscritos.fechahora">Inscritos por Mes</option>
-                <option value="tminscritos.punto">Punto</option>
-                <option value="tminscritos.precio">Precio</option>
+                <option value="Inscrito:status">Estatus</option>
+                <option value="Inscrito:fechahora">Inscritos por Dia</option>
+                <option value="Inscrito:punto">Punto</option>
+                <option value="Inscrito:precio">Precio</option>
+                <option value="Competencia:descripcion">Competencia</option>
+                <option value="Categoria:descripcion">Categoria</option>
                 {% for atributo in atributos %}
-                    <option value="tmcompetidores.{{ atributo.idatributo.nombre }}">
+                    <option value="Competidor:{{ atributo.idatributo.nombre }}">
                         {% if atributo.etiqueta is null %}
                             {{ atributo.idatributo.nombre }} 
                         {% else %} 
@@ -202,10 +66,11 @@
                         {% endif %}
                     </option>
                 {% endfor %}
-                <option value="tmpagos.tipo">Forma de Pago</option>
-                <option value="tmpagos.moneda">Monneda</option>
-                <option value="tmpagos.conciliado">Conciliado</option>
+                <option value="Pago:tipo">Forma de Pago</option>
                 </select>
+            </div>
+            <div id="seccionCargando">
+                <img src="{{ asset('bundles/fratersoftpiaweb/images/loading.gif') }}">
             </div>
             <div id="seccionTabla">
                 <table id="tablaestadistica" class="display" border="0"></table>
@@ -221,3 +86,162 @@
         </p>
     </div>       
     {% endblock %}
+{% block javascripts %}
+    <script>
+//- Fincion Generica para generar las tablas -----------------------------------    
+        var arraydatos=[];
+        var data=[];
+        var total=[];
+        var datosgrafico=[];
+        var etiquetasgrafico=[];
+        var table;
+        var arrayColors = [
+                'rgb(255, 159, 64)', //orange
+                'rgb(54, 162, 235)', //blue
+                'rgb(255, 99, 132)', //red
+                'rgb(255, 205, 86)', //yellow
+                'rgb(75, 192, 192)', //green
+                'rgb(153, 102, 255)', //purple
+                'rgb(201, 203, 207)', //grey    
+        ];            
+        
+        function GenerarTabla(nombretabla,caption,tcantidad,tporcentaje,trecords,ordenarpor,tipoorden){
+            var orden=[];
+            if($(nombretabla + " > tfoot").length==0)
+                $(nombretabla).append("<tfoot><tr><th></th><th></th><th></th></tr></tfoot>");
+            if(table!=null)
+                table.destroy();
+            var dom=(trecords>50)?"tp":"t";
+            table = $(nombretabla).DataTable({ 
+                dom: dom,
+                data: data,
+                retrieve: true,
+                "pageLength": 50,
+                columns: [
+                    { title: "Descripcion" },
+                    { title: "Cantidad" },
+                    { title: "%" },
+                ],
+                "columnDefs": [ //centra el contenido de la columna
+                  {"className": "dt-center", "targets": 1},
+                  {"className": "dt-right", "targets": 2}
+                ],
+                order: [[ordenarpor,tipoorden]],
+                "footerCallback": function ( row, data, start, end, display ) {    
+                    var api = this.api();
+                    $(api.column( 0 ).footer()).html("TOTAL");
+                    $(api.column( 1 ).footer()).html(tcantidad);
+                    $(api.column( 2 ).footer()).html(tporcentaje.toFixed(2));
+                }                
+            });
+            $(nombretabla + " > caption").empty();
+            $(nombretabla).append("<caption><b>" + caption + "</b></caption>");
+        } 
+        function Graficar(){
+            var tipochart;
+            var config = {};
+            var backgroundColors=[];
+            var displaylabels;
+            tipochart=(datosgrafico.length>5)?'bar':'pie';
+            displaylabels=(datosgrafico.length>5)?false:true;
+            for(var i=0;i<datosgrafico.length;i++){
+                backgroundColors.push((tipochart=='bar')?arrayColors[0]:arrayColors[i]);            
+            }
+            config = {
+                type: tipochart,
+                data: {
+                    datasets: [{
+                        data: datosgrafico,
+                        backgroundColor: backgroundColors,
+                    }],
+                    labels: etiquetasgrafico
+                },
+                options: {
+                    responsive: true,
+                    legend: {
+                        display: displaylabels,
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 10,
+                        }                        
+                    },   
+                }
+            };
+            $("#canvas-holder").empty();
+            $("#canvas-holder").html("<canvas id='grafico'/>");
+            $("#canvas-holder").attr("style",(datosgrafico.length>5)?"width:80%":"width:50%");
+            var ctx = document.getElementById("grafico").getContext("2d");
+            window.myPie = new Chart(ctx, config);
+        }
+        function ConsultarDataAjax(){
+            var criterios = "idevento=" + {{ idevento }} + "&entity=" + $("#select_atributos_opcion").val();
+            var orden=($("#select_atributos_opcion").val()=='Inscrito:fechahora')?0:1;
+            var torden=($("#select_atributos_opcion").val()=='Inscrito:fechahora')?'asc':'desc';
+            $.ajax({
+                type: "GET",
+                data: criterios,
+                url: "{{ path('inscrito_estadisticasajax') }}",
+                dataType: "json",
+                success: function (datos)
+                {
+                    var totalporcentaje=0;
+                    var porcentaje=0;
+                    datosgrafico=[];
+                    etiquetasgrafico=[];
+                    arraydatos=[];
+                    $.each(datos.data, function (key, value) {
+                        porcentaje=(value.cantidad/datos.sumaCantidad)*100;
+                        arraydatos.push([value.valor,value.cantidad,porcentaje.toFixed(2)]);
+                        totalporcentaje+=porcentaje;
+                        datosgrafico.push(porcentaje.toFixed(2));
+                        etiquetasgrafico.push(value.valor);
+                    });
+                    data=arraydatos;
+                    GenerarTabla(
+                        '#tablaestadistica',
+                        'Estadisticas por ' + $("#select_atributos_opcion option:selected").text(),
+                        datos.sumaCantidad,
+                        totalporcentaje,
+                        datos.recordsTotal,
+                        orden,
+                        torden
+                    );
+                    Graficar();
+                    $("#seccionCargando").hide();
+                    $("#seccionGrafico").show();
+                    $("#seccionTabla").show();
+                },
+                error: function (jqXHR, textStatus, errorThrown){
+                    alert("PIA Ajax Error: " + jqXHR.responseText);
+                }
+            });
+        }
+        $(document).ready(function () {
+            $("#tabs").tabs();
+            $('#tabs a[href="#tabs-5"]').click();            
+            //Redireccion a la pagina de los inscritos al hacer click en el tab
+            $('#tabs a[href="#tabs-1"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento,'email':email}) }}')
+            });            //Redireccion a la pagina de los inscritos al hacer click en el tab
+            $('#tabs a[href="#tabs-2"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
+            });
+            //Redireccion a la pagina de los anulados al hacer click en el tab
+            $('#tabs a[href="#tabs-3"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
+            });
+            //Redireccion a la pagina de los operaciones TCD al hacer click en el tab
+            $('#tabs a[href="#tabs-4"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
+            });   
+
+            ConsultarDataAjax();
+            $("#select_atributos_opcion").change(function () {
+                $("#seccionCargando").show();
+                $("#seccionGrafico").hide();
+                $("#seccionTabla").hide();
+                ConsultarDataAjax();
+            });            
+        });
+    </script>           
+    {% endblock %}    

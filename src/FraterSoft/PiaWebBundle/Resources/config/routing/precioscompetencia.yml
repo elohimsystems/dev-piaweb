@@ -27,4 +27,3 @@ precioscompetencia_update:
 precioscompetencia_delete:
     pattern:  /{id}/delete
     defaults: { _controller: "FraterSoftPiaWebBundle:Precioscompetencia:delete" }
-    requirements: { _method: post|delete }
