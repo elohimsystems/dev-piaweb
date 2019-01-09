@@ -230,4 +230,21 @@ FraterSoft\PiaWebBundle\Entity\Evento:
       numeracion:
         targetEntity: Numeracion
         mappedBy: idevento  
+    manyToMany:
+        idrecarga:
+            targetEntity: Recarga
+            cascade: { }
+            mappedBy: null
+            inversedBy: idevento
+            joinTable:
+                name: piaaccess.trrecargaseventos
+                joinColumns:
+                    -
+                        name: idevento
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    -
+                        name: idrecarga
+                        referencedColumnName: id
+            orderBy: null        
     lifecycleCallbacks: {  }
