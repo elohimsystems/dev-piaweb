@@ -204,7 +204,19 @@ class Evento
      */
     private $idciudad;
     
-        
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $idrecarga;    
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->idrecarga = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
     /**
      * Get id
      *
@@ -1087,6 +1099,60 @@ class Evento
     public function getIdciudad()
     {
         return $this->idciudad;
+    }
+    
+    /**
+     * Set idrecarga
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga
+     * @return Club
+     */
+    public function setIdrecarga($idrecarga = null)
+    {
+        $this->idrecarga = $idrecarga;
+
+        return $this;
+    }
+
+    /**
+     * Add idrecarga
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga
+     * @return Club
+     */
+    public function addIdrecarga(\FraterSoft\PiaWebBundle\Entity\Recarga $disciplina)
+    {
+        $this->idrecarga[] = $disciplina;
+        return $this;
+    }
+    
+    /**
+     * Remove idrecarga
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga
+     */
+    public function removeIdrecarga(\FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga)
+    {
+        $this->idrecarga->removeElement($idrecarga);
+    }
+    
+    /**
+     * Remove idrecarga
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga
+     */
+    public function removeAlldisciplinas()
+    {
+        unset($this->idrecarga);
+    }
+    /**
+     * Get idrecarga
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Recarga 
+     */
+    public function getIdrecarga()
+    {
+        return $this->idrecarga;
     }
     
 }

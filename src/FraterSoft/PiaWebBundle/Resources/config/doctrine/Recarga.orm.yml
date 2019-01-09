@@ -1,0 +1,78 @@
+FraterSoft\PiaWebBundle\Entity\Recarga:
+    type: entity
+    table: piaaccess.tmrecargas
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        idorganizador:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+        idpais:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+        nombre:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        valor:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            comment: ''
+        porcentaje:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            comment: ''
+        verporcentaje:
+            type: boolean
+            nullable: true
+            comment: ''
+            default: true
+        validohasta:
+            type: date
+            nullable: true
+            comment: ''
+        estatus:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        idtiporecarga:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+    manyToMany:
+        idevento:
+            targetEntity: Evento
+            cascade: { }
+            mappedBy: null
+            inversedBy: idrecarga
+            joinTable:
+                name: piaaccess.tmeventos
+                joinColumns:
+                    -
+                        name: idrecarga
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    -
+                        name: idevento
+                        referencedColumnName: id
+            orderBy: null             
+    lifecycleCallbacks: {  }

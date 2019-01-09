@@ -491,7 +491,7 @@ class InscritoRepository extends EntityRepository
         else{
             switch(true){
                 case ($tipo=="datetime" || $tipo=="datetimetz"):
-                    $sql = 'select valor,sum(cantidad) as cantidad from (' 
+                    $sql = 'select to_date(valor,\'dd/mm/yyyy\')  as valor ,sum(cantidad) as cantidad from (' 
                         . 'select to_char(i.fechahora,\'dd/mm/yyyy\') as valor,count(i) as cantidad '
                         . 'from piaaccess.tminscritos i left join piaaccess.tmpagos p on i.idpago=p.id where p.conciliado=true and i.idevento=' . $idevento
                         . 'group by i.fechahora) e group by valor order by valor';
