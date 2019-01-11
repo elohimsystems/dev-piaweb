@@ -553,6 +553,8 @@ class InscritoController extends commonPIAClass {
 
         //Busca los datos del competidor si existen, lo asigna a la entidad del formulario
         $entity = new Inscrito();
+        
+        print_r($evento->getIdrecarga()[0]->getNombre());
         if ($idcompetidor != 0) { //Si el competidor existe
             $competidor = $em->getRepository('FraterSoftPiaWebBundle:Competidor')
                     ->findOneBy(array('id' => $idcompetidor));
