@@ -237,7 +237,7 @@ FraterSoft\PiaWebBundle\Entity\Evento:
             mappedBy: null
             inversedBy: idevento
             joinTable:
-                name: piaaccess.trrecargaseventos
+                name: piaaccess.treventosrecargas
                 joinColumns:
                     -
                         name: idevento
