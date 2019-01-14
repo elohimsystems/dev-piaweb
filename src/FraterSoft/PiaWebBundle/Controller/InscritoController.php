@@ -430,7 +430,7 @@ class InscritoController extends commonPIAClass {
                     'widget' => 'single_text',
                     'data' => new \DateTime('now'),
                     'attr' => array('style' => 'display:none'),
-                    'label' => ' ',
+                    'label' => false,
                 ))
         ;
         $form->add('submit', 'submit', array(
@@ -554,7 +554,6 @@ class InscritoController extends commonPIAClass {
         //Busca los datos del competidor si existen, lo asigna a la entidad del formulario
         $entity = new Inscrito();
         
-        print_r($evento->getIdrecarga()[0]->getNombre());
         if ($idcompetidor != 0) { //Si el competidor existe
             $competidor = $em->getRepository('FraterSoftPiaWebBundle:Competidor')
                     ->findOneBy(array('id' => $idcompetidor));
@@ -675,8 +674,9 @@ class InscritoController extends commonPIAClass {
                     ))
             ;
             
-            $this->ocultaCampos($idevento, $form);            
-                        
+            $this->ocultaCampos($idevento, $form,array('clave'=>'iddocumento','dato'=>$iddocumento));
+
+            
             //Dependiendo del tipo de evento asigna el Equipo
             if ($evento->getIdcampeonato()) {
                 $form->get('idpia')
@@ -759,10 +759,10 @@ class InscritoController extends commonPIAClass {
             $form
                     ->get('idpago')
                     ->add('tipo', 'choice', array(
-                        'label' => 'Tipo de Pago',
+                        'label' => 'Forma  de Pago',
                         'choices' => $formasdepagoarray,
                         'required' => true,
-                        'empty_value' => 'Seleccione Tipo de Pago',
+                        'empty_value' => 'Seleccione Forma de Pago',
             ));
         else {
             return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
@@ -791,7 +791,7 @@ class InscritoController extends commonPIAClass {
                 'read_only' => true,
             ));
         }
-
+        
         //Busca los atributos criterios del evento y los envia al formulario, 
         //para las busqueda en ajax de las categorias
         $atributoscriterios = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')
@@ -799,11 +799,6 @@ class InscritoController extends commonPIAClass {
         if (!$atributoscriterios) {
             return new response("No hay atributos criterios para este evento");
         }
-
-        //$session = new Session();
-        //if ($session->isStarted())
-        //$session->start();
-            //$session->set('form', $form);       
 
         $arrayincrementos= array();
         if($evento->getProceso()==1){
@@ -815,7 +810,9 @@ class InscritoController extends commonPIAClass {
             foreach($formaspago as $formapago){
                 $arrayincrementos[$formapago->getIdformapago()->getId()]=$formapago->getIncremento();
             }
-        }   
+            $recargas=$evento->getIdrecarga();
+            //$form->get('idpago')->add('monto','hidden');
+        }
 
         $this->addBotonRegresar($form,$this->generateUrl('competidor_find', array('idevento' => $idevento)));
 
@@ -824,6 +821,7 @@ class InscritoController extends commonPIAClass {
             'atributos' => $atributoscriterios,
             'form' => $form->createView(),
             'incremento' => $arrayincrementos,
+            'recargas'=>$recargas
         ));
     }
 
@@ -842,7 +840,6 @@ class InscritoController extends commonPIAClass {
         $normalizers = array(new GetSetMethodNormalizer());  
         $serializer = new Serializer($normalizers, $encoders);  
         $jsonContent = $serializer->serialize($entity[0],'json');    
-        print_r($jsonContent);
         //Se transforma a un array php porque se json crea un array de objectos
         $obj_php = json_decode($jsonContent);
         //Se transforma en array basico, porque el decode crea un array de objetos 
@@ -1041,10 +1038,10 @@ class InscritoController extends commonPIAClass {
             $editForm
                     ->get('idpago')
                     ->add('tipo', 'choice', array(
-                        'label' => 'Tipo de Pago',
+                        'label' => 'Forma de Pago',
                         'choices' => $formasdepagoarray,
                         'required' => true,
-                        'empty_value' => 'Seleccione Tipo de Pago',
+                        'empty_value' => 'Seleccione Forma de Pago',
             ));
         else {
             return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(

@@ -84,7 +84,7 @@
             <tr><th>Club</th><td>{{ entity.idpia.equipo|upper }}</td></tr>
             <tr><th>Estado</th><td>{{ entity.idpia.idestado.estado }}</td></tr>
             <tr><th>Email Personal</th><td>{{ entity.idpia.emailpersonal|lower }}</td></tr>
-            <tr><th>Precio</th><td>{{( entity.precio * (1 + (incremento/100)))|round(2, 'floor') }}</td></tr>
+            <tr><th>Monto</th><td>{{( entity.idpago.monto * (1 + (incremento/100)))|round(2, 'floor') }}</td></tr>
             <tr><th>Categor&iacute;a</th><td>{{ entity.idcategoria.descripcion }}</td></tr>            
             <tr>
                 <th>Inscrito el</th>

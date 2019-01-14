@@ -38,21 +38,6 @@
                             //url = url.replace('_data_json_', data_json);
                             window.open(url, "_self");
                     }},                 
-                    /*{extend: 'selected', 
-                        text: 'Desmarcar',
-                        action: function () {
-                            table.rows().deselect();
-                        }
-                    },
-                    {extend: 'selectAll',
-                        className: 'selectall',
-                        text: 'Marcar',
-                        action : function(e) {
-                            e.preventDefault();
-                            table.rows({ search: 'applied'}).deselect();
-                            table.rows({ search: 'applied'}).select();
-                        }
-                    },*/                  
                     {text: 'Notificar',
                         action: function (e, dt, node, config) {
                             var countelement = 0;
@@ -137,7 +122,7 @@
                     {% endfor %}
                     { title: "Categoria", data: "idcategoria.descripcion" },
                     { title: "Punto", data: "punto" },
-                    { title: "Precio", data: "precio" },   
+                    { title: "Monto", data: "idpago.monto" },   
                     { title: "Notificado", data: "notificado",render: function(data){return data!=true?"NO":"SI";} },
                     { title: "Acciones", data:"id",render:
                                 function(data, type, row){

@@ -15,16 +15,15 @@ class PagoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('fechahora','datetime', array(
-                'widget' => 'single_text',
-                'data' => new \DateTime('now'),
-                'attr'=> array('style'=>'display:none'),
-                'label'=>' ',
+            ->add('monto','text', array(
+                'label'=>'Total a Pagar',
+                'label_attr'=>array('style'=>'display:none'),
+                'read_only' =>'true',
+                'attr'=>array('style'=>'display:none'),
             ))
-            ->add('monto','hidden')
             ->add('moneda','hidden')
             ->add('tipo','choice',array(
-                'label'=>'Tipo de Pago',
+                'label'=>'Forma de Pago',
                 'choices' => array(
                     0 => 'Exonerado', 
                     1 => 'Depósito', 
@@ -32,7 +31,7 @@ class PagoType extends AbstractType
                     3 => 'Tarjetas de Credito',
                     5 => 'Cortesia'),
                 'required' => true,
-                'empty_value' => 'Seleccione Tipo de Pago'
+                'empty_value' => 'Seleccione Forma de Pago'
             ))
             ->add('referencia','text', array(
                 'label'=>'Número Operación ',
@@ -77,12 +76,18 @@ class PagoType extends AbstractType
                 'required' => true,
                 'empty_value' => 'Seleccione un Banco',
             ))
+            ->add('fechahora','datetime', array(
+                'label'=>false,
+                'widget' => 'single_text',
+                'data' => new \DateTime('now'),
+                'attr'=> array('style'=>'display:none'),
+            ))                
             ->add('conciliado','hidden')
             ->add('conciliadoel','datetime', array(
                 'widget' => 'single_text',
                 'data' => new \DateTime('now'),
                 'attr'=> array('style'=>'display:none'),
-                'label'=>' ',
+                'label'=>false,
             ))
         ;
     }
