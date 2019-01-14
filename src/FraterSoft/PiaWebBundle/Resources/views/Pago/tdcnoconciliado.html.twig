@@ -63,6 +63,30 @@
                         break;
                 }
             });
+            
+            $("#{{edit_form.precio.vars.id}}").change(function () {
+                $("#{{form.idpago.monto.vars.id}}").show();
+                $("#{{form.idpago.monto.vars.id}}").parent().children(0).show();
+                recarga=[];
+                div=$("#{{form.precio.vars.id}}").parent().get(0);
+                precio=$("#{{form.precio.vars.id}}").val();
+                {% for recarga in recargas %}
+                $("#recarga{{loop.index0}}").remove();
+                if($("#{{form.precio.vars.id}}").val()){
+                    montorecargo=precio*({{recarga.porcentaje}}/100);
+                    total=parseFloat(montorecargo)+parseFloat(precio);
+                    recarga.push($("<div id='recarga{{loop.index0}}'><label>{{recarga.nombre|title}}{%if recarga.verporcentaje %} ({{recarga.porcentaje}}%){% endif %}</label>"+montorecargo.toFixed(2)+"</div>"));
+                    recarga[{{loop.index0}}].insertAfter(div);
+                    $("#{{form.idpago.monto.vars.id}}").val(total.toFixed(2));
+                    div=recarga[{{loop.index0}}];
+                }
+                else{
+                    $("#{{form.idpago.monto.vars.id}}").hide();
+                    $("#{{form.idpago.monto.vars.id}}").parent().children(0).hide();
+                }
+                {% endfor %}      
+            });   
+            
         });
     </script>
 {% endblock %}

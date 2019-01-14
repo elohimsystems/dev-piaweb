@@ -68,6 +68,12 @@
                     + "&idcompetencia=" + idcompetencia
                     + "&idcategoria=" + idcategoria;
             $('#{{ form.precio.vars.id }}').find('option').remove();
+            //Oculta el total a pagar
+            $("#{{form.idpago.monto.vars.id}}").hide();
+            $("#{{form.idpago.monto.vars.id}}").parent().children(0).hide();
+            {% for recarga in recargas %}
+            $("#recarga{{loop.index0}}").remove();
+            {% endfor %}
             $.ajax({
                 type: "GET",
                 data: criterios,
@@ -177,11 +183,6 @@
             $("#{{ form.idcompetencia.vars.id }}").change(function () {
                 if ($("#{{ form.idcompetencia.vars.id }}").val() != '') {
                     buscaCategorias();
-                    {#buscaPrecio(
-                            $('#{{ form.idevento.vars.id }}').val(),
-                            $('#{{ form.idcompetencia.vars.id }}').val(),
-                            ''
-                    );#}
                 }
             });                      
 
@@ -209,9 +210,6 @@
             });
 
             $("#formulario").validate();
-            //jQuery.extend(jQuery.validator.messages, {
-            //    required: "<span style='color:red;margin-left:2px'><b>*</b></span>",
-            //});
 
             jQuery.validator.addMethod("fechaESP", function (value, element)
             {
@@ -249,24 +247,6 @@
                 return true;
             }, "Fecha invalida");
 
-{################## CODIGO SOLO PARA EL EVENTO SANTA CORRE PRESENCIAL DE RETOSINFO ####################################}
-            {% if entity.idevento.id == 33981265 %}
-            if($("#{{ form.idpia.edad.vars.id }}").val()>15){
-                $("#{{ form.idpia.idrepresentante.vars.id }}").removeAttr("required");
-                $("#fratersoft_piawebbundle_inscrito_idpia > div:nth-child(24)").hide();
-                $("#{{ form.idpia.nombrerepresentante.vars.id }}").removeAttr("required");
-                $("#fratersoft_piawebbundle_inscrito_idpia > div:nth-child(25)").hide();
-            }
-            else{
-                $("#{{ form.idpia.idrepresentante.vars.id }}").prop("required", true);
-                $("#fratersoft_piawebbundle_inscrito_idpia > div:nth-child(24)").show();
-                $("#{{ form.idpia.nombrerepresentante.vars.id }}").prop("required", true);
-                $("#fratersoft_piawebbundle_inscrito_idpia > div:nth-child(25)").show();
-            }
-            {% endif %}
-{######################################################################################################################}
-
-
             //Funcion calcula la edad del competidor, dependiendo del critetio configurado
             $("#{{ form.idpia.fechanacimiento.vars.id }}").blur(function () {
                 if ($("#{{ form.idpia.fechanacimiento.vars.id }}").val() != '') {
@@ -289,38 +269,11 @@
                     {% endif %}
                     buscaCategorias();
                     
-{################## CODIGO SOLO PARA EL EVENTO SANTA CORRE PRESENCIAL DE RETOSINFO ####################################}
-                    //CODIGO NUEVO
-                    {% if entity.idevento.id == 33981265 %}
-                    if($("#{{ form.idpia.edad.vars.id }}").val()>15){
-                        $("#{{ form.idpia.idrepresentante.vars.id }}").removeAttr("required");
-                        $("#fratersoft_piawebbundle_inscrito_idpia > div:nth-child(24)").hide();
-                        $("#{{ form.idpia.nombrerepresentante.vars.id }}").removeAttr("required");
-                        $("#fratersoft_piawebbundle_inscrito_idpia > div:nth-child(25)").hide();
-                    }
-                    else{
-                        $("#{{ form.idpia.idrepresentante.vars.id }}").prop("required", true);
-                        $("#fratersoft_piawebbundle_inscrito_idpia > div:nth-child(24)").show();
-                        $("#{{ form.idpia.nombrerepresentante.vars.id }}").prop("required", true);
-                        $("#fratersoft_piawebbundle_inscrito_idpia > div:nth-child(25)").show();
-                    }
-                    {% endif %}
-{######################################################################################################################}
-                    {#buscaPrecio(
-                            $('#{{ form.idevento.vars.id }}').val(),
-                            $('#{{ form.idcompetencia.vars.id }}').val(),
-                            $('#{{ form.idcategoria.vars.id }}').val()
-                    );#}                        
                 }
             });
 
         $("#{{ form.idpia.sexo.vars.id }}").change(function () {
             buscaCategorias();
-            {#buscaPrecio(
-                    $('#{{ form.idevento.vars.id }}').val(),
-                    $('#{{ form.idcompetencia.vars.id }}').val(),
-                    $('#{{ form.idcategoria.vars.id }}').val()
-            );#}                    
         });
 
         $("#{{ form.idcategoria.vars.id }}").change(function () {
@@ -462,8 +415,45 @@
             ]
         });
         
+        var recarga=[];
+        var indexrecarga=0;
+        var div;
+        var montorecargo;
+        var arrayrecargas=[];
+        var precio=0;
+        var total=0;
+        {% for recarga in recargas %}
+        if($("#{{form.precio.vars.id}}").val()){
+            div=$("#{{form.precio.vars.id}}").parent().get(0);
+            montorecargo=$("#{{form.precio.vars.id}}").val()*({{recarga.porcentaje}}/100);
+            recarga.push($("<div id='recarga{{loop.index0}}'><label>{{recarga.nombre|title}}{%if recarga.verporcentaje %} ({{recarga.porcentaje}}%){% endif %}</label>"+montorecargo.toFixed(2)+"</div>"));
+            recarga[{{loop.index0}}].insertAfter(div);
+            div=recarga[{{loop.index0}}];
+        }
+        {% endfor %}      
         
-
+        $("#{{form.precio.vars.id}}").change(function () {
+            $("#{{form.idpago.monto.vars.id}}").show();
+            $("#{{form.idpago.monto.vars.id}}").parent().children(0).show();
+            recarga=[];
+            div=$("#{{form.precio.vars.id}}").parent().get(0);
+            precio=$("#{{form.precio.vars.id}}").val();
+            {% for recarga in recargas %}
+            $("#recarga{{loop.index0}}").remove();
+            if($("#{{form.precio.vars.id}}").val()){
+                montorecargo=precio*({{recarga.porcentaje}}/100);
+                total=parseFloat(montorecargo)+parseFloat(precio);
+                recarga.push($("<div id='recarga{{loop.index0}}'><label>{{recarga.nombre|title}}{%if recarga.verporcentaje %} ({{recarga.porcentaje}}%){% endif %}</label>"+montorecargo.toFixed(2)+"</div>"));
+                recarga[{{loop.index0}}].insertAfter(div);
+                $("#{{form.idpago.monto.vars.id}}").val(total.toFixed(2));
+                div=recarga[{{loop.index0}}];
+            }
+            else{
+                $("#{{form.idpago.monto.vars.id}}").hide();
+                $("#{{form.idpago.monto.vars.id}}").parent().children(0).hide();
+            }
+            {% endfor %}      
+        });   
 
     });
     </script>   
@@ -476,6 +466,7 @@
             margin: auto;
             width: 390px;
         }
+                
         #namefile_fileiddocumento,
         #namefile_foto,
         #namefile_filepartidanacimiento,
@@ -520,27 +511,21 @@
         #formulario > div:nth-child(1) {
             display:none;
         }
-        #formulario > div:nth-child(4){
-            margin: 0px;
-        }
-        #formulario > div:nth-child(4) > label{
-            display:none;
-        }
         #formulario > div:nth-child(2):hover{
             font-weight: bold;
-        }          
+        }
         #formulario > div:nth-child(6):hover{
             font-weight: bold;
         }  
         #formulario > div:nth-child(7):hover{
             font-weight: bold;
         }          
-        #formulario > div:nth-child(5){
+        #formulario > div:nth-child(3){
             margin: 0px;
         }
-        #formulario > div:nth-child(5) > label{
+        #formulario > div:nth-child(3) > label{
             display:none;
-        }        
+        }
         #formulario > div:nth-child(n+0) > label{
             width: 180px;
         }        
@@ -574,11 +559,11 @@
             font-weight: bold;
         }         
         
-        /*************************************************/
-        /*Configura el estilo del subformulario pago ******/
-        /*************************************************/
+        /****************************************************/
+        /*  Configura el estilo del subformulario pago ******/
+        /****************************************************/
         #{{form.idpago.vars.id}} > div:nth-child(1){
-            display: none;
+            /*display: none;*/
         }         
         #{{form.idpago.vars.id}} > div:nth-child(n+0){
             margin-top: 5px;
@@ -639,7 +624,15 @@
         }
         label.error {
             display:none !important; 
-        }          
+        }                  
+        .group_fields {
+            width: 98% !important;
+            border: 1px solid black;
+            text-align: center !important;
+            font-size: 10px;
+            padding:3px;
+        }        
+        
    </style>
 {% endblock %}    
 

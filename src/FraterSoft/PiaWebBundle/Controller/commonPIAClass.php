@@ -35,7 +35,7 @@ class commonPIAClass extends Controller
     } 
     
     //Oculta los campos que no estan configurados en la base de datos    
-    public function ocultaCampos($idevento, $form) {
+    public function ocultaCampos($idevento, $form,$campobusqueda=array('clave'=>NULL,'dato'=>NULL)) {
         $em = $this->getDoctrine()->getManager();
         $eventoatributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')->atributosEvento($idevento);
         if ($eventoatributos) {
@@ -56,13 +56,25 @@ class commonPIAClass extends Controller
                 if ($existe == true)
                     switch($atributo->getIdatributo()->getTipodato()){
                         case "S":
+                            $propiedades=[];
+                            switch(true){
+                                case $child->getName()=='iddocumento' && $campobusqueda['clave']=='iddocumento':
+                                    $propiedades['data']=$campobusqueda['dato'];
+                                    break;
+                                case $child->getName()=='emailpersonal' && $campobusqueda['clave']=='emailpersonal':
+                                    $propiedades['data']=$campobusqueda['dato'];
+                                    break;
+                            }
+                            $propiedades['required']=($atributo->getRequerido()==true)?true:false;
+                            $propiedades['label']=(is_null($atributo->getEtiqueta()))?$atributo->getIdatributo()->getNombre():$atributo->getEtiqueta();
+                            $propiedades['read_only']=($atributo->getBusqueda()==true)?true:false;
                             $tipocampo='text';
                             $form->get('idpia')->add(
-                                $child->getName(), $tipocampo,array(
-                                'required'=>($atributo->getRequerido()==true)?true:false,
-                                'label'=>(is_null($atributo->getEtiqueta()))?$atributo->getIdatributo()->getNombre():$atributo->getEtiqueta(),
-                                'read_only' => ($atributo->getBusqueda()==true)?true:false,
-                            ));                     
+                                $child->getName(), $tipocampo,$propiedades//array(
+                                //'required'=>($atributo->getRequerido()==true)?true:false,
+                                //'label'=>(is_null($atributo->getEtiqueta()))?$atributo->getIdatributo()->getNombre():$atributo->getEtiqueta(),
+                                //'read_only' => ($atributo->getBusqueda()==true)?true:false,
+                            );                     
                             break;
                         case "N":
                             $tipocampo='number';
@@ -284,7 +296,7 @@ class commonPIAClass extends Controller
             "nai" => $numpedido, //NUMERO DE PEDIDO 
             "co" => "INSCRIPCION " . $entity->getIdevento()->getNombre(),
             "tl" => "0424-9642982", //Telefono Soporte PIA
-            "mt" => number_format($entity->getPrecio() * (1 + $porcentaje), 2, ".", ""), //Monto
+            "mt" => number_format($entity->getIdpago()->getMonto() * (1 + $porcentaje), 2, ".", ""), //Monto
             "ancho" => "190px"
         );
 
@@ -448,10 +460,10 @@ class commonPIAClass extends Controller
         if ($formasdepagoarray)
             $formulario
                     ->add('tipo', 'choice', array(
-                        'label' => 'Tipo de Pago',
+                        'label' => 'Forma de Pago',
                         'choices' => $formasdepagoarray,
                         'required' => true,
-                        'empty_value' => 'Seleccione Tipo de Pago',
+                        'empty_value' => 'Seleccione Forma de Pago',
             ));
         else {
             return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
