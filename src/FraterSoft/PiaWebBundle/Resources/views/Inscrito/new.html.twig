@@ -9,7 +9,7 @@
 
 {% block javascripts %}
     <script>
-
+        var precios=[];
         function buscaCategorias() {
             //Busca las categorias segun los atributos configurados
             if(!$('#{{ form.idcompetencia.vars.id }}').val()){
@@ -84,6 +84,7 @@
                     if(datos['values'][0]['values'].length>1)
                         $("#{{ form.precio.vars.id }}").append("<option selected value=''>Seleccione un Precio</option>");
                     $.each(datos['values'][0]['values'], function (key, value) {
+                        precios.push(value.precio);
                         if(value.precio!=-1){
                             $('#{{ form.precio.vars.id }}').append($('<option>', {
                                 value: value.precio,
@@ -121,7 +122,8 @@
             buscaPrecio($('#{{ form.idevento.vars.id }}').val(),
                         $('#{{ form.idcompetencia.vars.id }}').val()?$('#{{ form.idcompetencia.vars.id }}').val():'',
                         $('#{{ form.idcategoria.vars.id }}').val()?$('#{{ form.idcategoria.vars.id }}').val():'');
-
+            console.log($('#{{ form.precio.vars.id }}').val());
+                
 
             //Habilita el campo del banco justo antes de enviar el formulario
             $("form#formulario" ).submit(function( event ) {
@@ -354,7 +356,6 @@
                     }
                     else {
                         $("#{{ form.submit.vars.id }}").show();
-                        console.log('{{ form_label(form.idpago.referencia) }}');
                         $("#label_pago_referencia").html('Codigo');
                         $("#mensajepago").hide();
                         $("#mensajepagotarjeta").hide();
@@ -415,20 +416,24 @@
             ]
         });
         
+        
         var recarga=[];
         var indexrecarga=0;
         var div;
         var montorecargo;
-        var arrayrecargas=[];
-        var precio=0;
+        var precio=precios[0];
         var total=0;
+        console.log(precios[0]);
         {% for recarga in recargas %}
-        if($("#{{form.precio.vars.id}}").val()){
+        if(!$("#{{form.precio.vars.id}}").val()){
             div=$("#{{form.precio.vars.id}}").parent().get(0);
-            montorecargo=$("#{{form.precio.vars.id}}").val()*({{recarga.porcentaje}}/100);
-            recarga.push($("<div id='recarga{{loop.index0}}'><label>{{recarga.nombre|title}}{%if recarga.verporcentaje %} ({{recarga.porcentaje}}%){% endif %}</label>"+montorecargo.toFixed(2)+"</div>"));
+            montorecargo=precio*({{recarga.porcentaje}}/100);
+            total=parseFloat(montorecargo)+parseFloat(precio);
+            recarga.push($("<div id='recarga{{loop.index0}}'><label>{{recarga.nombre|title}}{%if recarga.verporcentaje is not null %} ({{recarga.porcentaje}}%){% endif %}</label>"+montorecargo.toFixed(2)+"</div>"));
             recarga[{{loop.index0}}].insertAfter(div);
-            div=recarga[{{loop.index0}}];
+            $("#{{form.idpago.monto.vars.id}}").val(total.toFixed(2));
+            $("#{{form.idpago.monto.vars.id}}").show();
+            $("#{{form.idpago.monto.vars.id}}").parent().children(0).show();
         }
         {% endfor %}      
         
