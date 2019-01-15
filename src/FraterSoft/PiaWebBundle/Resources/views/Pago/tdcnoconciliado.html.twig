@@ -8,7 +8,7 @@
             $("#mensajepagotarjeta").hide();
             $("#{{ edit_form.tipo.vars.id }}").find("[value='0']").remove();
 
-            $("#{{ edit_form.monto.vars.id }}").val({{inscrito.precio}});
+            {#$("#{{ edit_form.monto.vars.id }}").val({{inscrito.precio}});#}
 
             //Se limpia la forma de pago, para que el usuario decida nuevamente
             $("#{{ edit_form.tipo.vars.id }}").val('');
@@ -63,35 +63,17 @@
                         break;
                 }
             });
-            
-            $("#{{edit_form.precio.vars.id}}").change(function () {
-                $("#{{form.idpago.monto.vars.id}}").show();
-                $("#{{form.idpago.monto.vars.id}}").parent().children(0).show();
-                recarga=[];
-                div=$("#{{form.precio.vars.id}}").parent().get(0);
-                precio=$("#{{form.precio.vars.id}}").val();
-                {% for recarga in recargas %}
-                $("#recarga{{loop.index0}}").remove();
-                if($("#{{form.precio.vars.id}}").val()){
-                    montorecargo=precio*({{recarga.porcentaje}}/100);
-                    total=parseFloat(montorecargo)+parseFloat(precio);
-                    recarga.push($("<div id='recarga{{loop.index0}}'><label>{{recarga.nombre|title}}{%if recarga.verporcentaje %} ({{recarga.porcentaje}}%){% endif %}</label>"+montorecargo.toFixed(2)+"</div>"));
-                    recarga[{{loop.index0}}].insertAfter(div);
-                    $("#{{form.idpago.monto.vars.id}}").val(total.toFixed(2));
-                    div=recarga[{{loop.index0}}];
-                }
-                else{
-                    $("#{{form.idpago.monto.vars.id}}").hide();
-                    $("#{{form.idpago.monto.vars.id}}").parent().children(0).hide();
-                }
-                {% endfor %}      
-            });   
-            
+                        
         });
     </script>
 {% endblock %}
 {% block style %}
     <style type="text/css">
+        .contenido{    
+            margin: auto;
+            width: 390px;
+        }
+        
         th{
             text-align: left;
         }
@@ -115,6 +97,38 @@
         #mensajepagotarjeta{
             text-align: center;
         }
+        #montorecarga{
+            -webkit-appearance: textarea;
+            border: 1px solid gray;
+            font: medium -moz-fixed;
+            font: -webkit-small-control;
+            height: 16px;
+            padding: 2px 0px 2px 0px;
+            resize: both;
+            width: 198px;
+        }
+        #{{edit_form.vars.id}} > div:nth-child(n+0){
+            margin-top: 5px;
+        }         
+        #{{edit_form.vars.id}} > div:nth-child(n+0) > label{
+            display: inline-block;
+            width: 180px;
+            text-align: left;   
+            vertical-align: middle;
+        }
+        input{
+            vertical-align: middle;
+            width: 196px;
+            margin-left: 0;
+            vertical-align: middle;
+        }
+        #{{edit_form.vars.id}} > div:nth-child(n+0) > select {
+            height: 21px;
+        }
+        #{{edit_form.vars.id}} > div:nth-child(n+0):hover{
+            font-weight: bold;
+        }         
+        
     </style>
 {% endblock %}  
 {% block body -%}
@@ -128,16 +142,12 @@
             <td colspan="2">{{ form_errors(edit_form) }}</td>
         </tr>              
         <tr>
-            <th>Evento</th>
-            <td>{{inscrito.idevento.nombre}}</td>
-        </tr>          
-        <tr>
             <th>Competencia</th>
             <td>{{inscrito.idcompetencia.descripcion}}</td>
         </tr>         
         <tr>
             <th>Cedula</th>
-            <td>{{inscrito.idpia}}</td>
+            <td>{{inscrito.idpia.iddocumento}}</td>
         </tr>        
         <tr>
             <th>Nombre</th>
@@ -155,6 +165,16 @@
             <th>Categor&iacute;a</th>
             <td>{{inscrito.idcategoria.descripcion}}</td>
         </tr>          
+        <tr>
+            <th>Precio</td>
+            <td><spam id='montorecarga'>{{inscrito.precio|number_format(2, ',', '.')}}</spam></td>
+        </tr>                
+        {% for recarga in inscrito.idevento.idrecarga %}
+        <tr>
+            <th>{{recarga.nombre|title}} {%if recarga.verporcentaje == true %}({{recarga.porcentaje}}%){% endif %}</td>
+            <td><spam id='montorecarga'>{%if recarga.valor is null %}{{(inscrito.precio*(recarga.porcentaje/100))|number_format(2, ',', '.')}}{% else %}{{recarga.valor}}{% endif %}</spam></td>
+        </tr>                
+        {% endfor %}      
         <tr>
             <th>{{form_label(edit_form.monto)}}</td>
             <td>{{form_widget(edit_form.monto, {'read_only': true })}}</td>

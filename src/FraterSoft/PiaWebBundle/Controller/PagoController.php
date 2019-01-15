@@ -501,7 +501,7 @@ class PagoController extends commonPIAClass {
             throw $this->createNotFoundException('Unable to find Pago entity.');
         }
 
-        $precios=$this->buscarPrecio(
+        /*$precios=$this->buscarPrecio(
                 $inscrito->getIdevento()->getId(),
                 $inscrito->getIdcompetencia()->getId(),
                 $inscrito->getIdcategoria()->getId()
@@ -510,15 +510,20 @@ class PagoController extends commonPIAClass {
         $array_precios = array();
         foreach($precios as $precio){
             $array_precios[(string)$precio['precio']]= $precio['texto'] . " " . $precio['moneda'] . " " . $precio['precio'];
-        }
+        }*/
         
 
         $editForm = $this->createEditForm($inscrito->getIdpago());
         $editForm
-                ->add('monto','choice',array(
+                /*->add('monto','choice',array(
                     'label'=>'Precios',
                     'choices' => $array_precios,
                     'empty_value' => 'Seleccione El Precio'
+                ))*/
+                ->add('monto','text',array(
+                    'label'=>'Total a Pagar',
+                    'data'=>$inscrito->getIdpago()->getMonto(),
+                    'read_only'=>true,
                 ))
                 ->remove('conciliado')
                 ->remove('conciliadoel')

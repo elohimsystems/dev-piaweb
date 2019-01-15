@@ -27,10 +27,6 @@ FraterSoft\PiaWebBundle\Entity\Inscrito:
             id: true
             generator:
                 strategy: SEQUENCE
-            #sequenceGenerator:
-            #    sequenceName: piaaccess.tminscritos_id_sq
-            #    allocationSize: 100
-            #    initialValue: 1                  
     fields:
         numero:
             type: integer
