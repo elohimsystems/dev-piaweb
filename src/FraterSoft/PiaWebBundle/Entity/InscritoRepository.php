@@ -126,7 +126,7 @@ class InscritoRepository extends EntityRepository
                         . 'and i.idcompetencia=c '
                         . 'and i.status = 1 '
                         . 'and (p.conciliado=false or p.conciliado is null) '
-                        . 'and (p.tipo=\'1\' or p.tipo=\'2\' or p.tipo is null)'
+                        . 'and (p.tipo!=\'3\' or p.tipo is null)'
                         . 'and i.idevento=' . $idevento
                     . 'ORDER BY '
                         . 'i.secuencia ASC'
@@ -157,7 +157,7 @@ class InscritoRepository extends EntityRepository
                         . 'and co.idestado=es '
                         . 'and i.status = 1 '
                         . 'and (p.conciliado=false or p.conciliado is null) '
-                        . 'and (p.tipo=\'1\' or p.tipo=\'2\' or p.tipo=\'5\' or p.tipo is null) '
+                        . 'and (p.tipo!=\'3\' or p.tipo is null) '
                         . 'and i.idevento=' . $idevento . ' ' 
                     . 'ORDER BY '
                         . 'i.secuencia ASC'                 

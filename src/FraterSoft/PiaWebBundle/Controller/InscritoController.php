@@ -269,6 +269,7 @@ class InscritoController extends commonPIAClass {
         
         if ($form->isValid()) {
 
+            print_r($form->get('idpago')->getData()->getTipo());
             $emails = array();
             if(!is_null($entity->getIdpia()->getEmail()) && filter_var($entity->getIdpia()->getEmail(), FILTER_VALIDATE_EMAIL))
                 array_push($emails,$entity->getIdpia()->getEmail());
@@ -391,6 +392,7 @@ class InscritoController extends commonPIAClass {
                 var_dump($child->getName());
                 $errors[$child->getName()] = $this->getErrorMessages($child);
                 print_r($errors);
+                print_r($child->getData());
             }
         }
         foreach ($form->get('idpia')->all() as $child) {

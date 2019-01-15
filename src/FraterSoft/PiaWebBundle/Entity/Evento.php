@@ -1120,9 +1120,9 @@ class Evento
      * @param \FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga
      * @return Club
      */
-    public function addIdrecarga(\FraterSoft\PiaWebBundle\Entity\Recarga $disciplina)
+    public function addIdrecarga(\FraterSoft\PiaWebBundle\Entity\Recarga $recarga)
     {
-        $this->idrecarga[] = $disciplina;
+        $this->idrecarga[] = $recarga;
         return $this;
     }
     
@@ -1131,9 +1131,9 @@ class Evento
      *
      * @param \FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga
      */
-    public function removeIdrecarga(\FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga)
+    public function removeIdrecarga(\FraterSoft\PiaWebBundle\Entity\Recarga $recarga)
     {
-        $this->idrecarga->removeElement($idrecarga);
+        $this->idrecarga->removeElement($recarga);
     }
     
     /**
@@ -1141,7 +1141,7 @@ class Evento
      *
      * @param \FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga
      */
-    public function removeAlldisciplinas()
+    public function removeAllrecargas()
     {
         unset($this->idrecarga);
     }

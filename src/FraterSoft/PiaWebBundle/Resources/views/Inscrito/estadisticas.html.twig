@@ -42,6 +42,7 @@
             <li><a href="#tabs-3">Anulados</a></li>
             <li><a href="#tabs-4">Operaciones TDC</a></li>
             <li><a href="#tabs-5">Estadisticas</a></li>            
+            <li><a href="#tabs-6">Auditoria</a></li>   
         </ul>
         <div id="tabs-2"></div>
         <div id="tabs-3"></div>  
@@ -86,7 +87,7 @@
         </p>
     </div>       
     {% endblock %}
-{% block javascripts %}
+{% block javascripts %}    
     <script>
 //- Fincion Generica para generar las tablas -----------------------------------    
         var arraydatos=[];
@@ -234,6 +235,9 @@
             $('#tabs a[href="#tabs-4"]').on("click", function () {
                 $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
             });   
+            $('#tabs a[href="#tabs-6"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento,'email':email}) }}')
+            });         
 
             ConsultarDataAjax();
             $("#select_atributos_opcion").change(function () {

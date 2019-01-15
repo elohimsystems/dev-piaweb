@@ -591,11 +591,30 @@
     
     function TextoFormaPago(valor){
         switch(valor){
-            case 1: return("DEPOSITO");
-            case 2: return("TRANFERECIA");
-            case 3: return("TARJETA DE CREDITO");
-            case 5: return("OTROS");
-            case 6: return("PUNTO");
+            case '1': return("DEPOSITO");
+            case '2': return("TRANFERECIA BS");
+            case '3': return("TARJETA DE CREDITO");
+            case '5': return("OTROS");
+            case '6': return("TARJETA DE DEBITO");
+            case '7': return("PAYPAL");
+            case '8': return("EFECTIVO $");
+            case '9': return("TRANSFERENCIA $");
+            case '10': return("EFECTIVO BS");
+            default: return("DEFINIR FDP");
+        }
+    }
+    function CodigoFormaPago(valor){
+        switch(valor){
+            case '1': return("DEP");
+            case '2': return("TRA");
+            case '3': return("TDC");
+            case '5': return("OTR");
+            case '6': return("TDD");
+            case '7': return("PAY");
+            case '8': return("EF$");
+            case '9': return("TR$");
+            case '10': return("EFE");
+            default: return("DEFINIR");
         }
     }    
 </script>
