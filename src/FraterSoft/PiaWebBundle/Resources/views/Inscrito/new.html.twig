@@ -61,6 +61,31 @@
                     );
                 }
 
+        function calcularTotalPagar(precio){
+            var recarga=[];
+            var indexrecarga=0;
+            var div;
+            var montorecargo;
+            var total=parseFloat(precio);
+            {% for recarga in recargas %}
+            $("#recarga{{loop.index0}}").remove();
+            if($("#{{form.precio.vars.id}}").val()){
+                div=$("#{{form.precio.vars.id}}").parent().get(0);
+                montorecargo=precio*({{recarga.porcentaje}}/100);
+                total+=parseFloat(montorecargo);
+                recarga.push($("<div id='recarga{{loop.index0}}'><label>{{recarga.nombre|title}}{%if recarga.verporcentaje is not null %} ({{recarga.porcentaje}}%){% endif %}</label><spam id='montorecarga'>"+montorecargo.toFixed(2)+"</spam></div>"));
+                recarga[{{loop.index0}}].insertAfter(div);
+                $("#{{form.idpago.monto.vars.id}}").val(total.toFixed(2));
+                $("#{{form.idpago.monto.vars.id}}").show();
+                $("#{{form.idpago.monto.vars.id}}").parent().children(0).show();
+            }
+            else{
+                $("#{{form.idpago.monto.vars.id}}").hide();
+                $("#{{form.idpago.monto.vars.id}}").parent().children(0).hide();
+            }
+            {% endfor %}      
+        }
+        
         function buscaPrecio(idevento, idcompetencia, idcategoria) {
             {%if entity.idevento.proceso == 1%}
             //Busca el precio segun configuracion
@@ -83,13 +108,38 @@
                 {
                     if(datos['values'][0]['values'].length>1)
                         $("#{{ form.precio.vars.id }}").append("<option selected value=''>Seleccione un Precio</option>");
+                    var texto="";
                     $.each(datos['values'][0]['values'], function (key, value) {
-                        precios.push(value.precio);
+                        var recarga=[];
+                        var indexrecarga=0;
+                        var div;
+                        var montorecargo;
+                        var precio=precios[0];
+                        var total=0;
+                        texto=((value.texto==null)?'':value.texto) + ' ' + ((value.moneda==null)?'':value.moneda) + ' ' + value.precio;
                         if(value.precio!=-1){
-                            $('#{{ form.precio.vars.id }}').append($('<option>', {
+                            if(datos['values'][0]['values'].length==1){
+                                $('#{{ form.precio.vars.id }}').append('<option selected value='+value.precio+'>'+texto+'</option>');
+                                calcularTotalPagar(value.precio);
+                                {#% for recarga in recargas %}
+                                if($("#{{form.precio.vars.id}}").val()){
+                                    div=$("#{{form.precio.vars.id}}").parent().get(0);
+                                    montorecargo=value.precio*({{recarga.porcentaje}}/100);
+                                    total=parseFloat(montorecargo)+parseFloat(value.precio);
+                                    recarga.push($("<div id='recarga{{loop.index0}}'><label>{{recarga.nombre|title}}{%if recarga.verporcentaje is not null %} ({{recarga.porcentaje}}%){% endif %}</label>"+montorecargo.toFixed(2)+"</div>"));
+                                    recarga[{{loop.index0}}].insertAfter(div);
+                                    $("#{{form.idpago.monto.vars.id}}").val(total.toFixed(2));
+                                    $("#{{form.idpago.monto.vars.id}}").show();
+                                    $("#{{form.idpago.monto.vars.id}}").parent().children(0).show();
+                                }
+                                {% endfor %#}      
+                            }
+                            else
+                                $('#{{ form.precio.vars.id }}').append('<option value='+value.precio+'>'+texto+'</option>');
+                            {#$('#{{ form.precio.vars.id }}').append($('<option>', {
                                 value: value.precio,
                                 text: ((value.texto==null)?'':value.texto) + ' ' + ((value.moneda==null)?'':value.moneda) + ' ' + value.precio
-                            }));
+                            }));#}
                             $("#{{ form.precio.vars.id }}").prop("disabled", false);
                             $("#{{ form.idpago.banco.vars.id }}").prop("disabled", false);
                             $("#{{ form.idpago.referencia.vars.id }}").prop("disabled", false);
@@ -121,9 +171,7 @@
             //Busca los precios para los valores por defecto
             buscaPrecio($('#{{ form.idevento.vars.id }}').val(),
                         $('#{{ form.idcompetencia.vars.id }}').val()?$('#{{ form.idcompetencia.vars.id }}').val():'',
-                        $('#{{ form.idcategoria.vars.id }}').val()?$('#{{ form.idcategoria.vars.id }}').val():'');
-            console.log($('#{{ form.precio.vars.id }}').val());
-                
+                        $('#{{ form.idcategoria.vars.id }}').val()?$('#{{ form.idcategoria.vars.id }}').val():'');                
 
             //Habilita el campo del banco justo antes de enviar el formulario
             $("form#formulario" ).submit(function( event ) {
@@ -415,29 +463,15 @@
                 }
             ]
         });
-        
-        
-        var recarga=[];
-        var indexrecarga=0;
-        var div;
-        var montorecargo;
-        var precio=precios[0];
-        var total=0;
-        console.log(precios[0]);
-        {% for recarga in recargas %}
-        if(!$("#{{form.precio.vars.id}}").val()){
-            div=$("#{{form.precio.vars.id}}").parent().get(0);
-            montorecargo=precio*({{recarga.porcentaje}}/100);
-            total=parseFloat(montorecargo)+parseFloat(precio);
-            recarga.push($("<div id='recarga{{loop.index0}}'><label>{{recarga.nombre|title}}{%if recarga.verporcentaje is not null %} ({{recarga.porcentaje}}%){% endif %}</label>"+montorecargo.toFixed(2)+"</div>"));
-            recarga[{{loop.index0}}].insertAfter(div);
-            $("#{{form.idpago.monto.vars.id}}").val(total.toFixed(2));
-            $("#{{form.idpago.monto.vars.id}}").show();
-            $("#{{form.idpago.monto.vars.id}}").parent().children(0).show();
-        }
-        {% endfor %}      
-        
+                
         $("#{{form.precio.vars.id}}").change(function () {
+            calcularTotalPagar($("#{{form.precio.vars.id}}").val());
+            {#var recarga=[];
+            var indexrecarga=0;
+            var div;
+            var montorecargo;
+            var precio=precios[0];
+            var total=0;
             $("#{{form.idpago.monto.vars.id}}").show();
             $("#{{form.idpago.monto.vars.id}}").parent().children(0).show();
             recarga=[];
@@ -458,9 +492,10 @@
                 $("#{{form.idpago.monto.vars.id}}").parent().children(0).hide();
             }
             {% endfor %}      
+            #}
         });   
 
-    });
+    });    
     </script>   
 {% endblock %}
 {% block style %}
@@ -637,6 +672,16 @@
             font-size: 10px;
             padding:3px;
         }        
+        #montorecarga{
+            -webkit-appearance: textarea;
+            border: 1px solid gray;
+            font: medium -moz-fixed;
+            font: -webkit-small-control;
+            height: 16px;
+            padding: 2px 0px 2px 0px;
+            resize: both;
+            width: 198px;
+        }
         
    </style>
 {% endblock %}    

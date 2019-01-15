@@ -30,7 +30,8 @@
                 "columnDefs": [
                     { "visible": false, "targets": 4 },
                     { "visible": false, "targets": 8 },
-                ],           
+                    { "width": 200, "targets": 9 },
+                ],
                 "language": {
                     "emptyTable": "No hay datos para mostrar",
                     "lengthMenu": "Muestra _MENU_ registros",
@@ -214,6 +215,11 @@
                                 <ul id="icons" class="ui-widget ui-helper-clearfix">      
                                     <a href="{{ path('inscrito_show', { 'id': operaciontdc.id }) }}">
                                         <li class="ui-state-default ui-corner-all" title="Ver"><span class="ui-icon ui-icon-search"></span></li>
+                                    </a>
+                                    <a href="{{ path('inscrito_anular', { 'id': operaciontdc.id }) }}">
+                                        <li class="{% if operaciontdc.idpago.conciliado != TRUE %}ui-state-default{%else%}ui-state-disabled{%endif%} ui-corner-all" title="Anular">
+                                            <span class="ui-icon ui-icon-closethick"></span>
+                                        </li>
                                     </a>
                                 </ul>                                
                             </td>
