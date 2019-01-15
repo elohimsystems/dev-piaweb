@@ -22,7 +22,8 @@ class PagoType extends AbstractType
                 'attr'=>array('style'=>'display:none'),
             ))
             ->add('moneda','hidden')
-            ->add('tipo','choice',array(
+            ->add('tipo')
+            /*->add('tipo','choice',array(
                 'label'=>'Forma de Pago',
                 'choices' => array(
                     0 => 'Exonerado', 
@@ -32,7 +33,7 @@ class PagoType extends AbstractType
                     5 => 'Cortesia'),
                 'required' => true,
                 'empty_value' => 'Seleccione Forma de Pago'
-            ))
+            ))*/
             ->add('referencia','text', array(
                 'label'=>'Número Operación ',
                 'label_attr' => array('id' => 'label_pago_referencia')

@@ -105,7 +105,10 @@
             });     
             $('#tabs a[href="#tabs-5"]').on("click", function () {
                 $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
-            });   
+            });  
+            $('#tabs a[href="#tabs-6"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento,'email':email}) }}')
+            });         
         });
     </script>           
 {% endblock %}     
@@ -151,6 +154,7 @@
             <li><a href="#tabs-3">Anulados</a></li>
             <li><a href="#tabs-4">Operaciones TDC</a></li>
             <li><a href="#tabs-5">Estadisticas</a></li>              
+            <li><a href="#tabs-6">Auditoria</a></li>   
         </ul>
         <div id="tabs-1"></div>
         <div id="tabs-2"></div>
@@ -165,7 +169,7 @@
                         <th>Apellido</th>
                         <th>Nombre</th>
                         <th>Inscrito el</th>
-                        <th>Precio</th>
+                        <th>Monto Pagado</th>
                         <th>Conciliado</th>
                         <th>Fecha</th>
                         <th>Comprobante</th>
@@ -186,7 +190,7 @@
                             <td>{{ operaciontdc.idpia.apellido|upper }}</td>
                             <td>{{ operaciontdc.idpia.nombre|upper }}</td>
                             <td>{{ operaciontdc.fechahora | date('d-m-Y') }}</td>
-                            <td>{{ operaciontdc.precio | number_format(2, '.', ',') }}</td>
+                            <td>{{ operaciontdc.idpago.monto | number_format(2, '.', ',') }}</td>
                             <td>
                                 {% if operaciontdc.idpago.conciliado == TRUE %}
                                     SI
