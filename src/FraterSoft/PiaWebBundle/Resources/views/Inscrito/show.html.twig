@@ -1,8 +1,10 @@
 {% extends '::base.html.twig' %}
 {% if entity.idevento.tema is defined and entity.idevento.tema is not null %}{% set temastyle=entity.idevento.tema.styles %}{% endif %}
 {% block javascripts %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}    
     <script>
         $(document).ready(function () {
+            $("#textoformapago").html(TextoFormaPago('{{ entity.idpago.tipo }}'));
             $('#tablaReporte').DataTable({
                 dom: "t",
                 ordering: false,
@@ -93,7 +95,7 @@
             {% if entity.idevento.proceso == 1 %}
             {% if entity.idpago is not null %}
             <tr><th>Monto Pagado</th><td>{{ entity.idpago.monto }}</td></tr>  
-            <tr><th>Forma de Pago</th><td>{{ entity.idpago.tipo }}</td></tr>  
+            <tr><th>Forma de Pago</th><td><spam id="textoformapago"></spam></td></tr>  
             <tr><th>Banco</th><td>{{ entity.idpago.banco }}</td></tr>  
             <tr><th>Referencia</th><td>{{ entity.idpago.referencia }}</td></tr>  
             {%endif%}
