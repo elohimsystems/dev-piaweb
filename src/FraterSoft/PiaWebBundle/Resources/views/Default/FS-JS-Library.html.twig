@@ -238,7 +238,7 @@
                         configcols[i]={ title: value['nombre'], data: key, visible: true  };
                         break;
                     case 'foreingkey':
-                        configcols[i]={ title: value['nombre'], data: key, visible: true  };
+                        configcols[i]={ title: value['nombre'], data: key, visible: false  };
                         break;
                     default:
                         configcols[i]={ title: toTitleCase(value['nombre']), data: key };
@@ -371,7 +371,9 @@
                         rows = table.rows({selected: true}).data();
                         $("#eliminar").html("");
                         if (rows.length == 1) {
-                            $("#eliminar").append(rows[0].etiqueta?rows[0].etiqueta:rows[0].atributo);
+                            console.log();
+                            $("#eliminar").append(rows[0]['id']);
+                            $("#dialogelimiar").dialog({ title: "Eliminar " + caption });
                             $("#dialogelimiar").data('id',rows[0].id).dialog("open");                            
                         }
                         else

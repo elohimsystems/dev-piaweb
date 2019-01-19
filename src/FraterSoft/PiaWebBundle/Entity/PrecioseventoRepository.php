@@ -63,7 +63,7 @@ class PrecioseventoRepository extends EntityRepository {
             )
             ->getResult();        
         $preciosselect = new ArrayCollection();
-        $imagenanterior = "vacio";
+        $imagenanterior = "vacio";    
         foreach($precios as $precio){
             switch(true){
                 //Solo cantidad configurada

@@ -54,7 +54,7 @@ class PrecioseventoController extends commonPIAClass
             $em->persist($entity);
             $em->flush();
 
-            return $this->redirect($this->generateUrl('formaspagoevento_new', array(
+            return $this->redirect($this->generateUrl('preciosevento_new', array(
                 'idevento' => $entity->getIdevento()->getId(),
                 'estado' => 2
             )));            
@@ -186,40 +186,19 @@ class PrecioseventoController extends commonPIAClass
      * Deletes a Preciosevento entity.
      *
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction($id)
     {
-        $form = $this->createDeleteForm($id);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('FraterSoftPiaWebBundle:Preciosevento')->find($id);
-
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find Preciosevento entity.');
-            }
-
-            $em->remove($entity);
-            $em->flush();
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Preciosevento')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Precio por Evento entity.');
         }
-
-        return $this->redirect($this->generateUrl('preciosevento'));
+        $em->remove($entity);
+        $em->flush();
+        return $this->redirect($this->generateUrl('preciosevento_new', array(
+            'idevento' => $entity->getIdevento()->getId(),
+            'estado' => 1
+        )));  
     }
 
-    /**
-     * Creates a form to delete a Preciosevento entity by id.
-     *
-     * @param mixed $id The entity id
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm($id)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('preciosevento_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
-        ;
-    }
 }
