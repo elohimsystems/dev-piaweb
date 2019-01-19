@@ -11,9 +11,11 @@
     #atributos{
         margin: 10px 0;
     }    
-    /*#formulario > div:nth-child(1){
-        display: none;
-    }*/
+    #atributoseleccionado{
+        margin: auto;
+        text-align: center;
+        font-weight: bold;
+    }
 </style>
 {% endblock %}  
 {% set entidad='listasevento' %}
@@ -22,7 +24,7 @@
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
         <div id="tabs-2">     
             {{ include("FraterSoftPiaWebBundle:Evento:menu_conf_inscripciones.html.twig") }}
-            <div id="titulotabla"><h3>Listas Configuradas</h3></div>
+            <div id="titulotabla"><h3>Listas</h3></div>
             <div id="atributos">
                 Seleccione el Atributo Opcion 
                 <select id="select_atributos_opcion">
@@ -37,6 +39,7 @@
                 {% endfor %}
                 </select>
             </div>
+            <div id="atributoseleccionado"></div>
             <table id="{{entidad}}" class="display row-border hover">
             </table>    
             <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistaeventos')}}');">Regresar</button>            
@@ -83,9 +86,10 @@
         filtrarTabla(2,$("#select_atributos_opcion"));
         
         
+        $('#atributoseleccionado').append("Valores para el atributo: " + $("#select_atributos_opcion option:selected").text());
         $("#select_atributos_opcion").change(function () {
-            $('#listasevento > caption').remove();
-            $('#listasevento').append("<caption><b>Lista " + $("#select_atributos_opcion option:selected").text() + "</b></caption>");
+            $('#atributoseleccionado').html("");
+            $('#atributoseleccionado').append("Valores para el atributo: " + $("#select_atributos_opcion option:selected").text());
             tabla.draw();
         });
         

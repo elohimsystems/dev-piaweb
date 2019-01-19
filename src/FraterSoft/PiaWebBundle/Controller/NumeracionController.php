@@ -127,7 +127,7 @@ class NumeracionController extends Controller {
                         $numeracionexterna->setAsignado(true);
                     }
                     else{
-                         return(-2);
+                         return(commonPIAClass::NUMERACIONEXTERNA_NO_CONFIGURADA);
                     }
                     $em->flush();
                 }

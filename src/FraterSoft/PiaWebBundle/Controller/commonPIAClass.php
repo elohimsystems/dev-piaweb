@@ -13,6 +13,9 @@ use FraterSoft\PiaWebBundle\Entity\Preciosevento;
 use FraterSoft\PiaWebBundle\Entity\Precioscompetencia;
 use FraterSoft\PiaWebBundle\Entity\Precioscategoria;
 
+const NUMERACION_NO_CONFIGURADA = -1;
+const NUMERACIONEXTERNA_NO_CONFIGURADA = -2;
+
 class commonPIAClass extends Controller
 {
     
@@ -254,13 +257,12 @@ class commonPIAClass extends Controller
         if($idcategoria)
             $precio = $em->getRepository('FraterSoftPiaWebBundle:Precioscategoria')
                     ->BuscaPreciosCategoria($idcategoria);            
-//        if(count($precio)==0)
-//            $precio = $em->getRepository('FraterSoftPiaWebBundle:Precioscompetencia')
-//                    ->BuscaPreciosCompetencia($idcompetencia);
+        if($idcompetencia && count($precio)==0)
+            $precio = $em->getRepository('FraterSoftPiaWebBundle:Precioscompetencia')
+                    ->BuscaPreciosCompetencia($idcompetencia);
         if(count($precio)==0)
             $precio = $em->getRepository('FraterSoftPiaWebBundle:Preciosevento')
                     ->BuscaPreciosEvento($idevento);
-        
         return $precio;
     }   
     

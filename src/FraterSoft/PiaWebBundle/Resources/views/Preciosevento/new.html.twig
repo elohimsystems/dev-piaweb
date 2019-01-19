@@ -11,12 +11,13 @@
 </style>
 {% endblock %}  
 {% set entidad='preciosevento' %}
+{% set titulo='Precios por Evento' %}
 {% block body -%}
     <div id="tabs">    
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
         <div id="tabs-2">     
             {{ include("FraterSoftPiaWebBundle:Evento:menu_conf_inscripciones.html.twig") }}
-            <div id="titulotabla"><h3>{{entidad|title}}s Configuradas</h3></div>
+            <div id="titulotabla"><h3>{{titulo}}</h3></div>
             <table id="{{entidad}}" class="display row-border hover">
             </table>    
             <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistaeventos')}}');">Regresar</button>
@@ -26,7 +27,7 @@
             {{ form_end(form) }} 
         </div>          
         <div id="dialogelimiar">
-            ¿Esta seguro que desea elimar la {{entidad}} <strong id="eliminar"></strong>?
+            ¿Esta seguro que desea elimar la fila <strong id="eliminar"></strong>?
         </div> 
         <div id="dialog-message" title="Mensaje">
         </div>        
@@ -45,7 +46,7 @@
         tablaDatos(
                 $('#formulario'), //Se usa para llenar lo campos del formulario
                 {{campos|json_encode|raw}}, //json con los atributos de la entidad y sus caracteristicas
-                toTitleCase(entidad), //Usada para el titulo 
+                "{{titulo}}", //Usada para el titulo 
                 "{{ path(entidad ~ '_create')}}", //Url para crear
                 "{{ path(entidad ~ '_update',{'id':'_id_'})}}", //Url para editar
                 "{{ path(entidad ~ '_listaajax',{'idevento': idevento }) }}", //Url para buscar los datos a listar

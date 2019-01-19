@@ -27,4 +27,3 @@ preciosevento_update:
 preciosevento_delete:
     pattern:  /{id}/delete
     defaults: { _controller: "FraterSoftPiaWebBundle:Preciosevento:delete" }
-    requirements: { _method: post|delete }

@@ -414,12 +414,12 @@ class PagoController extends commonPIAClass {
             if($respuesta<0){
                 $request = $this->getRequest();
                 $referer = $request->headers->get('referer');   
-                if($respuesta==-1)
+                /*if($respuesta==commonPIAClass::NUMERACION_NO_CONFIGURADA)
                     return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                                 'url' => $referer,
                                 'texto' => 'Se concilio pero no se pudo enumerar. Falta configuracion de numeracion',
-                    ));      
-                if($respuesta==-2)
+                    ));     */ 
+                if($respuesta==commonPIAClass::NUMERACIONEXTERNA_NO_CONFIGURADA)
                     return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                                 'url' => $referer,
                                 'texto' => 'Se concilio pero no se pudo enumerar. No existen numeros externos disponibles',
@@ -438,7 +438,6 @@ class PagoController extends commonPIAClass {
                         ->setFrom("confirmacion@sistemapia.com.ve")
                         ->setCharset('iso-8859-1')
                         ->setContentType('text/html')
-                        //->setTo($inscrito->getIdpia()->getEmailpersonal())
                         ->setTo($emails)
                         ->setBody(
                         $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailok.html.twig', array('inscrito' => $inscrito)
