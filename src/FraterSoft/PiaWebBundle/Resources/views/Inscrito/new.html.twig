@@ -90,6 +90,13 @@
             {% endif %}
         }
         
+        function setTextoPrecio(){
+            var texto;
+            texto=$("#{{form.precio.vars.id}} option:selected").text();
+            texto=texto.substring(0,texto.search($("#{{form.precio.vars.id}}").val())-1);
+            $("#{{form.idpago.texto.vars.id}}").val(texto);
+        }
+        
         function buscaPrecio(idevento, idcompetencia, idcategoria) {
             {%if entity.idevento.proceso == 1%}
             //Busca el precio segun configuracion
@@ -120,11 +127,12 @@
                         var montorecargo;
                         var precio=precios[0];
                         var total=0;
-                        texto=((value.texto==null)?'':value.texto) + ' ' + ((value.moneda==null)?'':value.moneda) + ' ' + value.precio;
+                        texto=((value.texto==null)?'':value.texto + ' ')  + ((value.moneda==null)?'':value.moneda + ' ') + value.precio;
                         if(value.precio!=-1){
                             if(datos['values'][0]['values'].length==1){
                                 $('#{{ form.precio.vars.id }}').append('<option selected value='+value.precio+'>'+texto+'</option>');
                                 calcularTotalPagar(value.precio);
+                                setTextoPrecio();
                             }
                             else
                                 $('#{{ form.precio.vars.id }}').append('<option value='+value.precio+'>'+texto+'</option>');
@@ -451,8 +459,9 @@
                 }
             ]
         });
-                
+
         $("#{{form.precio.vars.id}}").change(function () {
+            setTextoPrecio();
             calcularTotalPagar($("#{{form.precio.vars.id}}").val());
         });   
 
