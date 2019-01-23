@@ -393,9 +393,7 @@
                     $( "#tabs" ).tabs("enable");
                 }                
             }
-            $('#tabs a[href="#tabs-2"]').on("click", function () {
-                $(location).attr('href', '{{ path('eventoatributos_new',{'idevento':entity.id}) }}')
-            });            
+            manuTabsConfigEvento();
         });    
     </script>
 {% endblock %}

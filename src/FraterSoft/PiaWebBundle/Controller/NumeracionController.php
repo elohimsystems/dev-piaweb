@@ -6,9 +6,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DomCrawler\Crawler;
-use FraterSoft\PiaWebBundle\Entity\Competidor;
-use FraterSoft\PiaWebBundle\Entity\Inscrito;
-use FraterSoft\PiaWebBundle\Form\CompetidorType;
+use FraterSoft\PiaWebBundle\Entity\Numeracion;
+use FraterSoft\PiaWebBundle\Form\NumeracionType;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
@@ -19,7 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * Competidor controller.
  *
  */
-class NumeracionController extends Controller {
+class NumeracionController extends commonPIAClass {
     
     private $numerados;
     private $inicial; 
@@ -169,4 +168,166 @@ class NumeracionController extends Controller {
         }
         return($contador);
     }
+    
+    /**
+     * Creates a new Numeracion entity.
+     *
+     */
+    public function createAction(Request $request)
+    {
+        $entity = new Numeracion();
+        $form = $this->createCreateForm($entity);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($entity);
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('numeracion_gestion', array(
+                'idevento' => $entity->getIdevento()->getId(),
+                'estado' => 2
+            )));            
+        }
+        $errors=$this->getErrorMessages($editForm);
+        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => null,
+                    'texto' => json_encode($errors),
+                    'tema' => $entity->getIdevento()->getTema()
+        ));                
+
+    }
+
+    /**
+    * Creates a form to create a Numeracion entity.
+    *
+    * @param Numeracion $entity The entity
+    *
+    * @return \Symfony\Component\Form\Form The form
+    */
+    private function createCreateForm(Numeracion $entity)
+    {
+        $form = $this->createForm(new NumeracionType(), $entity, array(
+            'method' => 'POST',
+        ));
+        return $form;
+    }
+
+    /**
+     * Displays a form to create a new Numeracion entity.
+     *
+     */
+    public function gestionAction($idevento)
+    {
+        $entity = new Numeracion();
+        $form   = $this->createCreateForm($entity);
+        
+        $em = $this->getDoctrine()->getManager();
+        
+        //llena el Select con el evento y Oculta el control
+//        $form->add('idevento','entity',array(
+//                'class' => 'FraterSoftPiaWebBundle:Evento',
+//                'query_builder' => function (EntityRepository $er) use ( $idevento ) {
+//                    return $er->createQueryBuilder('e')
+//                            ->where('e.id=:idevento')
+//                            ->setParameter('idevento',$idevento);
+//                },
+//            ));
+        
+
+        $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')->atributosOptions($idevento);
+        
+        return $this->render('FraterSoftPiaWebBundle:Numeracion:gestion.html.twig', array(
+            'form'   => $form->createView(),
+            'idevento' => $idevento,
+            'atributos' => $atributos, 
+            'campos' => $this->getCampos($em,'Numeracion'),
+        ));
+    }
+
+    public function listaAjaxAction($idevento){
+        $encoders = array(new XmlEncoder(), new JsonEncoder());
+        $normalizers = array(new GetSetMethodNormalizer());  
+        $serializer = new Serializer($normalizers, $encoders);  
+        
+        $em = $this->getDoctrine()->getManager();
+        $entities = $em->getRepository('FraterSoftPiaWebBundle:Numeracion')->arrayListas($idevento);
+
+        $jsonContent = $serializer->serialize(array(
+            "recordsTotal"=> count($entities),
+            "data"=>$entities)
+                , 'json');
+        
+        return new response($jsonContent);                    
+    }
+
+    /**
+    * Creates a form to edit a Numeracion entity.
+    *
+    * @param Numeracion $entity The entity
+    *
+    * @return \Symfony\Component\Form\Form The form
+    */
+    private function createEditForm(Numeracion $entity)
+    {
+        $form = $this->createForm(new NumeracionType(), $entity, array(
+            'method' => 'POST',
+        ));
+
+        return $form;
+    }
+    
+    /**
+     * Edits an existing Numeracion entity.
+     *
+     */
+    public function updateAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Numeracion')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Numeracion entity.');
+        }
+
+        $editForm = $this->createEditForm($entity);
+        $editForm->handleRequest($request);
+
+        if ($editForm->isValid()) {
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('numeracion_gestion', array(
+                'idevento' => $entity->getIdevento()->getId(),
+                'estado' => 3
+            )));            
+        }
+        
+        $errors=$this->getErrorMessages($editForm);
+        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => null,
+                    'texto' => json_encode($errors),
+                    'tema' => $entity->getIdevento()->getTema()
+        ));        
+    }
+    
+    /**
+     * Deletes a Numeracion entity.
+     *
+     */
+    public function deleteAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Numeracion')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Numeracion entity.');
+        }
+        $em->remove($entity);
+        $em->flush();
+            return $this->redirect($this->generateUrl('numeracion_gestion', array(
+                'idevento' => $entity->getIdevento()->getId(),
+                'estado' => 1
+            )));            
+    }
+    
 }
