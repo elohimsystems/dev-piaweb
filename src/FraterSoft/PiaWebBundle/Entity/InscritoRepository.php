@@ -462,7 +462,7 @@ class InscritoRepository extends EntityRepository
                         . 'and i.idpia=co '
                         . 'and co.idestado=e '
                         . 'and i.idcategoria=ca '
-                        . 'and p.conciliado=true '
+                        //. 'and p.conciliado=true '
                         . 'and i.idevento=' . $idevento
                     . 'ORDER BY '
                         . 'i.secuencia ASC'                    

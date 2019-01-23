@@ -71,5 +71,11 @@ FraterSoft\PiaWebBundle\Entity\Pago:
         notificado:
             type: datetime
             nullable: true
+            comment: ''   
+        texto:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
             comment: ''            
     lifecycleCallbacks: {  }

@@ -21,19 +21,9 @@ class PagoType extends AbstractType
                 'read_only' =>'true',
                 'attr'=>array('style'=>'display:none'),
             ))
+            ->add('texto','hidden')                
             ->add('moneda','hidden')
             ->add('tipo')
-            /*->add('tipo','choice',array(
-                'label'=>'Forma de Pago',
-                'choices' => array(
-                    0 => 'Exonerado', 
-                    1 => 'Depósito', 
-                    2 => 'Transferencia',
-                    3 => 'Tarjetas de Credito',
-                    5 => 'Cortesia'),
-                'required' => true,
-                'empty_value' => 'Seleccione Forma de Pago'
-            ))*/
             ->add('referencia','text', array(
                 'label'=>'Número Operación ',
                 'label_attr' => array('id' => 'label_pago_referencia')
