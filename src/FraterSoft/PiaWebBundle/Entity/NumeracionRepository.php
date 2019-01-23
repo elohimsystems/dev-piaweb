@@ -21,5 +21,17 @@ class NumeracionRepository extends EntityRepository {
                 ->getArrayResult();
         return $formaspago;
     }
+    
+    public function arrayListas($idevento)
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                "select nu.id, e.id as idevento, nu.inicio, nu.fin, nu.siguiente, nu.ordenarpor, nu.secuencial, nu.atributo from FraterSoftPiaWebBundle:Numeracion nu "
+                    . "JOIN nu.idevento e "
+                . "where nu.idevento = " . $idevento 
+            )
+            ->getResult();
+    }
+    
 
 }

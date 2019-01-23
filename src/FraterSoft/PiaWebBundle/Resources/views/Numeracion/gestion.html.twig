@@ -1,0 +1,84 @@
+{% extends '::base.html.twig' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
+<style type="text/css">
+    #sel_competencias{
+        margin: 10px 0;
+    }    
+    #tabs{  /* Oculta el tabs para que se muestre luego de cargar todo el html */
+        display: none;
+    }
+    #atributos{
+        margin: 10px 0;
+    }    
+    #atributoseleccionado{
+        margin: auto;
+        text-align: center;
+        font-weight: bold;
+    }
+</style>
+{% endblock %}  
+{% set entidad='numeracion' %}
+{% block body -%}    
+    <div id="tabs">    
+        {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
+        <div id="tabs-2">     
+            {{ include("FraterSoftPiaWebBundle:Evento:menu_conf_inscripciones.html.twig") }}
+            <div id="titulotabla"><h3>Enumerar</h3></div>
+            <div id="atributoseleccionado"></div>
+            <table id="{{entidad}}" class="display row-border hover">
+            </table>    
+            <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistaeventos')}}');">Regresar</button>            
+        </div> 
+        <div id="dialogformGuardar">
+            {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+            {{ form_end(form) }} 
+        </div>          
+        <div id="dialogelimiar">
+            ¿Esta seguro que desea elimar la fila <strong id="eliminar"></strong>?
+        </div> 
+        <div id="dialog-message" title="Mensaje">
+        </div>        
+    </div>         
+{% endblock %}
+{% block javascripts -%}
+{{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}
+<script>
+    $(document).ready(function () { 
+                
+        var entidad = 'numeracion';
+        var tabla;
+        $("#tabs").css("display","block");
+        $( "#botonera" ).controlgroup();                          
+        tabla=tablaDatos(
+                $('#formulario'), //Se usa para llenar lo campos del formulario
+                {{campos|json_encode|raw}}, //json con los atributos de la entidad y sus caracteristicas
+                'Lista', //Usada para el titulo 
+                "{{ path(entidad ~ '_create')}}", //Url para crear
+                "{{ path(entidad ~ '_update',{'id':'_id_'})}}", //Url para editar
+                "{{ path(entidad ~ '_listaajax',{'idevento': idevento }) }}", //Url para buscar los datos a listar
+                null,
+                null,
+                $('#select_atributos_opcion')
+        );
+        
+        dialogGuardar($('#formulario'),{{campos|json_encode|raw}});
+        dialogEliminar('{{ path(entidad ~ '_delete',{'id':'_id_'})}}');
+        dialogMensaje();
+        
+        //$('#tabs a[href="#tabs-6"]').click();
+        manuTabsConfigEvento();
+
+        //Filtra la tabla de datos segun la opcion del select seleccionado
+        filtrarTabla(2,$("#select_atributos_opcion"));
+                
+        $('#atributoseleccionado').append("Valores para el atributo: " + $("#select_atributos_opcion option:selected").text());
+        $("#select_atributos_opcion").change(function () {
+            $('#atributoseleccionado').html("");
+            $('#atributoseleccionado').append("Valores para el atributo: " + $("#select_atributos_opcion option:selected").text());
+            tabla.draw();
+        });
+        
+    });    
+</script>    
+{% endblock %}
