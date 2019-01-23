@@ -384,7 +384,7 @@
     <style type="text/css">
         .contenido{    
             margin: auto;
-            width: 390px;
+            width: 400px;
         }        
         #namefile_fileiddocumento,
         #namefile_foto,
@@ -423,7 +423,7 @@
             vertical-align: middle;
             padding-right: 2px;
         }
-        
+
         /******************************************************/
         /*Configura el estilo del formulario de inscripciones */
         /******************************************************/        
@@ -442,6 +442,9 @@
         #formulario > div:nth-child(n+0) > label{
             width: 180px;
         }           
+        #formulario > div:nth-child(4){
+            margin: 0px;
+        }        
         /***********************************************************************
         * Da formato al formulario del competidor *
         ***********************************************************************/
@@ -506,7 +509,13 @@
         #{{edit_form.idpago.vars.id}} > div:nth-child(n+0) > select {
             height: 21px;
         }    
-         
+        .group_fields {
+            width: 96% !important;
+            border: 1px solid black;
+            text-align: center !important;
+            font-size: 10px;
+            padding:3px;
+        }           
    </style>
 {% endblock %}    
 {% block body -%}

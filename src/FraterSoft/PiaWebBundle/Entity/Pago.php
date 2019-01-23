@@ -70,6 +70,11 @@ class Pago
     private $notificado;
     
     /**
+     * @var string
+     */
+    private $texto;    
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -332,12 +337,26 @@ class Pago
         return $this->notificado;
     }      
     
-//    /**
-//     * to string
-//     *
-//     * @return string 
-//     */
-//    public function __toString() {
-//        return $this->$id;
-//    }       
+    /**
+     * Set texto
+     *
+     * @param string $texto
+     * @return Pago
+     */
+    public function setTexto($texto)
+    {
+        $this->texto = $texto;
+
+        return $this;
+    }
+
+    /**
+     * Get texto
+     *
+     * @return string 
+     */
+    public function getTexto()
+    {
+        return $this->texto;
+    }     
 }

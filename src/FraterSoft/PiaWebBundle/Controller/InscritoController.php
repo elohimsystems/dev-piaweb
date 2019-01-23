@@ -309,6 +309,7 @@ class InscritoController extends commonPIAClass {
                 $pago->setFechahora($form->get('idpago')->getData()->getFechahora());
                 $pago->setMonto($form->get('idpago')->getData()->getMonto());
                 $pago->setMoneda($form->get('idpago')->getData()->getMoneda());
+                $pago->setTexto($form->get('idpago')->getData()->getTexto());
                 $pago->setReferencia($form->get('idpago')->getData()->getReferencia());
                 $pago->setComprobante($form->get('idpago')->getData()->getComprobante());
                 $pago->setTipo($form->get('idpago')->getData()->getTipo());
@@ -1057,6 +1058,7 @@ class InscritoController extends commonPIAClass {
                 ->remove('idpago')
             ;
         }        
+        $editForm->get('idpago')->add('texto');
 
         $this->addBotonRegresar($editForm,$this->get('session')->get('urlreturn'));
         
