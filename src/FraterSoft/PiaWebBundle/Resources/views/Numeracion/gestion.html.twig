@@ -22,8 +22,7 @@
 {% block body -%}    
     <div id="tabs">    
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
-        <div id="tabs-2">     
-            {{ include("FraterSoftPiaWebBundle:Evento:menu_conf_inscripciones.html.twig") }}
+        <div id="tabs-6">     
             <div id="titulotabla"><h3>Enumerar</h3></div>
             <div id="atributoseleccionado"></div>
             <table id="{{entidad}}" class="display row-border hover">
@@ -66,7 +65,7 @@
         dialogEliminar('{{ path(entidad ~ '_delete',{'id':'_id_'})}}');
         dialogMensaje();
         
-        //$('#tabs a[href="#tabs-6"]').click();
+        $('#tabs a[href="#tabs-6"]').click();
         manuTabsConfigEvento();
 
         //Filtra la tabla de datos segun la opcion del select seleccionado
