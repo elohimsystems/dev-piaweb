@@ -1,0 +1,22 @@
+patrocinante_gestion:
+    pattern:  /{idevento}/gestion
+    defaults: { _controller: "FraterSoftPiaWebBundle:Patrocinante:gestion" }
+
+patrocinante_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Patrocinante:create" }
+    requirements: { _method: post }
+
+patrocinante_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Patrocinante:update" }
+    requirements: { _method: post|put }
+
+patrocinante_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Patrocinante:delete" }
+    
+patrocinante_listaajax:
+    pattern:  /{idevento}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Patrocinante:listaajax" }
+    
