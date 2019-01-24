@@ -1,0 +1,37 @@
+FraterSoft\PiaWebBundle\Entity\Patrocinante:
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\PatrocinanteRepository       
+    type: entity
+    table: piaaccess.tmpatrocinantes
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nombre:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        logo:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        idevento:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: ''
+        estatus:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+    lifecycleCallbacks: {  }
