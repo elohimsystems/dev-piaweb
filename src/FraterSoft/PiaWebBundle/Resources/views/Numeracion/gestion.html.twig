@@ -19,12 +19,13 @@
 </style>
 {% endblock %}  
 {% set entidad='numeracion' %}
+{% set titulo='Configurar Numeracion' %}
+{% set idtab=5 %}
 {% block body -%}    
     <div id="tabs">    
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
-        <div id="tabs-6">     
-            <div id="titulotabla"><h3>Enumerar</h3></div>
-            <div id="atributoseleccionado"></div>
+        <div id="tabs-{{idtab}}">     
+            <div id="titulotabla"><h3>{{titulo}}</h3></div>
             <table id="{{entidad}}" class="display row-border hover">
             </table>    
             <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistaeventos')}}');">Regresar</button>            
@@ -65,7 +66,7 @@
         dialogEliminar('{{ path(entidad ~ '_delete',{'id':'_id_'})}}');
         dialogMensaje();
         
-        $('#tabs a[href="#tabs-6"]').click();
+        $('#tabs a[href="#tabs-{{idtab}}"]').click();
         manuTabsConfigEvento();
 
         //Filtra la tabla de datos segun la opcion del select seleccionado
