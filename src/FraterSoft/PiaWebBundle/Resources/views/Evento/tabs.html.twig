@@ -1,7 +1,16 @@
+{% 
+set opcionestab=[
+    {id:1,nombre:'Datos Generales'},
+    {id:2,nombre:'Inscripciones'},
+    {id:3,nombre:'Publicidad'},
+    {id:4,nombre:'Temas'},
+    {id:5,nombre:'Numeracion'},
+]
+%}
 <ul>
-    <li><a href="#tabs-1">Datos Generales</a></li>
-    <li><a href="#tabs-2">Inscripciones</a></li>
-    <li><a href="#tabs-4">Publicidad</a></li>
-    <li><a href="#tabs-5">Temas</a></li>
-    <li><a href="#tabs-6">Numeracion</a></li>
+    <li><a href="#tabs-{{opcionestab[0].id}}">{{opcionestab[0].nombre}}</a></li>
+    <li><a href="#tabs-{{opcionestab[1].id}}">{{opcionestab[1].nombre}}</a></li>
+    <li><a href="#tabs-{{opcionestab[2].id}}">{{opcionestab[2].nombre}}</a></li>
+    <li><a href="#tabs-{{opcionestab[3].id}}">{{opcionestab[3].nombre}}</a></li>
+    <li><a href="#tabs-{{opcionestab[4].id}}">{{opcionestab[4].nombre}}</a></li>
 </ul>
