@@ -478,34 +478,45 @@ class InscritoRepository extends EntityRepository
         $tipo=$em->getClassMetadata('FraterSoft\PiaWebBundle\Entity\\' . $entidad)->getTypeOfField($atributo);
         $nombreTabla=$em->getClassMetadata('FraterSoft\PiaWebBundle\Entity\\' . $entidad)->getTableName();
         $sql="";
-        if($entidad=="Inscrito" && $atributo=='status')
-            $sql = 'select valor,sum(cantidad) as cantidad from (' 
-                . 'select case when i.status=1 and p.conciliado=true then \'INSCRITOS\' ' 
-		. 'when i.status=0 then \'ANULADOS\' '
-		. 'when i.status=1 and p.conciliado is null and p.tipo<>\'3\' then \'POR CONCILIAR\' ' 
-		. 'when i.status=1 and p.conciliado is null and p.tipo=\'3\' then \'TDC SIN PAGAR\' '
-                . 'end as valor, '
-                . 'count(i) as cantidad '
-                . ' from piaaccess.tminscritos i left join piaaccess.tmpagos p on i.idpago=p.id where i.idevento= ' . $idevento
-                . 'group by p.conciliado, i.status, p.tipo) e group by valor order by cantidad desc';
-        else{
-            switch(true){
-                case ($tipo=="datetime" || $tipo=="datetimetz"):
-                    $sql = 'select to_date(valor,\'dd/mm/yyyy\')  as valor ,sum(cantidad) as cantidad from (' 
-                        . 'select to_char(i.fechahora,\'dd/mm/yyyy\') as valor,count(i) as cantidad '
-                        . 'from piaaccess.tminscritos i left join piaaccess.tmpagos p on i.idpago=p.id where p.conciliado=true and i.idevento=' . $idevento
-                        . 'group by i.fechahora) e group by valor order by valor';
-                    break;
-                default:
-                    $sql = "select " . $nombreTabla . "." .$atributo . " as valor, count(".$nombreTabla."." .$atributo .") as cantidad from piaaccess.tminscritos "
-                            . "inner join piaaccess.tmcompetidores on tmcompetidores.id = tminscritos.idpia "
-                            . "inner join piaaccess.tmpagos on tmpagos.id = tminscritos.idpago "
-                            . "left join piaaccess.tmcategorias on tmcategorias.id = tminscritos.idcategoria "
-                            . "left join piaaccess.tmcompetencias on tmcompetencias.id = tminscritos.idcompetencia "
-                            . "where tminscritos.idevento=" . $idevento . " and tmpagos.conciliado=true " 
-                            . "group by ".$nombreTabla.".".$atributo . " order by cantidad desc";
-                    break;
-            }
+        switch(true){
+            case ($entidad=="Inscrito" && $atributo=='status'):
+                $sql = 'select valor,sum(cantidad) as cantidad from (' 
+                    . 'select case when i.status=1 and p.conciliado=true then \'INSCRITOS\' ' 
+            		. 'when i.status=0 then \'ANULADOS\' '
+            		. 'when i.status=1 and p.conciliado is null and p.tipo<>\'3\' then \'POR CONCILIAR\' ' 
+            		. 'when i.status=1 and p.conciliado is null and p.tipo=\'3\' then \'TDC SIN PAGAR\' '
+                    . 'end as valor, '
+                    . 'count(i) as cantidad '
+                    . ' from piaaccess.tminscritos i left join piaaccess.tmpagos p on i.idpago=p.id where i.idevento= ' . $idevento
+                    . 'group by p.conciliado, i.status, p.tipo) e group by valor order by cantidad desc';
+                break;
+            case ($entidad=="Categoria" && $atributo=='descripcion'):
+                $sql = "select " . $nombreTabla . "." .$atributo . " || ' - ' || piaaccess.tmcompetidores.sexo as valor, count(".$nombreTabla."." .$atributo .") as cantidad from piaaccess.tminscritos "
+                        . "inner join piaaccess.tmcompetidores on tmcompetidores.id = tminscritos.idpia "
+                        . "inner join piaaccess.tmpagos on tmpagos.id = tminscritos.idpago "
+                        . "left join piaaccess.tmcategorias on tmcategorias.id = tminscritos.idcategoria "
+                        . "left join piaaccess.tmcompetencias on tmcompetencias.id = tminscritos.idcompetencia "
+                        . "where tminscritos.idevento=" . $idevento . " and tmpagos.conciliado=true " 
+                        . "group by ".$nombreTabla.".".$atributo . ",piaaccess.tmcompetidores.sexo order by cantidad desc";
+                break;
+            default:
+                switch(true){
+                    case ($tipo=="datetime" || $tipo=="datetimetz"):
+                        $sql = 'select to_date(valor,\'dd/mm/yyyy\') as valor,sum(cantidad) as cantidad from (' 
+                            . 'select to_char(i.fechahora,\'dd/mm/yyyy\') as valor,count(i) as cantidad '
+                            . 'from piaaccess.tminscritos i left join piaaccess.tmpagos p on i.idpago=p.id where p.conciliado=true and i.idevento=' . $idevento
+                            . 'group by i.fechahora) e group by valor order by valor';
+                        break;
+                    default:
+                        $sql = "select " . $nombreTabla . "." .$atributo . " as valor, count(".$nombreTabla."." .$atributo .") as cantidad from piaaccess.tminscritos "
+                                . "inner join piaaccess.tmcompetidores on tmcompetidores.id = tminscritos.idpia "
+                                . "inner join piaaccess.tmpagos on tmpagos.id = tminscritos.idpago "
+                                . "left join piaaccess.tmcategorias on tmcategorias.id = tminscritos.idcategoria "
+                                . "left join piaaccess.tmcompetencias on tmcompetencias.id = tminscritos.idcompetencia "
+                                . "where tminscritos.idevento=" . $idevento . " and tmpagos.conciliado=true " 
+                                . "group by ".$nombreTabla.".".$atributo . " order by cantidad desc";
+                        break;
+                }
         }
         $stmt = $em->getConnection()->prepare($sql);
         $stmt->execute(); 
