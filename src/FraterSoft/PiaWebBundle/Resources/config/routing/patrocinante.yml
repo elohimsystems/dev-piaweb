@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 patrocinante_gestion:
     pattern:  /{idevento}/gestion
     defaults: { _controller: "FraterSoftPiaWebBundle:Patrocinante:gestion" }
@@ -19,4 +20,35 @@ patrocinante_delete:
 patrocinante_listaajax:
     pattern:  /{idevento}/listaajax
     defaults: { _controller: "FraterSoftPiaWebBundle:Patrocinante:listaajax" }
+=======
+numeracion_asignar:
+    pattern:  /asignar/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Numeracion:asignar" }
+    
+numeracion_resetear:
+    pattern:  /resetear/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Numeracion:resetear" }    
+
+numeracion_gestion:
+    pattern:  /{idevento}/gestion
+    defaults: { _controller: "FraterSoftPiaWebBundle:Numeracion:gestion" }
+
+numeracion_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Numeracion:create" }
+    requirements: { _method: post }
+
+numeracion_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Numeracion:update" }
+    requirements: { _method: post|put }
+
+numeracion_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Numeracion:delete" }
+    
+numeracion_listaajax:
+    pattern:  /{idevento}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Numeracion:listaajax" }
+>>>>>>> 1c93fb63f2f17a8d54be1d811a3014c6a99a6112
     
