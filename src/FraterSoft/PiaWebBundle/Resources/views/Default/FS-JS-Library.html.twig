@@ -436,7 +436,7 @@
                     click: function () {
                         $.each(arraycampos, function( key, value ) {
                             if(value['constraint']=='foreingkey'){
-                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',false);
+                                //$("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',false);
                             }
                         });                        
                         formulario.submit();
@@ -524,6 +524,7 @@
         return str;
     }    
     
+    {% if idevento is defined  and idevento != null %}
     function manuTabsConfigEvento(){
         $('#tabs a[href="#tabs-1"]').on("click", function () {
             $(location).attr('href', '{{ path('evento_edit',{'id':idevento}) }}')
@@ -541,6 +542,7 @@
             $(location).attr('href', '{{ path('numeracion_gestion',{'idevento':idevento}) }}');
         });                    
     }
+    {% endif %}
 
     {% if idevento is defined and idevento != null %}
     function menuConfInscripcionesControl(entidad){
