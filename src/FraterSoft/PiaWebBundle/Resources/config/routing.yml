@@ -128,3 +128,7 @@ FraterSoftPiaWebBundle_clubcompetidores:
 FraterSoftPiaWebBundle_precioscategoria:
     resource: "@FraterSoftPiaWebBundle/Resources/config/routing/precioscategoria.yml"
     prefix:   /precioscategoria
+    
+FraterSoftPiaWebBundle_patrocinante:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/patrocinante.yml"
+    prefix:   /patrocinante

@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
-class NumeracionType extends AbstractType
+class PatrocinanteType extends AbstractType
 {
         /**
      * @param FormBuilderInterface $builder
@@ -15,13 +15,10 @@ class NumeracionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('atributo')
-            ->add('automatica')
-            ->add('inicio')
-            ->add('fin')
-            ->add('siguiente')            
-            ->add('ordenarpor')            
-            ->add('secuencial')            
+            ->add('idorganizador')
+            ->add('logo')
+            ->add('nombre')
+            ->add('estatus')
         ;
     }
     
@@ -31,7 +28,7 @@ class NumeracionType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'FraterSoft\PiaWebBundle\Entity\Numeracion'
+            'data_class' => 'FraterSoft\PiaWebBundle\Entity\Patrocinante'
         ));
     }
 
@@ -40,6 +37,6 @@ class NumeracionType extends AbstractType
      */
     public function getName()
     {
-        return 'fratersoft_piawebbundle_numeracion';
+        return 'fratersoft_piawebbundle_patrocinante';
     }
 }
