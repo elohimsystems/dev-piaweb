@@ -1,0 +1,18 @@
+{% 
+set opcionestab=[
+    {id:1,nombre:'Datos Generales'},
+    {id:2,nombre:'Aliados'},
+    {id:3,nombre:'Formas de Pago'},
+    {id:4,nombre:'Listas'},
+    {id:5,nombre:'Seguridad'},
+    {id:6,nombre:'Bancos'},
+]
+%}
+<ul>
+    <li><a href="#tabs-{{opcionestab[0].id}}">{{opcionestab[0].nombre}}</a></li>
+    <li><a href="#tabs-{{opcionestab[1].id}}">{{opcionestab[1].nombre}}</a></li>
+    <li><a href="#tabs-{{opcionestab[2].id}}">{{opcionestab[2].nombre}}</a></li>
+    <li><a href="#tabs-{{opcionestab[3].id}}">{{opcionestab[3].nombre}}</a></li>
+    <li><a href="#tabs-{{opcionestab[4].id}}">{{opcionestab[4].nombre}}</a></li>
+    <li><a href="#tabs-{{opcionestab[5].id}}">{{opcionestab[5].nombre}}</a></li>
+</ul>

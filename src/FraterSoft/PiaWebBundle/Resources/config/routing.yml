@@ -132,3 +132,7 @@ FraterSoftPiaWebBundle_precioscategoria:
 FraterSoftPiaWebBundle_patrocinante:
     resource: "@FraterSoftPiaWebBundle/Resources/config/routing/patrocinante.yml"
     prefix:   /patrocinante
+    
+FraterSoftPiaWebBundle_organizador:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/organizador.yml"
+    prefix:   /organizador    

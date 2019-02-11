@@ -44,7 +44,7 @@
         tabla=tablaDatos(
                 $('#formulario'), //Se usa para llenar lo campos del formulario
                 {{campos|json_encode|raw}}, //json con los atributos de la entidad y sus caracteristicas
-                'Lista', //Usada para el titulo 
+                'Patrocinante', //Usada para el titulo 
                 "{{ path(entidad ~ '_create')}}", //Url para crear
                 "{{ path(entidad ~ '_update',{'id':'_id_'})}}", //Url para editar
                 "{{ path(entidad ~ '_listaajax',{'idorganizador': idorganizador }) }}", //Url para buscar los datos a listar
