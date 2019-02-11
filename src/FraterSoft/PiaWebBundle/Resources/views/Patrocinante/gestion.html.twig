@@ -1,32 +1,22 @@
 {% extends '::base.html.twig' %}
+{% set entidad='patrocinante' %}
+{% set titulo='Gestionar Patrocinante' %}
 {% block style %} 
 {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
 <style type="text/css">
-    #sel_competencias{
-        margin: 10px 0;
-    }    
-    #tabs{  /* Oculta el tabs para que se muestre luego de cargar todo el html */
-        display: none;
-    }
-    #atributos{
-        margin: 10px 0;
-    }    
-    #atributoseleccionado{
+    .contenido{    
         margin: auto;
-        text-align: center;
-        font-weight: bold;
+        width: 600px;
+    }    
+    #{{entidad}}_length > label > select{ /* ancho del select de registros mostrar en la tabla */
+        width:60px;
     }
 </style>
 {% endblock %}  
-{% set entidad='patrocinante' %}
-{% set titulo='Configurar Patrocinantes' %}
-{% set idtab=2 %}
 {% block body -%}    
-    <div id="tabs">    
-        {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
-        <div id="tabs-{{idtab}}">     
-            <div id="titulotabla"><h3>Enumerar</h3></div>
-            <div id="atributoseleccionado"></div>
+    <div class="contenido">    
+        <div>     
+            <div id="titulotabla"><h3>{{titulo}}</h3></div>
             <table id="{{entidad}}" class="display row-border hover">
             </table>    
             <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistaeventos')}}');">Regresar</button>            
@@ -47,7 +37,7 @@
 <script>
     $(document).ready(function () { 
                 
-        var entidad = 'numeracion';
+        var entidad = '{{entidad}}';
         var tabla;
         $("#tabs").css("display","block");
         $( "#botonera" ).controlgroup();                          
@@ -57,29 +47,16 @@
                 'Lista', //Usada para el titulo 
                 "{{ path(entidad ~ '_create')}}", //Url para crear
                 "{{ path(entidad ~ '_update',{'id':'_id_'})}}", //Url para editar
-                "{{ path(entidad ~ '_listaajax',{'idevento': idevento }) }}", //Url para buscar los datos a listar
+                "{{ path(entidad ~ '_listaajax',{'idorganizador': idorganizador }) }}", //Url para buscar los datos a listar
                 null,
                 null,
-                $('#select_atributos_opcion')
+                null
         );
         
         dialogGuardar($('#formulario'),{{campos|json_encode|raw}});
         dialogEliminar('{{ path(entidad ~ '_delete',{'id':'_id_'})}}');
         dialogMensaje();
-        
-        $('#tabs a[href="#tabs-{{idtab}}"]').click();
-        manuTabsConfigEvento();
-
-        //Filtra la tabla de datos segun la opcion del select seleccionado
-        filtrarTabla(2,$("#select_atributos_opcion"));
                 
-        $('#atributoseleccionado').append("Valores para el atributo: " + $("#select_atributos_opcion option:selected").text());
-        $("#select_atributos_opcion").change(function () {
-            $('#atributoseleccionado').html("");
-            $('#atributoseleccionado').append("Valores para el atributo: " + $("#select_atributos_opcion option:selected").text());
-            tabla.draw();
-        });
-        
     });    
 </script>    
 {% endblock %}

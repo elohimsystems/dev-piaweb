@@ -1,0 +1,50 @@
+FraterSoft\PiaWebBundle\Entity\Publicidad:
+    type: entity
+    table: piaaccess.tmpublicidad
+    indexes:
+        IDX_2A97C540233BA6A9:
+            columns:
+                - idevento
+        IDX_2A97C540A4A99363:
+            columns:
+                - idpatrocinante
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        idubicacion:
+            type: bigint
+            nullable: true
+            unsigned: false
+            comment: '1: en banner sistema, 2: en info evento, 3: en formulario'
+        estatus:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+    manyToOne:
+        idevento:
+            targetEntity: Evento
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idevento:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idpatrocinante:
+            targetEntity: Patrocinante
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idpatrocinante:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

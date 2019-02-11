@@ -15,10 +15,10 @@ class PatrocinanteType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('idevento')
+            ->add('idorganizador')
             ->add('logo')
             ->add('nombre')
-            ->add('estatus')          
+            ->add('estatus')
         ;
     }
     
