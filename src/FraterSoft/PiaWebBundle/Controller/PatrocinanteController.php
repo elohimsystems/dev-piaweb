@@ -13,6 +13,7 @@ use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * Competidor controller.
@@ -23,57 +24,7 @@ class PatrocinanteController extends commonPIAClass {
     private $numerados;
     private $inicial; 
     private $final;
-
-    /**
-     * Lists all Competidor entities.
-     *
-     */
-    public function asignarAction($idevento) {
-        $respuesta=$this->enumerar($idevento);
-        if($respuesta>0){
-            return $this->render('FraterSoftPiaWebBundle:Patrocinante:numerar.html.twig', array(
-                        'numerados' => $this->numerados,
-                        'inicial' => $this->inicial,
-                        'final' => $this->final
-            ));
-        }
-        else{
-            $request = $this->getRequest();
-            $referer = $request->headers->get('referer');   
-            if($respuesta==-1)
-                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                            'url' => $referer,
-                            'texto' => 'No se ha configurado patrocinante para este evento',
-                ));      
-            if($respuesta==-2)
-                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                            'url' => null,
-                            'texto' => 'No existen numeros externos disponibles',
-                ));                
-        }
-    }  
-    
-    public function resetearAction($idevento) {
-        $em = $this->getDoctrine()->getManager();
-        $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->resetearPatrocinante($idevento);
-        $patrocinante=$em->getRepository('FraterSoftPiaWebBundle:Patrocinante')->findOneBy(array('idevento'=>$idevento));
-        if($patrocinante){
-            $em->getRepository('FraterSoftPiaWebBundle:Patrocinanteexterna')->resetear($patrocinante->getId());
-            $patrocinante->setSiguiente($patrocinante->getInicio());
-            $patrocinanteatributos=$em->getRepository('FraterSoftPiaWebBundle:Patrocinanteatributo')->findBy(array('idpatrocinante'=>$patrocinante->getId()));
-            foreach ($patrocinanteatributos as $patrocinanteatributo){
-                $patrocinanteatributo->setSiguiente($patrocinanteatributo->getInicio());
-            }
-            $em->flush();     
-        }
-        $request = $this->getRequest();
-        $referer = $request->headers->get('referer');
-        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                    'url' => $referer,
-                    'texto' => 'Reseteada toda la patrocinante del evento',
-        ));          
-    }
-    
+   
     public function listapatrocinanteAction($idevento,$email) {
         $em = $this->getDoctrine()->getManager();
 
@@ -89,85 +40,6 @@ class PatrocinanteController extends commonPIAClass {
         ));
     }      
     
-    public function enumerar($idevento){
-        $em = $this->getDoctrine()->getManager();
-        $inscrito=null;
-        $contador=1;
-        $patrocinante = $em->getRepository('FraterSoftPiaWebBundle:Patrocinante')->findOneBy(array('idevento' => $idevento));
-        if(!$patrocinante) //si no hay patrocinante configurada
-            return(-1);
-        $patrocinanteatributos = $em->getRepository('FraterSoftPiaWebBundle:Patrocinanteatributo')->findBy(array('idpatrocinante' => $patrocinante->getId()));
-        if(!$patrocinanteatributos){ //Si no hay atributos configurados se usa configuracion por evento
-            $this->numerados=array(0);
-            $this->inicial=array(0);
-            $this->final=array(0);
-            $inscritos = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->listaParaNumerar(
-                    $idevento,null,$patrocinante->getOrdenarpor()
-            );
-            foreach ($inscritos as $inscrito){
-                $inscripcion=$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->find($inscrito);
-                if($patrocinante->getSecuencial()){
-                    $this->numerados[0]=$contador++;
-                    if($patrocinante->getSiguiente()==$patrocinante->getInicio())
-                        $this->inicial[0]=$patrocinante->getSiguiente();
-                    $inscripcion->setNumero($patrocinante->getSiguiente());
-                    $this->final[0]=$patrocinante->getSiguiente();
-                    $patrocinante->setSiguiente($patrocinante->getSiguiente()+1);
-                }
-                else{
-                    $patrocinanteexterna = $em->getRepository('FraterSoftPiaWebBundle:Patrocinanteexterna')->findOneBy(
-                            array('idpatrocinante'=>$patrocinante->getId(),'asignado'=>false),
-                            array('numero'=>'ASC'),
-                            1 //parametro limit (devuelve 1 registro de los seleccionados)
-                    );
-                    if($patrocinanteexterna){ 
-                        $this->numerados[0]=$contador++;
-                        $inscripcion->setNumero($patrocinanteexterna->getNumero());
-                        $patrocinanteexterna->setAsignado(true);
-                    }
-                    else{
-                         return(commonPIAClass::NUMERACIONEXTERNA_NO_CONFIGURADA);
-                    }
-                    $em->flush();
-                }
-            }
-            $em->flush();
-        }
-        else{
-            $this->numerados=array();
-            $this->inicial=array();
-            $this->final=array();                
-            foreach ($patrocinanteatributos as $patrocinanteatributo){
-                switch (true){
-                    case $patrocinante->getAtributo()=="competencia":
-                        $filtro="tmcompetencias.descripcion in (" . $patrocinanteatributo->getValoratributo() . ")";
-                        break;
-                    case $patrocinante->getAtributo()=="categortia":
-                        $filtro="tmcategorias.descripcion in (" . $patrocinanteatributo->getValoratributo() . ")";
-                        break;                
-                    case $patrocinante->getAtributo()=="precio":
-                        $filtro="tminscritos.precio in (" . $patrocinanteatributo->getValoratributo() . ")";
-                        break;        
-                    default:
-                        $filtro="tmcompetidores." . $patrocinante->getAtributo() . " in (" . $patrocinanteatributo->getValoratributo() . ")";
-                }
-                $idinscritos = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->listaParaNumerar(
-                        $idevento,$filtro,$patrocinante->getOrdenarpor()
-                );
-                $this->inicial[$patrocinanteatributo->getValoratributo()]=$patrocinanteatributo->getSiguiente(); 
-                $contador=1;
-                foreach ($idinscritos as $idinscrito){
-                    $this->numerados[$patrocinanteatributo->getValoratributo()]=$contador++;
-                    $inscripcion=$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->find($idinscrito);
-                    $inscripcion->setNumero($patrocinanteatributo->getSiguiente());
-                    $this->final[$patrocinanteatributo->getValoratributo()]=$patrocinanteatributo->getSiguiente();
-                    $patrocinanteatributo->setSiguiente($patrocinanteatributo->getSiguiente()+1);
-                }
-                $em->flush();     
-            }
-        }
-        return($contador);
-    }
     
     /**
      * Creates a new Patrocinante entity.
@@ -180,12 +52,13 @@ class PatrocinanteController extends commonPIAClass {
         $form->handleRequest($request);
 
         if ($form->isValid()) {
+            //$entity->setIdOrganizador($em->getRepository('FraterSoftPiaWebBundle:Patrocinante')->find());
             $em = $this->getDoctrine()->getManager();
             $em->persist($entity);
             $em->flush();
 
             return $this->redirect($this->generateUrl('patrocinante_gestion', array(
-                'idevento' => $entity->getIdevento()->getId(),
+                'idorganizador' => $entity->getIdorganizador()->getId(),
                 'estado' => 2
             )));            
         }
@@ -224,34 +97,30 @@ class PatrocinanteController extends commonPIAClass {
         
         $em = $this->getDoctrine()->getManager();
         
-        //llena el Select con el evento y Oculta el control
-//        $form->add('idevento','entity',array(
-//                'class' => 'FraterSoftPiaWebBundle:Evento',
-//                'query_builder' => function (EntityRepository $er) use ( $idevento ) {
-//                    return $er->createQueryBuilder('e')
-//                            ->where('e.id=:idevento')
-//                            ->setParameter('idevento',$idevento);
-//                },
-//            ));
-        
-
-        $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')->atributosOptions($idevento);
-        
+        //llena el Select con el organizador y Oculta el control
+        $form->add('idorganizador','entity',array(
+                'class' => 'FraterSoftPiaWebBundle:Organizador',
+                'query_builder' => function (EntityRepository $er) use ( $idorganizador ) {
+                    return $er->createQueryBuilder('o')
+                            ->where('o.id=:idorganizador')
+                            ->setParameter('idorganizador',$idorganizador);
+                },
+            ));
+                             
         return $this->render('FraterSoftPiaWebBundle:Patrocinante:gestion.html.twig', array(
             'form'   => $form->createView(),
-            'idevento' => $idevento,
-            'atributos' => $atributos, 
+            'idorganizador' => $idorganizador,
             'campos' => $this->getCampos($em,'Patrocinante'),
         ));
     }
 
-    public function listaAjaxAction($idevento){
+    public function listaAjaxAction($idorganizador){
         $encoders = array(new XmlEncoder(), new JsonEncoder());
         $normalizers = array(new GetSetMethodNormalizer());  
         $serializer = new Serializer($normalizers, $encoders);  
         
         $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('FraterSoftPiaWebBundle:Patrocinante')->arrayListas($idevento);
+        $entities = $em->getRepository('FraterSoftPiaWebBundle:Patrocinante')->arrayListas($idorganizador);
 
         $jsonContent = $serializer->serialize(array(
             "recordsTotal"=> count($entities),
@@ -298,7 +167,7 @@ class PatrocinanteController extends commonPIAClass {
             $em->flush();
 
             return $this->redirect($this->generateUrl('patrocinante_gestion', array(
-                'idevento' => $entity->getIdevento()->getId(),
+                'idorganizador' => $entity->getIdorganizador()->getId(),
                 'estado' => 3
             )));            
         }
@@ -325,7 +194,7 @@ class PatrocinanteController extends commonPIAClass {
         $em->remove($entity);
         $em->flush();
             return $this->redirect($this->generateUrl('patrocinante_gestion', array(
-                'idevento' => $entity->getIdevento()->getId(),
+                'idorganizador' => $entity->getIdorganizador()->getId(),
                 'estado' => 1
             )));            
     }
