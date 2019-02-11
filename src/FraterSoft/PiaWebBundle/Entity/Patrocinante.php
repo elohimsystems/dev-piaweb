@@ -27,12 +27,12 @@ class Patrocinante
     /**
      * @var integer
      */
-    private $idevento;
+    private $estatus;
 
     /**
-     * @var integer
+     * @var \FraterSoft\PiaWebBundle\Entity\Organizador
      */
-    private $estatus;
+    private $idorganizador;
 
 
     /**
@@ -54,7 +54,7 @@ class Patrocinante
     public function setNombre($nombre)
     {
         $this->nombre = $nombre;
-
+    
         return $this;
     }
 
@@ -77,7 +77,7 @@ class Patrocinante
     public function setLogo($logo)
     {
         $this->logo = $logo;
-
+    
         return $this;
     }
 
@@ -92,29 +92,6 @@ class Patrocinante
     }
 
     /**
-     * Set idevento
-     *
-     * @param integer $idevento
-     * @return Patrocinante
-     */
-    public function setIdevento($idevento)
-    {
-        $this->idevento = $idevento;
-
-        return $this;
-    }
-
-    /**
-     * Get idevento
-     *
-     * @return integer 
-     */
-    public function getIdevento()
-    {
-        return $this->idevento;
-    }
-
-    /**
      * Set estatus
      *
      * @param integer $estatus
@@ -123,7 +100,7 @@ class Patrocinante
     public function setEstatus($estatus)
     {
         $this->estatus = $estatus;
-
+    
         return $this;
     }
 
@@ -135,5 +112,28 @@ class Patrocinante
     public function getEstatus()
     {
         return $this->estatus;
+    }
+
+    /**
+     * Set idorganizador
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Organizador $idorganizador
+     * @return Patrocinante
+     */
+    public function setIdorganizador(\FraterSoft\PiaWebBundle\Entity\Organizador $idorganizador = null)
+    {
+        $this->idorganizador = $idorganizador;
+    
+        return $this;
+    }
+
+    /**
+     * Get idorganizador
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Organizador 
+     */
+    public function getIdorganizador()
+    {
+        return $this->idorganizador;
     }
 }

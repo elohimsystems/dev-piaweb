@@ -1,7 +1,11 @@
 FraterSoft\PiaWebBundle\Entity\Patrocinante:
-    repositoryClass: FraterSoft\PiaWebBundle\Entity\PatrocinanteRepository       
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\PatrocinanteRepository
     type: entity
     table: piaaccess.tmpatrocinantes
+    indexes:
+        IDX_1845DD246FAFBFF6:
+            columns:
+                - idorganizador
     id:
         id:
             type: integer
@@ -24,14 +28,19 @@ FraterSoft\PiaWebBundle\Entity\Patrocinante:
             length: 100
             fixed: false
             comment: ''
-        idevento:
-            type: bigint
-            nullable: true
-            unsigned: false
-            comment: ''
         estatus:
             type: integer
             nullable: true
             unsigned: false
             comment: ''
+    manyToOne:
+        idorganizador:
+            targetEntity: Organizador
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idorganizador:
+                    referencedColumnName: id
+            orphanRemoval: false
     lifecycleCallbacks: {  }
