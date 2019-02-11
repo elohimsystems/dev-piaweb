@@ -12,13 +12,17 @@ use Doctrine\ORM\EntityRepository;
  */
 class PatrocinanteRepository extends EntityRepository {
 
+    /*
+     * Llena el dattable del twig. En valor devuelo debe ser un array json simple, No deben haber objetos anidados
+     * para lo cual se deben detallar los campos a mostrar en la tabla
+    */
     public function arrayListas($idorganizador)
     {
         return $this->getEntityManager()
             ->createQuery(
-                "select entity from FraterSoftPiaWebBundle:Patrocinante entity "
-                    . "JOIN entity.idorganizador o "
-                . "where entity.idorganizador  = " . $idorganizador
+                "select p.id,p.logo,p.nombre,p.estatus,o.id as idorganizador  from FraterSoftPiaWebBundle:Patrocinante p "
+                    . "JOIN p.idorganizador o "
+                . "where p.idorganizador  = " . $idorganizador
             )
             ->getResult();
     }

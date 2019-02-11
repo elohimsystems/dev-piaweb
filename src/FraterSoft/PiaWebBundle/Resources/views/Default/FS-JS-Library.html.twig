@@ -436,7 +436,7 @@
                     click: function () {
                         $.each(arraycampos, function( key, value ) {
                             if(value['constraint']=='foreingkey'){
-                                //$("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',false);
+                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',false);
                             }
                         });                        
                         formulario.submit();
@@ -533,10 +533,10 @@
             $(location).attr('href', '{{ path('eventoatributos_new',{'idevento':idevento}) }}')
         });            
         $('#tabs a[href="#tabs-3"]').on("click", function () {
-            $(location).attr('href', '{{ path('patrocinante_gestion',{'idevento':idevento}) }}')
+            {#$(location).attr('href', '{{ path('publicidad_gestion',{'idevento':idevento}) }}')#}
         });            
         $('#tabs a[href="#tabs-4"]').on("click", function () {
-            $(location).attr('href', '{{ path('tema_gestion',{'idevento':idevento}) }}')
+            {#$(location).attr('href', '{{ path('tema_gestion',{'idevento':idevento}) }}')#}
         });            
         $('#tabs a[href="#tabs-5"]').on("click", function () {
             $(location).attr('href', '{{ path('numeracion_gestion',{'idevento':idevento}) }}');
