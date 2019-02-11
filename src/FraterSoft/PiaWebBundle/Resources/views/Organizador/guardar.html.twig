@@ -1,0 +1,25 @@
+{% extends '::base.html.twig' %}
+{% set entidad='organizador' %}
+{% set titulo='Gestionar Organizador' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
+<style type="text/css">
+    .contenido{    
+        margin: auto;
+        width: 600px;
+    }    
+</style>
+{% endblock %}  
+{% block body -%}    
+    <div id="tabs">        
+        {{ include("FraterSoftPiaWebBundle:Organizador:tabs.html.twig") }}
+        <div id="tabs-1">
+            <div class="contenido">
+                <div id="contenedor-form">
+                {{ form_start(form) }}
+                {{ form_end(form) }} 
+                </div>
+            </div> 
+        </div>
+    </div>
+{% endblock %}

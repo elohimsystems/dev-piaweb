@@ -1,0 +1,47 @@
+{% extends '::base.html.twig' %}
+{% set entidad='organizador' %}
+{% set titulo='Gestionar Organizador' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
+<style type="text/css">
+    .contenido{    
+        margin: auto;
+        width: 600px;
+    }    
+</style>
+{% endblock %}  
+{% block body -%}    
+    <div id="tabs">        
+        {{ include("FraterSoftPiaWebBundle:Organizador:tabs.html.twig") }}
+        <div id="tabs-1">
+            <div class="contenido">
+                <div id="contenedor-form">
+                {{ form_start(edit_form) }}
+                {{ form_end(edit_form) }} 
+                </div>
+            </div> 
+        </div>
+    </div>
+        
+    <div id="mapa">        
+        <input id="pac-input" class="controls" type="text" placeholder="Buscar lugar">
+        <div id='map'></div>
+    </div>
+
+    <div id="dialog_checkemail">    
+        Ingrese el codigo de confirmacion enviado al correo<br>
+        <input id="codigo" type="text" placeholder="Ingrese codigo">
+    </div>
+
+    <div id="uploadimage">    
+        <div id="fine-uploader"></div>  
+        {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
+    </div>
+    <div id="uploadvideo">
+        <b>Pegue el codigo de youtube, y presione Insertar</b>
+        <textarea id="codigoyoutube" rows="4" cols="89"></textarea>
+        <button id="boton_insertar">Insertar</button>
+        <button id="boton_borrar">Borrar</button>
+        <div id="reproductor"></div>
+    </div>  
+{% endblock %}
