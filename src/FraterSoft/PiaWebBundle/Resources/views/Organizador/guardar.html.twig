@@ -2,11 +2,34 @@
 {% set entidad='organizador' %}
 {% set titulo='Gestionar Organizador' %}
 {% block style %} 
-{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}    
+<link href="{{asset('bundles/fratersoftpiaweb/fine-uploader/fine-uploader.min.css')}}" rel="stylesheet" type="text/css"/>
 <style type="text/css">
     .contenido{    
-        margin: auto;
+        margin: 0;
         width: 600px;
+    }    
+    #tabs{
+        display: none; 
+    }     
+    #imagen_logo{
+        width: 200px;
+        border-radius: 10%;
+    }    
+    #boton_logo{
+        width: 200px;
+    }    
+    #imagenesbotones{
+        float: left;    
+        margin-right: 5px;            
+    }       
+    #formulario > div:nth-child(1){ /* oculta el campo logo */
+        display: none; 
+    }
+    #formulario > div:nth-last-child(-n+3) { /* ajusta el formato de los botones */ 
+        float: left;
+        width: unset;
+        text-align: center;
     }    
 </style>
 {% endblock %}  
@@ -15,11 +38,56 @@
         {{ include("FraterSoftPiaWebBundle:Organizador:tabs.html.twig") }}
         <div id="tabs-1">
             <div class="contenido">
+                <div id="imagenesbotones">                
+                    <div id="seccion_logo">
+                        {% if form.logo.vars.data is empty %}
+                            <div><img id="imagen_logo" src="{{asset('bundles/fratersoftpiaweb/images/sinimagen.png') }}"></div>
+                        {%else%}    
+                            <div><img id="imagen_logo" src="{{asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ form.logo.vars.data}}"></div>
+                        {%endif%}
+                        <div><button type="button" id="boton_logo">Logo</button></div>
+                    </div>                
+                </div>   
                 <div id="contenedor-form">
-                {{ form_start(form) }}
+                {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
                 {{ form_end(form) }} 
                 </div>
             </div> 
         </div>
     </div>
+    <div id="uploadimage">    
+        <div id="fine-uploader"></div>  
+        {{ include("FraterSoftPiaWebBundle:Default:template-fineuploader.html.twig") }} 
+    </div>                
+{% endblock %}
+{% block javascripts %}
+    <script src="{{asset('bundles/fratersoftpiaweb/fine-uploader/fine-uploader.min.js')}}" type="text/javascript"></script>
+    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}    
+    <script>	
+        $(function() {  
+            $("#tabs").css("display","grid");
+            $("#boton_logo").on('click', function() {
+                cargar_imagen($("#{{ form.logo.vars.id }}"),$("#imagen_logo"),500,300);
+            });            
+            $("#uploadimage").dialog({
+                autoOpen: false,
+                modal: true,
+                buttons: [
+                    {
+                        text: "Aceptar",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    },
+                    {
+                        text: "Cerrar",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                ]
+            });
+            manuTabsConfigOrganizador({{organizador|json_encode|raw}});
+        });    
+    </script>
 {% endblock %}

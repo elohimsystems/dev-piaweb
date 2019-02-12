@@ -38,51 +38,6 @@ class OrganizadorController extends commonPIAClass {
     }    
         
     /**
-     * Creates a new Organizador entity.
-     *
-     */
-    public function createAction(Request $request)
-    {
-        $entity = new Organizador();
-        $form = $this->createCreateForm($entity);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            //$entity->setIdOrganizador($em->getRepository('FraterSoftPiaWebBundle:Organizador')->find());
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('organizador_gestion', array(
-                'idorganizador' => $entity->getIdorganizador()->getId(),
-                'estado' => 2
-            )));            
-        }
-        $errors=$this->getErrorMessages($editForm);
-        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                    'url' => null,
-                    'texto' => json_encode($errors),
-                    'tema' => $entity->getIdevento()->getTema()
-        ));                
-
-    }
-
-    /**
-    * Creates a form to create a Organizador entity.
-    *
-    * @param Organizador $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
-    private function createCreateForm(Organizador $entity)
-    {
-        $form = $this->createForm(new OrganizadorType(), $entity, array(
-            'method' => 'POST',
-        ));
-        return $form;
-    }
-
-    /**
      * Displays a form to create a new Organizador entity.
      *
      */
@@ -99,24 +54,24 @@ class OrganizadorController extends commonPIAClass {
                 'campos' => $this->getCampos($em,'Organizador'),
             ));
         else{
-            $entity=$em->getRepository('FraterSoftPiaWebBundle:Organizador')->findBy(array('email'=>$email));
-            if (!$entity) {
-                $entity = new Organizador();  
-                $form = $this->crearFormulario($entity);
-            }
-            else{
-                $form = $this->crearFormulario($entity[0]);
-            }
+            $entity = new Organizador();  
+            $busqueda=$em->getRepository('FraterSoftPiaWebBundle:Organizador')->findBy(array('email'=>$email));
+            if (!$busqueda)
+                $entity->setEmail($email);
+            else
+                $entity=$busqueda[0];
+            $form = $this->crearFormulario($entity);
+            $this->addBotonRegresar($form,$this->get('session')->get('urllistaeventos'));            
             $form->handleRequest($request); 
             if ($form->isValid()) {
                 $em->persist($entity);
                 $em->flush();          
             }            
-            $this->addBotonRegresar($form,$this->get('session')->get('urllistaeventos'));            
             return $this->render('FraterSoftPiaWebBundle:Organizador:guardar.html.twig', array(
                 'form'   => $form->createView(),
+                'organizador' => $entity,
                 'email' => $email,
-                //'campos' => $this->getCampos($em,'Organizador'),
+                'campos' => $this->getCampos($em,'Organizador'),
             ));
         }
     }
@@ -136,57 +91,7 @@ class OrganizadorController extends commonPIAClass {
         
         return new response($jsonContent);                    
     }
-
-    /**
-    * Creates a form to edit a Organizador entity.
-    *
-    * @param Organizador $entity The entity
-    *
-    * @return \Symfony\Component\Form\Form The form
-    */
-    private function createEditForm(Organizador $entity)
-    {
-        $form = $this->createForm(new OrganizadorType(), $entity, array(
-            'method' => 'POST',
-        ));
-
-        return $form;
-    }
-    
-    /**
-     * Edits an existing Organizador entity.
-     *
-     */
-    public function updateAction(Request $request, $id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $entity = $em->getRepository('FraterSoftPiaWebBundle:Organizador')->find($id);
-
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Organizador entity.');
-        }
-
-        $editForm = $this->createEditForm($entity);
-        $editForm->handleRequest($request);
-
-        if ($editForm->isValid()) {
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('organizador_gestion', array(
-                'idorganizador' => $entity->getIdorganizador()->getId(),
-                'estado' => 3
-            )));            
-        }
-        
-        $errors=$this->getErrorMessages($editForm);
-        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                    'url' => null,
-                    'texto' => json_encode($errors),
-                    'tema' => $entity->getIdevento()->getTema()
-        ));        
-    }
-    
+   
     /**
      * Deletes a Organizador entity.
      *

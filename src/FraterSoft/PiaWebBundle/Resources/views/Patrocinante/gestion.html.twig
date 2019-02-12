@@ -5,32 +5,40 @@
 {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
 <style type="text/css">
     .contenido{    
-        margin: auto;
-        width: 600px;
+        margin: 0;
+        width: 800px;
     }    
+    #tabs{
+        display: none; 
+    }         
     #{{entidad}}_length > label > select{ /* ancho del select de registros mostrar en la tabla */
         width:60px;
     }
 </style>
 {% endblock %}  
-{% block body -%}    
-    <div class="contenido">    
-        <div>     
-            <div id="titulotabla"><h3>{{titulo}}</h3></div>
-            <table id="{{entidad}}" class="display row-border hover">
-            </table>    
-            <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistaeventos')}}');">Regresar</button>            
-        </div> 
-        <div id="dialogformGuardar">
-            {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
-            {{ form_end(form) }} 
-        </div>          
-        <div id="dialogelimiar">
-            ¿Esta seguro que desea elimar la fila <strong id="eliminar"></strong>?
-        </div> 
-        <div id="dialog-message" title="Mensaje">
-        </div>        
-    </div>         
+{% block body -%}   
+    <div id="tabs">     
+        {{ include("FraterSoftPiaWebBundle:Organizador:tabs.html.twig") }}
+        <div id="tabs-2">        
+            <div class="contenido">    
+                <div>     
+                    <div id="titulotabla"><h3>{{titulo}}</h3></div>
+                    <table id="{{entidad}}" class="display row-border hover">
+                    </table>    
+                    <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistaeventos')}}');">Regresar</button>            
+                </div> 
+                <div id="dialogformGuardar">
+                    {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+                    {{ form_end(form) }} 
+                </div>          
+                <div id="dialogelimiar">
+                    ¿Esta seguro que desea elimar la fila <strong id="eliminar"></strong>?
+                </div> 
+                <div id="dialog-message" title="Mensaje">
+                </div>        
+            </div>   
+        </div>               
+    </div>                
 {% endblock %}
 {% block javascripts -%}
 {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}
@@ -39,7 +47,8 @@
                 
         var entidad = '{{entidad}}';
         var tabla;
-        $("#tabs").css("display","block");
+        $("#tabs").css("display","grid");
+        $('#tabs a[href="#tabs-2"]').click();
         $( "#botonera" ).controlgroup();                          
         tabla=tablaDatos(
                 $('#formulario'), //Se usa para llenar lo campos del formulario
@@ -47,7 +56,7 @@
                 'Patrocinante', //Usada para el titulo 
                 "{{ path(entidad ~ '_create')}}", //Url para crear
                 "{{ path(entidad ~ '_update',{'id':'_id_'})}}", //Url para editar
-                "{{ path(entidad ~ '_listaajax',{'idorganizador': idorganizador }) }}", //Url para buscar los datos a listar
+                "{{ path(entidad ~ '_listaajax',{'idorganizador': organizador.id }) }}", //Url para buscar los datos a listar
                 null,
                 null,
                 null
@@ -57,6 +66,7 @@
         dialogEliminar('{{ path(entidad ~ '_delete',{'id':'_id_'})}}');
         dialogMensaje();
                 
+        manuTabsConfigOrganizador({{organizador|json_encode|raw}});
     });    
 </script>    
 {% endblock %}

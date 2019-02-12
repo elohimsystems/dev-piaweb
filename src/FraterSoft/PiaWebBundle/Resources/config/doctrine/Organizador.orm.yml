@@ -31,19 +31,19 @@ FraterSoft\PiaWebBundle\Entity\Organizador:
         logo:
             type: string
             nullable: true
-            length: null
+            length: 255
             fixed: false
             comment: ''
         email:
             type: string
             nullable: true
-            length: null
+            length: 255
             fixed: false
             comment: ''
         banco:
             type: string
             nullable: true
-            length: null
+            length: 50
             fixed: false
             comment: ''
         tipocuenta:
@@ -54,7 +54,7 @@ FraterSoft\PiaWebBundle\Entity\Organizador:
         numerocuenta:
             type: string
             nullable: true
-            length: null
+            length: 50
             fixed: false
             comment: ''
         rif:
@@ -66,19 +66,19 @@ FraterSoft\PiaWebBundle\Entity\Organizador:
         contacto:
             type: string
             nullable: true
-            length: null
+            length: 50
             fixed: false
             comment: ''
         telefonocontacto:
             type: string
             nullable: true
-            length: null
+            length: 50
             fixed: false
             comment: ''
         emailcontacto:
             type: string
             nullable: true
-            length: null
+            length: 50
             fixed: false
             comment: ''
     lifecycleCallbacks: {  }

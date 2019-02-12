@@ -82,10 +82,23 @@
                     { title: "Categoria", data: "idcategoria.descripcion" },
                     { title: "Punto", data: "punto" },
                     { title: "Precio", data: "precio" },   
+                    { title: "Estatus", data: "status",
+                        render: function(data, type, row){
+                            if(data==1 && row.idpago.conciliado==true)
+                                return('INSCRITO');
+                            else if(data==1 && row.idpago.conciliado==null && row.idpago.tipo!='3')
+                                return('PREINSCRITO');
+                            else if(data==1 && row.idpago.conciliado==null && row.idpago.tipo=='3')
+                                return('TDC NO PAGADO');
+                            else if(data==0)
+                                return('ANULADO');
+                            else return('');
+                        }
+                    },
                     /* INFORMACION DEL PAGO */
                     { title: "FechaPago", data: "idpago.fechahora",
                         render: function(data){
-                            var formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
+                            var formatted = (data)?$.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000)):'';
                             return formatted;
                         }
                     },
