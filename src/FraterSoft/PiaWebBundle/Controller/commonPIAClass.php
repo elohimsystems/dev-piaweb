@@ -13,11 +13,12 @@ use FraterSoft\PiaWebBundle\Entity\Preciosevento;
 use FraterSoft\PiaWebBundle\Entity\Precioscompetencia;
 use FraterSoft\PiaWebBundle\Entity\Precioscategoria;
 
-const NUMERACION_NO_CONFIGURADA = -1;
-const NUMERACIONEXTERNA_NO_CONFIGURADA = -2;
 
 class commonPIAClass extends Controller
 {
+
+    const NUMERACION_NO_CONFIGURADA = -1;
+    const NUMERACIONEXTERNA_NO_CONFIGURADA = -2;
     
     //Oculta los campos que no estan configurados en la base de datos    
     public function renombraLabels($idevento, $form) {

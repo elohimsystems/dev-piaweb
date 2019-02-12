@@ -106,10 +106,12 @@ class PatrocinanteController extends commonPIAClass {
                             ->setParameter('idorganizador',$idorganizador);
                 },
             ));
-                             
+                
+        $organizador = $em->getRepository('FraterSoftPiaWebBundle:Organizador')->find($idorganizador);
+
         return $this->render('FraterSoftPiaWebBundle:Patrocinante:gestion.html.twig', array(
             'form'   => $form->createView(),
-            'idorganizador' => $idorganizador,
+            'organizador' => $organizador,
             'campos' => $this->getCampos($em,'Patrocinante'),
         ));
     }

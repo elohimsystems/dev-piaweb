@@ -1059,6 +1059,7 @@ class InscritoController extends commonPIAClass {
             ;
         }        
         $editForm->get('idpago')->add('texto');
+        $editForm->add('numero');
 
         $this->addBotonRegresar($editForm,$this->get('session')->get('urlreturn'));
         

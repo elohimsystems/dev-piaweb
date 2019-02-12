@@ -598,6 +598,26 @@
     }
     {% endif %}
 
+    {% if organizador is defined and organizador != null %}
+    function manuTabsConfigOrganizador(organizador){
+        $('#tabs a[href="#tabs-1"]').on("click", function () {
+            $(location).attr('href', '{{ path('organizador_guardar',{'email':organizador.email}) }}')
+        });                    
+        $('#tabs a[href="#tabs-2"]').on("click", function () {
+            $(location).attr('href', '{{ path('patrocinante_gestion',{'idorganizador':organizador.id}) }}')
+        });            
+        $('#tabs a[href="#tabs-3"]').on("click", function () {
+            {#$(location).attr('href', '{{ path('publicidad_gestion',{'idevento':idevento}) }}')#}
+        });            
+        $('#tabs a[href="#tabs-4"]').on("click", function () {
+            {#$(location).attr('href', '{{ path('tema_gestion',{'idevento':idevento}) }}')#}
+        });            
+        $('#tabs a[href="#tabs-5"]').on("click", function () {
+            {#$(location).attr('href', '{{ path('numeracion_gestion',{'idevento':idevento}) }}');#}
+        });                    
+    }
+    {% endif %}
+
     function checklogin(){
         if(parent.document.location=='http://localhost/drupal-7.53/setsession')
             alert("Lamada ok");
