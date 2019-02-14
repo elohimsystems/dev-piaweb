@@ -20,10 +20,6 @@ use Doctrine\ORM\EntityRepository;
  *
  */
 class PatrocinanteController extends commonPIAClass {
-    
-    private $numerados;
-    private $inicial; 
-    private $final;
    
     public function listapatrocinanteAction($idevento,$email) {
         $em = $this->getDoctrine()->getManager();

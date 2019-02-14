@@ -1,22 +1,8 @@
-organizador_gestion:
-    pattern:  /{email}/gestion
-    defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:gestion" }
-    
-organizador_guardar:
-    pattern:  /{email}/guardar
+publicidad_guardar:
+    pattern:  /{idevento}/guardar
     defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:guardar" }    
 
-organizador_create:
-    pattern:  /create
-    defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:create" }
-    requirements: { _method: post }
-
-organizador_update:
-    pattern:  /{id}/update
-    defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:update" }
-    requirements: { _method: post|put }
-
-organizador_delete:
+publicidad_delete:
     pattern:  /{id}/delete
     defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:delete" }
     
