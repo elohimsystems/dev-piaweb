@@ -34,7 +34,15 @@ class Patrocinante
      */
     private $idorganizador;
 
-
+    /**
+     * to string
+     *
+     * @return string 
+     */
+    public function __toString() {
+        return $this->nombre;
+    }       
+    
     /**
      * Get id
      *

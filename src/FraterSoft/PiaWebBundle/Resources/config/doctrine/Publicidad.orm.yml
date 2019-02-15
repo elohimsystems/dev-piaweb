@@ -1,6 +1,7 @@
 FraterSoft\PiaWebBundle\Entity\Publicidad:
     type: entity
     table: piaaccess.tmpublicidad
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\PublicidadRepository       
     indexes:
         IDX_2A97C540233BA6A9:
             columns:
