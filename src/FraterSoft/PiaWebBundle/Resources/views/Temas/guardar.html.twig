@@ -1,0 +1,63 @@
+{% extends '::base.html.twig' %}
+{% set entidad='tema' %}
+{% set titulo='Configurar Tema' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}    
+<link href="{{asset('bundles/fratersoftpiaweb/fine-uploader/fine-uploader.min.css')}}" rel="stylesheet" type="text/css"/>
+<style type="text/css">
+    .contenido{    
+        margin: 0;
+        width: 600px;
+    }    
+    #tabs{
+        display: none; 
+    }     
+    #imagen_logo{
+        width: 200px;
+        border-radius: 10%;
+    }    
+    #boton_logo{
+        width: 200px;
+    }    
+    #imagenesbotones{
+        float: left;    
+        margin-right: 5px;            
+    }       
+    #formulario > div:nth-child(1){ /* oculta el campo logo */
+        display: none; 
+    }
+    #formulario > div:nth-last-child(-n+3) { /* ajusta el formato de los botones */ 
+        float: left;
+        width: unset;
+        text-align: center;
+    }    
+</style>
+{% endblock %}  
+{% block body -%}    
+    <div id="tabs">        
+        {{ include("FraterSoftPiaWebBundle:Organizador:tabs.html.twig") }}
+        <div id="tabs-1">
+            <div class="contenido">  
+                <div id="contenedor-form">
+                {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+                {{ form_end(form) }} 
+                </div>
+            </div> 
+        </div>
+    </div>
+    <div id="uploadimage">    
+        <div id="fine-uploader"></div>  
+        {{ include("FraterSoftPiaWebBundle:Default:template-fineuploader.html.twig") }} 
+    </div>                
+{% endblock %}
+{% block javascripts %}
+    <script src="{{asset('bundles/fratersoftpiaweb/fine-uploader/fine-uploader.min.js')}}" type="text/javascript"></script>
+    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}    
+    <script>	
+        $(function() {  
+            $("#tabs").css("display","grid");
+
+            manuTabsConfigOrganizador({{organizador|json_encode|raw}});
+        });    
+    </script>
+{% endblock %}
