@@ -140,3 +140,7 @@ FraterSoftPiaWebBundle_organizador:
 FraterSoftPiaWebBundle_publicidad:
     resource: "@FraterSoftPiaWebBundle/Resources/config/routing/publicidad.yml"
     prefix:   /publicidad     
+        
+FraterSoftPiaWebBundle_tema:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/tema.yml"
+    prefix:   /tema    

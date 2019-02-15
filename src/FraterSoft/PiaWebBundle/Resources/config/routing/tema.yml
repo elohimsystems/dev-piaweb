@@ -1,22 +1,8 @@
-tema_gestion:
-    pattern:  /{idevento}/gestion
-    defaults: { _controller: "FraterSoftPiaWebBundle:Tema:gestion" }
-
-tema_create:
-    pattern:  /create
-    defaults: { _controller: "FraterSoftPiaWebBundle:Tema:create" }
-    requirements: { _method: post }
-
-tema_update:
-    pattern:  /{id}/update
-    defaults: { _controller: "FraterSoftPiaWebBundle:Tema:update" }
-    requirements: { _method: post|put }
+tema_guardar:
+    pattern:  /{email}/guardar
+    defaults: { _controller: "FraterSoftPiaWebBundle:Tema:guardar" }    
 
 tema_delete:
     pattern:  /{id}/delete
     defaults: { _controller: "FraterSoftPiaWebBundle:Tema:delete" }
-    
-tema_listaajax:
-    pattern:  /{idevento}/listaajax
-    defaults: { _controller: "FraterSoftPiaWebBundle:Tema:listaajax" }
     
