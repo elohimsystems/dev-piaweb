@@ -1,8 +1,8 @@
-publicidad_guardar:
-    pattern:  /{idevento}/guardar
+organizador_guardar:
+    pattern:  /{email}/guardar
     defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:guardar" }    
 
-publicidad_delete:
+organizador_delete:
     pattern:  /{id}/delete
     defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:delete" }
     

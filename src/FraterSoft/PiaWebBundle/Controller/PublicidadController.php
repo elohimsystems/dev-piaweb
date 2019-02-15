@@ -2,87 +2,116 @@
 
 namespace FraterSoft\PiaWebBundle\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\DomCrawler\Crawler;
-use FraterSoft\PiaWebBundle\Entity\Publicidad;
-use FraterSoft\PiaWebBundle\Form\PublicidadType;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
-use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
 use Doctrine\ORM\EntityRepository;
 
+use FraterSoft\PiaWebBundle\Entity\Publicidad;
+use FraterSoft\PiaWebBundle\Form\PublicidadType;
+
 /**
- * Competidor controller.
+ * Publicidad controller.
  *
  */
-class PublicidadController extends commonPIAClass {
-    
+class PublicidadController extends commonPIAClass
+{
+
     /**
-    * Creates a form to edit a Publicidad entity.
+     * Creates a new Publicidad entity.
+     *
+     */
+    public function createAction(Request $request)
+    {
+        $entity = new Publicidad();
+        $form = $this->createCreateForm($entity);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($entity);
+            $em->flush();
+            
+            return $this->redirect($this->generateUrl('publicidad_gestion', array(
+                'idevento' => $entity->getIdevento()->getId(),
+                'estado' => 2
+            )));            
+            
+        }
+        
+        $errors=$this->getErrorMessages($editForm);
+        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => null,
+                    'texto' => json_encode($errors),
+        ));        
+
+    }
+
+    /**
+    * Creates a form to create a Publicidad entity.
     *
     * @param Publicidad $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function crearFormulario(Publicidad $entity)
+    private function createCreateForm(Publicidad $entity)
     {
         $form = $this->createForm(new PublicidadType(), $entity, array(
             'method' => 'POST',
         ));
-        $form->add('submit', 'submit', array('label' => 'Guardar'));
         return $form;
-    }    
-        
-    /**
-     * Displays a form to create a new Publicidad entity.
-     *
-     */
-    public function guardarAction(Request $request,$email)
-    {
-     
-        $em = $this->getDoctrine()->getManager();
-        
-        if($email=='admin')
-            // llamar al index de publicidades
-            return $this->render('FraterSoftPiaWebBundle:Publicidad:guardar.html.twig', array(
-                'form'   => $form->createView(),
-                'email' => $email,
-                'campos' => $this->getCampos($em,'Publicidad'),
-            ));
-        else{
-            $entity = new Publicidad();  
-            $busqueda=$em->getRepository('FraterSoftPiaWebBundle:Publicidad')->findBy(array('email'=>$email));
-            if (!$busqueda)
-                $entity->setEmail($email);
-            else
-                $entity=$busqueda[0];
-            $form = $this->crearFormulario($entity);
-            $this->addBotonRegresar($form,$this->get('session')->get('urllistaeventos'));            
-            $form->handleRequest($request); 
-            if ($form->isValid()) {
-                $em->persist($entity);
-                $em->flush();          
-            }            
-            return $this->render('FraterSoftPiaWebBundle:Publicidad:guardar.html.twig', array(
-                'form'   => $form->createView(),
-                'publicidad' => $entity,
-                'email' => $email,
-                'campos' => $this->getCampos($em,'Publicidad'),
-            ));
-        }
     }
 
-    public function listaAjaxAction($idpublicidad){
+    /**
+     * Displays a form to create a new Formaspago entity.
+     *
+     */
+    public function gestionAction($idevento,$estado)
+    {
+        $entity = new Publicidad();
+        $form   = $this->createCreateForm($entity);
+
+        $em = $this->getDoctrine()->getManager();        
+        
+        
+        //llena el Select con el evento y lo oculta 
+        //llena el select con los estatus 
+        $form
+            ->add('idevento','entity',array(
+            'class' => 'FraterSoftPiaWebBundle:Evento',
+            'attr' => array('style'=>'display:none'),
+            'label_attr' => array('style'=>'display:none'),
+            'query_builder' => function (EntityRepository $er) use ( $idevento ) {
+                return $er->createQueryBuilder('e')
+                        ->where('e.id=:idevento')
+                        ->setParameter('idevento',$idevento);
+            }))
+            ->add('estatus','choice',$this->OpcionesEstatus())
+        ;        
+            
+        
+        return $this->render('FraterSoftPiaWebBundle:Publicidad:gestion.html.twig', array(
+            'entity' => $entity,
+            'form'   => $form->createView(),
+            'idevento' => $idevento,
+            'campos' => $this->getCampos($em,'Publicidad'),            
+            'estado' => $estado,            
+        ));
+    }
+
+    public function listaAjaxAction($idevento){
         $encoders = array(new XmlEncoder(), new JsonEncoder());
         $normalizers = array(new GetSetMethodNormalizer());  
         $serializer = new Serializer($normalizers, $encoders);  
         
         $em = $this->getDoctrine()->getManager();
-        $entities = $em->getRepository('FraterSoftPiaWebBundle:Publicidad')->arrayListas($idpublicidad);
+        $entities = $em->getRepository('FraterSoftPiaWebBundle:Publicidad')->arrayLista($idevento);
 
         $jsonContent = $serializer->serialize(array(
             "recordsTotal"=> count($entities),
@@ -91,12 +120,59 @@ class PublicidadController extends commonPIAClass {
         
         return new response($jsonContent);                    
     }
-   
+
+    /**
+    * Creates a form to edit a Publicidad entity.
+    *
+    * @param Publicidad $entity The entity
+    *
+    * @return \Symfony\Component\Form\Form The form
+    */
+    private function createEditForm(Publicidad $entity)
+    {
+        $form = $this->createForm(new PublicidadType(), $entity, array(
+            'method' => 'POST',
+        ));
+        return $form;
+    }
+    /**
+     * Edits an existing Publicidad entity.
+     *
+     */
+    public function updateAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Publicidad')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Publicidad entity.');
+        }
+
+        $editForm = $this->createEditForm($entity);
+        $editForm->handleRequest($request);
+
+        if ($editForm->isValid()) {
+            $em->flush();
+
+            return $this->redirect($this->generateUrl('publicidad_gestion', array(
+                'idevento' => $entity->getIdevento()->getId(),
+                'estado' => 3
+            )));            
+        }
+        
+        $errors=$this->getErrorMessages($editForm);
+        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => null,
+                    'texto' => json_encode($errors),
+        ));        
+
+    }
     /**
      * Deletes a Publicidad entity.
      *
      */
-    public function deleteAction(Request $request, $id)
+    public function deleteAction($id)
     {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('FraterSoftPiaWebBundle:Publicidad')->find($id);
@@ -105,10 +181,10 @@ class PublicidadController extends commonPIAClass {
         }
         $em->remove($entity);
         $em->flush();
-            return $this->redirect($this->generateUrl('publicidad_gestion', array(
-                'idpublicidad' => $entity->getIdpublicidad()->getId(),
-                'estado' => 1
-            )));            
+        return $this->redirect($this->generateUrl('publicidad_gestion', array(
+            'idevento' => $entity->getIdevento()->getId(),
+            'estado' => 1
+        )));            
     }
-    
+
 }

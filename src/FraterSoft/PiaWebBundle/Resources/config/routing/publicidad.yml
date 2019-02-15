@@ -1,0 +1,21 @@
+publicidad_listaajax:
+    pattern:  /{idevento}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Publicidad:listaajax" }
+
+publicidad_gestion:
+    pattern:  /gestion/{idevento}/{estado}
+    defaults: { _controller: FraterSoftPiaWebBundle:Publicidad:gestion,estado:null }
+
+publicidad_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Publicidad:create" }
+    requirements: { _method: post }
+
+publicidad_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Publicidad:update" }
+    requirements: { _method: post|put }
+
+publicidad_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:Publicidad:delete" }

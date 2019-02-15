@@ -338,7 +338,11 @@
                                                     });
                                                 }
                                                 $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val(rows[0][key]);
-                                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',true);
+                                                /* 
+                                                 * Habilita o no la seleccion del select de clave foranea, si esta falso, en el new o gestion del controlador
+                                                 * se debe ocultar mediante ccs el select, ver caso Publicidad 
+                                                 */
+                                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',false);
                                             }
                                             else
                                                 $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val(rows[0][key]);
@@ -533,7 +537,7 @@
             $(location).attr('href', '{{ path('eventoatributos_new',{'idevento':idevento}) }}')
         });            
         $('#tabs a[href="#tabs-3"]').on("click", function () {
-            {#$(location).attr('href', '{{ path('publicidad_gestion',{'idevento':idevento}) }}')#}
+            $(location).attr('href', '{{ path('publicidad_gestion',{'idevento':idevento}) }}')
         });            
         $('#tabs a[href="#tabs-4"]').on("click", function () {
             {#$(location).attr('href', '{{ path('tema_gestion',{'idevento':idevento}) }}')#}

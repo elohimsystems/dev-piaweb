@@ -135,4 +135,8 @@ FraterSoftPiaWebBundle_patrocinante:
     
 FraterSoftPiaWebBundle_organizador:
     resource: "@FraterSoftPiaWebBundle/Resources/config/routing/organizador.yml"
-    prefix:   /organizador    
+    prefix:   /organizador  
+    
+FraterSoftPiaWebBundle_publicidad:
+    resource: "@FraterSoftPiaWebBundle/Resources/config/routing/publicidad.yml"
+    prefix:   /publicidad     

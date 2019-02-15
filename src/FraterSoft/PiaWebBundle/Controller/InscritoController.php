@@ -1568,6 +1568,7 @@ class InscritoController extends commonPIAClass {
                 array_push($emails,$inscrito->getIdpia()->getEmailpersonal()); 
             
             //if($inscrito->getNotificado()!=true){ //OJO MOSCA, VALIDAR ESTO PARA QUE NO QUE CONSUMAN LOS RECURSOS AL REENVIAR MUCHAS VECES
+            if(count($emails)>=1){
                 $subject = is_null($inscrito->getNumero())?
                         "Confirmacion de Inscripcion " . $inscrito->getIdevento()->getNombre():
                         "Dorsal Numero " . $inscrito->getNumero() . ". " . $inscrito->getIdevento()->getNombre();            
@@ -1580,7 +1581,7 @@ class InscritoController extends commonPIAClass {
                 );
                 $num_notifiaciones++;
                 $inscrito->setNotificado(true);
-            //}            
+            }
         }
         $em->flush();
         return($num_notifiaciones);

@@ -539,4 +539,14 @@ class commonPIAClass extends Controller
         else 
             return false;
     }
+    
+    public function OpcionesEstatus(){
+        return( array(
+                'choices' => array(
+                    0 => 'Inactivo', 
+                    1 => 'Activo',
+                 ),
+            )
+        );
+    }
 }
