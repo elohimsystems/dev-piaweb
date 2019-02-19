@@ -269,7 +269,7 @@ class commonPIAClass extends Controller
     
     //Funcion que genera el boton de pago para 123pago, hay que estar pendiente que el numero
     //de pedido no exedad los 45 caracteres
-    public function generarBoton123Pago($entity) {
+    public function generarBoton123Pago($entity,$incremento) {
 
         $date = new \DateTime('now');
         //$post_url = "http://190.153.48.117/msBotonDePago/index.jsp"; // (TEST)
@@ -285,9 +285,7 @@ class commonPIAClass extends Controller
         $numpedido.=$entity->getIdpago()->getId();
         $numpedido.='F';
         $numpedido.=$date->format('YmdHis');
-        //$porcentaje=($entity->getIdevento()->getId()==21)?0.15:0.10;
-        $porcentaje=0.15;
-        //$porcentaje=$incremento / 100;
+        $porcentaje=$incremento / 100;
 
         $post_values = array(
             "nbproveedor" => "INVERSIONES DEPORTIVAS GARCIA",
