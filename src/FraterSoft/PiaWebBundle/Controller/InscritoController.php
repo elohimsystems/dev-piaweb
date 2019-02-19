@@ -372,7 +372,7 @@ class InscritoController extends commonPIAClass {
                     return $this->render('FraterSoftPiaWebBundle:Inscrito:boton123pago.html.twig', array(
                                 'entity' => $entity,
                                 'incremento' => $formapago[0]->getIncremento(),
-                                'boton123Pago' => $this->generarBoton123Pago($entity),
+                                'boton123Pago' => $this->generarBoton123Pago($entity,$formapago[0]->getIncremento()),
                     ));
                 }		
             }
