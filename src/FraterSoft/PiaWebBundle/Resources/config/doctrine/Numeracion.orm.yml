@@ -51,16 +51,11 @@ FraterSoft\PiaWebBundle\Entity\Numeracion:
             type: boolean
             nullable: true
             comment: ''            
-    #manyToOne:
-    #    idevento:
-    #        targetEntity: Evento
-    #        cascade: {  }
-    #        mappedBy: null
-    #        inversedBy: null
-    #        joinColumns:
-    #            idevento:
-    #                referencedColumnName: id
-    #        orphanRemoval: false
+        tipo:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
     oneToOne:
       idevento:
         targetEntity: Evento

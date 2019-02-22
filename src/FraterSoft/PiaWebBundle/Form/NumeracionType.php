@@ -15,13 +15,22 @@ class NumeracionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+            ->add('idevento')            
+            ->add('tipo','choice',array(
+                'label'=>'Tipo',
+                'choices' => array(
+                    1 => 'Secuencial', 
+                    2 => 'Externa'
+                 ),
+                'required' => true,
+                'empty_value' => 'Seleccione Tipo de Numeracion'
+            ))                       
             ->add('atributo')
             ->add('automatica')
             ->add('inicio')
             ->add('fin')
             ->add('siguiente')            
             ->add('ordenarpor')            
-            ->add('secuencial')            
         ;
     }
     

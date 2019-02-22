@@ -1,10 +1,7 @@
 {% extends '::base.html.twig' %}
 {% block style %} 
 {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
-<style type="text/css">
-    #sel_competencias{
-        margin: 10px 0;
-    }    
+<style type="text/css">  
     #tabs{  /* Oculta el tabs para que se muestre luego de cargar todo el html */
         display: none;
     }
@@ -48,8 +45,7 @@
                 
         var entidad = 'numeracion';
         var tabla;
-        $("#tabs").css("display","block");
-        $( "#botonera" ).controlgroup();                          
+        $("#tabs").css("display","block");                  
         tabla=tablaDatos(
                 $('#formulario'), //Se usa para llenar lo campos del formulario
                 {{campos|json_encode|raw}}, //json con los atributos de la entidad y sus caracteristicas
@@ -67,18 +63,7 @@
         dialogMensaje();
         
         $('#tabs a[href="#tabs-{{idtab}}"]').click();
-        manuTabsConfigEvento();
-
-        //Filtra la tabla de datos segun la opcion del select seleccionado
-        filtrarTabla(2,$("#select_atributos_opcion"));
-                
-        $('#atributoseleccionado').append("Valores para el atributo: " + $("#select_atributos_opcion option:selected").text());
-        $("#select_atributos_opcion").change(function () {
-            $('#atributoseleccionado').html("");
-            $('#atributoseleccionado').append("Valores para el atributo: " + $("#select_atributos_opcion option:selected").text());
-            tabla.draw();
-        });
-        
+        menuTabsConfigEvento();        
     });    
 </script>    
 {% endblock %}

@@ -55,6 +55,11 @@ class Numeracion
     private $secuencial;    
     
     /**
+     * @var integer
+     */
+    private $tipo;    
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -246,5 +251,28 @@ class Numeracion
     public function getSecuencial()
     {
         return $this->secuencial;
+    }    
+    
+    /**
+     * Set tipo
+     *
+     * @param integer $tipo
+     * @return Numeracion
+     */
+    public function setTipo($tipo)
+    {
+        $this->tipo = $tipo;
+
+        return $this;
+    }
+
+    /**
+     * Get tipo
+     *
+     * @return integer 
+     */
+    public function getTipo()
+    {
+        return $this->tipo;
     }    
 }

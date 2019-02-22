@@ -15,8 +15,8 @@ class TemaType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('styles')
             ->add('idevento')
+            ->add('styles')
         ;
     }
     

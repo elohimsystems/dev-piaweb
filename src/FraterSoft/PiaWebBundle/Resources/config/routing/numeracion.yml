@@ -6,9 +6,9 @@ numeracion_resetear:
     pattern:  /resetear/{idevento}
     defaults: { _controller: "FraterSoftPiaWebBundle:Numeracion:resetear" }    
 
-numeracion_gestion:
-    pattern:  /{idevento}/gestion
-    defaults: { _controller: "FraterSoftPiaWebBundle:Numeracion:gestion" }
+numeracion_guardar:
+    pattern:  /{idevento}/guardar
+    defaults: { _controller: "FraterSoftPiaWebBundle:Numeracion:guardar" }
 
 numeracion_create:
     pattern:  /create

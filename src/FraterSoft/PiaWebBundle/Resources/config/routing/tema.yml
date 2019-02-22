@@ -1,5 +1,5 @@
 tema_guardar:
-    pattern:  /{email}/guardar
+    pattern:  /{idevento}/guardar
     defaults: { _controller: "FraterSoftPiaWebBundle:Tema:guardar" }    
 
 tema_delete:

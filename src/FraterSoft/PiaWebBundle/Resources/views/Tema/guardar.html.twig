@@ -1,0 +1,41 @@
+{% extends '::base.html.twig' %}
+{% set entidad='tema' %}
+{% set titulo='Configurar Tema' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}    
+<style type="text/css">
+    .contenido{    
+        margin: 0;
+        width: 700px;
+    }    
+    #tabs{
+        display: none; 
+    }               
+    #formulario > div:nth-child(1){ /* oculta el campo evento */
+        display: none; 
+    }    
+</style>
+{% endblock %}  
+{% block body -%}    
+    <div id="tabs">        
+        {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
+        <div id="tabs-4">
+            <div class="contenido">  
+                <div id="contenedor-form">
+                {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+                {{ form_end(form) }} 
+                </div>
+            </div> 
+        </div>
+    </div>            
+{% endblock %}
+{% block javascripts %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}    
+    <script>	
+        $(function() {  
+            $("#tabs").css("display","grid");
+            $('#tabs a[href="#tabs-4"]').click();             
+            menuTabsConfigEvento();
+        });    
+    </script>
+{% endblock %}
