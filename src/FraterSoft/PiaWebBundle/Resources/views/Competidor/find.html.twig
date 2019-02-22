@@ -187,7 +187,21 @@
     .centrar {
         width: 536px;
     }
-
+    #logowhatsapp{
+        width: 32px;
+        vertical-align: middle;
+    }
+    #{{form.buscar.vars.id}}{
+        margin: 10px;
+    }
+    #{{form.Buscar.vars.id}}{
+        margin: 10px;
+    }
+    #texto{
+        display: block;
+        font-size: 2em;
+        font-weight: bold;
+    }
 </style>
 {% endblock %}    
 {% block body -%}  
@@ -196,25 +210,23 @@
     {{ form_errors(form) }}
     {% set etiquetabuscar = form_label(form.buscar) %}
     <table align="center" width="100%" border="0">
+
         <tr>
-            <td align="center">
-                {% if evento.proceso == 1 %}
-                <h1>Inicia o Consulta tu Inscripción</h1>
-                {% else %}
-                <h1>Consulta, Inicia o Paga tu Pre-Inscripción</h1>
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <td align="center">{{ form_label(form.atributo) }}{{ form_widget(form.atributo) }}</td>
+            <td align="center"><spam id="texto">{{ form_label(form.atributo) }} {{ form_widget(form.atributo) }}</spam></td>
         </tr>
         {% if form.siniddocumento is defined %}
         <tr>
-            <td align="center">No posee {{form_label(form.buscar)}}?, marque aqui:{{form_widget(form.siniddocumento)}} e ingrese {{form_label(form.buscar)}} del Representante</td>
+            <td align="center"><h2>No posee {{form_label(form.buscar)}}?, marque aqui:{{form_widget(form.siniddocumento)}} e ingrese {{form_label(form.buscar)}} del Representante</h1></td>
         </tr>
         {% endif %}
         <tr>
-            <td align="center"> {{ form_widget(form.buscar) }} {{ form_widget(form.Buscar) }}</td>       
+            <td align="center"> {{ form_widget(form.buscar) }}</td>       
+        </tr>        
+        <tr>
+            <td align="center"><spam id="texto">Pulsa el boton para</spam></td>       
+        </tr>        
+        <tr>
+            <td align="center"> {{ form_widget(form.Buscar) }}</td>       
         </tr>
         <tr>
             <td align="center">
@@ -234,7 +246,13 @@
         </tr>           
         <tr>
             <td align="center">
-                <div class="soporte">Para cualquier soporte o consulta puede comunicarse al <br><b>0424-964.29.82</b></div>
+                <br>
+                <div class="soporte">Para soporte o consulta puede escríbirnos o llámarnos por <br><b>WhatsApp  
+                    <a href="https://wa.me/584249642982" target="_blank"><img id="logowhatsapp" alt="+58 424.964.29.82"  src="{{asset('bundles/fratersoftpiaweb/images/whatsapp.png')}}" ></a>
+                     al numero +58 0424-9136277</b><br>
+                     O escríbanos con <b>WhatsApp Web</b> por el siguiente enlace: <a href="https://wa.me/584249642982" target="_blank">Link</a>
+                </div>
+                <br>
                 Mejor con: <img width="24" align="center" src="{{asset('bundles/fratersoftpiaweb/images/cromo.png')}}"/>
                 <img width="24" align="center" src="{{asset('bundles/fratersoftpiaweb/images/opera.png')}}"/>
                 <img width="24" align="center" src="{{asset('bundles/fratersoftpiaweb/images/mozilla.png')}}"/>                

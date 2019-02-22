@@ -13,6 +13,7 @@ use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityRepository;
 
 /**
  * Competidor controller.
@@ -170,79 +171,52 @@ class NumeracionController extends commonPIAClass {
     }
     
     /**
-     * Creates a new Numeracion entity.
-     *
-     */
-    public function createAction(Request $request)
-    {
-        $entity = new Numeracion();
-        $form = $this->createCreateForm($entity);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($entity);
-            $em->flush();
-
-            return $this->redirect($this->generateUrl('numeracion_gestion', array(
-                'idevento' => $entity->getIdevento()->getId(),
-                'estado' => 2
-            )));            
-        }
-        $errors=$this->getErrorMessages($editForm);
-        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                    'url' => null,
-                    'texto' => json_encode($errors),
-                    'tema' => $entity->getIdevento()->getTema()
-        ));                
-
-    }
-
-    /**
-    * Creates a form to create a Numeracion entity.
+    * Creates a form to edit a Tema entity.
     *
-    * @param Numeracion $entity The entity
+    * @param Tema $entity The entity
     *
     * @return \Symfony\Component\Form\Form The form
     */
-    private function createCreateForm(Numeracion $entity)
+    private function crearFormulario(Numeracion $entity)
     {
         $form = $this->createForm(new NumeracionType(), $entity, array(
             'method' => 'POST',
         ));
+        $form->add('submit', 'submit', array('label' => 'Guardar'));
         return $form;
-    }
+    } 
 
     /**
      * Displays a form to create a new Numeracion entity.
      *
      */
-    public function gestionAction($idevento)
+    public function guardarAction(Request $request,$idevento)
     {
-        $entity = new Numeracion();
-        $form   = $this->createCreateForm($entity);
-        
         $em = $this->getDoctrine()->getManager();
         
-        //llena el Select con el evento y Oculta el control
-//        $form->add('idevento','entity',array(
-//                'class' => 'FraterSoftPiaWebBundle:Evento',
-//                'query_builder' => function (EntityRepository $er) use ( $idevento ) {
-//                    return $er->createQueryBuilder('e')
-//                            ->where('e.id=:idevento')
-//                            ->setParameter('idevento',$idevento);
-//                },
-//            ));
-        
-
-        $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')->atributosOptions($idevento);
-        
-        return $this->render('FraterSoftPiaWebBundle:Numeracion:gestion.html.twig', array(
+        $entity = new Numeracion();  
+        $busqueda=$em->getRepository('FraterSoftPiaWebBundle:Numeracion')->findBy(array('idevento'=>$idevento));
+        if (!$busqueda){
+            $evento=$em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idevento);
+            $entity->setIdevento($evento);
+        }
+        else
+            $entity=$busqueda[0];
+        $form = $this->crearFormulario($entity);
+      
+        $this->addBotonRegresar($form,$this->get('session')->get('urllistaeventos'));            
+        $form->handleRequest($request); 
+        if ($form->isValid()) {
+            $em->persist($entity);
+            $em->flush();          
+        }            
+        return $this->render('FraterSoftPiaWebBundle:Numeracion:guardar.html.twig', array(
             'form'   => $form->createView(),
+            'tema' => $entity,
             'idevento' => $idevento,
-            'atributos' => $atributos, 
             'campos' => $this->getCampos($em,'Numeracion'),
         ));
+
     }
 
     public function listaAjaxAction($idevento){

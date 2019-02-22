@@ -296,11 +296,6 @@ class CompetidorController extends commonPIAClass {
             //Verifica si el evento no esta cerrado
             if ($evento->getFechacierre() < new \DateTime('now')){
                 return $this->redirect($this->generateUrl('competidor_consultar', array('idevento' => $evento->getId())));                
-//                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-//                            'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
-//                            'texto' => 'Proceso de Inscripcion Cerrado',
-//                            'tema' => $evento->getTema()
-//                ));
             }
 
             //Verifica si el esta configurado para control de cupo y valida si llego al maximo
@@ -309,11 +304,6 @@ class CompetidorController extends commonPIAClass {
                 ->cantidad($idevento);
                 if ($cantidadinscritos >= $evento->getCupomaximo())
                     return $this->redirect($this->generateUrl('competidor_consultar', array('idevento' => $evento->getId())));  
-//                    return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-//                                'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
-//                                'texto' => 'Se ha alcanzado el cupo máximo de inscritos para este Evento',
-//                                'tema' => $evento->getTema()
-//                    ));
             }
             
         } else
@@ -339,8 +329,9 @@ class CompetidorController extends commonPIAClass {
                 ->add('buscar', 'text', array(
                     'label' => 'Cedula',
                     'method' => 'POST',
+                    'placeholder' => 'Ej: 12660131',
                 )) 
-                ->add('Buscar', 'submit')
+                ->add('Buscar', 'submit', array('label' => 'Iniciar o Consultar tu Inscripcion'))
                 ->getForm();
         }
         else{//Si el evento no es tipo campeonato busca solo por cedula
@@ -351,8 +342,9 @@ class CompetidorController extends commonPIAClass {
                 ->add('buscar', 'text', array(
                     'label' => 'Cedula',
                     'method' => 'POST',
+                    'attr' => array('placeholder' => 'Ej: 12660131'),
                 ))
-                ->add('Buscar', 'submit')
+                ->add('Buscar', 'submit', array('label' => 'Iniciar o Consultar tu Inscripcion'))
                 ->getForm();            
         }
         

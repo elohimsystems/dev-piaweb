@@ -41,39 +41,43 @@ class TemaController extends commonPIAClass {
      * Displays a form to create a new Tema entity.
      *
      */
-    public function guardarAction(Request $request,$email)
+    public function guardarAction(Request $request,$idevento)
     {
      
         $em = $this->getDoctrine()->getManager();
         
-        if($email=='admin')
-            // llamar al index de temaes
-            return $this->render('FraterSoftPiaWebBundle:Tema:guardar.html.twig', array(
-                'form'   => $form->createView(),
-                'email' => $email,
-                'campos' => $this->getCampos($em,'Tema'),
-            ));
-        else{
-            $entity = new Tema();  
-            $busqueda=$em->getRepository('FraterSoftPiaWebBundle:Tema')->findBy(array('email'=>$email));
-            if (!$busqueda)
-                $entity->setEmail($email);
-            else
-                $entity=$busqueda[0];
-            $form = $this->crearFormulario($entity);
-            $this->addBotonRegresar($form,$this->get('session')->get('urllistaeventos'));            
-            $form->handleRequest($request); 
-            if ($form->isValid()) {
-                $em->persist($entity);
-                $em->flush();          
-            }            
-            return $this->render('FraterSoftPiaWebBundle:Tema:guardar.html.twig', array(
-                'form'   => $form->createView(),
-                'tema' => $entity,
-                'email' => $email,
-                'campos' => $this->getCampos($em,'Tema'),
-            ));
+        $entity = new Tema();  
+        $busqueda=$em->getRepository('FraterSoftPiaWebBundle:Tema')->findBy(array('idevento'=>$idevento));
+        if (!$busqueda){
+            $evento=$em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idevento);
+            $entity->setIdevento($evento);
         }
+        else
+            $entity=$busqueda[0];
+        $form = $this->crearFormulario($entity);
+        /* FORMATEAR VISUALIZACION DE CAMPOS DEL FORMUALRIO */
+        $form
+            ->add('styles','textarea', array(
+                'label' => 'Ingrese Codigo CSS3' , 
+                'max_length' => 255 , 
+                'attr' => array(
+                    'cols' => '80',
+                    'rows' => '20',
+                    'title' => '',),
+            ))
+        ;        
+        $this->addBotonRegresar($form,$this->get('session')->get('urllistaeventos'));            
+        $form->handleRequest($request); 
+        if ($form->isValid()) {
+            $em->persist($entity);
+            $em->flush();          
+        }            
+        return $this->render('FraterSoftPiaWebBundle:Tema:guardar.html.twig', array(
+            'form'   => $form->createView(),
+            'tema' => $entity,
+            'idevento' => $idevento,
+            'campos' => $this->getCampos($em,'Tema'),
+        ));
     }
 
     public function listaAjaxAction($idtema){
