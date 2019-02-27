@@ -1,4 +1,10 @@
 {% extends '::base.html.twig' %}
+{%macro opeart(operador_art)%}
+    {%if(operador_art=='>')%}>{%elseif(operador_art=='<')%}<{%elseif(operador_art=='>=')%}>={%elseif(operador_art=='<=')%}<={%elseif(operador_art=='==')%}=={%elseif(operador_art=='!=')%}!={%endif%}
+{%endmacro%}
+{%macro opelog(operador_log)%}
+    {%if(operador_log=='&&')%}&&{%elseif(operador_log=='||')%}||{%elseif(operador_log=='!')%}!{%endif%}
+{%endmacro%}
 {% if entity.idevento.tema is defined and entity.idevento.tema is not null %}{% set temastyle=entity.idevento.tema.styles %}{% endif %}
 {% block stylesheets %}
     <link href="{{asset('bundles/fratersoftpiaweb/fine-uploader/fine-uploader.min.css')}}" rel="stylesheet" type="text/css"/>
@@ -92,8 +98,7 @@
         
         function setTextoPrecio(){
             var texto;
-            texto=$("#{{form.precio.vars.id}} option:selected").text();
-            texto=texto.substring(0,texto.search($("#{{form.precio.vars.id}}").val())-1);
+            texto=$("#{{form.precio.vars.id}} option:selected").attr('texto');
             $("#{{form.idpago.texto.vars.id}}").val(texto);
         }
         
@@ -117,6 +122,7 @@
                 dataType: "json",
                 success: function (datos)
                 {
+                    console.log(datos);
                     if(datos['values'][0]['values'].length>1)
                         $("#{{ form.precio.vars.id }}").append("<option selected value=''>Seleccione un Precio</option>");
                     var texto="";
@@ -127,15 +133,16 @@
                         var montorecargo;
                         var precio=precios[0];
                         var total=0;
+                        var textoprecio=(value.texto==null)?'':'texto=\'' + value.texto + '\'';
                         texto=((value.texto==null)?'':value.texto + ' ')  + ((value.moneda==null)?'':value.moneda + ' ') + value.precio;
                         if(value.precio!=-1){
                             if(datos['values'][0]['values'].length==1){
-                                $('#{{ form.precio.vars.id }}').append('<option selected value='+value.precio+'>'+texto+'</option>');
+                                $('#{{ form.precio.vars.id }}').append('<option selected '+textoprecio+' value='+value.precio+'>'+texto+'</option>');
                                 calcularTotalPagar(value.precio);
-                                setTextoPrecio();
                             }
                             else
-                                $('#{{ form.precio.vars.id }}').append('<option value='+value.precio+'>'+texto+'</option>');
+                                $('#{{ form.precio.vars.id }}').append('<option '+textoprecio+' value='+value.precio+'>'+texto+'</option>');
+                            setTextoPrecio();
                             $("#{{ form.precio.vars.id }}").prop("disabled", false);
                             $("#{{ form.idpago.banco.vars.id }}").prop("disabled", false);
                             $("#{{ form.idpago.referencia.vars.id }}").prop("disabled", false);
@@ -146,6 +153,8 @@
                                 value: 0,
                                 text: "EXONERADO"
                             }));
+                            $("#{{form.idpago.monto.vars.id}}").val(0);
+                            $("#{{form.idpago.texto.vars.id}}").val(value.texto);
                             $("#{{ form.precio.vars.id }}").prop("disabled", true);
                             $("#{{ form.idpago.banco.vars.id }}").prop("disabled", true);
                             $("#{{ form.idpago.referencia.vars.id }}").prop("disabled", true);
@@ -162,6 +171,9 @@
         }        
 
         $().ready(function () {
+            
+         if({{valor1}}{{_self.opeart(operador_ari)}}{{valor2}}{{_self.opelog(operador_log)}}{{valor1}}{{_self.opeart(operador_ari)}}{{valor2}})
+            console.log('hola');
 
             {%if entity.idevento.proceso == 1%}
             //Busca los precios para los valores por defecto
@@ -171,6 +183,7 @@
 
             //Habilita el campo del banco justo antes de enviar el formulario
             $("form#formulario" ).submit(function( event ) {
+                $("#{{ form.precio.vars.id }}").removeAttr("disabled");
                 if($("#{{ form.idpago.tipo.vars.id }}").val()=='1')
                     $("#{{ form.idpago.banco.vars.id }}").removeAttr("disabled");
                 if($("#{{ form.idpago.tipo.vars.id }}").val()=='0'){

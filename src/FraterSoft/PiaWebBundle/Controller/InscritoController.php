@@ -823,7 +823,11 @@ class InscritoController extends commonPIAClass {
             'atributos' => $atributoscriterios,
             'form' => $form->createView(),
             'incremento' => $arrayincrementos,
-            'recargas'=>$recargas
+            'recargas'=>$recargas,
+            'operador_ari'=>'>=',
+            'operador_log'=>'&&',
+            'valor1'=>5,
+            'valor2'=>2
         ));
     }
 
