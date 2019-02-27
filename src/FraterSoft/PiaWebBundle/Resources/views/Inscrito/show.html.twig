@@ -94,6 +94,7 @@
             <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr> 
             {% if entity.idevento.proceso == 1 %}
             {% if entity.idpago is not null %}
+            <tr><th>Texto</th><td>{{ entity.idpago.texto }}</td></tr>  
             <tr><th>Monto Pagado</th><td>{{ entity.idpago.monto }}</td></tr>  
             <tr><th>Forma de Pago</th><td><spam id="textoformapago"></spam></td></tr>  
             <tr><th>Banco</th><td>{{ entity.idpago.banco }}</td></tr>  

@@ -16,7 +16,7 @@ class PrecioscategoriaRepository extends EntityRepository {
     public function BuscaPreciosCategoria($idcategoria){
         $precios = $this->getEntityManager()
             ->createQuery(
-                    "select p.cantidad, p.precio, p.hasta "
+                    "select p.cantidad, p.precio, p.hasta, p.imagen, p.texto, p.moneda "
                     . "from FraterSoftPiaWebBundle:Precioscategoria p "
                     . "where p.idcategoria = " . $idcategoria 
                     . " order by p.precio"

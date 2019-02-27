@@ -22,7 +22,7 @@ class PrecioscompetenciaRepository extends EntityRepository {
     public function BuscaPreciosCompetencia($idcompetencia){
         $precios = $this->getEntityManager()
             ->createQuery(
-                    "select p.cantidad, p.precio, p.hasta, c.descripcion as texto, 'Bs' as moneda "
+                    "select p.cantidad, p.precio, p.hasta, p.imagen, p.texto, p.moneda "
                     . "from FraterSoftPiaWebBundle:Precioscompetencia p join p.idcompetencia c "
                     . "where p.idcompetencia=c.id and p.idcompetencia = " . $idcompetencia 
                     . " order by p.precio"

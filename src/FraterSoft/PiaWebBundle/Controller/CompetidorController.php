@@ -329,7 +329,7 @@ class CompetidorController extends commonPIAClass {
                 ->add('buscar', 'text', array(
                     'label' => 'Cedula',
                     'method' => 'POST',
-                    'placeholder' => 'Ej: 12660131',
+                    'attr' => array('placeholder' => 'Ej: 12660131'),
                 )) 
                 ->add('Buscar', 'submit', array('label' => 'Iniciar o Consultar tu Inscripcion'))
                 ->getForm();
