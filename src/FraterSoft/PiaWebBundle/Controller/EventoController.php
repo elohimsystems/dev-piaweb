@@ -38,7 +38,6 @@ class EventoController extends commonPIAClass
         $em = $this->getDoctrine()->getManager();
 
         if($email=='admin'){
-            //$entities = $em->getRepository('FraterSoftPiaWebBundle:Evento')->findAll();
             $entities = $em->getRepository('FraterSoftPiaWebBundle:Evento')->enproceso('admin');             
             $ejecutados = $em->getRepository('FraterSoftPiaWebBundle:Evento')->ejecutados('admin');
         }
