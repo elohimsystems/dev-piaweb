@@ -228,6 +228,12 @@ FraterSoft\PiaWebBundle\Entity\Competidor:
             length: 2
             fixed: false
             comment: ''
+        localidad:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
     manyToOne:
         idestado:
             targetEntity: Estado

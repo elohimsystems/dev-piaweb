@@ -11,11 +11,12 @@ use Symfony\Component\DependencyInjection\Reference;
 use AppBundle\Config\UserConfigManager;
 use AppBundle\Config\CustomConfigManager;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpFoundation\Response;
 
 use FraterSoft\PiaWebBundle\Entity\Inscrito;
 use FraterSoft\PiaWebBundle\Entity\Competidor;
 
-class DefaultController extends Controller 
+class DefaultController extends commonPIAClass 
 {
   
     public function indexAction($name)
@@ -24,30 +25,30 @@ class DefaultController extends Controller
     }
     
     //Oculta los campos que no estan configurados en la base de datos    
-    private function renombraLabels($idevento, $form) {
-        $em = $this->getDoctrine()->getManager();
-        $eventoatributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')->atributosEvento($idevento);
-        if ($eventoatributos) {
-            $atributo = null;
-            foreach ($form->get('idpia')->all() as $child) {
-                $existe = false;            
-                foreach ($eventoatributos as $atributo) {
-//                    print_r(strtolower($atributo->getIdatributo()->getNombre()));
-                    if ($child->getName() == strtolower($atributo->getIdatributo()->getNombre())) {
-                        $existe = true;
-//                        print_r(' existe'.'<br>');
-                        break;
-                    } else {
-                        $existe = false;
-//                        print_r(' no existe'.'<br>');
-                    }
-                }
-                if ($existe == false && $child->getName() != 'idestado')
-//                    print_r('borrar campo ' . $child->getName().'<br>');
-                    $form->get('idpia')->add($child->getName(), 'hidden');
-            }
-        }
-    }      
+//    private function renombraLabels($idevento, $form) {
+//        $em = $this->getDoctrine()->getManager();
+//        $eventoatributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')->atributosEvento($idevento);
+//        if ($eventoatributos) {
+//            $atributo = null;
+//            foreach ($form->get('idpia')->all() as $child) {
+//                $existe = false;            
+//                foreach ($eventoatributos as $atributo) {
+////                    print_r(strtolower($atributo->getIdatributo()->getNombre()));
+//                    if ($child->getName() == strtolower($atributo->getIdatributo()->getNombre())) {
+//                        $existe = true;
+////                        print_r(' existe'.'<br>');
+//                        break;
+//                    } else {
+//                        $existe = false;
+////                        print_r(' no existe'.'<br>');
+//                    }
+//                }
+//                if ($existe == false && $child->getName() != 'idestado')
+////                    print_r('borrar campo ' . $child->getName().'<br>');
+//                    $form->get('idpia')->add($child->getName(), 'hidden');
+//            }
+//        }
+//    }      
     
     public function sessionsAction(){
         $request = $this->getRequest();
@@ -119,4 +120,5 @@ class DefaultController extends Controller
                     'texto' => 'No existe una Categorias aplicable a este participante',
         ));                 
     }      
+    
 }

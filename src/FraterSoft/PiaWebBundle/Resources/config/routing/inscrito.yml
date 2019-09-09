@@ -58,13 +58,17 @@ inscrito_confirmacion:
     pattern:  /{id}/confirmacion
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:confirmacion" }
 
+inscrito_confirmaciongrupo:
+    pattern:  /{idevento}/{idcompetencia}/{idgrupo}/confirmaciongrupo
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:confirmaciongrupo" }
+
 inscrito_new:
-    pattern:  /new/{idevento}/{idcompetidor}/{iddocumento}
-    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:new" }
+    pattern:  /new/{idevento}/{idcompetidor}/{iddocumento}/{idcompetencia}/{idgrupo}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:new",idcompetencia:null,idgrupo:null }
 
 inscrito_create:
-    pattern:  /create
-    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:create" }
+    pattern:  /create/{idcompetencia}/{idgrupo}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:create",idcompetencia:null,idgrupo:null }
     requirements: { _method: post }
 
 inscrito_edit:
@@ -123,6 +127,10 @@ inscrito_anular_tdcnoconciliados:
 inscrito_notificar_confirmacion_lote:
     pattern:  /notificarconfirmacionlote/{data_json}/{idevento}
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:notificarconfirmacionlote" }     
+
+inscrito_notificar_preinscritos_lote:
+    pattern:  /notificarpreinscripcionlote/{data_json}/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:notificarpreinscripcionlote" }     
     
 inscrito_notificar_confirmacion_todos:
     pattern:  /notificarconfirmacionlote/{idevento}
@@ -131,3 +139,7 @@ inscrito_notificar_confirmacion_todos:
 inscrito_importar:
     pattern:  /importar/{idevento}
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:importar" }        
+    
+inscrito_addintegrante:
+    pattern:  /addintegrante
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:addintegrante" }

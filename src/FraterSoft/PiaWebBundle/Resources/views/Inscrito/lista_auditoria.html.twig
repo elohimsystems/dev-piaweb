@@ -22,7 +22,7 @@
 		buttons: [  
                     {extend: 'excelHtml5',
                         text: 'Exportar',
-                        title: 'ListadoInscritos'
+                        title: 'Listado Auditoria {{nombreevento}}'
                     }, 
                 ],
                 'select': {
@@ -84,11 +84,13 @@
                     { title: "Precio", data: "precio" },   
                     { title: "Estatus", data: "status",
                         render: function(data, type, row){
-                            if(data==1 && row.idpago.conciliado==true)
+                            if(data==1 && row.pagos.length==0)
+                                return('SIN PAGO');
+                            else if(data==1 && row.pagos[0].conciliado==true)
                                 return('INSCRITO');
-                            else if(data==1 && row.idpago.conciliado==null && row.idpago.tipo!='3')
+                            else if(data==1 && row.pagos[0].conciliado==null && row.pagos[0].tipo!='3')
                                 return('PREINSCRITO');
-                            else if(data==1 && row.idpago.conciliado==null && row.idpago.tipo=='3')
+                            else if(data==1 && row.pagos[0].conciliado==null && row.pagos[0].tipo=='3')
                                 return('TDC NO PAGADO');
                             else if(data==0)
                                 return('ANULADO');
@@ -96,29 +98,25 @@
                         }
                     },
                     /* INFORMACION DEL PAGO */
-                    { title: "FechaPago", data: "idpago.fechahora",
+                    { title: "FechaPago", data: "pagos[0].fechapago",
                         render: function(data){
                             var formatted = (data)?$.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000)):'';
                             return formatted;
                         }
                     },
-                    { title: "Texto", data: "idpago.texto" },        
-                    { title: "Monto", data: "idpago.monto" },        
-                    { title: "Moneda", data: "idpago.moneda" },        
-                    { title: "Referencia", data: "idpago.referencia" },        
-                    { title: "Comprobante", data: "idpago.comprobante" },                            
-                    { title: "Forma de Pago", data: "idpago.tipo",
+                    { title: "Texto", data: "pagos[0].texto" },        
+                    { title: "Monto", data: "pagos[0].monto" },        
+                    { title: "Moneda", data: "pagos[0].moneda" },        
+                    { title: "Referencia", data: "pagos[0].referencia" },        
+                    { title: "Comprobante", data: "pagos[0].comprobante" },                            
+                    { title: "Forma de Pago", data: "pagos[0].idformpago.nombre"},   
+                    { title: "Banco", data: "pagos[0].idbanco.nombre" },        
+                    { title: "Conciliado?", data: "pagos[0].conciliado",
                         render: function(data){
-                            return(TextoFormaPago(data));
-                        }
-                    },   
-                    { title: "Banco", data: "idpago.banco" },        
-                    { title: "Conciliado?", data: "idpago.conciliado",
-                        render: function(data){
-                            return(data==true?"SI":"NO");
+                            return(data=='true'?"SI":"NO");
                         }
                     },        
-                    { title: "ConciliadoEl", data: "idpago.conciliadoel",
+                    { title: "ConciliadoEl", data: "pagos[0].conciliadoel",
                         render: function(data){
                             if(data)
                                 return $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
@@ -126,7 +124,7 @@
                                 return null;
                         }            
                     },
-                    { title: "Liquidado", data: "idpago.idliquidacion" },
+                    { title: "Liquidado", data: "pagos[0].idliquidacion" },
                 ],
                 "columnDefs": [ //Oculta las columnas en la tabla
                     {% set target=3 %}
@@ -269,12 +267,23 @@
             $('#tabs a[href="#tabs-5"]').on("click", function () {
                 $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
             });             
+            $("#seccionCargando").hide();        
+            $("#contenido").show();        
         });
 
     </script>           
 {% endblock %} 
 {% block style %}
 <style type="text/css">
+    #contenido{     
+        display: none;
+    }
+    #seccionCargando > img{
+        width: 50px;
+    }        
+    #seccionCargando{
+        text-align: center;
+    }    
     td,th{
         font-size: 10px;
     }
@@ -299,40 +308,45 @@
 </style>
 {% endblock %}  
 {% block body -%}
-    <div id="evento">{{nombreevento}}</div>
-    <div id="tabs">
-        <ul>
-            <li><a href="#tabs-1">Pre-Inscritos</a></li>
-            <li><a href="#tabs-2">Inscritos</a></li>
-            <li><a href="#tabs-3">Anulados</a></li>
-            <li><a href="#tabs-4">Operaciones TDC</a></li>
-            <li><a href="#tabs-5">Estadisticas</a></li>    
-            <li><a href="#tabs-6">Audutoria</a></li>    
-        </ul>
-        <div id="tabs-1"></div>
-        <div id="tabs-2"></div>  
-        <div id="tabs-3"></div>  
-        <div id="tabs-4"></div>        
-        <div id="tabs-5"></div>  
-        <div id="tabs-6">
-            <table id="tablaAuditoria" class="display row-border hover">
-            </table>     
-            <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+    <div id="seccionCargando">
+        <img src="{{ asset('bundles/fratersoftpiaweb/images/loading.gif') }}">
+    </div>        
+    <div id="contenido">            
+        <div id="evento">{{nombreevento}}</div>
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1">Pre-Inscritos</a></li>
+                <li><a href="#tabs-2">Inscritos</a></li>
+                <li><a href="#tabs-3">Anulados</a></li>
+                <li><a href="#tabs-4">Operaciones TDC</a></li>
+                <li><a href="#tabs-5">Estadisticas</a></li>    
+                <li><a href="#tabs-6">Audutoria</a></li>    
+            </ul>
+            <div id="tabs-1"></div>
+            <div id="tabs-2"></div>  
+            <div id="tabs-3"></div>  
+            <div id="tabs-4"></div>        
+            <div id="tabs-5"></div>  
+            <div id="tabs-6">
+                <table id="tablaAuditoria" class="display row-border hover">
+                </table>     
+                <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+            </div>
+            <div id="notificacion" title="Advertencia!!!">
+                <p id="msgconc">Desea reenviar las notificaciones de Confirmacion de Inscripcion de las siguintes secuencias: <div id="ids"></div></p>
+            </div>            
+            <div id="anumeros" title="Advertencia!!!">
+                <p id="msgconc">¿Esta seguro que desea ASIGNAR los numeros?</p>
+            </div>  
+            <div id="rnumeros" title="Advertencia!!!">
+                <p id="msgconc">¿Esta seguro que desea RESETEAR los numeros?</p>
+            </div>  
+            <div id="correosatodos" title="Advertencia!!!">
+                <p id="msgconc">¿Esta seguro que desea enviar la confirmacion a todos los inscritos? El proceso tardara varios minutos.</p>
+            </div> 
+            <div id="dialog" title="Advertencia!!!">
+                <p>Esta seguro que desea anular inscripcion con la secuencia <b id="sec"></b> ?</p>
+            </div>        
         </div>
-        <div id="notificacion" title="Advertencia!!!">
-            <p id="msgconc">Desea reenviar las notificaciones de Confirmacion de Inscripcion de las siguintes secuencias: <div id="ids"></div></p>
-        </div>            
-        <div id="anumeros" title="Advertencia!!!">
-            <p id="msgconc">¿Esta seguro que desea ASIGNAR los numeros?</div></p>
-        </div>  
-        <div id="rnumeros" title="Advertencia!!!">
-            <p id="msgconc">¿Esta seguro que desea RESETEAR los numeros?</div></p>
-        </div>  
-        <div id="correosatodos" title="Advertencia!!!">
-            <p id="msgconc">¿Esta seguro que desea enviar la confirmacion a todos los inscritos? El proceso tardara varios minutos.</div></p>
-        </div> 
-        <div id="dialog" title="Advertencia!!!">
-            <p>Esta seguro que desea anular inscripcion con la secuencia <b id="sec"></b> ?</p>
-        </div>        
     </div>
 {% endblock %}

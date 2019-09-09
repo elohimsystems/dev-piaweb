@@ -41,4 +41,9 @@ FraterSoft\PiaWebBundle\Entity\Competencia:
                 idevento:
                     referencedColumnName: id
             orphanRemoval: false
+    oneToOne:
+        grupo:
+          targetEntity: Grupo
+          mappedBy: idcompetencia
+            
     lifecycleCallbacks: {  }

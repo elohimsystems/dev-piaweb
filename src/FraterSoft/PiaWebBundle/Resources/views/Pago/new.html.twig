@@ -1,15 +1,104 @@
 {% extends '::base.html.twig' %}
+{% block stylesheets %}
+    <link href="{{asset('bundles/fratersoftpiaweb/css/jquery.datetimepicker.css')}}" rel="stylesheet" type="text/css"/>
+{% endblock %}
+{% block javascripts %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':inscripcion.idevento.id}) }}    
+    <script>
+        $(document).ready(function () {
+            var parametros;
+            $("#{{form.fechapago.vars.id}}").datetimepicker({
+                format: "d/m/Y",
+                defaultSelect: true,
+                lang: 'es',
+                timepicker:false,
+            });
+            $('#tablaReporte').DataTable({
+                dom: "t",
+                ordering: false,
+                pageLength: 30,
+                columns: [
+                    { title: "" },
+                    { title: "" },
+                ],       
+                "columnDefs": [ //centra el contenido de la columna
+                    {"className": "dt-right", "targets":0},
+                    {"className": "dt-left", "targets":1},
+                ],  
+            });
+            $("#tablaReporte").append("<caption><b>PAGO DE PRE-INSCRIPCI&Oacute;N</b></caption>");
+            
+            ocultaCamposPagoForm($('#formulario'));
+            parametros={{fpparametros|json_encode|raw}};
+            $("#{{ form.idformapago.vars.id }}").change(function () {
+                if(window.sessionStorage.getItem('idfp'+$("#{{ form.idformapago.vars.id }}").val())==null)
+                    if(parametros[$("#{{ form.idformapago.vars.id }}").val()])
+                        jparametros=jQuery.parseJSON(parametros[$("#{{ form.idformapago.vars.id }}").val()]);
+                    else
+                        jparametros=[];
+                else
+                    jparametros=jQuery.parseJSON(window.sessionStorage.getItem('idfp'+$("#{{ form.idformapago.vars.id }}").val()));
+                ocultaCamposPagoForm($('#formulario'));
+                manejoFormularioPago(
+                    $("#{{ form.precio.vars.id }}"),
+                    $('#formulario'),
+                    jparametros
+                ); 
+            });
+            $("#{{ form.idmoneda.vars.id }}").change(function () {
+                ocultaCamposPagoForm($('#formulario'));
+                buscarFormasPago(
+                    $('#formulario'),
+                    {{inscripcion.idevento.id}},
+                    $("#formulario input[type='radio']:checked").val()
+                );
+                buscaPrecio({{inscripcion.idevento.id}},
+                    {{inscripcion.idcompetencia.id}},
+                    {{inscripcion.idcategoria.id}},
+                    $('#formulario'),
+                    {{recargas|json_encode|raw}},
+                    $("#formulario input[type='radio']:checked").val()
+                );
+            });   
+        });
+    </script>           
+{% endblock %} 
+{% block style %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}
+    <style type="text/css">
+        div.container
+        {     
+            width: 400px;
+            margin: auto;
+            text-align: center;
+        }    
+        #formulario > div:nth-child(n+0) > label{
+            display: inline-block;
+            width: 180px;
+            text-align: left;   
+            vertical-align: middle;
+        }        
+        #fratersoft_piawebbundle_pago_idmoneda{
+            width: 200px;
+            float: right;        
+        }
+    </style>
+{% endblock %} 
 
 {% block body -%}
-    <h1>Pago creation</h1>
-
-    {{ form(form) }}
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('pago') }}">
-            Back to the list
-        </a>
-    </li>
-</ul>
+    <div class="container">
+        <table id="tablaReporte" class="display compact">
+            <tbody>          
+                <tr><th>Competencia</th><td>{{ inscripcion.idcompetencia.descripcion }}</td></tr>
+                <tr><th>Nombre</th><td>{{ inscripcion.idpia.nombre|upper }}</td></tr>
+                <tr><th>Apellido</th><td>{{ inscripcion.idpia.apellido|upper }}</td></tr>
+                <tr><th>Categoria</th><td>{{ inscripcion.idcategoria.descripcion }}</td></tr> 
+            </tbody>
+        </table>
+        {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+        {{ form_end(form) }} 
+    </div>
 {% endblock %}
+{% block jsQuery %}    
+    <script src="{{asset('bundles/fratersoftpiaweb/js/jquery.datetimepicker.full.js')}}" type="text/javascript"></script>    
+{% endblock %}  

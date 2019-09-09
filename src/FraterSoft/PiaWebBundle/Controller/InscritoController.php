@@ -24,6 +24,7 @@ use FraterSoft\PiaWebBundle\Entity\Preciosevento;
 use FraterSoft\PiaWebBundle\Entity\Precioscompetencia;
 use FraterSoft\PiaWebBundle\Entity\Precioscategoria;
 use FraterSoft\PiaWebBundle\Entity\Pago;
+use FraterSoft\PiaWebBundle\Entity\Grupo;
 use FraterSoft\PiaWebBundle\Form\InscritoType;
 use FraterSoft\PiaWebBundle\Form\CompetidorType;
 
@@ -165,6 +166,10 @@ class InscritoController extends commonPIAClass {
             return new response("No hay atributos configurados para este evento");
         }    
         
+        $request = $this->container->get('request');
+        $routeURL = $request->getRequestUri();
+        $this->get('session')->set('urlreturn',$routeURL);
+        
         return $this->render('FraterSoftPiaWebBundle:Inscrito:lista_inscritos.html.twig', array(
                     'atributos' => $atributos,
                     'idevento' => $idevento,
@@ -227,7 +232,8 @@ class InscritoController extends commonPIAClass {
      * Creates a new Inscrito entity.
      *
      */
-    public function createAction(Request $request) {
+    public function createAction(Request $request,$idcompetencia,$idgrupo) {
+                           
         $entity = new Inscrito();
         $pago = new Pago();
         $competidor = new Competidor();
@@ -305,7 +311,30 @@ class InscritoController extends commonPIAClass {
                 }     
             }            
 
-            if($entity->getIdevento()->getProceso()==1){
+            $grupo=new Grupo();
+            $grupo=$em->getRepository('FraterSoftPiaWebBundle:Grupo')->findOneBy(array(
+                        'idcompetencia'=>$form->get('idcompetencia')->getData()->getId(),
+                    ));
+            if($grupo){
+                if($idgrupo==null){
+                    $secuenciagrupo=$grupo->getSecuencia();
+                    $em->getConnection()->beginTransaction();
+                    $idgrupo='C'.$entity->getIdCompetencia()->getId().'G'.$secuenciagrupo;
+                    $idcompetencia=$form->get('idcompetencia')->getData()->getId();
+                    try{
+                        $grupo->setSecuencia($secuenciagrupo+1);
+                        $em->persist($grupo);
+                        $em->flush();            
+                        $em->getConnection()->commit();
+                    }
+                    catch (Exception $e) {
+                        $em->getConnection()->rollback();
+                        throw $e;
+                    }
+                }
+            }
+
+            if($entity->getIdevento()->getProceso()==1 && $grupo==null){
                 $pago->setFechahora($form->get('idpago')->getData()->getFechahora());
                 $pago->setMonto($form->get('idpago')->getData()->getMonto());
                 $pago->setMoneda($form->get('idpago')->getData()->getMoneda());
@@ -327,38 +356,57 @@ class InscritoController extends commonPIAClass {
             $entity->setIdcompetencia($competencia);
             $entity->setIdpia($competidor);
 
-            $entity->setStatus(1);
+            if($grupo==null)
+                $entity->setStatus(1);
+            else{
+                $entity->setStatus(3);
+                $entity->setIdgrupo($idgrupo);
+            }
+                
             $entity->setFechahora(new \DateTime('now'));
-            $maxsec = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->maximaSecuencia($entity->getIdevento()->getId());
-            $entity->setSecuencia($maxsec ? $maxsec + 1 : 1);
-            $em->persist($entity);
-            $em->flush();
 
-            if($entity->getIdevento()->getProceso()==1){
+            $em->getConnection()->beginTransaction();            
+            try{
+                $maxsec = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->maximaSecuencia($entity->getIdevento()->getId());
+                $entity->setSecuencia($maxsec ? $maxsec + 1 : 1);
+                $em->persist($entity);
+                $em->flush();            
+                $em->getConnection()->commit();
+            } 
+            catch (Exception $e) {
+                $em->getConnection()->rollback();
+                throw $e;
+            }            
+
+            if($entity->getIdevento()->getProceso()==1 && $grupo==null){
                 if ($form->get('idpago')->getData()->getTipo() <> 3) { //PAGOS CON TDC
                     if ($form->get('idpago')->getData()->getTipo() <> 0) { //INSCRIPCIONES GRATIS
                         //Se envia el correo de confirmacion
                         $mailer = $this->get('app.mail_controller');
                         $mailer->enviarPreinscripcion(
                                 "Pre-Inscripcion " . $entity->getIdevento()->getNombre(), 
-                                //$competidor->getEmail(), 
                                 $emails,
                                 $this->renderView('FraterSoftPiaWebBundle:Inscrito:email.html.twig', array('entity' => $entity))
                         );         
                         return $this->redirect($this->generateUrl('inscrito_confirmacion', array('id' => $entity->getId())));
                     }
                     else{ //SI LA INSCRIPCION ES GRATUITA SE ENVIA LA CONFIRMACION
-                        $mensaje = \Swift_Message::newInstance()
-                                ->setSubject("Confirmacion de Inscripcion " . $entity->getIdevento()->getNombre())
-                                ->setFrom("confirmacion@sistemapia.com.ve")
-                                ->setCharset('iso-8859-1')
-                                ->setContentType('text/html')
-                                //->setTo($entity->getIdpia()->getEmail())
-                                ->setTo($emails)
-                                ->setBody(
-                                $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailok.html.twig', array('inscrito' => $entity)
-                        ));
-                        $this->get('mailer')->send($mensaje);
+//                        $mensaje = \Swift_Message::newInstance()
+//                                ->setSubject("Confirmacion de Inscripcion " . $entity->getIdevento()->getNombre())
+//                                ->setFrom("confirmacion@sistemapia.com.ve")
+//                                ->setCharset('iso-8859-1')
+//                                ->setContentType('text/html')
+//                                ->setTo($emails)
+//                                ->setBody(
+//                                $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailok.html.twig', array('inscrito' => $entity)
+//                        ));
+//                        $this->get('mailer')->send($mensaje);
+                        $mailer = $this->get('app.mail_controller');
+                        $mailer->enviarConfirmacion(
+                                "Confirmacion de Inscripcion " . $entity->getIdevento()->getNombre(), 
+                                $emails,
+                                $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailok.html.twig', array('inscrito' => $entity))
+                        );         
 
                         return $this->render('FraterSoftPiaWebBundle:Inscrito:conciliado.html.twig', array(
                                     'inscrito' => $entity,
@@ -377,33 +425,63 @@ class InscritoController extends commonPIAClass {
                 }		
             }
             else{ //Envia el correo si el proceso es tipo 2
-                $mailer = $this->get('app.mail_controller');
-                $mailer->enviarPreinscripcion(
+                if($grupo==null){
+                    $precio=$this->buscarPrecio(
+                                $entity->getIdevento()->getid(), 
+                                $entity->getIdcompetencia()->getid(), 
+                                $entity->getIdcategoria()->getid(),
+                                2
+                            );
+                    $mailer = $this->get('app.mail_controller');
+                    $mailer->enviarPreinscripcion(
                         "Pre-Inscripcion " . $entity->getIdevento()->getNombre(), 
                         $emails, 
-                        $this->renderView('FraterSoftPiaWebBundle:Inscrito:email.html.twig', array('entity' => $entity))
-                );         
-                return $this->redirect($this->generateUrl('inscrito_confirmacion', array('id' => $entity->getId())));
+                        $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailproceso2.html.twig', array(
+                            'entity' => $entity,
+                            'precios'=>$precio,
+                        ))
+                    );
+                    return $this->redirect($this->generateUrl('inscrito_confirmacion', array('id' => $entity->getId())));
+                }
+                else{ //si la inscripcion es grupal
+                    $integrantes=$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->findBy(array(
+                        'idevento' => $entity->getIdevento()->getId(),
+                        'idgrupo'=>$idgrupo,
+                        'status'=>3,
+                    ));                    
+                    if(count($integrantes)<$grupo->getIntegrantes())
+                        return $this->redirect($this->generateUrl('inscrito_confirmaciongrupo', array(
+                            'idevento' => $entity->getIdevento()->getId(),
+                            'idcompetencia' => $idcompetencia,
+                            'idgrupo'=> $idgrupo,
+                        )));
+                    else
+                        return $this->redirect($this->generateUrl('pago_newgrupo', array(
+                            'idevento' => $entity->getIdevento()->getId(),
+                            'idcompetencia' => $idcompetencia,
+                            'idgrupo'=> $idgrupo
+                        )));
+                }
             }
         }
         
-        foreach ($form->all() as $child) {
-            if (!$child->isValid()) {
-                var_dump($child->getName());
-                $errors[$child->getName()] = $this->getErrorMessages($child);
-                print_r($errors);
-                print_r($child->getData());
-            }
-        }
-        foreach ($form->get('idpia')->all() as $child) {
-            if (!$child->isValid()) {
-                var_dump($child->getName());
-                $errors[$child->getName()] = $this->getErrorMessages($child);
-                print_r($errors);
-            }
-        }        
+//        foreach ($form->all() as $child) {
+//            if (!$child->isValid()) {
+//                var_dump($child->getName());
+//                $errors[$child->getName()] = $this->getErrorMessages($child);
+//                print_r($errors);
+//                print_r($child->getData());
+//            }
+//        }
+//        foreach ($form->get('idpia')->all() as $child) {
+//            if (!$child->isValid()) {
+//                var_dump($child->getName());
+//                $errors[$child->getName()] = $this->getErrorMessages($child);
+//                print_r($errors);
+//            }
+//        }        
         
-        return new Response($form->getData()->getPrecio() . ' | ' . $form->getErrorsAsString());
+        return new Response($form->getErrorsAsString());
     }
 
     /**
@@ -413,18 +491,28 @@ class InscritoController extends commonPIAClass {
      *
      * @return \Symfony\Component\Form\Form The form
      */
-    private function createCreateForm(Inscrito $entity, $idevento) {
+    private function createCreateForm(Inscrito $entity, $idevento,$idcompetencia=null,$idgrupo=null) {
         if ($idevento) {
             $em = $this->getDoctrine()->getManager();
             $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idevento);
             $entity->setIdevento($evento);
         }
         //createForm
-        $form = $this->createForm(new InscritoType(), $entity, array(
-            'attr' => ['id' => 'inscrito-form', 'class' => 'cmxform'],
-            'action' => $this->generateUrl('inscrito_create'),
-            'method' => 'POST',
-        ));
+        if($idgrupo==null)
+            $form = $this->createForm(new InscritoType(), $entity, array(
+                'attr' => ['id' => 'inscrito-form', 'class' => 'cmxform'],
+                'action' => $this->generateUrl('inscrito_create'),
+                'method' => 'POST',
+            ));
+        else
+            $form = $this->createForm(new InscritoType(), $entity, array(
+                'attr' => ['id' => 'inscrito-form', 'class' => 'cmxform'],
+                'action' => $this->generateUrl('inscrito_create',array(
+                    'idcompetencia'=>$idcompetencia,
+                    'idgrupo'=>$idgrupo
+                )),
+                'method' => 'POST',
+            ));
 
         //Agrega la Fecha y Hora de la inscripcion
         $form
@@ -447,7 +535,7 @@ class InscritoController extends commonPIAClass {
      * Displays a form to create a new Inscrito entity.
      *
      */
-    public function newAction($idevento, $idcompetidor, $iddocumento) {
+    public function newAction($idevento, $idcompetidor, $iddocumento,$idcompetencia,$idgrupo) {
         $entity = new Inscrito();
         $evento = new Evento();
         $precioevento = new Preciosevento();
@@ -462,56 +550,109 @@ class InscritoController extends commonPIAClass {
                         'texto' => 'Evento no configurado',
                         'tema' => $evento->getTema()
             ));
-        } 
+        }
         
+        //Busca la cantidad de competencias por eventos, si hay mas de 1 muestra el combo        
+        $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')
+                ->findBy(array(
+            'idevento' => $idevento,
+        ));        
+        
+        $cantidad_integrantes=($idgrupo)?$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->cantidadIntegrantesGrupo($idgrupo)+1:1;
+                
         //Verifica si el competidor ya esta inscrito
         $entity = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->buscarInscrito($idevento, $idcompetidor);
         $url = '';
+
+        $default_moneda=null;
+        $arraymonedas=$this->MonedasEvento($em,$default_moneda,$evento);
+        
         if ($entity != null) {
-            
-            //Si la inscripcion no posee pago, es un evento de tipo proceso 2
-            if (is_null($entity[0]->getIdpago())){
+            if (is_null($entity[0]->getPagos()[0])){//Si la inscripcion no posee pago
                 switch (true){
                     case $evento->getProceso()==2:
-                        
                         $formasdepago = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')
-                                ->listar($idevento);
+                                ->listarPublicos($idevento,$default_moneda);
                         $cantidadformaspago=0;
                         foreach ($formasdepago as $formadepago) {
                             $cantidadformaspago++;
-                            if ($formadepago['id']==3) {
-                                $formasdepagoarray[$formadepago['id']] = $formadepago['nombre'];
+                            if ($formadepago->getId()==3) {
+                                $formasdepagoarray[$formadepago->getId()] = $formadepago->getNombre();
                             }
                         }       
                         
                         // revisar todo este blqoye
-                        if($cantidadformaspago==1 and $formadepago['id']==3){
+                        if($cantidadformaspago==1 and $formadepago->getId()==3){
                             return $this->redirect($this->generateUrl('pago_newtdc', array('idinscripcion' => $entity[0]->getId()))); 
                         }
                         else{
-                            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                                'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
-                                'texto' => 'Se ha encontrado una Pre-Inscripci&oacute;n para la cedula ingresada<br>'
-                                    . 'Posteriormente estaremos informando de la fecha de inicio de pago',
-                                'tema' => $evento->getTema()
-                            ));
+                            $pago=$em->getRepository('FraterSoftPiaWebBundle:Pago')->findBy(array('idinscrito'=>$entity[0]->getId()));
+                            if($pago)//SI YA POSEE PAGO
+                                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                                            'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                                            'texto' => 'Se ha encontrado una Pre-Inscripci&oacute;n para la cedula ingresada<br>'
+                                            . 'El organizador aun no ha conciliado la informacion de pago. Escriba a <b>' . $evento->getIdorganizador()->getEmail()
+                                    . "</b> para mayor informaci&oacute;n",
+                                            'tema' => $evento->getTema()
+                                ));                
+                            else//SI NO POSEE PAGO
+                                if($evento->getRegistropago()==1 || is_null($evento->getRegistropago()))
+                                    return $this->redirect($this->generateUrl('pago_new', array(
+                                        'idinscripcion' => $entity[0]->getId())
+                                    )); 
+                                else
+                                    return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                                                'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                                                'texto' => 'Se ha encontrado una Pre-Inscripci&oacute;n sin registro de pago para la cedula ingresada<br>'
+                                                . 'Si aun no ha pagado, por favor realice el pago y envie la informaci&oacute;n del mismo al correo <b>' . $evento->getIdorganizador()->getEmail()
+                                        . "</b>.",
+                                                'tema' => $evento->getTema()
+                                    ));                
                         }
+                        break;
                     case $evento->getProceso()==1:
-                        //Aqui debe crearse el pago para la inscripcion registrada, debe llamarse al newdel pago para crearlo
-                        //pasar el id de la inscripcion para actualizar el 
+                        switch(true){
+                            case $entity[0]->getIdgrupo()!=null && $entity[0]->getStatus()==3:
+                                    $cantidad_integrantes=$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->cantidadIntegrantesGrupo($entity[0]->getIdgrupo());
+                                    if($cantidad_integrantes>=$entity[0]->getIdcompetencia()->getGrupo()->getIntegrantes())
+                                        return $this->redirect($this->generateUrl('pago_newgrupo', array(
+                                            'idevento' => $idevento,
+                                            'idcompetencia' => $entity[0]->getIdcompetencia()->getId(),
+                                            'idgrupo'=> $entity[0]->getIdgrupo(),
+                                        )));                                        
+                                    else
+                                        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                                            'url' => null,
+                                            'texto' => 'El participante esta registrado en una inscripcion grupal sin finalizar,'
+                                            . ' presione <b>Continuar</b> para finalizar con el proceso de inscripcion de dicho grupo o <b>Regresar</b> para anular el registro.',
+                                            'urlcontinuar' => $this->generateUrl('inscrito_confirmaciongrupo', array(
+                                                'idevento' => $idevento,
+                                                'idcompetencia'=>$entity[0]->getIdcompetencia()->getId(),
+                                                'idgrupo'=>$entity[0]->getIdgrupo(),
+                                            )),
+                                        ));
+                                break;
+                            case $entity[0]->getIdgrupo()!=null && $entity[0]->getStatus()==1:
+                                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                                            'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                                            'texto' => 'El participante esta registrado y pertenece a un grupo.'
+                                ));
+                            break;
+                        }
+                        break;                                    
                 }
             }
-            if ($entity[0]->getIdpago()->getTipo() == "3" and $entity[0]->getIdpago()->getConciliado() == false)
+            if ($entity[0]->getPagos()[0]->getTipo() == "3" and $entity[0]->getPagos()[0]->getConciliado() == false)
                 return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                             'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
                             'texto' => 'Usted posee una pre-inscripci&oacute;n pendiente de pago por Tarjeta de Cr&eacute;dito, '
                             . 'presione continuar para volver a intentar o elija otra forma de pago',
-                            'urlcontinuar' => $this->generateUrl('pago_tdcnoconciliado', array('id' => $entity[0]->getIdpago()->getId())),
+                            'urlcontinuar' => $this->generateUrl('pago_tdcnoconciliado', array('id' => $entity[0]->getPagos()[0]->getId())),
                             'tema' => $evento->getTema()
                 ));
             else{
-                if($entity[0]->getIdpago()->getConciliado()){
-                    if($entity[0]->getIdpago()->getTipo() == "0"){                    
+                if($entity[0]->getPagos()[0]->getConciliado()){
+//                    if($entity[0]->getPagos()[0]->getIdformapago() == 0){                    
                         return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                                     'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
                                     'texto' => "El portador del Documento de Identidad Nro. " . $entity[0]->getIdpia()->getIdDocumento() . "<br>"
@@ -519,17 +660,17 @@ class InscritoController extends commonPIAClass {
                                     . $evento->getNombre() . "</b><br><br>",
                                     'tema' => $evento->getTema()
                         ));
-                    }else{
-                        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                                    'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
-                                    'texto' => "El pago de la Pre-Inscripci&oacute;n Nro. " . $entity[0]->getSecuencia() . "<br>"
-                                    . "fu&eacute; conciliado satisfactoriamente. <br>"
-                                    . "El portador del Documento de Identidad Nro. " . $entity[0]->getIdpia()->getIdDocumento() . "<br>"
-                                    . "est&aacute; oficialmente inscrito para el evento <br><b>" 
-                                    . $evento->getNombre() . "</b><br><br>",
-                                    'tema' => $evento->getTema()
-                        ));
-                    }
+//                    }else{
+//                        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+//                                    'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+//                                    'texto' => "El pago de la Pre-Inscripci&oacute;n Nro. " . $entity[0]->getSecuencia() . "<br>"
+//                                    . "fu&eacute; conciliado satisfactoriamente. <br>"
+//                                    . "El portador del Documento de Identidad Nro. " . $entity[0]->getIdpia()->getIdDocumento() . "<br>"
+//                                    . "est&aacute; oficialmente inscrito para el evento <br><b>" 
+//                                    . $evento->getNombre() . "</b><br><br>",
+//                                    'tema' => $evento->getTema()
+//                        ));
+//                    }
                 }
                 else
                     return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
@@ -593,7 +734,11 @@ class InscritoController extends commonPIAClass {
                 $equipo = $competidor->setEquipo($compcamp->getIdclub()->getNombre());
                 $idcategoria = $compcamp->getIdcategoria();
                 $entity->setIdpia($competidor);
-                $form = $this->createCreateForm($entity, $idevento);
+                if($idgrupo==null)
+                    $form = $this->createCreateForm($entity, $idevento);
+                else
+                    $form = $this->createCreateForm($entity, $idevento,$idcompetencia,$idgrupo);
+                    
                 $this->ocultaCampos($idevento, $form);                
                 $form
                         ->add('idcategoria', 'entity', array(
@@ -618,7 +763,10 @@ class InscritoController extends commonPIAClass {
                 //Si no existe el competidor en el Campeonato, le calculo su Categoria                
             } else {                
                 $entity->setIdpia($competidor);
-                $form = $this->createCreateForm($entity, $idevento);
+                if($idgrupo==null)
+                    $form = $this->createCreateForm($entity, $idevento);
+                else
+                    $form = $this->createCreateForm($entity, $idevento,$idcompetencia,$idgrupo);
                 $this->ocultaCampos($idevento, $form);
                 //seleccional la categoria que le aplica al competidor
                 $categorias = $this->seleccionaCategorias($idevento, $competidor);
@@ -634,13 +782,25 @@ class InscritoController extends commonPIAClass {
                     $emptyvalue = 'Seleccione una Categoría';
                 else
                     $emptyvalue = null;
-                $form->add('idcategoria', 'entity', array(
-                    'class' => 'FraterSoftPiaWebBundle:Categoria',
-                    'label' => 'Categoria',
-                    'choices' => $categorias,
-                    'empty_value' => $emptyvalue,
-                    'required' => true,
-                ));
+                
+                //Si la cantidad de competencias es mayor a 1, no se muestran las categorias
+                if(count($competencias)==1)
+                    $form->add('idcategoria', 'entity', array(
+                        'class' => 'FraterSoftPiaWebBundle:Categoria',
+                        'label' => 'Categoria',
+                        'choices' => $categorias,
+                        'empty_value' => $emptyvalue,
+                        'required' => true,
+                    ));
+                else
+                    $form->add('idcategoria', 'entity', array(
+                        'class' => 'FraterSoftPiaWebBundle:Categoria',
+                        'label' => 'Categoria',
+                        'choices' => array(),
+                        'empty_value' => $emptyvalue,
+                        'required' => true,
+                    ));
+                    
                 $form->add('numero', 'hidden');
 
                 //Dependiendo del tipo de evento asigna el Equipo
@@ -658,7 +818,10 @@ class InscritoController extends commonPIAClass {
         }
         //Si el competidor no existe
         else {
-            $form = $this->createCreateForm($entity, $idevento);
+            if($idgrupo==null)
+                $form = $this->createCreateForm($entity, $idevento);
+            else
+                $form = $this->createCreateForm($entity, $idevento,$idcompetencia,$idgrupo);
             $form
                     ->add('idcategoria', 'entity', array(
                         'class' => 'FraterSoftPiaWebBundle:Categoria',
@@ -698,32 +861,32 @@ class InscritoController extends commonPIAClass {
                         'required' => true,
             ));
         }
-
-        //Busca la cantidad de competencias por eventos, si hay mas de 1 muestra el combo
-        //sino, muestra el texto de la competencia
-        //$competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')->cantidad($idevento);
-        $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')
-                ->findBy(array(
-            'idevento' => $idevento,
-        ));
+        
+        $arraycompetencias=array();
+        foreach($competencias as $competencia){
+            if($competencia->getGrupo()!=null){
+                array_push($arraycompetencias,$competencia->getId());
+            }
+        }
+            
         if ($competencias) {
             if (count($competencias) > 1) {
                 $form
-                        ->add('idcompetencia', 'entity', array(
-                            'class' => 'FraterSoftPiaWebBundle:Competencia',
-                            'label' => 'Competencia',
-                            'choices' => $competencias,
-                            'required' => true,
-                            'empty_value' => 'Seleccione una Competencia',
-                        ))
+                    ->add('idcompetencia', 'entity', array(
+                        'class' => 'FraterSoftPiaWebBundle:Competencia',
+                        'label' => 'Distancia',
+                        'choices' => $competencias,
+                        'required' => true,
+                        'empty_value' => 'Seleccione una Distancia',
+                    ))
                 ;
             } else {
                 $form
-                        ->add('idcompetencia', 'entity', array(
-                            'class' => 'FraterSoftPiaWebBundle:Competencia',
-                            'label' => 'Competencia',
-                            'choices' => $competencias,
-                        ))
+                    ->add('idcompetencia', 'entity', array(
+                        'class' => 'FraterSoftPiaWebBundle:Competencia',
+                        'label' => 'Distancia',
+                        'choices' => $competencias,
+                    ))
                 ;
             }
         }
@@ -748,39 +911,6 @@ class InscritoController extends commonPIAClass {
             'empty_value' => 'Seleccione El Precio'
         ));
                         
-        //Agrega las formas de pago del evento
-        $formasdepagoarray = array();
-        $formasdepago = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')
-                ->listar($idevento);
-        foreach ($formasdepago as $formadepago) {
-            if ($formadepago['nombre']) {
-                $formasdepagoarray[$formadepago['id']] = $formadepago['nombre'];
-            }
-        }
-        if ($formasdepagoarray)
-            $form
-                    ->get('idpago')
-                    ->add('tipo', 'choice', array(
-                        'label' => 'Forma  de Pago',
-                        'choices' => $formasdepagoarray,
-                        'required' => true,
-                        'empty_value' => 'Seleccione Forma de Pago',
-            ));
-        else {
-            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                        'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
-                        'texto' => "No se han configurado las Formas De Pago para este Evento",
-                        'tema' => $evento->getTema()
-            ));            
-        }
-        
-        if ($evento->getProceso()==2){
-            $form
-                    ->remove('precio')
-                    ->remove('idpago')
-            ;
-        }
-
         //Muestra la etiqueta de la edad segun el tipo de calculo
         if ($evento->getCriteriocalculoedad() == 1) {
             $form->get('idpia')->add('edad', 'text', array(
@@ -790,7 +920,7 @@ class InscritoController extends commonPIAClass {
         } else {
             $form->get('idpia')->add('edad', 'text', array(
                 'label' => 'Edad al Evento',
-                'read_only' => true,
+                    'read_only' => true,
             ));
         }
         
@@ -803,8 +933,37 @@ class InscritoController extends commonPIAClass {
         }
 
         $arrayincrementos= array();
+        $arrayrecargas=array();
+        $formaspago=null;
         if($evento->getProceso()==1){
-            $this->addFormasPago($form->get('idpago'),$entity->getIdevento());  
+            
+            //Agrega las formas de pago del evento
+            $formasdepagoarray = array();
+            $formasdepago = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')
+                    ->listarPublicos($idevento,$default_moneda);
+            foreach ($formasdepago as $formadepago) {
+                if ($formadepago->getIdFormapago()->getNombre()) {
+                    $formasdepagoarray[$formadepago->getIdFormapago()->getId()] = $formadepago->getIdFormapago()->getNombre();
+                }
+            }
+            if ($formasdepagoarray)
+                $form
+                        ->get('idpago')
+                        ->add('idformapago', 'choice', array(
+                            'label' => 'Forma  de Pago',
+                            'choices' => $formasdepagoarray,
+                            'required' => true,
+                            'empty_value' => 'Seleccione Forma de Pago',
+                ));
+            else {
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                            'texto' => "No se han configurado las Formas De Pago para este Evento",
+                            'tema' => $evento->getTema()
+                ));            
+            }
+            
+            $this->addFormasPago($form->get('idpago'),$entity->getIdevento(),$default_moneda);  
             $formaspago=$em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')
                     ->findBy(array(
                 'idevento' => $entity->getIdevento(),
@@ -812,22 +971,46 @@ class InscritoController extends commonPIAClass {
             foreach($formaspago as $formapago){
                 $arrayincrementos[$formapago->getIdformapago()->getId()]=$formapago->getIncremento();
             }
-            $recargas=$evento->getIdrecarga();
-            //$form->get('idpago')->add('monto','hidden');
+            $arrayrecargas=$this->EntitiesToArray($evento->getIdrecarga(),$this->getCampos($em,'Recarga'));
+                        
         }
-
-        $this->addBotonRegresar($form,$this->generateUrl('competidor_find', array('idevento' => $idevento)));
-
+        else{
+            $form
+                ->add('submit', 'submit', array(
+                    'attr' => ['class' => 'submit'],
+                    'label' => 'Pre-Inscribir'))
+                ->remove('info')
+                ->remove('precio')
+                ->remove('idpago')
+            ;            
+        }
+        /* 
+         * Busca si existen grupos configurados y elimina los campos de pagos y precios
+         * Y se determina si la configuracion de grupos es total, parcial o ninguna
+         */
+        if($idcompetencia!=null and $idgrupo!=null){
+            $this->addBotonRegresar($form,$this->generateUrl('competidor_find', array('idevento' => $idevento)));
+            $form
+                ->add('submit', 'submit', array(
+                    'attr' => ['class' => 'submit'],
+                    'label' => 'Agregar'
+                )
+            );
+        }
+        else
+            $this->addBotonRegresar($form,$this->generateUrl('competidor_find', array('idevento' => $idevento)));
+                
         return $this->render('FraterSoftPiaWebBundle:Inscrito:new.html.twig', array(
             'entity' => $entity,
             'atributos' => $atributoscriterios,
             'form' => $form->createView(),
             'incremento' => $arrayincrementos,
-            'recargas'=>$recargas,
-            'operador_ari'=>'>=',
-            'operador_log'=>'&&',
-            'valor1'=>5,
-            'valor2'=>2
+            'recargas'=>$arrayrecargas,
+            'competenciasgrupo'=>$arraycompetencias,
+            'idcompetencia'=>$idcompetencia,
+            'idgrupo'=>$idgrupo,
+            'integrante'=>$cantidad_integrantes,
+            'formasdepago'=>$formaspago==null?null:$this->EntitiesToArray($formasdepago,$this->getCampos($em,'Formaspagoevento'))
         ));
     }
 
@@ -839,32 +1022,37 @@ class InscritoController extends commonPIAClass {
 
         $em = $this->getDoctrine()->getManager();
 
-        $entity = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->findIdArray($id);
+//        $entity = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->findIdArray($id);
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->find($id);
         
         //Se convierte la entidad en arreglo json para poder accesar a traves del nombre de la propiedad
-        $encoders = array(new XmlEncoder(), new JsonEncoder());
-        $normalizers = array(new GetSetMethodNormalizer());  
-        $serializer = new Serializer($normalizers, $encoders);  
-        $jsonContent = $serializer->serialize($entity[0],'json');    
-        //Se transforma a un array php porque se json crea un array de objectos
-        $obj_php = json_decode($jsonContent);
-        //Se transforma en array basico, porque el decode crea un array de objetos 
-        //stdClass, y es necesacio un array con acceso a traves de los keys del array
-        $x=$this->objectToArray($obj_php);
+//        $encoders = array(new XmlEncoder(), new JsonEncoder());
+//        $normalizers = array(new GetSetMethodNormalizer());  
+//        $serializer = new Serializer($normalizers, $encoders);  
+//        $jsonContent = $serializer->serialize($entity[0],'json');    
+//        //Se transforma a un array php porque se json crea un array de objectos
+//        $obj_php = json_decode($jsonContent);
+//        //Se transforma en array basico, porque el decode crea un array de objetos 
+//        //stdClass, y es necesacio un array con acceso a traves de los keys del array
+//        $x=$this->objectToArray($obj_php);
+//        
+//        //Busca los atributos del evento y los envia al formulario
+//        $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')
+//                ->atributosEvento($obj_php->idevento->id);
+//        if (!$atributos) {
+//            return new response("No hay atributos configurados para este evento");
+//        }    
         
-        //Busca los atributos del evento y los envia al formulario
-        $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')
-                ->atributosEvento($obj_php->idevento->id);
-        if (!$atributos) {
-            return new response("No hay atributos configurados para este evento");
-        }    
-        
-        $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($obj_php->idevento->id);
+//        $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($obj_php->idevento->id);
 
+        $parametros=null;
+        if(is_null($entity->getPagos()))
+            $parametros=$entity->getPagos()[0]->getidformapago()->getparametros();
         return $this->render('FraterSoftPiaWebBundle:Inscrito:show.html.twig', array(
-                    'entity' => $x,
-                    'evento' => $evento,
-                    'atributos' => $atributos,
+                    'entity' => $entity,
+                    'parametros'=>json_decode($parametros),
+//                    'evento' => $evento,
+//                    'atributos' => $atributos,
         ));        
     }
 
@@ -953,6 +1141,23 @@ class InscritoController extends commonPIAClass {
                     'atributos' => $atributos,
         ));
     }
+    
+    public function confirmaciongrupoAction($idevento,$idcompetencia,$idgrupo) {
+        $em = $this->getDoctrine()->getManager();
+
+        $integrantes = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosGrupo($idevento,$idgrupo);
+        
+//        $integrantes=$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->findBy(array(
+//            'idevento' => $idevento,
+//            'idgrupo'=>$idgrupo,
+//        ));                        
+        return $this->render('FraterSoftPiaWebBundle:Inscrito:confirmaciongrupo.html.twig', array(
+            'integrantes' => $integrantes,
+            'idevento' => $idevento,
+            'idcompetencia' => $idcompetencia,
+            'idgrupo' => $idgrupo,
+        ));
+    }
 
     /**
      * Displays a form to edit an existing Inscrito entity.
@@ -1014,55 +1219,58 @@ class InscritoController extends commonPIAClass {
                 $editForm
                         ->add('idcompetencia', 'entity', array(
                             'class' => 'FraterSoftPiaWebBundle:Competencia',
-                            'label' => 'Competencia',
+                            'label' => 'Distancia',
                             'choices' => $competencias,
                             'required' => true,
-                            'empty_value' => 'Seleccione una Competencia',
+                            'empty_value' => 'Seleccione una Distancia',
                         ))
                 ;
             } else {
                 $editForm
                         ->add('idcompetencia', 'entity', array(
                             'class' => 'FraterSoftPiaWebBundle:Competencia',
-                            'label' => 'Competencia',
+                            'label' => 'Distancia',
                             'choices' => $competencias,
                         ))
                 ;
             }
         }
+
+        $default_moneda=null;
+        $arraymonedas=$this->MonedasEvento($em,$default_moneda,$entity->getIdevento());        
         
         /**************** Agrega las formas de pago del evento ****************/
         $formasdepagoarray = array();
         $formasdepago = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')
-                ->listar($entity->getIdevento()->getId());
+                ->listarPublicos($entity->getIdevento()->getId(),$default_moneda);
         foreach ($formasdepago as $formadepago) {
-            if ($formadepago['nombre']) {
-                $formasdepagoarray[$formadepago['id']] = $formadepago['nombre'];
+            if ($formadepago->getIdformapago()->getNombre()) {
+                $formasdepagoarray[$formadepago->getId()] = $formadepago->getIdformapago()->getNombre();
             }
         }
-        if ($formasdepagoarray)
-            $editForm
-                    ->get('idpago')
-                    ->add('tipo', 'choice', array(
-                        'label' => 'Forma de Pago',
-                        'choices' => $formasdepagoarray,
-                        'required' => true,
-                        'empty_value' => 'Seleccione Forma de Pago',
-            ));
-        else {
-            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                        'url' => $this->generateUrl('competidor_find', array('idevento' => $entity->getIdevento()->getId())),
-                        'texto' => "No se han configurado las Formas De Pago para este Evento",
-                        'tema' => $evento->getTema()
-            ));            
-        }        
-        if ($entity->getIdevento()->getProceso()==2){
-            $editForm
-                ->remove('precio')
-                ->remove('idpago')
-            ;
-        }        
-        $editForm->get('idpago')->add('texto');
+//        if ($formasdepagoarray)
+//            $editForm
+//                    ->get('pagos')
+//                    ->add('idformaspago', 'choice', array(
+//                        'label' => 'Forma de Pago',
+//                        'choices' => $formasdepagoarray,
+//                        'required' => true,
+//                        'empty_value' => 'Seleccione Forma de Pago',
+//            ));
+//        else {
+//            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+//                        'url' => $this->generateUrl('competidor_find', array('idevento' => $entity->getIdevento()->getId())),
+//                        'texto' => "No se han configurado las Formas De Pago para este Evento",
+//                        'tema' => $evento->getTema()
+//            ));            
+//        }        
+//        if ($entity->getIdevento()->getProceso()==2){
+//            $editForm
+//                ->remove('precio')
+//                ->remove('idpago')
+//            ;
+//        }        
+//        $editForm->get('idpago')->add('texto');
         $editForm->add('numero');
 
         $this->addBotonRegresar($editForm,$this->get('session')->get('urlreturn'));
@@ -1265,8 +1473,8 @@ class InscritoController extends commonPIAClass {
                     $criterios[strtolower($atruibutocriterio->getIdatributo()->getNombre())] = $valor;
                 }
             }
-
-            $categoriasselect = new ArrayCollection();
+            //$categoriasselect = new ArrayCollection();
+            $categoriasselect = array();
 
             $categorias = $em->getRepository('FraterSoftPiaWebBundle:Categoria')->arrayCategorias(
                     $this->get('request')->query->get('idcompetencia')
@@ -1278,20 +1486,23 @@ class InscritoController extends commonPIAClass {
                 $parametrok = false;
                 foreach ($reglas as $regla) {
                     $parametrok = false;
-                    if ($regla->getTipo() == 'R') {
-                        if ($regla->getValor1() <= $criterios[strtolower($regla->getAtributo())] &&
-                                $regla->getValor2() >= $criterios[strtolower($regla->getAtributo())])
-                            $parametrok = true;
-                    }
-                    else {
-                        if ($regla->getValor1() == $criterios[strtolower($regla->getAtributo())])
-                            $parametrok = true;
+                    switch($regla->getTipo()){
+                        case '[]':
+                            if ($regla->getValor1() <= $criterios[strtolower($regla->getAtributo())] &&
+                                    $regla->getValor2() >= $criterios[strtolower($regla->getAtributo())])
+                                $parametrok = true;
+                            break;
+                        case '=':
+                            if ($regla->getValor1() == $criterios[strtolower($regla->getAtributo())])
+                                $parametrok = true;
+                            break;
                     }
                     if (!$parametrok)
                         break;
                 }
                 if ($parametrok) {
-                    $categoriasselect->add($categorias[$i]);
+                    //$categoriasselect->add($categorias[$i]);
+                    array_push($categoriasselect,$categorias[$i]);
                     $parametrok = false;
                 }
             }
@@ -1302,7 +1513,7 @@ class InscritoController extends commonPIAClass {
         }
     }  
 
-    public function anularAction($id) {
+    public function anularAction($id,$idgrupo=null) {
 
         $em = $this->getDoctrine()->getManager();
 
@@ -1326,15 +1537,25 @@ class InscritoController extends commonPIAClass {
         $mailer = $this->get('app.mail_controller');
         $mailer->enviar(
                 "Pre-Inscripcion Anulada " . $entity->getIdevento()->getNombre(), 
-                //$entity->getIdpia()->getEmail(), 
                 $emails,
-                $this->renderView('FraterSoftPiaWebBundle:Inscrito:anulado.html.twig', array('inscrito' => $entity))
+                $this->renderView('FraterSoftPiaWebBundle:Inscrito:anulado.html.twig', array(
+                    'inscrito' => $entity,
+                    'idgrupo' => $idgrupo
+                ))
         );
-        $request = $this->getRequest();
-        $referer = $request->headers->get('referer');  
+        if($idgrupo){
+            $url=$this->redirect($this->generateUrl('competidor_find', array('idevento' => $entity->getIdevento()->getid())));
+            $texto='Integrante anulado satisfactoriamente del grupo';
+        }
+        else{
+            $request = $this->getRequest();
+            $referer = $request->headers->get('referer');  
+            $url=$referer;
+            $texto='Inscripcion Nro ' . $entity->getSecuencia() . ' Anulada';
+        }
         return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                    'url' => $referer,
-                    'texto' => 'Inscripcion Nro ' . $entity->getSecuencia() . ' Anulada',
+                    'url' => $url,
+                    'texto' => $texto,
         ));
     }
 
@@ -1348,9 +1569,10 @@ class InscritoController extends commonPIAClass {
         $idevento = $this->get('request')->query->get('idevento');
         $idcompetencia = $this->get('request')->query->get('idcompetencia');
         $idcategoria = $this->get('request')->query->get('idcategoria');
+        $idmoneda = $this->get('request')->query->get('idmoneda');
 
         $precio = 0;
-        $precio = $this->buscarPrecio($idevento, $idcompetencia, $idcategoria);
+        $precio = $this->buscarPrecio($idevento, $idcompetencia, $idcategoria,$idmoneda);
 
         if ($precio) {
             $precioselect->add($precio);
@@ -1370,34 +1592,11 @@ class InscritoController extends commonPIAClass {
         //Busca los atributos del evento y los envia al formulario
         $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')
                 ->atributosEstadistica($idevento);
-        //if (!$atributos) {
-        //    return new response("No hay atributos configurados para este evento");
-        //}            
-
-        /*$insxcomp = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorCompetencia($idevento);
-        $insxstatus = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorEstatus($idevento);        
-        $insxformapago = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorFormaPago($idevento);        
-        $insxsexo = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorSexo($idevento);        
-        $insxcategoria = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorCategoria($idevento);        
-        $insxestado = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorEstado($idevento);     
-        $insxprecio = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorPrecio($idevento);  
-        $insxfecha = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->inscritosPorFecha($idevento);  */
 
         $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idevento);
         
         $total=0;
-        /*foreach($insxstatus as $row){
-            $total+=$row['cantidad'];
-        } */
         return $this->render('FraterSoftPiaWebBundle:Inscrito:estadisticas.html.twig', array(
-                    /*'insxcomp' => $insxcomp,
-                    'insxstatus' => $insxstatus,
-                    'insxformapago' => $insxformapago,
-                    'insxsexo' => $insxsexo,
-                    'insxcategoria' => $insxcategoria,
-                    'insxestado' => $insxestado,
-                    'insxprecio' => $insxprecio,                    
-                    'insxfechahora' => $insxfecha,                    */
                     'idevento' => $idevento,
                     'email' => $email,            
                     'total' => $total,
@@ -1460,18 +1659,25 @@ class InscritoController extends commonPIAClass {
                     $row->setStatus(0);
                     $em->persist($row);
                     $em->flush();
-                    $mensaje = \Swift_Message::newInstance()
-                            ->setSubject("Pago no Conciliado en " . $row->getIdevento()->getNombre())
-                            ->setFrom("pagos@sistemapia.com.ve")
-                            ->setCharset('iso-8859-1')
-                            ->setContentType('text/html')
-                            //->setTo($row->getIdpia()->getEmail())
-                            ->setTo($emails)
-                            ->setBody(
+                    $mailer = $this->get('app.mail_controller');
+                    $mailer->enviarPago(
+                            "Pago no Conciliado en " . $entity->getIdevento()->getNombre(), 
+                            $emails,
                             $this->renderView('FraterSoftPiaWebBundle:Inscrito:anulado.html.twig', 
-                                    array('inscrito' => $row)
-                    ));
-                    $this->get('mailer')->send($mensaje);   
+                                    array('inscrito' => $row))
+                    );                    
+//                    $mensaje = \Swift_Message::newInstance()
+//                            ->setSubject("Pago no Conciliado en " . $row->getIdevento()->getNombre())
+//                            ->setFrom("pagos@sistemapia.com.ve")
+//                            ->setCharset('iso-8859-1')
+//                            ->setContentType('text/html')
+//                            //->setTo($row->getIdpia()->getEmail())
+//                            ->setTo($emails)
+//                            ->setBody(
+//                            $this->renderView('FraterSoftPiaWebBundle:Inscrito:anulado.html.twig', 
+//                                    array('inscrito' => $row)
+//                    ));
+//                    $this->get('mailer')->send($mensaje);   
                     $num_anulados++;
                 }
             } catch(\Swift_TransportException $e){
@@ -1525,6 +1731,36 @@ class InscritoController extends commonPIAClass {
 
     }      
     
+//   public function notificarpreinscritostodosAction($idevento) {
+//        $num_notifiaciones = 0;
+//        $em = $this->getDoctrine()->getManager();
+//
+//        $inscritos = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->listarNoConciliadas($idevento); 
+//        if (!$inscritos) {
+//            throw $this->createNotFoundException('Unable to find Inscrito entity.');
+//        }
+//        
+//        $num_notifiaciones = $this->EnviarConfirmacion($inscritos,$em);
+//        
+//        if($num_notifiaciones!=0){
+//            $request = $this->getRequest();
+//            $referer = $request->headers->get('referer');     
+//            return $this->render('FraterSoftPiaWebBundle:Default:progressbar.html.twig', array(
+//                        'url' => $referer,
+//                        'texto' => 'Se han enviado satisfactoriamente ' . $num_notifiaciones . ' notificaciones de confirmacion de inscripcion',
+//            ));
+//        }
+//        else{
+//            $request = $this->getRequest();
+//            $referer = $request->headers->get('referer');     
+//            return $this->render('FraterSoftPiaWebBundle:Default:progressbar.html.twig', array(
+//                        'url' => $referer,
+//                        'texto' => 'No exiten participantes por notificar',
+//            ));
+//        }
+//
+//    }      
+
     public function notificarconfirmacionloteAction($data_json,$idevento){
         $num_notifiaciones = 0;     
         $ids="";
@@ -1559,38 +1795,44 @@ class InscritoController extends commonPIAClass {
             ));
         }
     }
-    
-    private function EnviarConfirmacion($inscritos,$em){
-        //Envia los correo a los inscritos conciliados
-        $num_notifiaciones = 0;        
-        foreach ($inscritos as $inscrito) {
-
-            $emails = array();
-            if(!is_null($inscrito->getIdpia()->getEmail()) && filter_var($inscrito->getIdpia()->getEmail(), FILTER_VALIDATE_EMAIL))
-                array_push($emails,$inscrito->getIdpia()->getEmail());
-            if(!is_null($inscrito->getIdpia()->getEmailpersonal()) && filter_var($inscrito->getIdpia()->getEmailpersonal(), FILTER_VALIDATE_EMAIL))
-                array_push($emails,$inscrito->getIdpia()->getEmailpersonal()); 
-            
-            //if($inscrito->getNotificado()!=true){ //OJO MOSCA, VALIDAR ESTO PARA QUE NO QUE CONSUMAN LOS RECURSOS AL REENVIAR MUCHAS VECES
-            if(count($emails)>=1){
-                $subject = is_null($inscrito->getNumero())?
-                        "Confirmacion de Inscripcion " . $inscrito->getIdevento()->getNombre():
-                        "Dorsal Numero " . $inscrito->getNumero() . ". " . $inscrito->getIdevento()->getNombre();            
-                $mailer = $this->get('app.mail_controller');
-                $mailer->enviarConfirmacion(
-                        $subject, 
-                        //$inscrito->getIdpia()->getEmail(), 
-                        $emails,
-                        $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailok.html.twig', array('inscrito' => $inscrito))
-                );
-                $num_notifiaciones++;
-                $inscrito->setNotificado(true);
-            }
+        
+    public function notificarpreinscripcionloteAction($data_json,$idevento){
+        $num_notifiaciones = 0;     
+        $ids="";
+        $arry_erros_mails = array();
+        $data_array=json_decode($data_json, $assoc = true);
+        for($i=0;$i<count($data_array);$i++){
+            $separador = ($i==count($data_array)-1)?"":",";
+            $ids .= $data_array[$i].$separador;
         }
-        $em->flush();
-        return($num_notifiaciones);
+        
+        $em = $this->getDoctrine()->getManager();      
+        
+        $inscritos = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
+                ->buscarSecuencias($ids,$idevento);      
+        if(!$inscritos)
+            throw $this->createNotFoundException('No se ubico id de inscripcion');
+        
+        $num_notifiaciones = $this->EnviarConfirmacionPreinscritos($inscritos,$em);
+        
+        if($num_notifiaciones!=0){
+            $request = $this->getRequest();
+            $referer = $request->headers->get('referer');     
+            return $this->render('FraterSoftPiaWebBundle:Default:progressbar.html.twig', array(
+                        'url' => $referer,
+                        'texto' => 'Se han enviado satisfactoriamente ' . $num_notifiaciones . ' notificaciones de confirmacion de inscripcion',
+            ));
+        }
+        else{
+            $request = $this->getRequest();
+            $referer = $request->headers->get('referer');     
+            return $this->render('FraterSoftPiaWebBundle:Default:progressbar.html.twig', array(
+                        'url' => $referer,
+                        'texto' => 'No exiten participantes por notificar',
+            ));
+        }
     }
-    
+
     public function importarAction(Request $request,$idevento){
         $accessor = PropertyAccess::createPropertyAccessor();        
         $em = $this->getDoctrine()->getManager();
@@ -1617,7 +1859,7 @@ class InscritoController extends commonPIAClass {
         $categorias=$em->getRepository("FraterSoftPiaWebBundle:Categoria")->listaCategorias($idevento);
         $estados=$em->getRepository("FraterSoftPiaWebBundle:Estado")->findAll();
         $paises=$em->getRepository("FraterSoftPiaWebBundle:Pais")->findAll();
-        $formaspago=$em->getRepository("FraterSoftPiaWebBundle:Formaspagoevento")->listar($idevento);
+        $formaspago=$em->getRepository("FraterSoftPiaWebBundle:Formaspagoevento")->listarPublicos($idevento,$default_moneda);
         //$precios=$em->getRepository("FraterSoftPiaWebBundle:Preciosevento")->findBy(array('idevento'=>$idevento));
         
         $form->handleRequest($request);

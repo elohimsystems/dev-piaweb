@@ -210,11 +210,22 @@ class Evento
     private $idrecarga;    
     
     /**
+     * @var integer
+     */
+    private $registropago;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $atributos;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->idrecarga = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->atribitos = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -1155,4 +1166,60 @@ class Evento
         return $this->idrecarga;
     }
     
+    /**
+     * Set registropago
+     *
+     * @param integer $registropago
+     * @return Evento
+     */
+    public function setRegistropago($registropago)
+    {
+        $this->registropago = $registropago;
+    
+        return $this;
+    }
+
+    /**
+     * Get registropago
+     *
+     * @return integer 
+     */
+    public function getRegistropago()
+    {
+        return $this->registropago;
+    }
+
+
+    /**
+     * Add atributos
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\EventoAtributos $atributos
+     * @return Evento
+     */
+    public function addAtributo(\FraterSoft\PiaWebBundle\Entity\EventoAtributos $atributos)
+    {
+        $this->atributos[] = $atributos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove atributos
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\EventoAtributos $atributos
+     */
+    public function removeAtributo(\FraterSoft\PiaWebBundle\Entity\EventoAtributos $atributos)
+    {
+        $this->atributos->removeElement($atributos);
+    }
+
+    /**
+     * Get atributos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAtributos()
+    {
+        return $this->atributos;
+    }
 }

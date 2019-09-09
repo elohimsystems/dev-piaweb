@@ -19,9 +19,10 @@ class CompetenciaRepository extends EntityRepository
     {
         $query = $this->getEntityManager()
             ->createQuery(
-                'SELECT c.id,e.id as idevento,c.descripcion,c.fechacierre,c.cupomaximo '
+                'SELECT c.id,e.id as idevento,c.descripcion,c.fechacierre,c.cupomaximo,g.integrantes,g.secuencia '
                     . 'FROM FraterSoftPiaWebBundle:Competencia c '
                     . 'JOIN c.idevento e '                  
+                    . 'LEFT JOIN c.grupo g '
                     . 'WHERE c.idevento =' . $idevento 
             );
          return $query->getResult();

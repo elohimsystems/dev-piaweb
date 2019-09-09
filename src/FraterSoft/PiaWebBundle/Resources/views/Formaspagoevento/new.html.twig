@@ -9,7 +9,7 @@
         /*display: none;*/
     }
     .dataTables_wrapper {   
-        width: 60%;
+        width: 80%;
     }
 </style>
 {% endblock %}  
@@ -52,7 +52,9 @@
                 "{{ path(entidad ~ '_create')}}", //Url para crear
                 "{{ path(entidad ~ '_update',{'id':'_id_'})}}", //Url para editar
                 "{{ path(entidad ~ '_listaajax',{'idevento': idevento }) }}", //Url para buscar los datos a listar
-                [{posicion:3, config:{title:"Nombre",data:"nombre"}}]
+                [{posicion:1, config:{title:"Nombre",data:"nombre"}},
+                 {posicion:2, config:{title:"Moneda",data:"codigolocal"}},
+                 ]
         );
         dialogGuardar($('#formulario'),{{campos|json_encode|raw}});
         dialogEliminar('{{ path(entidad ~ '_delete',{'id':'_id_'})}}');

@@ -62,11 +62,6 @@ class Competidor
     /**
      * @var string
      */
-    private $condicion;
-
-    /**
-     * @var string
-     */
     private $email;
 
     /**
@@ -170,12 +165,27 @@ class Competidor
     private $idestado;
 
     /**
+     * @var string
+     */
+    private $textodorsal;
+
+    /**
+     * @var string
+     */
+    private $telefonoemergencia;
+
+    /**
+     * @var string
+     */
+    private $seguromedico;
+
+    /**
      * to string
      *
      * @return string 
      */
     public function __toString() {
-        return $this->iddocumento;
+        return $this->nombre;
     }        
 
     /**
@@ -403,29 +413,6 @@ class Competidor
     public function getPeso()
     {
         return $this->peso;
-    }
-
-    /**
-     * Set condicion
-     *
-     * @param string $condicion
-     * @return Competidor
-     */
-    public function setCondicion($condicion)
-    {
-        $this->condicion = $condicion;
-
-        return $this;
-    }
-
-    /**
-     * Get condicion
-     *
-     * @return string 
-     */
-    public function getCondicion()
-    {
-        return $this->condicion;
     }
 
     /**
@@ -910,4 +897,186 @@ class Competidor
     {
         return $this->idestado;
     }
+    /**
+     * @var string
+     */
+    private $entrenador;
+
+    /**
+     * @var string
+     */
+    private $fileiddocumento;
+
+    /**
+     * @var string
+     */
+    private $filepartidanacimiento;
+
+    /**
+     * @var string
+     */
+    private $filecertificadodeportivo;
+
+
+    /**
+     * Set entrenador
+     *
+     * @param string $entrenador
+     * @return Competidor
+     */
+    public function setEntrenador($entrenador)
+    {
+        $this->entrenador = $entrenador;
+
+        return $this;
+    }
+
+    /**
+     * Get entrenador
+     *
+     * @return string 
+     */
+    public function getEntrenador()
+    {
+        return $this->entrenador;
+    }
+
+    /**
+     * Set fileiddocumento
+     *
+     * @param string $fileiddocumento
+     * @return Competidor
+     */
+    public function setFileiddocumento($fileiddocumento)
+    {
+        $this->fileiddocumento = $fileiddocumento;
+
+        return $this;
+    }
+
+    /**
+     * Get fileiddocumento
+     *
+     * @return string 
+     */
+    public function getFileiddocumento()
+    {
+        return $this->fileiddocumento;
+    }
+
+    /**
+     * Set filepartidanacimiento
+     *
+     * @param string $filepartidanacimiento
+     * @return Competidor
+     */
+    public function setFilepartidanacimiento($filepartidanacimiento)
+    {
+        $this->filepartidanacimiento = $filepartidanacimiento;
+
+        return $this;
+    }
+
+    /**
+     * Get filepartidanacimiento
+     *
+     * @return string 
+     */
+    public function getFilepartidanacimiento()
+    {
+        return $this->filepartidanacimiento;
+    }
+
+    /**
+     * Set filecertificadodeportivo
+     *
+     * @param string $filecertificadodeportivo
+     * @return Competidor
+     */
+    public function setFilecertificadodeportivo($filecertificadodeportivo)
+    {
+        $this->filecertificadodeportivo = $filecertificadodeportivo;
+
+        return $this;
+    }
+
+    /**
+     * Get filecertificadodeportivo
+     *
+     * @return string 
+     */
+    public function getFilecertificadodeportivo()
+    {
+        return $this->filecertificadodeportivo;
+    }
+    
+    /**
+     * Set textodorsal
+     *
+     * @param string $textodorsal
+     * @return Competidor
+     */
+    public function setTextodorsal($textodorsal)
+    {
+        $this->textodorsal = $textodorsal;
+
+        return $this;
+    }
+
+    /**
+     * Get textodorsal
+     *
+     * @return string 
+     */
+    public function getTextodorsal()
+    {
+        return $this->textodorsal;
+    }
+
+    /**
+     * Set telefonoemergencia
+     *
+     * @param string $telefonoemergencia
+     * @return Competidor
+     */
+    public function setTelefonoemergencia($telefonoemergencia)
+    {
+        $this->telefonoemergencia = $telefonoemergencia;
+
+        return $this;
+    }
+
+    /**
+     * Get telefonoemergencia
+     *
+     * @return string 
+     */
+    public function getTelefonoemergencia()
+    {
+        return $this->telefonoemergencia;
+    }
+
+    /**
+     * Set seguromedico
+     *
+     * @param string $seguromedico
+     * @return Competidor
+     */
+    public function setSeguromedico($seguromedico)
+    {
+        $this->seguromedico = $seguromedico;
+
+        return $this;
+    }
+
+    /**
+     * Get seguromedico
+     *
+     * @return string 
+     */
+    public function getSeguromedico()
+    {
+        return $this->seguromedico;
+    }
+    
 }

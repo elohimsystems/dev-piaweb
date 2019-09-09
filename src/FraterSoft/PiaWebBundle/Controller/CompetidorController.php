@@ -1278,5 +1278,184 @@ class CompetidorController extends commonPIAClass {
                     'idcampeonato'=>$idcampeonato,
         ));
     }
+
+    public function findgrupoAction(Request $request, $idevento,$idcompetencia,$idgrupo) {
+                
+        //Valida que la aplicacion no sea usada con Internet Explorer
+        $em = $this->getDoctrine()->getManager();
+
+        $cantidad_integrantes=$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->cantidadIntegrantesGrupo($idgrupo);
+                
+        $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idevento);
+        if ($evento) {        
+            $browser = $this->getBrowser();
+            $navegador = $browser['name'];
+            $versionB = $browser['version'];
+            if ($navegador == "Internet Explorer") {
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                            'texto' => 'Navegador no soportado por el Sistema',
+                            'tema' => $evento->getTema()
+                ));            
+            }
+            
+            //Verifica si el evento esta abierto
+            $hoy=new \DateTime('now');
+            if ($evento->getZonahoraria()) //Valida que el evento tenga configurado el timezone
+                $hoy->setTimezone(new \DateTimeZone($evento->getZonahoraria()));
+            $fechainicio=$evento->getFechainicio();
+            if ($hoy < $fechainicio){
+                return $this->render('FraterSoftPiaWebBundle:Competidor:iniciar.html.twig', array(
+                            'evento' => $evento,
+                ));
+            }           
+
+            //Verifica si no se ha configurado el Organizador del evento
+            if (!$evento->getIdorganizador()){
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                            'texto' => 'No se ha configurado el Organizador del Evento',
+                            'tema' => $evento->getTema()
+                ));
+            }
+            
+
+            //Verifica si el evento no esta cerrado
+            if ($evento->getFechacierre() < new \DateTime('now')){
+                return $this->redirect($this->generateUrl('competidor_consultar', array('idevento' => $evento->getId())));                
+            }
+
+            //Verifica si el esta configurado para control de cupo y valida si llego al maximo
+            if ($evento->getCupocontrol()){
+                $cantidadinscritos = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
+                ->cantidad($idevento);
+                if ($cantidadinscritos >= $evento->getCupomaximo())
+                    return $this->redirect($this->generateUrl('competidor_consultar', array('idevento' => $evento->getId())));  
+            }
+            
+        } else
+            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                        'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                        'texto' => 'Evento ' . $idevento . ' no ha sido configurado',
+                        'tema' => $evento->getTema()
+            ));            
+
+        $buscar = '';
+        $atributo = '';
+        $competidor = new Competidor();
+        
+        //Si el tipo de evento es campeonato, agrega formulario para buscar por cedula o numero
+        if ($evento->getIdCampeonato()) {
+            $form = $this->createFormBuilder(null)
+                ->add('atributo', 'choice', array(
+                    'choices' => array('iddocumento' => 'Cedula', 'numero' => 'Número'),
+                    'data'=>'iddocumento',
+                    'label' => 'Buscar Por',
+                    'expanded' => true,
+                ))
+                ->add('buscar', 'text', array(
+                    'label' => 'Cedula',
+                    'method' => 'POST',
+                    'attr' => array('placeholder' => 'Ej: 12660131'),
+                )) 
+                ->add('Buscar', 'submit', array('label' => 'Agregar Integrante N° ' . strval($cantidad_integrantes+1)))
+                ->getForm();
+        }
+        else{//Si el evento no es tipo campeonato busca solo por cedula
+            $form = $this->createFormBuilder(null)
+                ->add('atributo', 'hidden', array(
+                    'label' => 'Ingresa tu Cedula',
+                ))
+                ->add('buscar', 'text', array(
+                    'label' => 'Cedula',
+                    'method' => 'POST',
+                    'attr' => array('placeholder' => 'Ej: 12660131'),
+                ))
+                ->add('Buscar', 'submit', array('label' => 'Agregar Integrante N° ' . strval($cantidad_integrantes+1)))
+                ->getForm();            
+        }
+        
+        //Busca la edad minima del evento configurada
+        $edadminima = $em->getRepository('FraterSoftPiaWebBundle:Evento')
+            ->edadminima($idevento);     
+                
+        if(!is_null($edadminima) && $edadminima<9){
+            $form->add('siniddocumento', 'checkbox', array(
+                'required' => false,
+            ));
+        }        
+
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            //Buscar para eventos tipo Campeonato
+            if ($evento->getIdCampeonato()) {
+                if($form->get("atributo")->getData()!='iddocumento'){
+                    $atributo='id';
+                    $campcomp = $em->getRepository('FraterSoftPiaWebBundle:CampeonatoCompetidores')
+                    ->findOneBy(array($form->get("atributo")->getData() => $form->get("buscar")->getData()));
+                    $buscar=$campcomp?$campcomp->getIdcompetidor():null;
+                 }
+                 else{
+                    $atributo = $form->get("atributo")->getData();
+                    $buscar = $form->get("buscar")->getData();
+                 }   
+            }
+            else{
+                //Buscar para eventos tipo Unico
+                $atributo = 'iddocumento';
+                $buscar = $form->get("buscar")->getData();                
+            }
+
+            if($atributo == 'iddocumento'){ //Si se esta buscando por IdDocumento
+                $competidor = $em->getRepository('FraterSoftPiaWebBundle:Competidor')
+                        ->findOneBy(array($atributo => $buscar));
+                if (!$competidor) {
+                    return $this->redirect($this->generateUrl('inscrito_new', array(
+                                        'idevento' => $idevento,
+                                        'idcompetidor' => 0,
+                                        'iddocumento' => $buscar,
+                                        'idcompetencia' => $idcompetencia,
+                                        'idgrupo' => $idgrupo,
+                    )));
+                } else {
+                    return $this->redirect($this->generateUrl('inscrito_new', array(
+                                        'idevento' => $idevento,
+                                        'idcompetidor' => $competidor->getId(),
+                                        'iddocumento' => $competidor->getIdDocumento(),
+                                        'idcompetencia' => $idcompetencia,
+                                        'idgrupo'=>$idgrupo,
+                    )));
+                }                
+            }
+            else{ //Si se esta buscando por Numero
+                $competidor = $em->getRepository('FraterSoftPiaWebBundle:Competidor')
+                        ->findOneBy(array($atributo => $buscar));
+                if (!$competidor) {
+                    $url = $this->generateUrl('competidor_find', array('idevento' => $idevento));
+                    return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                                'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                                'texto' => 'Número no está asignado a ningún Competidor',
+                                'tema' => $evento->getTema()
+                    ));                    
+                } else {
+                    return $this->redirect($this->generateUrl('inscrito_new', array(
+                                        'idevento' => $idevento,
+                                        'idcompetidor' => $competidor->getId(),
+                                        'iddocumento' => $competidor->getIdDocumento(),
+                                        'idcompetencia' => $idcompetencia,
+                                        'idgrupo'=>$idgrupo,
+                    )));
+                }                   
+            }
+        }
+
+        return $this->render('FraterSoftPiaWebBundle:Competidor:findgrupo.html.twig', array(
+                    'evento' => $evento,
+                    'form' => $form->createView(),
+        ));
+    }
     
 }

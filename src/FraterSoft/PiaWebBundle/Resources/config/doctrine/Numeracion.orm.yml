@@ -51,15 +51,10 @@ FraterSoft\PiaWebBundle\Entity\Numeracion:
             type: boolean
             nullable: true
             comment: ''            
-        tipo:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: ''
     oneToOne:
-      idevento:
-        targetEntity: Evento
-        joinColumn:
-          name: idevento
-          referencedColumnName: id       
+        idevento:
+            targetEntity: Evento
+            joinColumn:
+                name: idevento
+                referencedColumnName: id       
     lifecycleCallbacks: {  }

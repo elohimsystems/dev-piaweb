@@ -16,7 +16,16 @@ class CategoriaReglasType extends AbstractType
     {
         $builder
             ->add('idcategoria')
+            ->add('accion','choice',array(
+                'label'=>'Accion',
+                'choices' => array(
+                    1 => 'Sumar', 
+                    2 => 'Contar'
+                 ),
+                'empty_value' => 'Seleccione la Accion'
+            ))
             ->add('atributo')
+            ->add('cantidad')
             ->add('tipo')
             ->add('valor1')
             ->add('valor2')

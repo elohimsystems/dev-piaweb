@@ -61,9 +61,6 @@
             <div id="sel_competencias">
                 Seleccione la Comptencia
                 <select id="select_competencias_opcion">
-                {% for competencia in competencias %}
-                    <option value="{{ competencia.id }}">{{competencia.descripcion}}</option>
-                {% endfor %}
                 </select>
             </div>
             <table id="{{entidad}}" class="display row-border hover">
@@ -190,8 +187,6 @@
             }
         });     
         
-        
-        
         $("#dialogformGuardarCategoriaReglas").dialog({
             autoOpen: false,
             width: 400,
@@ -213,6 +208,7 @@
                 }
             ]             
         });         
+        
         $("#dialogEliminarCategoriaReglas").dialog({
             autoOpen: false,
             width: 400,
@@ -237,8 +233,16 @@
         });         
         
         //Filtra la tabla de datos segun la opcion del select seleccionado
-        filtrarTabla(2,$("#select_competencias_opcion"));
-        
+        filtrarTabla(4,$("#select_competencias_opcion"));
+
+        var competencias={{competencias|json_encode|raw}};
+        $.each(competencias, function( key, value ) {
+            $('#select_competencias_opcion').append($('<option>', {
+                value: value.id,
+                text: value.descripcion,
+                grupal: (value['grupo']==null)?false:true
+            }));            
+        });
         $("#select_competencias_opcion").change(function () {
             tabla.draw();
         });
@@ -247,6 +251,16 @@
     
     function openGuardarForm(id){
         $({{formCategoriaReglas.idcategoria.vars.id}}).val(id);
+        if($("#select_competencias_opcion").find('option:selected').attr('grupal')=="false"){
+            $("#{{formCategoriaReglas.accion.vars.id}}").val('');
+            $("#{{formCategoriaReglas.cantidad.vars.id}}").val('');
+            $("#{{formCategoriaReglas.accion.vars.id}}").parent().hide()        
+            $("#{{formCategoriaReglas.cantidad.vars.id}}").parent().hide()        
+        }
+        else{
+            $("#{{formCategoriaReglas.accion.vars.id}}").parent().show()        
+            $("#{{formCategoriaReglas.cantidad.vars.id}}").parent().show()        
+        }
         var url_action="{{ path('categoriareglas_create')}}";
         //$("#formularioCategoriaReglas").val($("#dialogformGuardarCategoriaReglas").data('id'));
         $("#formularioCategoriaReglas").attr('action',url_action);                        
@@ -262,16 +276,31 @@
     function format ( d ) {
         var valor2='';
         var html="";
-        html+='<table id="tabla_reglas" class="display row-border hover">'+
-            '<thead><tr>'+
-                '<th>Atributos</th><th>Tipo</th><th>Valor 1</th><th>Valor 2</th><th>Opciones</th>'+
-            '</tr></thead><tbody>';
+        if($("#select_competencias_opcion").find('option:selected').attr('grupal')=="false")
+            html+='<table id="tabla_reglas" class="display row-border hover">'+
+                '<thead><tr>'+
+                    '<th>Atributos</th><th>Tipo</th><th>Valor 1</th><th>Valor 2</th><th>Opciones</th>'+
+                '</tr></thead><tbody>';
+        else
+            html+='<table id="tabla_reglas" class="display row-border hover">'+
+                '<thead><tr>'+
+                    '<th>Accion</th><th>Atributos</th><th>Cantidad</th><th>Tipo</th><th>Valor 1</th><th>Valor 2</th><th>Opciones</th>'+
+                '</tr></thead><tbody>';
         for(i=0;i<d.data.length;i++){
-            valor2=(d.data[i].valor2!=null)?d.data[i].valor2:''
-            html+='<tr><td>'+d.data[i].atributo+'</td>'
-                    +'<td>'+d.data[i].tipo+'</td>'
-                    +'<td>'+d.data[i].valor1+'</td>'
-                    +'<td>'+valor2+'</td>';
+            valor2=(d.data[i].valor2!=null)?d.data[i].valor2:'';
+            if($("#select_competencias_opcion").find('option:selected').attr('grupal')=="false")
+                html+='<tr><td>'+d.data[i].atributo+'</td>'
+                        +'<td>'+d.data[i].tipo+'</td>'
+                        +'<td>'+d.data[i].valor1+'</td>'
+                        +'<td>'+valor2+'</td>';
+            else
+                html+='<tr>'
+                        +'<td>'+d.data[i].accion+'</td>'
+                        +'<td>'+d.data[i].atributo+'</td>'
+                        +'<td>'+d.data[i].cantidad+'</td>'                
+                        +'<td>'+d.data[i].tipo+'</td>'
+                        +'<td>'+d.data[i].valor1+'</td>'
+                        +'<td>'+valor2+'</td>';
             html+='<td><ul id="icons" class="ui-widget ui-helper-clearfix">' +
                         '<a href="">' +
                             '<li class="ui-state-default ui-corner-all" title="Editar Regla"><span class="ui-icon ui-icon-pencil"></span></li>' +

@@ -1,4 +1,5 @@
 {% extends '::base.html.twig' %}
+{% import "FraterSoftPiaWebBundle:Default:FS-TWIG-Library.html.twig" as twiglib %}
 {% block poweredby %}
 <div style="text-align: center">
     <a href="{{app.request.getSchemeAndHttpHost() }}" target="_blank">
@@ -16,6 +17,7 @@
         text-align:left;
     }
     table{
+        padding: 10px;
         width:650px;        
         border: 1px solid black;
     }
@@ -43,42 +45,57 @@
             </tr>
             {% endif %}            
             <tr>
-                <td rowspan="13">
+                <td rowspan="{{inscrito.idevento.atributos|length + 5}}">
                     <img width="300 px" 
                          src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ inscrito.idevento.logo }}">
                 </td>
             </tr>            
-            <tr><th>Cedula</th><td>{{ inscrito.idpia.iddocumento }}</td></tr>
-            <tr><th>Apellido</th><td>{{ inscrito.idpia.apellido }}</td></tr>
-            <tr><th>Nombre</th><td>{{ inscrito.idpia.nombre }}</td></tr>
-            <tr><th>Fecha de Nacimiento</th><td>{{ inscrito.idpia.fechanacimiento|date('d-m-Y') }}</td></tr>
-            <tr><th>Sexo</th><td>{{ inscrito.idpia.sexo }}</td></tr>
-            <tr><th>Equipo</th><td>{{ inscrito.idpia.equipo }}</td></tr>
-            <tr><th>Estado</th><td>{{ inscrito.idpia.idestado.estado }}</td></tr>
+            {% for atributo in inscrito.idevento.atributos %}
+            {% if atributo.etiqueta is null %}
+            <tr><th>{{atributo.idatributo.nombre|capitalize}}</th><td>{{twiglib.imprimirAtributo(atributo,attribute(inscrito.idpia,'get'~atributo.idatributo.nombre))}}</td></tr>
+            {% else %}
+            <tr><th>{{atributo.etiqueta}}</th><td>{{ twiglib.imprimirAtributo(atributo,attribute(inscrito.idpia,'get'~atributo.idatributo.nombre)) }}</td></tr>
+            {% endif %}
+            {% endfor %}
+            <tr><th>Distancia</th><td>{{ inscrito.idcompetencia.descripcion }}</td></tr>            
             <tr><th>Categoria</th><td>{{ inscrito.idcategoria.descripcion }}</td></tr>            
             <tr>
                 <th>PreInscrito el</th>
                 <td>{{ inscrito.fechahora|date('d-m-Y H:i:s') }}</td>
             </tr>
             <tr>
-                <th>Punto</th>
-                <td>{{ inscrito.punto }}</td>
-            </tr>
-            <tr>
                 <th>Conciliado el</th>
-                <td>{{ inscrito.idpago.conciliadoel|date('d-m-Y H:i:s') }}</td>
+                <td>{{ inscrito.pagos[0].conciliadoel|date('d-m-Y H:i:s') }}</td>
             </tr>            
             <tr>
-                <th>Precio</th>
-                <td>{{ inscrito.precio|number_format(2,',','.') }}</td>
-            </tr>
-            <tr>
-                <td colspan="3" align="center">
-                    <p>El Pago de su Pre-Inscripci&oacute;n fu&eacute; certificado. 
-                    Usted est&aacute; inscrito oficialmente en el <br>
-                    <b>{{ inscrito.idevento.nombre }}</b></p>.
+                <td colspan="3">
+                    <p>Estimado(a) participante:</p>
+                    <p>Por medio de la presente le informamos que su  pago ha sido confirmado.</p>
+                    <p>A continuaci&oacute;n los datos suministrados por usted. En caso de existir alg&uacute;n error, por favor notif&iacute;quelo por esta v&iacute;a lo antes posible.</p>
+                    <p>ENTREGA DE KIT</p>
+                    <p>Sabado 14 diciembre 2019</p>
+                    <p>Horario: 9apm a 1pm</p>
+                    <p>Lugar: Hotel Eurobuilding, Ciudad Guayana. </p>
+                    <p>POR NINGUN MOTIVO SE ENTREGARAN KITS FUERA DEL HORARIO ESTABLECIDO</p>
+                    <br>
+                    <p><h2>NO GARANTIZAMOS LA TALLA DE LA FRANELA</h2></p>
+                    <p>ES INDISPENSABLE PARA RETIRAR EL KIT<br>
+                    -  C&eacute;dula Laminada del atleta<br>
+                    -  Para retirar el kit de otro participante, deber&aacute; presentar fotocopia de cedula tanto del participante como de la persona que lo retirara, m&aacute;s una autorizaci&oacute;n por escrito.</p>
+                    <p align="center"><h2>NOTA IMPORTANTE<br>
+                    Las Inscripciones NO SON REEMBOLSABLES Y/O TRANSFERIBLES.</h2></p>
+                    <br>
+                    <p>Gracias por participar en nuestro evento</p>
+                    <br>
+                    <p>Facebook Puroeventos<br>
+                    Twitter @Puroeventos<br>
+                    Instagram @Puroeventospzo</p>
+                    <p>
+                    {{ inscrito.idevento.idorganizador.contacto }}<br>
+                    {{ inscrito.idevento.idorganizador.telefonocontacto }}<br>
+                    </p>
                 </td>
-            </tr>  
+            </tr>              
         </tbody>
     </table>
 {% endblock %}

@@ -23,4 +23,32 @@ FraterSoft\PiaWebBundle\Entity\Formaspago:
             nullable: true
             unsigned: false
             comment: ''
-    lifecycleCallbacks: {  }
+        icono:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        parametros:
+            type: string
+            nullable: true
+            length: 500
+            fixed: false
+            comment: ''
+        programa:
+            type: string
+            nullable: true
+            length: 500
+            fixed: false
+            comment: ''
+    manyToOne:
+        idmoneda:
+            targetEntity: Moneda
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idmoneda:
+                    referencedColumnName: id
+            orphanRemoval: false
+lifecycleCallbacks: {  }

@@ -54,6 +54,10 @@ class Preciosevento
      */
     private $idevento;
 
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Moneda
+     */
+    private $idmoneda;
 
     /**
      * Get id
@@ -248,4 +252,28 @@ class Preciosevento
     {
         return $this->idevento;
     }
+    
+    /**
+     * Set idmoneda
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Evento $idmoneda
+     * @return Preciosevento
+     */
+    public function setIdmoneda(\FraterSoft\PiaWebBundle\Entity\Moneda $idmoneda = null)
+    {
+        $this->idmoneda = $idmoneda;
+
+        return $this;
+    }
+
+    /**
+     * Get idmoneda
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Evento 
+     */
+    public function getIdmoneda()
+    {
+        return $this->idmoneda;
+    }
+    
 }

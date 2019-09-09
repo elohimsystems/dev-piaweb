@@ -6,6 +6,9 @@ FraterSoft\PiaWebBundle\Entity\Precioscompetencia:
         IDX_624E854A42ED3925:
             columns:
                 - idcompetencia
+        IDX_624E854AD4B68681:
+            columns:
+                - idmoneda
     id:
         id:
             type: bigint
@@ -42,17 +45,19 @@ FraterSoft\PiaWebBundle\Entity\Precioscompetencia:
             nullable: true
             length: 100
             fixed: false
-        imagen:
-            type: string
-            nullable: true
-            length: 300
-            fixed: false
-            comment: 'Se usa para mostrar las imagenes de las opciones que incluyen el precio'
+            comment: ''
         moneda:
             type: string
             nullable: true
             length: 5
-            fixed: false            
+            fixed: false
+            comment: ''
+        imagen:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
     manyToOne:
         idcompetencia:
             targetEntity: Competencia
@@ -61,6 +66,15 @@ FraterSoft\PiaWebBundle\Entity\Precioscompetencia:
             inversedBy: null
             joinColumns:
                 idcompetencia:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idmoneda:
+            targetEntity: Moneda
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idmoneda:
                     referencedColumnName: id
             orphanRemoval: false
     lifecycleCallbacks: {  }

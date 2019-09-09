@@ -17,7 +17,7 @@
                 buttons: [
                     {extend: 'excelHtml5',
                         text: 'Exportar',
-                        title: 'Anulados'
+                        title: 'Listado Anulados {{nombreevento}}'
                     }, 
                     { extend: 'print', text: 'Imprimir' }
                 ],
@@ -55,11 +55,22 @@
             $('#tabs a[href="#tabs-6"]').on("click", function () {
                 $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento,'email':email}) }}')
             });         
+            $("#seccionCargando").hide();        
+            $("#contenido").show();        
         });
     </script>           
 {% endblock %}    
 {% block style %}
 <style type="text/css">
+    #contenido{     
+        display: none;
+    }
+    #seccionCargando > img{
+        width: 50px;
+    }        
+    #seccionCargando{
+        text-align: center;
+    }    
     td,th{
         font-size: 10px;
     }
@@ -87,61 +98,66 @@
 </style>
 {% endblock %}  
 {% block body -%}
-    <div id="evento">{{nombreevento}}</div>
-    <div id="tabs">
-        <ul>
-            <li><a href="#tabs-1">Pre-Inscritos</a></li>
-            <li><a href="#tabs-2">Inscritos</a></li>
-            <li><a href="#tabs-3">Anulados</a></li>
-            <li><a href="#tabs-4">Operaciones TDC</a></li>
-            <li><a href="#tabs-5">Estadisticas</a></li>    
-            <li><a href="#tabs-6">Auditoria</a></li>   
-        </ul>
-        <div id="tabs-1"></div>
-        <div id="tabs-2"></div>  
-        <div id="tabs-4"></div>        
-        <div id="tabs-5"></div>  
-        <div id="tabs-3">
-            <table id="tablaAnulados" class="display row-border hover">
-                <thead>
-                    <tr>
-                        <th>Nro</th>
-                        <th>Competencia</th>                
-                        <th>Cedula</th>                
-                        <th>Apellido</th>
-                        <th>Nombre</th>
-                        <th>Sexo</th>
-                        <th>Equipo</th>
-                        <th>Estado</th>
-                        <th>Categoria</th>
-                        <th>Punto</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for anulada in anuladas %}
+    <div id="seccionCargando">
+        <img src="{{ asset('bundles/fratersoftpiaweb/images/loading.gif') }}">
+    </div>        
+    <div id="contenido">            
+        <div id="evento">{{nombreevento}}</div>
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1">Pre-Inscritos</a></li>
+                <li><a href="#tabs-2">Inscritos</a></li>
+                <li><a href="#tabs-3">Anulados</a></li>
+                <li><a href="#tabs-4">Operaciones TDC</a></li>
+                <li><a href="#tabs-5">Estadisticas</a></li>    
+                <li><a href="#tabs-6">Auditoria</a></li>   
+            </ul>
+            <div id="tabs-1"></div>
+            <div id="tabs-2"></div>  
+            <div id="tabs-4"></div>        
+            <div id="tabs-5"></div>  
+            <div id="tabs-3">
+                <table id="tablaAnulados" class="display row-border hover">
+                    <thead>
                         <tr>
-                            <td>{{ anulada.secuencia }}</a></td>
-                            <td>{{ anulada.idcompetencia.descripcion }}</td>
-                            <td>{{ anulada.idpia.iddocumento }}</td>
-                            <td>{{ anulada.idpia.apellido|upper }}</td>
-                            <td>{{ anulada.idpia.nombre|upper }}</td>
-                            <td>{{ anulada.idpia.sexo }}</td>
-                            <td>{{ anulada.idpia.equipo|upper }}</td>
-                            <td>{{ anulada.idpia.idestado.estado }}</td>
-                            <td>{{ anulada.idcategoria.descripcion }}</td>
-                            <td>{{ anulada.punto }}</td>
-                            <td>
-                                <ul id="icons" class="ui-widget ui-helper-clearfix">      
-                                    <a href="{{ path('inscrito_show', { 'id': anulada.id }) }}">
-                                        <li class="ui-state-default ui-corner-all" title="Ver"><span class="ui-icon ui-icon-search"></span></li>
-                                    </a>
-                                </ul>                                
-                            </td>
+                            <th>Nro</th>
+                            <th>Competencia</th>                
+                            <th>Cedula</th>                
+                            <th>Apellido</th>
+                            <th>Nombre</th>
+                            <th>Sexo</th>
+                            <th>Equipo</th>
+                            <th>Estado</th>
+                            <th>Categoria</th>
+                            <th>Punto</th>
+                            <th>Acciones</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>      
-            <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>        </div>
+                    </thead>
+                    <tbody>
+                        {% for anulada in anuladas %}
+                            <tr>
+                                <td>{{ anulada.secuencia }}</a></td>
+                                <td>{{ anulada.idcompetencia.descripcion }}</td>
+                                <td>{{ anulada.idpia.iddocumento }}</td>
+                                <td>{{ anulada.idpia.apellido|upper }}</td>
+                                <td>{{ anulada.idpia.nombre|upper }}</td>
+                                <td>{{ anulada.idpia.sexo }}</td>
+                                <td>{{ anulada.idpia.equipo|upper }}</td>
+                                <td>{{ anulada.idpia.idestado.estado }}</td>
+                                <td>{{ anulada.idcategoria.descripcion }}</td>
+                                <td>{{ anulada.punto }}</td>
+                                <td>
+                                    <ul id="icons" class="ui-widget ui-helper-clearfix">      
+                                        <a href="{{ path('inscrito_show', { 'id': anulada.id }) }}">
+                                            <li class="ui-state-default ui-corner-all" title="Ver"><span class="ui-icon ui-icon-search"></span></li>
+                                        </a>
+                                    </ul>                                
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>      
+                <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>        </div>
+        </div>
     </div>
 {% endblock %}

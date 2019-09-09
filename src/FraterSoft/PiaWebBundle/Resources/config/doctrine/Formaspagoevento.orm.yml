@@ -27,7 +27,12 @@ FraterSoft\PiaWebBundle\Entity\Formaspagoevento:
         incremento:
             type: float
             nullable: true
-            unsigned: false
+            precision: 10
+            scale: 0
+            comment: 'Indica el incrmento que se aplicara a la tarifa si se selecciona dicha forma de pago. Debe se expresa en en %. Es decir, si se ingresa una cantidad X, el precio se incrmentara en X%'
+        publico:
+            type: boolean
+            nullable: true
             comment: ''
     manyToOne:
         idevento:

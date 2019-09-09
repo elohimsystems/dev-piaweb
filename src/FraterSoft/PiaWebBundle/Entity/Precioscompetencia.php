@@ -55,6 +55,11 @@ class Precioscompetencia
     private $moneda;    
 
     /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Moneda
+     */
+    private $idmoneda;
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -247,4 +252,27 @@ class Precioscompetencia
     {
         return $this->moneda;
     }    
+
+    /**
+     * Set idmoneda
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Moneda $idmoneda
+     * @return Precioscompetencia
+     */
+    public function setIdmoneda(\FraterSoft\PiaWebBundle\Entity\Moneda $idmoneda = null)
+    {
+        $this->idmoneda = $idmoneda;
+    
+        return $this;
+    }
+
+    /**
+     * Get idmoneda
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Moneda 
+     */
+    public function getIdmoneda()
+    {
+        return $this->idmoneda;
+    }
 }

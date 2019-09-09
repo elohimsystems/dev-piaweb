@@ -1,0 +1,211 @@
+{% extends '::base.html.twig' %}
+{% import "FraterSoftPiaWebBundle:Default:FS-TWIG-Library.html.twig" as twiglib %}
+{% if inscrito.idevento.tema is defined and inscrito.idevento.tema is not null %}{% set temastyle=inscrito.idevento.tema.styles %}{% endif %}
+{% block style %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}    
+    <style type="text/css">
+        .contenido{    
+            margin: auto;
+            width: 690px;
+        }        
+        th{
+            text-align: left;
+        }
+        table {
+            margin: auto;
+            border: 0px solid black;
+            width: 400px;
+        }        
+        #titulo{
+            text-align: center;
+            font-size: 24px;
+        }
+        #botonera{
+            text-align: center;
+        }
+
+        #mensajepago{
+            text-align: center;
+        }
+
+        #mensajepagotarjeta{
+            padding-top: 10px;
+            padding-bottom: 10px;
+            text-align:center;
+        }
+        #montorecarga{
+            -webkit-appearance: textarea;
+            border: 1px solid gray;
+            font: medium -moz-fixed;
+            font: -webkit-small-control;
+            height: 16px;
+            padding: 2px 0px 2px 0px;
+            resize: both;
+            width: 198px;
+        }
+        #{{form.vars.id}} > div:nth-child(n+0){
+            margin-top: 5px;
+        }         
+        #{{form.vars.id}} > div:nth-child(n+0) > label{
+            display: inline-block;
+            width: 180px;
+            text-align: left;   
+            vertical-align: middle;
+        }
+        input{
+            vertical-align: middle;
+            width: 196px;
+            margin-left: 0;
+            vertical-align: middle;
+        }
+        #{{form.vars.id}} > div:nth-child(n+0) > select {
+            height: 21px;
+        }
+        #{{form.vars.id}} > div:nth-child(n+0):hover{
+            font-weight: bold;
+        }         
+        #divform{
+            text-align: center;
+            margin-top: 10px;
+        }
+        input.error,select.error,.verimail-error.valid { 
+            border: 1px solid red; 
+            background-color: #ffa07a;
+        }
+        .valid{
+            background-color: white;
+        }
+        label.error {
+            display:none !important; 
+        }
+        #formulario > div:nth-last-child(-n+3) {
+            float: left;
+            width: 48%;
+            text-align: center;
+        }   
+        .group_fields {
+            width: 345px !important;
+            border: 1px solid black;
+            text-align: center !important;
+            font-size: 10px;
+            font-weight: bold;
+            padding:3px;
+        }           
+    </style>
+{% endblock %}  
+{% block body -%}
+    <div class="contenido">    
+        <table id="inscritosgrupo" class="display row-border hover">
+        </table>    
+        <div id="divform">
+        {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+        {{ form_end(form) }}         
+        </div>
+    {{twiglib.mensajetdc()}}
+    </div>
+    <div id="dialogEliminar">
+        ¿Esta seguro que desea ELIMIAR el integrante <strong id="eliminar"></strong> del grupo?
+    </div> 
+    
+{% endblock %}
+{% block javascripts %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':idevento}) }}                
+    <script>
+        $().ready(function () {
+            
+            $("#formulario").validate();
+            
+            var table = tablaDatosArrayObjetos(
+                "inscritosgrupo",                           //nombre de la tabla
+                {{inscripcionesgrupo|json_encode|raw}},     //conjunto de datos a mostrar
+                "INTEGRANTES DEL GRUPO",                     //titulo
+                [//Agregar una columna de botones en la posicion indicada, con los parametros descritos
+                    {
+                        "posicion":7,
+                        "titulo": "Opciones",
+                        "botones":[
+                            {"icon":'ui-icon-search',"title":'Ver Integrante',"onclick":'openVerInscrito(id);'},
+                            {"icon":'ui-icon-closethick',"title":'Eliminar Integrante',"onclick":'openDialogEliminar(id);'},
+                        ],
+                        "alineacion":"dt-right"
+                    }
+                ],
+            );
+
+            $("#mensajepagotarjeta").hide();
+            $("#{{ form.idformapago.vars.id }}").find("[value='0']").remove();
+
+            //Se limpia la forma de pago, para que el usuario decida nuevamente
+            $("#{{ form.idformapago.vars.id }}").val('');
+
+            //Habilita el campo del banco justo antes de enviar el formulario
+            $("form#formulario" ).submit(function( event ) {
+                $("#{{ form.precio.vars.id }}").removeAttr("disabled");
+                if($("#{{ form.idformapago.vars.id }}").val()=='1')
+                    $("#{{ form.idbanco.vars.id }}").removeAttr("disabled");
+                if($("#{{ form.idformapago.vars.id }}").val()=='0'){
+                    $("#{{ form.idbanco.vars.id }}").removeAttr("required");
+                    $("#{{ form.idformapago.vars.id }}").removeAttr("disabled");
+                }                
+            });
+
+            buscaPrecio(
+                    {{idevento}},
+                    {{idcompetencia}},
+                    $('#{{ form.idcategoria.vars.id }}').val(),
+                    $('#formulario'),
+                    {{recargas|json_encode|raw}}
+            );
+            $("#{{ form.idcategoria.vars.id }}").change(function () {
+                buscaPrecio(
+                        {{idevento}},
+                        {{idcompetencia}},
+                        $('#{{ form.idcategoria.vars.id }}').val(),
+                        $('#formulario'),
+                        {{recargas|json_encode|raw}}
+                );
+            });   
+
+            $("#{{ form.idformapago.vars.id }}").change(function () {
+                manejoFormularioPago(
+                        $("#{{ form.precio.vars.id }}"),
+                        $('#formulario'),
+                        {% if incremento[3] is defined %}{{incremento[3]}}{%else%}null{% endif %},
+                        null
+                ); 
+            });
+            
+            $("#dialogEliminar").dialog({
+                autoOpen: false,
+                width: 400,
+                modal: true,
+                buttons: [
+                    {
+                        text: "SI",
+                        click: function () {
+                            var action = "{{ path('inscrito_anular',{'id':'_id_'})}}";
+                            action = action.replace('_id_',$("#dialogEliminar").data('id'));
+                            window.open(action, "_self");                        
+                            $(this).dialog("close");
+                        }
+                    },
+                    {
+                        text: "NO",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                ]             
+            });         
+                                    
+        });
+        function openDialogEliminar(id){
+            var row=$("#inscritosgrupo").DataTable().row(id).data();
+            $("#eliminar").html("");
+            $("#eliminar").append(row.nombre + ' ' + row.apellido);                            
+            $("#dialogEliminar").dialog({ title: "Eliminar Integrante" });
+            $("#dialogEliminar").data('id',row.id).dialog("open");
+        }            
+        
+    </script>
+{% endblock %}

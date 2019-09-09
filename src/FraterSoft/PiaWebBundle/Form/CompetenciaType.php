@@ -23,6 +23,15 @@ class CompetenciaType extends AbstractType
                 'format' => 'dd/MM/y HH:mm',
             ))
             ->add('cupomaximo')
+            ->add('grupal', null, array(
+                'mapped' => false,                
+                'label'=>'Inscripcion Grupal?, ingrese la cantidad de:',
+                'label_attr'=>array('class'=>'group_fields'),
+                'attr'=> array('style'=>'display:none'),
+            ))
+            ->add('grupo', new GrupoType(),array(
+                'label_attr' => array('style'=>'display:none'),
+            ))                
         ;
     }
     

@@ -1,0 +1,54 @@
+{%macro mensajetdc()%}
+    <div id="mensajepagotarjeta">
+        <strong>
+            POR EL USO DE TARJETA DE CREDITO PARA EL PAGO, SE HARA UN <strong style="color:red;">RECARGO DEL <span id="incremento"></span>%</strong> SOBRE EL PRECIO DE LA INSCRIPCION
+        </strong>
+    </div>        
+{%endmacro%}
+
+{%macro textoFormasDePago(idformapago)%}
+    {% if idformapago == 1 %} DEPOSITO
+    {% elseif idformapago == 2 %} TRANFERECIA BS
+    {% elseif idformapago == 3 %} TARJETA DE CREDITO
+    {% elseif idformapago == 4 %} OTROS
+    {% elseif idformapago == 5 %} "TARJETA DE DEBITO"
+    {% elseif idformapago == 6 %} PAYPAL
+    {% elseif idformapago == 7 %} EFECTIVO $
+    {% elseif idformapago == 8 %} TRANSFERENCIA $
+    {% elseif idformapago == 9 %} EFECTIVO BS
+    {% elseif idformapago == 10 %} TRANFERECIA BS
+    {% else %} DEFINIR FDP
+    {% endif %}
+{%endmacro%}
+
+{%macro mensajePago(tipoProceso)%}
+    {% if tipoProceso == 1 %} 
+        <div id='mensajePago'>
+            <p>Esta incripci&oacute;n ser&aacute; confirmada una vez verifiquemos los datos del pago.</p>
+        </div>               
+    {% elseif tipoProceso == 2 %} 
+    {% endif %}
+{%endmacro%}
+
+{%macro imprimirAtributo(atributoevento,valor)%}
+    {% if atributoevento.idatributo.tipodato == 'D' %} {{valor|date('d-m-Y')}} 
+    {% elseif atributoevento.idatributo.tipodato == 'E' %} {{valor}} 
+    {% elseif atributoevento.idatributo.tipodato == 'I' %} 
+        {% if valor %}
+            <a href='{{asset('bundles/fratersoftpiaweb/fine-uploader/files/')~valor}}' target='_blank'>
+            <img id='imagen_{{atributoevento.idatributo.nombre|lower}}' src='{{asset('bundles/fratersoftpiaweb/fine-uploader/files/')~valor}}'/></a>
+        {% else %}
+            <img id='imagen_{{atributoevento.idatributo.nombre|lower}}' src='{{asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}'/>
+        {% endif %}            
+    {% elseif atributoevento.idatributo.tipodato == 'F' %} 
+        {% if valor %}
+            <a href='{{asset('bundles/fratersoftpiaweb/fine-uploader/files/')~valor}}' target='_blank'>
+            <img id='imagen_archivo' src='{{asset('bundles/fratersoftpiaweb/images/pdf-128.png')}}'/></a>
+        {% else %}
+            <img id='imagen_archivo' src='{{asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}'/>
+        {% endif %}            
+    {% elseif atributoevento.idatributo.tipodato == 'S' %} {{valor|upper}}
+    {% elseif atributoevento.idatributo.tipodato == 'O' %} {{valor|upper}}
+    {% elseif atributoevento.idatributo.tipodato == 'N' %} {{valor}}
+    {% endif %}    
+{%endmacro%}

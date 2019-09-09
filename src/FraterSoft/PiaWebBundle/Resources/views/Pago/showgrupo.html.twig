@@ -1,0 +1,113 @@
+{% extends '::base.html.twig' %}
+{% import "FraterSoftPiaWebBundle:Default:FS-TWIG-Library.html.twig" as twiglib %}
+{% block javascripts %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':inscripcionesgrupo[0]['idevento']['id']}) }}
+    <script>
+        $(document).ready(function () {
+            $("#espere" ).hide();   
+            $("#mensajePago" ).show();   
+            $("#titulo" ).append("<h1>Pre-Inscripcion Grupal</h1>");
+            $("#botonera" ).append("<button class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'>" +
+                "<a href='{{ path('competidor_find',{'idevento':inscripcionesgrupo[0]['idevento']['id']}) }}'>Continuar</a></button>");
+            $("#categoria").append("CATEGORIA: {{ inscripcionesgrupo[0].idcategoria.descripcion|upper }}");
+            var camposmostrar=["idpia.iddocumento","idpia.nombre","idpia.apellido"];
+            {% for atributo in atributoscriterios %}
+                camposmostrar.push("idpia.{{ atributo.idatributo.nombre }}")
+            {% endfor %}
+            tablaDatosObjetos(
+                "datosgrupo",                           //nombre de la tabla
+                {{inscripcionesgrupo|json_encode|raw}},     //conjunto de datos a mostrar
+                camposmostrar,
+                "Integrantes del Grupo",                     //titulo
+                [//Agregar una columna de botones en la posicion indicada, con los parametros descritos
+                    {
+                        "posicion":2,
+                        "titulo": "Opciones",
+                        "botones":[
+                            {"icon":'ui-icon-search',"title":'Ver Integrante',"onclick":'openVerInscrito(id);'},
+                        ],
+                        "alineacion":"dt-right"
+                    }
+                ],
+            );
+
+            
+            var dataSet = [
+                ["Total Pagado","{{pago.monto}}"],
+                ["Forma de Pago","{{twiglib.textoFormasDePago(pago.tipo)|trim}}"],
+                ["Banco de donde pago","{{pago.idbanco.nombre}}"],
+                ["Referencia","{{pago.referencia}}"],
+            ]
+            $('#datospago').DataTable({
+                dom: "t",
+                ordering: false,
+                data: dataSet,
+                columns: [
+                    { title: "" },
+                    { title: "" },
+                ],       
+                "columnDefs": [ //centra el contenido de la columna
+                    {"className": "dt-right", "targets":0,width:"50%"},
+                    {"className": "dt-left", "targets":1,width:"50%"},
+                ],  
+            });                                
+            $("#datospago").append("<caption><b>Datos de Pago</b></caption>");
+        });
+    </script>           
+{% endblock %}     
+
+{% block style %}
+    <style type="text/css">  
+        #espere{
+            margin: auto;            
+            text-align: center;
+            font-size: 16px;
+            width: 400px
+        }
+        #botonera{
+            margin-top: 30px;
+            text-align: center;
+        }              
+        .ui-button{
+            padding: 9px;
+        }
+        #datospago_wrapper{
+            width: 50%;
+            margin: auto;
+            padding-top: 15px;
+        }
+        #datosgrupo_wrapper{
+            width: 80%;
+            margin: auto;
+        }
+        #mensajePago{
+            margin: auto;            
+            text-align: center;
+            font-size: 16px;
+            width: 400px;
+            display: none;
+        }            
+        #categoria{
+            padding: 15px;
+            margin: auto;            
+            text-align: center;
+            font-size: 20px;
+        }            
+        .dt-right{
+            font-weight: bold;
+        }
+    </style>
+{% endblock %} 
+{% block body -%}
+    <p id="espere">
+        <img width="50px" src="{{ asset('bundles/fratersoftpiaweb/images/') ~ 'loading.gif' }}"><br>
+        Espera mientras se procesa la operacion...
+    </p>
+    <div id="titulo" align="center"></div>
+    <table id="datosgrupo" class="display compact"></table>
+    <div id="categoria"></div>
+    <table id="datospago" class="display compact"></table>
+    {{twiglib.mensajePago(1)}}    
+    <div id="botonera">
+    </div>    
+{% endblock %}

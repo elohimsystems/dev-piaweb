@@ -1,0 +1,38 @@
+FraterSoft\PiaWebBundle\Entity\Grupo:
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\GrupoRepository        
+    type: entity
+    table: piaaccess.tmgrupos
+    indexes:
+        IDX_64D40FFB233BA6A9:
+            columns:
+                - idevento
+        IDX_64D40FFB42ED3925:
+            columns:
+                - idcompetencia
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        integrantes:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        secuencia:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+    oneToOne:
+        idcompetencia:
+            targetEntity: Competencia
+            joinColumn:
+                name: idcompetencia
+                referencedColumnName: id       
+    lifecycleCallbacks: {  }

@@ -19,21 +19,21 @@ class InscritoType extends AbstractType
             ->add('idevento')
             ->add('numero')
             ->add('idpia', new CompetidorType(),array(
-                'label' => ' ',
+                'label' => '',
             ))
             ->add('equipo','hidden')
             ->add('idcompetencia')
             ->add('idcategoria')
-            ->add('info',null,array(
-                'mapped' => false,
-                'label'=>'INFORMACION DE PAGO',
-                'label_attr'=>array('class'=>'group_fields'),
-                'attr'=> array('style'=>'display:none'),
-            ))
-            ->add('precio')
-            ->add('idpago', new PagoType(), array(
-                'label'=>false,
-            ))
+//            ->add('info',null,array(
+//                'mapped' => false,
+//                'label'=>'INFORMACION DE PAGO',
+//                'label_attr'=>array('class'=>'group_fields'),
+//                'attr'=> array('style'=>'display:none'),
+//            ))
+//            ->add('precio')
+//            ->add('idpago', new PagoType(), array(
+//                'label'=>false,
+//            ))
         ;
     }
     

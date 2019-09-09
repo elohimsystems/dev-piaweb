@@ -19,6 +19,14 @@ class commonPIAClass extends Controller
 
     const NUMERACION_NO_CONFIGURADA = -1;
     const NUMERACIONEXTERNA_NO_CONFIGURADA = -2;
+    const CONFIGURACION_GRUPO_TOTAL = 1;
+    const CONFIGURACION_GRUPO_PARCIAL = 2;
+    const CONFIGURACION_GRUPO_NINGUNA = 0;
+    const RELACION_ONE_TO_ONE = 1;
+    const RELACION_MANY_TO_ONE = 2;
+    const RELACION_MANY_TO_MANY = 8;
+    const ESTATUS_INSCRIPCION_ACTIVA = 1;
+    const ESTATUS_INSCRIPCION_ANULADA = 0;
     
     //Oculta los campos que no estan configurados en la base de datos    
     public function renombraLabels($idevento, $form) {
@@ -223,14 +231,16 @@ class commonPIAClass extends Controller
                 $parametrok = false;
                 foreach ($reglas as $regla) {
                     $parametrok = false;
-                    if ($regla->getTipo() == 'R') {
-                        if ($regla->getValor1() <= $criterios[strtolower($regla->getAtributo())] &&
-                                $regla->getValor2() >= $criterios[strtolower($regla->getAtributo())])
-                            $parametrok = true;
-                    }
-                    else {
-                        if ($regla->getValor1() == $criterios[strtolower($regla->getAtributo())])
-                            $parametrok = true;
+                    switch($regla->getTipo()){
+                        case '[]':
+                            if ($regla->getValor1() <= $criterios[strtolower($regla->getAtributo())] &&
+                                    $regla->getValor2() >= $criterios[strtolower($regla->getAtributo())])
+                                $parametrok = true;
+                            break;
+                        case '=':
+                            if ($regla->getValor1() == $criterios[strtolower($regla->getAtributo())])
+                                $parametrok = true;
+                            break;
                     }
                     if (!$parametrok)
                         break;
@@ -245,8 +255,66 @@ class commonPIAClass extends Controller
             return null;
         }
     }    
+
+    public function seleccionaCategoriasGrupo($idevento,$idcompetencia,$idgrupo) {
+        $criterios = array();
+        $em = $this->getDoctrine()->getManager();
+        $atributoscriterios = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')->atributosCriterios($idevento);
+        if ($atributoscriterios) {
+
+            $categoriasselect = new ArrayCollection();
+
+            $categorias = $em->getRepository('FraterSoftPiaWebBundle:Categoria')->listaCategoriasGrupos($idevento,$idcompetencia);
+            
+            foreach ($categorias as $categoria) {
+                $reglas = $em->getRepository('FraterSoftPiaWebBundle:CategoriaReglas')->findBy(array(
+                    'idcategoria' => $categoria->getId()
+                ));
+                $parametrok = false;
+                foreach ($reglas as $regla) {
+                    $parametrok = false;
+                    //print_r($categoria->getDescripcion());
+                    switch($regla->getAccion()){
+                        case 1: // Accion sumar
+                            $suma = $em->getRepository('FraterSoftPiaWebBundle:CategoriaReglas')->SumarAccion(array(
+                                'idevento' => $idevento,
+                                'idgrupo' => $idgrupo,
+                                'recla' => $regla,
+                            ));
+                            switch($regla->getTipo()){
+                                case '[]':
+                                    if ($regla->getValor1() <= $suma &&
+                                            $regla->getValor2() >= $suma)
+                                        $parametrok = true;
+                                    break;
+                                case '=':
+                                    if ($regla->getValor1() == $suma)
+                                        $parametrok = true;
+                                    break;                                    
+                            }
+                            break;
+                        case 2: // Accion contar
+                            $atributo=$em->getRepository('FraterSoftPiaWebBundle:Atributo')->findOneBy(array('nombre'=>strtolower($regla->getAtributo())));
+                            $cuenta = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->ContarReglaGrupo($idevento,$idgrupo,$regla,$atributo);
+                            //echo('cuenta:');print_r($cuenta[0]['Cantidad']);print_r(' cantidad:'.$regla->getCantidad());echo("<br>");
+                            if ($regla->getCantidad() == $cuenta[0]['Cantidad'])
+                                $parametrok = true;
+                            break;
+                    }
+                }
+                if ($parametrok) {
+                    $categoriasselect->add($categoria);
+                    $parametrok = false;
+                    break; //rompo el for de categorias
+                }
+            }
+            return $categoriasselect;
+        } else {
+            return null;
+        }
+    }    
     
-    public function buscarPrecio($idevento, $idcompetencia, $idcategoria) {
+    public function buscarPrecio($idevento, $idcompetencia, $idcategoria,$idmoneda=null) {
         $precioevento = new Preciosevento();
         $preciocompetencia = new Precioscompetencia();
         $preciocategoria = new Precioscategoria();
@@ -257,13 +325,13 @@ class commonPIAClass extends Controller
 
         if($idcategoria)
             $precio = $em->getRepository('FraterSoftPiaWebBundle:Precioscategoria')
-                    ->BuscaPreciosCategoria($idcategoria);            
+                    ->BuscaPreciosCategoria($idcategoria,$idmoneda);
         if($idcompetencia && count($precio)==0)
             $precio = $em->getRepository('FraterSoftPiaWebBundle:Precioscompetencia')
-                    ->BuscaPreciosCompetencia($idcompetencia);
+                    ->BuscaPreciosCompetencia($idcompetencia,$idmoneda);
         if(count($precio)==0)
             $precio = $em->getRepository('FraterSoftPiaWebBundle:Preciosevento')
-                    ->BuscaPreciosEvento($idevento);
+                    ->BuscaPreciosEvento($idevento,$idmoneda);
         return $precio;
     }   
     
@@ -334,6 +402,60 @@ class commonPIAClass extends Controller
         return($array_objeto);
     }
     
+    /*
+     * Funcion recursiva para transformar los datos de una entidad 1 a 1 a un array de datos, 
+     * la funcion solo recorre dos niveles de relacion 1 a 1, el base de la entidad y el 
+     * siguiente segun la relacion que 1 a 1 que exista. Si consigue relaciones mucho a uno
+     * solo devuelve el valor del campo id de la relacion.
+     */
+    public function EntitiesToArray($rows,$campos){
+        $accessor = PropertyAccess::createPropertyAccessor();  
+        $arrayrows=array();
+        if(!is_array($rows)){
+            throw $this->createNotFoundException('Parametro rows no es un array');
+            return(null);
+        }
+        foreach($rows as $i=>$row){
+            $arrayrow=array();
+            foreach($campos as $campo => $valor){
+//                print_r($campo.":");print_r($valor);echo("<br>");echo("<br>");
+                if($campo!="entity")
+                    switch(true){
+                        case $valor["constraint"]==null || $valor["constraint"]=="primarykey":
+                            switch(true){
+                                case $valor["tipo"]=="bigint":
+                                    $arrayrow[$campo]=intval($accessor->getValue($row,$campo));
+                                    break;
+                                case $valor["tipo"]=="datetime":
+                                    $datetime=$accessor->getValue($row,$campo);
+                                    if(!is_null($datetime))
+                                        $arrayrow[$campo]=$datetime->format('Y-m-d H:i:s');
+                                    break;
+                                default:
+                                    $arrayrow[$campo]=$accessor->getValue($row,$campo);
+                            }
+                            break;
+                        case $valor["constraint"]=="foreingkey":
+//                            print_r($campo.":");print_r($valor);echo("<br>");
+                            switch(true){
+                                case $valor["tipoRelacion"]==$this::RELACION_ONE_TO_ONE:
+                                    $arrayrow[$campo]=is_null($accessor->getValue($row,$campo))?null:intval($accessor->getValue($row,$campo)->getId());
+                                    break;
+                                case $valor["tipoRelacion"]==$this::RELACION_MANY_TO_ONE:
+                                    if($accessor->getValue($row,$campo))
+                                        $arrayrow[$campo]=is_null($valor["campos"])?intval($accessor->getValue($row,$campo)->getId()):$this->EntitiesToArray([$accessor->getValue($row,$campo)],$valor["campos"]);
+                                    else
+                                        $arrayrow[$campo]=null;
+                                    break;
+                            }
+                            break;
+                    }
+            }
+            $arrayrows[$i]=$arrayrow;
+        }
+        return($arrayrows);
+    }
+    
     public function getErrorMessages(\Symfony\Component\Form\Form $form) {
         $errors = array();
 
@@ -402,7 +524,9 @@ class commonPIAClass extends Controller
      * longitd del mismo. Si el campo es una relacion a una entidad, el tipo contendra 
      * la ruta de ubicacion de la Entidad Acme\Bundle\Entity\Clase
      */
-    public function getCampos($em, $entidad){
+    public function getCampos($em, $entidad,$nivel=null){
+        if($nivel==null) $nivel=0;
+        if($nivel==2) return (null);
         $campos = array();
         $index = 0;
         $metadata = $em->getClassMetadata('FraterSoft\PiaWebBundle\Entity\\' . $entidad);
@@ -417,18 +541,10 @@ class commonPIAClass extends Controller
                 'longitud'=>null,
             );
         }
-        $AssociationNames=$em->getClassMetadata('FraterSoft\PiaWebBundle\Entity\\' . $entidad)->getAssociationNames();
-        /** Se llena el array con los campos foraneos */
-        for($i=0;$i<count($AssociationNames);$i++){
-            $campos[$AssociationNames[$i]] = array(
-                'nombre'=>$AssociationNames[$i],
-                'tipo'=>$metadata->getAssociationMapping($AssociationNames[$i])['targetEntity'],
-                'constraint'=>'foreingkey',
-                'longitud'=>null,
-            );
-        }
+
         $FieldNames=$em->getClassMetadata('FraterSoft\PiaWebBundle\Entity\\' . $entidad)->getColumnNames();
         //Se llena el array con el restp de los campos
+        
         for($i=count($IdentifierColumnNames);$i<count($FieldNames);$i++){
             $campos[$FieldNames[$i]] = array(
                 'nombre'=>$FieldNames[$i],
@@ -437,6 +553,21 @@ class commonPIAClass extends Controller
                 'longitud'=>$metadata->getTypeOfColumn($FieldNames[$i])=='string'?$metadata->getFieldMapping($FieldNames[$i])['length']:null,
             );
         }        
+        
+        $AssociationNames=$em->getClassMetadata('FraterSoft\PiaWebBundle\Entity\\' . $entidad)->getAssociationNames();        
+        /** Se llena el array con los campos foraneos */
+        for($i=0;$i<count($AssociationNames);$i++){
+                $targetEntity=$metadata->getAssociationMapping($AssociationNames[$i])['targetEntity'];
+                $campos[$AssociationNames[$i]] = array(
+                    'nombre'=>$AssociationNames[$i],
+                    'tipo'=>$metadata->getAssociationMapping($AssociationNames[$i])['targetEntity'],
+                    'constraint'=>'foreingkey',
+                    'longitud'=>null,
+                    'tipoRelacion'=>$metadata->getAssociationMapping($AssociationNames[$i])['type'],
+                    'campos'=>$this->getCampos($em,substr($targetEntity,strlen('FraterSoft\PiaWebBundle\Entity\\'),strlen($targetEntity)),$nivel+1)
+                );
+        }
+        
         return($campos);
     }
     public function addBotonRegresar($form,$url){
@@ -447,25 +578,35 @@ class commonPIAClass extends Controller
         ));
     }
     
-    public function addFormasPago($formulario,$evento){
+    public function addFormasPago($formulario,$evento,$idmoneda=null){
         //Agrega las formas de pago del evento
         $em = $this->getDoctrine()->getManager();
         $formasdepagoarray = array();
         $formasdepago = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')
-                ->listar($evento->getId());
+                ->listarPublicos($evento->getId(),$idmoneda);
         foreach ($formasdepago as $formadepago) {
-            if ($formadepago['nombre']) {
-                $formasdepagoarray[$formadepago['id']] = $formadepago['nombre'];
+            if ($formadepago->getIdFormapago()->getNombre()) {
+                $formasdepagoarray[$formadepago->getIdFormapago()->getId()] = $formadepago->getIdFormapago()->getNombre();
             }
         }
-        if ($formasdepagoarray)
-            $formulario
-                    ->add('tipo', 'choice', array(
-                        'label' => 'Forma de Pago',
-                        'choices' => $formasdepagoarray,
-                        'required' => true,
-                        'empty_value' => 'Seleccione Forma de Pago',
-            ));
+        if ($formasdepagoarray){
+            if(count($formasdepagoarray)==1)
+                $formulario
+                        ->add('idformapago', 'choice', array(
+                            'label' => 'Forma de Pago',
+                            'choices' => $formasdepagoarray,
+                            'required' => true,
+                ));
+            else
+                $formulario
+                        ->add('idformapago', 'choice', array(
+                            'label' => 'Forma de Pago',
+                            'choices' => $formasdepagoarray,
+                            'required' => true,
+                            'empty_value' => 'Seleccione Forma de Pago',
+                ));
+            return($formasdepago);
+        }
         else {
             return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                         'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
@@ -474,6 +615,12 @@ class commonPIAClass extends Controller
             ));            
         }        
     }      
+    
+    public function clearFormPago($formulario){
+        foreach ($formulario->all() as $child) {
+            $formulario->remove($child->getName());
+        }
+    }
     
     public function seleccionaCategoriasCampeonato($idcampeonato, $competidor) {
         $criterios = array();
@@ -547,4 +694,156 @@ class commonPIAClass extends Controller
             )
         );
     }
+    
+    public function getStrSqlCampos($idevento,$campos){
+        $em = $this->getDoctrine()->getManager();
+        $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')->arrayEtiquetasAtributos($idevento,$campos);
+        $strcampos="";
+        $cantidad_atributos=count($atributos);
+        $i=1;
+        foreach($atributos as $atributo){
+            if(is_null($atributo['etiqueta']))
+                $strcampos.="co." . $atributo['atributo'] . ",";
+            else
+                $strcampos.="co." . $atributo['atributo'] . ' as ' . $atributo['etiqueta'] . ",";
+        }
+        return($strcampos);
+    }
+    
+    public function getStrSqlCriterios($idevento){
+        $atributoscriterios = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')->atributosCriterios($idevento);
+        $criterios="";
+        $cantidad_criterios=count($atributoscriterios);
+        $i=1;
+        foreach ($atributoscriterios as $atruibutocriterio) {
+            $criterios.= "co." . $atruibutocriterio->getidatributo()->getNombre();
+            $criterios.=($i++<$cantidad_criterios)?",":"";
+        }
+        return($criterios);
+    }
+    
+    public function EnviarConfirmacion($inscritos,$em){
+        //Envia los correo a los inscritos conciliados
+        $num_notifiaciones = 0;        
+        foreach ($inscritos as $inscrito) {
+
+            $emails = array();
+            if(!is_null($inscrito->getIdpia()->getEmail()) && filter_var($inscrito->getIdpia()->getEmail(), FILTER_VALIDATE_EMAIL))
+                array_push($emails,$inscrito->getIdpia()->getEmail());
+            if(!is_null($inscrito->getIdpia()->getEmailpersonal()) && filter_var($inscrito->getIdpia()->getEmailpersonal(), FILTER_VALIDATE_EMAIL))
+                array_push($emails,$inscrito->getIdpia()->getEmailpersonal()); 
+            
+            //if($inscrito->getNotificado()!=true){ //OJO MOSCA, VALIDAR ESTO PARA QUE NO QUE CONSUMAN LOS RECURSOS AL REENVIAR MUCHAS VECES
+            if(count($emails)>=1){
+                $subject = is_null($inscrito->getNumero())?
+                        "Confirmacion de Inscripcion " . $inscrito->getIdevento()->getNombre():
+                        "Dorsal Numero " . $inscrito->getNumero() . ". " . $inscrito->getIdevento()->getNombre();            
+                $mailer = $this->get('app.mail_controller');
+                $mailer->enviarConfirmacion(
+                        $subject, 
+                        $emails,
+                        $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailok.html.twig', array('inscrito' => $inscrito))
+                );
+                $num_notifiaciones++;
+                $inscrito->setNotificado(true);
+            }
+        }
+        $em->flush();
+        return($num_notifiaciones);
+    }
+    
+    public function EnviarConfirmacionPreinscritos($inscritos,$em){
+        //Envia los correo a los inscritos conciliados
+        $num_notifiaciones = 0;        
+        if($inscritos[0]->getIdevento()->getProceso()==1)
+            $templateemail='FraterSoftPiaWebBundle:Inscrito:email.html.twig';
+        else{
+            $this->MonedasEvento($em,$default_moneda,$inscritos[0]->getIdevento());
+            $templateemail='FraterSoftPiaWebBundle:Inscrito:emailproceso2.html.twig';
+        }
+        foreach ($inscritos as $inscrito) {
+            if($inscrito->getIdevento()->getProceso()==1)
+                $parametros=array('entity' => $inscrito);
+            else{
+                $precio=$this->buscarPrecio(
+                            $inscrito->getIdevento()->getid(), 
+                            $inscrito->getIdcompetencia()->getid(), 
+                            $inscrito->getIdcategoria()->getid(),
+                            $default_moneda
+                        );                        
+                $parametros=array('entity' => $inscrito,'precios'=>$precio);
+            }
+            $emails = array();
+            if(!is_null($inscrito->getIdpia()->getEmail()) && filter_var($inscrito->getIdpia()->getEmail(), FILTER_VALIDATE_EMAIL))
+                array_push($emails,$inscrito->getIdpia()->getEmail());
+            if(!is_null($inscrito->getIdpia()->getEmailpersonal()) && filter_var($inscrito->getIdpia()->getEmailpersonal(), FILTER_VALIDATE_EMAIL))
+                array_push($emails,$inscrito->getIdpia()->getEmailpersonal()); 
+            
+            //if($inscrito->getNotificado()!=true){ //OJO MOSCA, VALIDAR ESTO PARA QUE NO QUE CONSUMAN LOS RECURSOS AL REENVIAR MUCHAS VECES
+            if(count($emails)>=1){
+                $subject = is_null($inscrito->getNumero())?
+                        "Confirmacion de Pre-Inscripcion " . $inscrito->getIdevento()->getNombre():
+                        "Dorsal Numero " . $inscrito->getNumero() . ". " . $inscrito->getIdevento()->getNombre();            
+                $mailer = $this->get('app.mail_controller');
+                $mailer->enviarPreinscripcion(
+                        $subject, 
+                        $emails,
+                        $this->renderView($templateemail, $parametros)
+                );
+                $num_notifiaciones++;
+                $inscrito->setNotificado(true);
+            }
+        }
+        $em->flush();
+        return($num_notifiaciones);
+    }
+
+    public function MonedasEvento($em,&$default_moneda,$evento){
+        $monedas = $em->getRepository('FraterSoftPiaWebBundle:Moneda')->MonedasEnEvento($evento->getId());
+        $arraymonedas=array();
+        //print_r();
+        foreach ($monedas as $moneda){
+            if($moneda['id']==$evento->getIdorganizador()->getIdmoneda()->getId())
+                $default_moneda=$moneda['id'];
+            $arraymonedas[$moneda['id']]=$moneda['nombre'];
+        }        
+        return($arraymonedas);
+    }
+    
+    public function preciosArray(&$emptyvalue_precio,$idevento,$idcompetencia){
+        $preciosarray = array();
+        $precios = $this->buscarPrecio($idevento, $idcompetencia, null);
+        foreach ($precios as $precio) {
+            $preciosarray[$precio['precio']] = $precio['texto'].' '.$precio['moneda'].' '.$precio['precio'];
+        }
+        $emptyvalue_precio = (count($preciosarray) > 1)?'Seleccione un Precio':null;
+        return($preciosarray);
+    }
+
+    public function ValidarEmail($email,$emailpersonal){
+        $emails = array();
+        if(!is_null($email) && filter_var($email, FILTER_VALIDATE_EMAIL))
+            array_push($emails,$email);
+        if(!is_null($emailpersonal) && filter_var($emailpersonal, FILTER_VALIDATE_EMAIL))
+            array_push($emails,$emailpersonal);
+        return($emails);
+    }
+    
+    public function buscarFormasPago($idevento,$idmoneda){
+        //Agrega las formas de pago del evento
+        $em = $this->getDoctrine()->getManager();
+        $formasdepagoarray = array();
+        $formasdepago = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')
+                ->listarPublicos($idevento,$idmoneda);
+        foreach ($formasdepago as $formadepago) {
+            if ($formadepago->getIdFormapago()->getNombre()) {
+                $formasdepagoarray[$formadepago->getIdFormapago()->getId()] = [
+                    'nombre'=>$formadepago->getIdFormapago()->getNombre(),
+                    'parametros'=>$formadepago->getIdFormapago()->getParametros()
+                ];
+            }
+        }
+        return($formasdepagoarray);
+    }      
+    
 }

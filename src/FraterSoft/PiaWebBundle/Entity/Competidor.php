@@ -180,6 +180,12 @@ class Competidor
     private $seguromedico;
 
     /**
+     * @var string
+     */
+    private $localidad;
+
+    
+    /**
      * to string
      *
      * @return string 
@@ -1079,4 +1085,26 @@ class Competidor
         return $this->seguromedico;
     }
     
+    /**
+     * Set localidad
+     *
+     * @param string $localidad
+     * @return Competidor
+     */
+    public function setLocalidad($localidad)
+    {
+        $this->localidad = $localidad;
+    
+        return $this;
+    }
+
+    /**
+     * Get localidad
+     *
+     * @return string 
+     */
+    public function getLocalidad()
+    {
+        return $this->localidad;
+    }
 }
