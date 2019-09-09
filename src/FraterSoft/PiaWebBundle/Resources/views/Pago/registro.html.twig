@@ -1,0 +1,104 @@
+{% extends '::base.html.twig' %}
+{% if evento.tema is defined and evento.tema is not null %}{% set temastyle=evento.tema.styles %}{% endif %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+            $('#tablaReporte').DataTable({
+                dom: "t",
+                ordering: false,
+                pageLength: 30,
+                columns: [
+                    { title: "" },
+                    { title: "" },
+                ],       
+                "columnDefs": [ //centra el contenido de la columna
+                    {"className": "dt-right", "targets":0},
+                    {"className": "dt-left", "targets":1},
+                ],  
+            });
+            $("#tablaReporte").append("<caption><b>INFORMACION DE INSCRIPCION</b></caption>");
+            $('#tablaPago').DataTable({
+                dom: "t",
+                ordering: false,
+                pageLength: 30,
+                columns: [
+                    { title: "" },
+                    { title: "" },
+                ],       
+                "columnDefs": [ //centra el contenido de la columna
+                    {"className": "dt-right", "targets":0},
+                    {"className": "dt-left", "targets":1},
+                ],  
+            });
+            $("#tablaPago").append("<caption><b>INFORMACION DE PAGO</b></caption>");
+        });
+    </script>           
+{% endblock %} 
+{% block style %}
+<style type="text/css">
+    div.container
+    {     
+        width: 400px;
+        margin: auto;
+        text-align: center;
+    }    
+    #boton{
+        text-align: center;
+    }
+    #mensaje{
+        margin: auto;            
+        text-align: center;
+        font-size: 16px;
+    }    
+</style>
+{% endblock %} 
+{% block body -%}
+    <div class="container">
+    <table id="tablaReporte" class="display compact">
+        <tbody>          
+            <tr><th>Competencia</th><td>{{ pago.idinscrito.idcompetencia.descripcion }}</td></tr>
+            {%if pago.idinscrito.numero is not null%}<tr><th>Numero</th><td>{{ pago.idinscrito.numero }}</td></tr>{%endif%}
+            {% for atributo in atributos %}
+            {%if atributo.idatributo.tipodato=='D' %}
+            <tr><th>{% if atributo.etiqueta is null %}{{ atributo.idatributo.nombre|title }}{% else %}{{atributo.etiqueta}}{% endif %}</th><td>{{ attribute(pago.idinscrito.idpia,'get' ~ atributo.idatributo.nombre|lower)|date('d-m-Y') }}</td></tr>
+            {%elseif atributo.idatributo.tipodato=='E' %}
+            <tr><th>{% if atributo.etiqueta is null %}{{ atributo.idatributo.nombre|title }}{% else %}{{atributo.etiqueta}}{% endif %}</th><td>{{ attribute(pago.idinscrito.idpia.idestado,'nombre') }}</tr>
+            {%else%}
+            <tr><th>{% if atributo.etiqueta is null %}{{ atributo.idatributo.nombre|title }}{% else %}{{atributo.etiqueta}}{% endif %}</th><td>{{ attribute(pago.idinscrito.idpia,'get' ~ atributo.idatributo.nombre|lower) }}</td></tr>
+            {%endif%}
+            {%endfor%}
+            <tr><th>Categoria</th><td>{{ pago.idinscrito.idcategoria.descripcion }}</td></tr> 
+            <tr><th>Fecha y Hora</th><td>{{ pago.idinscrito.fechahora.timestamp|date('d-m-Y H:i:s') }}</td></tr>                        
+        </tbody>
+    </table><p>
+    <table id="tablaPago" class="display compact">
+        <tbody>          
+            <tr><th>Forma de Pago</th><td>{{ pago.idformapago.nombre }}</td></tr>
+            <tr><th>Precio</th><td>{{ pago.precio }}</td></tr>
+            {% for parametro in parametros %}
+            {% if attribute(pago,'get' ~ parametro.campo).timestamp is defined %}
+            <tr><th>{{ parametro.etiqueta }}</th><td>{{ attribute(pago,'get' ~ parametro.campo)|date('d-m-Y') }}</td></tr>
+            {% elseif parametro.campo=='idcuenta' %}
+            <tr><th>{{ parametro.etiqueta }}</th><td>{{ attribute(pago.idcuenta.idbanco,'getNombre') }}</td></tr>
+            {%else%}
+            <tr><th>{{ parametro.etiqueta }}</th><td>{{ attribute(pago,'get' ~ parametro.campo) }}</td></tr>
+            {%endif%}
+            {% endfor %}
+        </tbody>
+    </table>
+    <div id='mensaje'>
+        {% if pago.idinscrito.idevento.proceso == 1 %}
+        <p>Su incripci&oacute;n ser&aacute; certificada una vez verifiquemos los datos del pago.</p>
+        <p>Correo de confirmaci&oacute;n de pre-inscripci&oacute;n enviado satisfactoriamente, revise la bandeja de
+        correos no deseados o spams, en caso de no ubicarlo en la bandeja de correos recibidos</p>
+        {% endif %}
+    </div>               
+    <div id='boton'><p>
+    <a href="{{ path('inscrito_lista_preinscritos', { 'idevento': pago.idinscrito.idevento.id,'email':email }) }}">            
+        <button class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only">
+            Regresar
+        </button> 
+    </a></p>
+    </div>    
+    </div>
+{% endblock %}

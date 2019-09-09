@@ -1,10 +1,12 @@
 {% extends '::base.html.twig' %}
-{%macro opeart(operador_art)%}
+{% import "FraterSoftPiaWebBundle:Default:FS-TWIG-Library.html.twig" as twiglib %}
+    
+{#{%macro opeart(operador_art)%}
     {%if(operador_art=='>')%}>{%elseif(operador_art=='<')%}<{%elseif(operador_art=='>=')%}>={%elseif(operador_art=='<=')%}<={%elseif(operador_art=='==')%}=={%elseif(operador_art=='!=')%}!={%endif%}
 {%endmacro%}
 {%macro opelog(operador_log)%}
     {%if(operador_log=='&&')%}&&{%elseif(operador_log=='||')%}||{%elseif(operador_log=='!')%}!{%endif%}
-{%endmacro%}
+{%endmacro%}#}
 {% if entity.idevento.tema is defined and entity.idevento.tema is not null %}{% set temastyle=entity.idevento.tema.styles %}{% endif %}
 {% block stylesheets %}
     <link href="{{asset('bundles/fratersoftpiaweb/fine-uploader/fine-uploader.min.css')}}" rel="stylesheet" type="text/css"/>
@@ -13,10 +15,220 @@
     <script src="{{asset('bundles/fratersoftpiaweb/fine-uploader/fine-uploader.min.js')}}" type="text/javascript"></script>
 {% endblock %}
 
+{% block style %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}
+    <style type="text/css">        
+        
+        .contenido{    
+            margin: auto;
+            width: 395px;
+        }
+                
+        #namefile_fileiddocumento,
+        #namefile_foto,
+        #namefile_filepartidanacimiento,
+        #namefile_filecertificadodeportivo{
+            width: 145px !important; 
+        }
+
+        #btn_foto,
+        #btn_fileiddocumento,
+        #btn_filepartidanacimiento,
+        #btn_filecertificadodeportivo{
+            height: 21px;
+            width: 31px;
+        }     
+        #btn_foto > span,
+        #btn_fileiddocumento > span,
+        #btn_filepartidanacimiento > span,
+        #btn_filecertificadodeportivo > span{
+            padding-bottom: 0;
+            padding-top: 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        #icon-foto,
+        #icon-fileiddocumento,
+        #icon-filepartidanacimiento,
+        #icon-filecertificadodeportivo{
+            vertical-align: middle;
+        }
+        #imagen_foto,
+        #imagen_fileiddocumento,
+        #imagen_filepartidanacimiento,
+        #imagen_filecertificadodeportivo{
+            height: 20px;
+            vertical-align: middle;
+            padding-right: 2px;
+        }
+
+        /******************************************************/
+        /*Configura el estilo del formulario de inscripciones */
+        /******************************************************/
+        #formulario > div:nth-child(1) {
+            display:none;
+        }
+        #formulario > div:nth-child(2):hover{
+            font-weight: bold;
+        }
+        #formulario > div:nth-child(6):hover{
+            font-weight: bold;
+        }  
+        #formulario > div:nth-child(7):hover{
+            font-weight: bold;
+        }          
+        #formulario > div:nth-child(3){
+            margin: 0px;
+        }
+        #formulario > div:nth-child(3) > label{
+            display:none;
+        }
+        #formulario > div:nth-child(n+0) > label{
+            width: 180px;
+            text-transform: capitalize;
+        }
+        /***********************************************************************
+        * Da formato al formulario del competidor *
+        ***********************************************************************/
+        #{{form.idpia.vars.id}} > div:nth-child(n+0){
+            margin-top: 5px;
+        }         
+        #{{form.idpia.vars.id}} > div:nth-child(n+0) > label{
+            display: inline-block;
+            width: 180px;
+            text-align: left;   
+            vertical-align: middle;
+            text-transform: capitalize;
+        }
+        #{{form.idpia.vars.id}} > div:nth-child(n+0) > input[type="checkbox"]{
+            vertical-align: middle;
+            margin-left: 0;
+        }
+        #{{form.idpia.vars.id}} > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea{
+            vertical-align: middle;
+            width: 196px;
+        }
+        #{{form.idpia.vars.id}} > div:nth-child(n+0) > select {
+            height: 21px;
+        }
+        #{{form.idpia.vars.id}} > div:nth-child(n+0) > label[class="error"]{
+            width: 20px;
+        }
+        #{{form.idpia.vars.id}} > div:nth-child(n+0):hover{
+            font-weight: bold;
+        }         
+        
+        {%if form.idpago is defined %}
+        /****************************************************/
+        /*  Configura el estilo del subformulario pago ******/
+        /****************************************************/
+        #{{form.idpago.vars.id}} > div:nth-child(1){
+            /*display: none;*/
+        }         
+        #{{form.idpago.vars.id}} > div:nth-child(n+0){
+            margin-top: 5px;
+        }         
+        #{{form.idpago.vars.id}} > div:nth-child(n+0) > label{
+            display: inline-block;
+            width: 180px;
+            text-align: left;   
+            vertical-align: middle;
+        }
+        #{{form.idpago.vars.id}} > div:nth-child(n+0) > input[type="checkbox"]{
+            vertical-align: middle;
+            margin-left: 0;
+        }
+        #{{form.idpago.vars.id}} > div:nth-child(n+0) > label[class="error"]{
+            width: 20px;
+        }
+        #{{form.idpago.vars.id}} > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea{
+            vertical-align: middle;
+            width: 196px;
+        }
+        #{{form.idpago.vars.id}} > div:nth-child(n+0) > select {
+            height: 21px;
+        }
+        #{{form.idpago.vars.id}} > div:nth-child(n+0):hover{
+            font-weight: bold;
+        }         
+        {% endif %}
+        
+        table, th, td {
+            border: 0px solid black;
+            border-collapse: collapse;
+        }        
+        #grupo{
+            border: 1px solid rgb(169, 169, 169);
+            padding: 3px;
+        }
+        #mensajepagotarjeta{
+            padding-top: 45px;
+            text-align:center;
+        }
+        #camposimple{
+            border: 1px solid rgb(169, 169, 169);
+            height: 19px;
+            width: 198px;
+            display: flex;
+            align-items: center;    
+            background: white;
+        }        
+        input.error,select.error,.verimail-error.valid { 
+            border: 1px solid red; 
+            background-color: #ffa07a;
+        }
+        .valid{
+            background-color: white;
+        }
+        label.error {
+            display:none !important; 
+        }                  
+        .group_fields {
+            width: 98% !important;
+            border: 1px solid black;
+            text-align: center !important;
+            font-size: 10px;
+            padding:3px;
+        }        
+        #montorecarga{
+            -webkit-appearance: textarea;
+            border: 1px solid gray;
+            font: medium -moz-fixed;
+            font: -webkit-small-control;
+            height: 16px;
+            padding: 2px 0px 2px 0px;
+            resize: both;
+            width: 198px;
+        }
+        #titulogrupos{
+            text-align: center;
+            display:none;
+        }    
+        {#% endif %#}
+   </style>
+{% endblock %}    
+
+{% block body -%}   
+    <div class="contenido">    
+        <div id="titulogrupos">    
+            <div>Inscripciones Grupales</div>
+            <div>Agregre Integrante <b>N° {{integrante}}</b> {% if integrante > 1 %}o Edite el Grupo{% endif %}</div>
+        </div>   
+        {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+        {{ form_end(form) }} 
+        <div id="uploadimage">    
+            <div id="fine-uploader"></div>  
+            {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
+        </div>   
+        {{twiglib.mensajetdc()}}
+    </div>    
+{% endblock %}
 {% block javascripts %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':entity.idevento.id}) }}            
     <script>
         var precios=[];
         function buscaCategorias() {
+        {% if form.idcategoria is defined %}
             //Busca las categorias segun los atributos configurados
             if(!$('#{{ form.idcompetencia.vars.id }}').val()){
                 alert('Debe seleccionar una Competencia');
@@ -44,15 +256,23 @@
                                 {
                                     $("#{{ form.idcategoria.vars.id }}").empty();
                                     $("#{{ form.idcategoria.vars.id }}").prop("required", true);
-                                    if (datos['values'].length > 1)
+                                    if (datos.length == 0){
+                                        alert("No existe una Categoria aplicable");
+                                        return(null);
+                                    }
+                                    if (datos.length > 1)
                                         $("#{{ form.idcategoria.vars.id }}").append("<option selected value=''>Seleccione una Categoría</option>");
                                     else
+                                        {% if form.idpago is defined and entity.idevento.proceso == 1%}
                                         buscaPrecio(
                                                 $('#{{ form.idevento.vars.id }}').val(),
                                                 $('#{{ form.idcompetencia.vars.id }}').val(),
-                                                datos['values'][0].id
-                                        );                                        
-                                    $.each(datos['values'], function (key, value) {
+                                                datos[0].id,
+                                                $('#formulario'),
+                                                {{recargas|json_encode|raw}}
+                                        );    
+                                        {% endif %}
+                                    $.each(datos, function (key, value) {
                                         $('#{{ form.idcategoria.vars.id }}').append($('<option>', {
                                             value: value.id,
                                             text: value.descripcion
@@ -65,131 +285,37 @@
                                 }
                             }
                     );
-                }
-
-        function calcularTotalPagar(precio){
-            var recarga=[];
-            var indexrecarga=0;
-            var div;
-            var montorecargo;
-            var total=parseFloat(precio);
-            {% if recargas|length > 0 %}
-            {% for recarga in recargas %}
-            $("#recarga{{loop.index0}}").remove();
-            if($("#{{form.precio.vars.id}}").val()){
-                div=$("#{{form.precio.vars.id}}").parent().get(0);
-                montorecargo=precio*({{recarga.porcentaje}}/100);
-                total+=parseFloat(montorecargo);
-                recarga.push($("<div id='recarga{{loop.index0}}'><label>{{recarga.nombre|title}}{%if recarga.verporcentaje is not null %} ({{recarga.porcentaje}}%){% endif %}</label><spam id='montorecarga'>"+montorecargo.toFixed(2)+"</spam></div>"));
-                recarga[{{loop.index0}}].insertAfter(div);
-                $("#{{form.idpago.monto.vars.id}}").val(total.toFixed(2));
-                $("#{{form.idpago.monto.vars.id}}").show();
-                $("#{{form.idpago.monto.vars.id}}").parent().children(0).show();
-            }
-            else{
-                $("#{{form.idpago.monto.vars.id}}").hide();
-                $("#{{form.idpago.monto.vars.id}}").parent().children(0).hide();
-            }
-            {% endfor %} 
-            {% else %}
-                $("#{{form.idpago.monto.vars.id}}").val($("#{{form.precio.vars.id}}").val());
-            {% endif %}
+        {% endif %}                    
         }
-        
-        function setTextoPrecio(){
-            var texto;
-            texto=$("#{{form.precio.vars.id}} option:selected").attr('texto');
-            $("#{{form.idpago.texto.vars.id}}").val(texto);
-        }
-        
-        function buscaPrecio(idevento, idcompetencia, idcategoria) {
-            {%if entity.idevento.proceso == 1%}
-            //Busca el precio segun configuracion
-            var criterios = "idevento=" + idevento
-                    + "&idcompetencia=" + idcompetencia
-                    + "&idcategoria=" + idcategoria;
-            $('#{{ form.precio.vars.id }}').find('option').remove();
-            //Oculta el total a pagar
-            $("#{{form.idpago.monto.vars.id}}").hide();
-            $("#{{form.idpago.monto.vars.id}}").parent().children(0).hide();
-            {% for recarga in recargas %}
-            $("#recarga{{loop.index0}}").remove();
-            {% endfor %}
-            $.ajax({
-                type: "GET",
-                data: criterios,
-                url: "{{ path('inscrito_precio') }}",
-                dataType: "json",
-                success: function (datos)
-                {
-                    console.log(datos);
-                    if(datos['values'][0]['values'].length>1)
-                        $("#{{ form.precio.vars.id }}").append("<option selected value=''>Seleccione un Precio</option>");
-                    var texto="";
-                    $.each(datos['values'][0]['values'], function (key, value) {
-                        var recarga=[];
-                        var indexrecarga=0;
-                        var div;
-                        var montorecargo;
-                        var precio=precios[0];
-                        var total=0;
-                        var textoprecio=(value.texto==null)?'':'texto=\'' + value.texto + '\'';
-                        texto=((value.texto==null)?'':value.texto + ' ')  + ((value.moneda==null)?'':value.moneda + ' ') + value.precio;
-                        if(value.precio!=-1){
-                            if(datos['values'][0]['values'].length==1){
-                                $('#{{ form.precio.vars.id }}').append('<option selected '+textoprecio+' value='+value.precio+'>'+texto+'</option>');
-                                calcularTotalPagar(value.precio);
-                            }
-                            else
-                                $('#{{ form.precio.vars.id }}').append('<option '+textoprecio+' value='+value.precio+'>'+texto+'</option>');
-                            setTextoPrecio();
-                            $("#{{ form.precio.vars.id }}").prop("disabled", false);
-                            $("#{{ form.idpago.banco.vars.id }}").prop("disabled", false);
-                            $("#{{ form.idpago.referencia.vars.id }}").prop("disabled", false);
-                            $("#{{ form.idpago.tipo.vars.id }}").prop("disabled", false);                                      
-                        }
-                        else{
-                            $('#{{ form.precio.vars.id }}').append($('<option>', {
-                                value: 0,
-                                text: "EXONERADO"
-                            }));
-                            $("#{{form.idpago.monto.vars.id}}").val(0);
-                            $("#{{form.idpago.texto.vars.id}}").val(value.texto);
-                            $("#{{ form.precio.vars.id }}").prop("disabled", true);
-                            $("#{{ form.idpago.banco.vars.id }}").prop("disabled", true);
-                            $("#{{ form.idpago.referencia.vars.id }}").prop("disabled", true);
-                            $("#{{ form.idpago.tipo.vars.id }}").prop("disabled", true);                                
-                        }
-                    });             
-                },
-                error: function (jqXHR, textStatus, errorThrown)
-                {
-                    alert("PIA Ajax Error: " + jqXHR.responseText);
-                }
-            });
-            {% endif %}
-        }        
 
         $().ready(function () {
-            
-         if({{valor1}}{{_self.opeart(operador_ari)}}{{valor2}}{{_self.opelog(operador_log)}}{{valor1}}{{_self.opeart(operador_ari)}}{{valor2}})
-            console.log('hola');
+        
+            {% if idgrupo is not null %}
+            $('#{{form.idcompetencia.vars.id}}').val({{idcompetencia}});
+            $('#{{form.idcompetencia.vars.id}}').prop("disabled",true);
+            {% endif %}
+        
+            {# GENERAR CODIGO JAVA SCRIPTS DINAMICO 
+            if({{valor1}}{{_self.opeart(operador_ari)}}{{valor2}}{{_self.opelog(operador_log)}}{{valor1}}{{_self.opeart(operador_ari)}}{{valor2}})
+                console.log('hola'); #}
 
             {%if entity.idevento.proceso == 1%}
             //Busca los precios para los valores por defecto
-            buscaPrecio($('#{{ form.idevento.vars.id }}').val(),
-                        $('#{{ form.idcompetencia.vars.id }}').val()?$('#{{ form.idcompetencia.vars.id }}').val():'',
-                        $('#{{ form.idcategoria.vars.id }}').val()?$('#{{ form.idcategoria.vars.id }}').val():'');                
 
             //Habilita el campo del banco justo antes de enviar el formulario
             $("form#formulario" ).submit(function( event ) {
+                {% if idgrupo is not null %}
+                $('#{{form.idcompetencia.vars.id}}').removeAttr("disabled");
+                {% endif %}
+                {% if form.idpago is defined %}
                 $("#{{ form.precio.vars.id }}").removeAttr("disabled");
-                if($("#{{ form.idpago.tipo.vars.id }}").val()=='1')
-                    $("#{{ form.idpago.banco.vars.id }}").removeAttr("disabled");
-                if($("#{{ form.idpago.tipo.vars.id }}").val()=='0'){
-                    $("#{{ form.idpago.banco.vars.id }}").removeAttr("required");
-                    $("#{{ form.idpago.tipo.vars.id }}").removeAttr("disabled");
+                if($("#{{ form.idpago.idformapago.vars.id }}").val()=='1')
+                    $("#{{ form.idpago.idbanco.vars.id }}").removeAttr("disabled");
+                if($("#{{ form.idpago.idformapago.vars.id }}").val()=='0'){
+                    $("#{{ form.idpago.idbanco.vars.id }}").removeAttr("required");
+                    $("#{{ form.idpago.idformapago.vars.id }}").removeAttr("disabled");
                 }
+                {% endif %}
                 
                 //Valida que no se envien ambos correos vacios
                 if($("#{{form.idpia.email.vars.id}}").val()=="" && $("#{{form.idpia.emailpersonal.vars.id}}").val()==""){
@@ -198,6 +324,60 @@
                 }            
             });
             
+            var competenciasgrupo={{competenciasgrupo|json_encode|raw}};
+            if($.inArray($("#{{ form.idcompetencia.vars.id }}").val(),competenciasgrupo)!=-1){
+                $("#{{form.idcategoria.vars.id}}").prop("disabled", true);
+                $("#{{form.precio.vars.id}}").prop("disabled", true);
+                $("#{{ form.precio.vars.id }}").attr('required',false);
+                {% for campopago in form.idpago %}
+                    $("#{{campopago.vars.id}}").prop("disabled", true);
+                {% endfor %}
+                $("#{{form.info.vars.id}}").parent().hide();  
+                $("#titulogrupos").show();
+            }
+            else{
+                {% if form.idcategoria is defined and form.idpago is defined and entity.idevento.proceso == 1%}
+                buscaPrecio($('#{{ form.idevento.vars.id }}').val(),
+                            $('#{{ form.idcompetencia.vars.id }}').val()?$('#{{ form.idcompetencia.vars.id }}').val():'',
+                            $('#{{ form.idcategoria.vars.id }}').val()?$('#{{ form.idcategoria.vars.id }}').val():'',
+                            $('#formulario'),
+                            {{recargas|json_encode|raw}}
+                );
+                {% endif %}                
+            }
+            //Recalcula la categoria si es cambiado la competencia
+            $("#{{ form.idcompetencia.vars.id }}").change(function () {
+                if($.inArray($("#{{ form.idcompetencia.vars.id }}").val(),competenciasgrupo)!=-1){
+                    $("#{{form.idcategoria.vars.id}}").prop("disabled", true);
+                    $("#{{form.precio.vars.id}}").prop("disabled", true);
+                    $("#{{ form.precio.vars.id }}").attr('required',false);
+                    {% for campopago in form.idpago %}
+                        $("#{{campopago.vars.id}}").prop("disabled", true);
+                    {% endfor %}
+                    {#$("#{{form.idcategoria.vars.id}}").parent().hide();#}
+                    {#$("#{{form.precio.vars.id}}").parent().hide();  #}
+                    {#$("#{{form.idpago.vars.id}}").parent().hide();  #}
+                    $("#{{form.info.vars.id}}").parent().hide();  
+                    $("#titulogrupos").show();
+                    $("#{{ form.submit.vars.id }}").html('<span class="ui-button-text">Agregar</span>');
+                }
+                else{
+                    $("#{{form.idcategoria.vars.id}}").parent().show();
+                    $("#{{form.idcategoria.vars.id}}").removeAttr("disabled");
+                    $("#{{form.precio.vars.id}}").parent().show();
+                    $("#{{form.precio.vars.id}}").removeAttr("disabled");
+                    $("#{{form.idpago.vars.id}}").parent().show();
+                    {% for campopago in form.idpago %}
+                        $("#{{campopago.vars.id}}").removeAttr("disabled");
+                    {% endfor %}
+                    $("#{{form.info.vars.id}}").parent().show();
+                    $("#titulogrupos").hide();
+                    if ($("#{{ form.idcompetencia.vars.id }}").val() != '') {
+                        buscaCategorias();
+                    }
+                    $("#{{ form.submit.vars.id }}").html('<span class="ui-button-text">Inscribir</span>');
+                }                
+            });                      
             
             {% elseif entity.idevento.proceso == 2 %}
                 $("form#formulario" ).submit(function( event ) {
@@ -207,10 +387,10 @@
                         return false;
                     }
                     {% endif %}        
-                    if(!validaRequiredHidden($("#{{ form.idpia.foto.vars.id }}"))) return false;
+                        {#if(!validaRequiredHidden($("#{{ form.idpia.foto.vars.id }}"))) return false;
                     if(!validaRequiredHidden($("#{{ form.idpia.fileiddocumento.vars.id }}"))) return false;
                     if(!validaRequiredHidden($("#{{ form.idpia.filepartidanacimiento.vars.id }}"))) return false;
-                    if(!validaRequiredHidden($("#{{ form.idpia.filecertificadodeportivo.vars.id }}"))) return false;
+                    if(!validaRequiredHidden($("#{{ form.idpia.filecertificadodeportivo.vars.id }}"))) return false;#}
                 });                    
             {% endif %}
             
@@ -237,15 +417,8 @@
                 return false;
             }
             {% endif %}  
-            
-            //Recalcula la categoria si es cambiado la competencia
-            $("#{{ form.idcompetencia.vars.id }}").change(function () {
-                if ($("#{{ form.idcompetencia.vars.id }}").val() != '') {
-                    buscaCategorias();
-                }
-            });                      
-
-            $("#mensajepago").hide();
+                            
+            //$("#mensajepago").hide();
             $("#mensajepagotarjeta").hide();
 
             //Enmascara los campos
@@ -335,94 +508,34 @@
             buscaCategorias();
         });
 
+        $("#{{ form.idcompetencia.vars.id }}").change(function () {
+            buscaCategorias();
+        });
+
+        {% if form.idcategoria is defined and form.idpago is defined and entity.idevento.proceso == 1%}
         $("#{{ form.idcategoria.vars.id }}").change(function () {
             buscaPrecio(
                     $('#{{ form.idevento.vars.id }}').val(),
                     $('#{{ form.idcompetencia.vars.id }}').val(),
-                    $('#{{ form.idcategoria.vars.id }}').val()
+                    $('#{{ form.idcategoria.vars.id }}').val(),
+                    $('#formulario'),
+                    {{recargas|json_encode|raw}}
             );
         });   
+        {% endif %}
 
-        {%if entity.idevento.proceso == 1%}
-        $("#{{ form.idpago.tipo.vars.id }}").change(function () {
-            switch ($("#{{ form.idpago.tipo.vars.id }}").val()) {
-                case '':
-                    $("#{{ form.idpago.banco.vars.id }}").val(null);
-                    $("#codigo123pago").remove();
-                    $("#mensajepagotarjeta").hide();
-                    $("#{{ form.idpago.referencia.vars.id }}").removeAttr("readonly");
-                    $("#{{ form.idpago.banco.vars.id }}").removeAttr("disabled");
-                    $("#mensajepago").hide();
-                    $("#{{ form.submit.vars.id }}").html('<span class="ui-button-text">Inscribir</span>')
-                    break;
-                case '1': //Selecciono Deposito
-                    if ($("#{{ form.precio.vars.id }}").val() == 0){
-                        alert("Error el precio no puede ser 0");
-                        $("#{{ form.idpago.tipo.vars.id }}").val('');                                
-                    }                                
-                    else {                             
-                        $("#label_pago_referencia").html('Numero Operacion');
-                        $("#{{ form.submit.vars.id }}").show();
-                        {% if entity.idevento.idorganizador %} //Valida que se haya configurado el organizador en el evento
-                            $("#{{ form.idpago.banco.vars.id }}").val("{{ entity.idevento.idorganizador.banco }}");
-                        {% endif %}
-                        $("#{{ form.idpago.referencia.vars.id }}").prop("disabled", false);
-                        $("#{{ form.idpago.banco.vars.id }}").prop("disabled",true);
-                        $("#mensajepago").show();
-                        $("#mensajepagotarjeta").hide();
-                        $("#codigo123pago").remove();
-                        $("#{{ form.submit.vars.id }}").html('<span class="ui-button-text">Inscribir</span>')
-                    }
-                    break;
-                case '2': //Selecciono Transferencia
-                    if ($("#{{ form.precio.vars.id }}").val() == 0){
-                        alert("Error el precio no puede ser 0");
-                        $("#{{ form.idpago.tipo.vars.id }}").val('');
-                    }
-                    else {                            
-                        $("#label_pago_referencia").html('Numero Operacion');
-                        $("#{{ form.submit.vars.id }}").show();
-                        $("#{{ form.idpago.banco.vars.id }}").val("");
-                        $("#{{ form.idpago.referencia.vars.id }}").prop("disabled", false);
-                        $("#{{ form.idpago.banco.vars.id }}").removeAttr("disabled");
-                        $("#mensajepago").show();
-                        $("#mensajepagotarjeta").hide();
-                        $("#{{ form.submit.vars.id }}").html('<span class="ui-button-text">Inscribir</span>');
-                    }
-                    break;
-                case '3': //Selecciono Tarjeta de Credito
-                    if ($("#{{ form.precio.vars.id }}").val() == 0){
-                        alert("Error el precio no puede ser 0");
-                        $("#{{ form.idpago.tipo.vars.id }}").val('');                                
-                    }
-                    else {
-                        $("#label_pago_referencia").html('Numero Operacion');
-                        $("#{{ form.idpago.referencia.vars.id }}").val('');
-                        $("#mensajepago").hide();
-                        $("#{{ form.idpago.banco.vars.id }}").prop("disabled", true);
-                        $("#{{ form.idpago.referencia.vars.id }}").prop("disabled", true);
-                        $("#{{ form.submit.vars.id }}").html('<span class="ui-button-text">Continuar</span>');
-                        $("#mensajepagotarjeta").show();
-                    }
-                    {% if incremento[3] is defined %} $("#incremento").html({{incremento[3]}}); {% endif %}
-                    break;                        
-                case '5': //Selecciono Cortesia
-                    if ($("#{{ form.precio.vars.id }}").val() == 0){
-                        alert("Error el precio no puede ser 0");
-                        $("#{{ form.idpago.tipo.vars.id }}").val('');                                
-                    }
-                    else {
-                        $("#{{ form.submit.vars.id }}").show();
-                        $("#label_pago_referencia").html('Codigo');
-                        $("#mensajepago").hide();
-                        $("#mensajepagotarjeta").hide();
-                        $("#{{ form.idpago.referencia.vars.id }}").prop("disabled", false);
-                        $("#{{ form.idpago.banco.vars.id }}").prop("disabled", true);
-                        $("#{{ form.submit.vars.id }}").html('<span class="ui-button-text">Inscribir</span>');
-                    }
-                    {% if incremento[3] is defined %} $("#incremento").html({{incremento[3]}}); {% endif %}
-                    break;                        
-            }
+        {%if entity.idevento.proceso == 1 and form.idpago is defined %}
+        
+        ocultaCamposPagoForm($('#formulario'));
+        $("#{{ form.idpago.idformapago.vars.id }}").change(function () {
+            ocultaCamposPagoForm($('#formulario'));
+            manejoFormularioPago(
+                    $("#{{ form.precio.vars.id }}"),
+                    $('#formulario'),
+                    {{formasdepago|json_encode|raw}}
+                    {#{% if incremento[3] is defined %}{{incremento[3]}}{%else%}null{% endif %},
+                    {% if entity.idevento.idorganizador %}{{ entity.idevento.idorganizador.banco }}{%else%}null{% endif %}#}
+            ); 
         });
         {% endif %}
 
@@ -473,220 +586,18 @@
             ]
         });
 
+        {% if form.precio is defined %}
         $("#{{form.precio.vars.id}}").change(function () {
-            setTextoPrecio();
-            calcularTotalPagar($("#{{form.precio.vars.id}}").val());
+            setTextoPrecio($("#{{form.precio.vars.id}} option:selected"),$("#{{form.idpago.texto.vars.id}}"));
+            calcularTotalPagar(
+                    $("#{{form.precio.vars.id}}"),
+                    $("#{{form.idpago.monto.vars.id}}"),
+                    {{recargas|json_encode|raw}}
+            );
         });   
-
+        {% endif %}
+        
+        
     });    
     </script>   
 {% endblock %}
-{% block style %}
-    {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}
-    <style type="text/css">        
-        
-        .contenido{    
-            margin: auto;
-            width: 390px;
-        }
-                
-        #namefile_fileiddocumento,
-        #namefile_foto,
-        #namefile_filepartidanacimiento,
-        #namefile_filecertificadodeportivo{
-            width: 145px !important; 
-        }
-
-        #btn_foto,
-        #btn_fileiddocumento,
-        #btn_filepartidanacimiento,
-        #btn_filecertificadodeportivo{
-            height: 21px;
-            width: 31px;
-        }     
-        #btn_foto > span,
-        #btn_fileiddocumento > span,
-        #btn_filepartidanacimiento > span,
-        #btn_filecertificadodeportivo > span{
-            padding-bottom: 0;
-            padding-top: 0;
-            padding-left: 0;
-            padding-right: 0;
-        }
-        #icon-foto,
-        #icon-fileiddocumento,
-        #icon-filepartidanacimiento,
-        #icon-filecertificadodeportivo{
-            vertical-align: middle;
-        }
-        #imagen_foto,
-        #imagen_fileiddocumento,
-        #imagen_filepartidanacimiento,
-        #imagen_filecertificadodeportivo{
-            height: 20px;
-            vertical-align: middle;
-            padding-right: 2px;
-        }
-
-        /******************************************************/
-        /*Configura el estilo del formulario de inscripciones */
-        /******************************************************/
-        #formulario > div:nth-child(1) {
-            display:none;
-        }
-        #formulario > div:nth-child(2):hover{
-            font-weight: bold;
-        }
-        #formulario > div:nth-child(6):hover{
-            font-weight: bold;
-        }  
-        #formulario > div:nth-child(7):hover{
-            font-weight: bold;
-        }          
-        #formulario > div:nth-child(3){
-            margin: 0px;
-        }
-        #formulario > div:nth-child(3) > label{
-            display:none;
-        }
-        #formulario > div:nth-child(n+0) > label{
-            width: 180px;
-        }        
-        /***********************************************************************
-        * Da formato al formulario del competidor *
-        ***********************************************************************/
-        #{{form.idpia.vars.id}} > div:nth-child(n+0){
-            margin-top: 5px;
-        }         
-        #{{form.idpia.vars.id}} > div:nth-child(n+0) > label{
-            display: inline-block;
-            width: 180px;
-            text-align: left;   
-            vertical-align: middle;
-        }
-        #{{form.idpia.vars.id}} > div:nth-child(n+0) > input[type="checkbox"]{
-            vertical-align: middle;
-            margin-left: 0;
-        }
-        #{{form.idpia.vars.id}} > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea{
-            vertical-align: middle;
-            width: 196px;
-        }
-        #{{form.idpia.vars.id}} > div:nth-child(n+0) > select {
-            height: 21px;
-        }
-        #{{form.idpia.vars.id}} > div:nth-child(n+0) > label[class="error"]{
-            width: 20px;
-        }
-        #{{form.idpia.vars.id}} > div:nth-child(n+0):hover{
-            font-weight: bold;
-        }         
-        
-        /****************************************************/
-        /*  Configura el estilo del subformulario pago ******/
-        /****************************************************/
-        #{{form.idpago.vars.id}} > div:nth-child(1){
-            /*display: none;*/
-        }         
-        #{{form.idpago.vars.id}} > div:nth-child(n+0){
-            margin-top: 5px;
-        }         
-        #{{form.idpago.vars.id}} > div:nth-child(n+0) > label{
-            display: inline-block;
-            width: 180px;
-            text-align: left;   
-            vertical-align: middle;
-        }
-        #{{form.idpago.vars.id}} > div:nth-child(n+0) > input[type="checkbox"]{
-            vertical-align: middle;
-            margin-left: 0;
-        }
-        #{{form.idpago.vars.id}} > div:nth-child(n+0) > label[class="error"]{
-            width: 20px;
-        }
-        #{{form.idpago.vars.id}} > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea{
-            vertical-align: middle;
-            width: 196px;
-        }
-        #{{form.idpago.vars.id}} > div:nth-child(n+0) > select {
-            height: 21px;
-        }
-        #{{form.idpago.vars.id}} > div:nth-child(n+0):hover{
-            font-weight: bold;
-        }         
-        
-        {#input#{{ form.idpia.email.vars.id }}.verimail-success {
-            background: transparent url('{{ asset('images/success.png') }}') no-repeat center right;
-        } #}       
-        table, th, td {
-            border: 0px solid black;
-            border-collapse: collapse;
-        }        
-        #grupo{
-            border: 1px solid rgb(169, 169, 169);
-            padding: 3px;
-        }
-        #mensajepago,#mensajepagotarjeta{
-            padding-top: 45px;
-            text-align:center;
-        }
-        #camposimple{
-            border: 1px solid rgb(169, 169, 169);
-            height: 19px;
-            width: 198px;
-            display: flex;
-            align-items: center;    
-            background: white;
-        }        
-        input.error,select.error,.verimail-error.valid { 
-            border: 1px solid red; 
-            background-color: #ffa07a;
-        }
-        .valid{
-            background-color: white;
-        }
-        label.error {
-            display:none !important; 
-        }                  
-        .group_fields {
-            width: 98% !important;
-            border: 1px solid black;
-            text-align: center !important;
-            font-size: 10px;
-            padding:3px;
-        }        
-        #montorecarga{
-            -webkit-appearance: textarea;
-            border: 1px solid gray;
-            font: medium -moz-fixed;
-            font: -webkit-small-control;
-            height: 16px;
-            padding: 2px 0px 2px 0px;
-            resize: both;
-            width: 198px;
-        }
-        
-   </style>
-{% endblock %}    
-
-{% block body -%}   
-    <div class="contenido">    
-        {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
-        {{ form_end(form) }} 
-        <div id="uploadimage">    
-            <div id="fine-uploader"></div>  
-            {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
-        </div>   
-        <div id="mensajepagotarjeta">
-            <strong>
-                POR EL USO DE TARJETA DE CREDITO PARA EL PAGO, SE HARA UN <strong style="color:red;">RECARGO DEL <span id="incremento"></span>%</strong> SOBRE EL PRECIO DE LA INSCRIPCION
-            </strong>
-        </div>        
-    </div>    
-    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':entity.idevento.id}) }}            
-{% endblock %}
-
-
-
-
-

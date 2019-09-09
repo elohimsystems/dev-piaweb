@@ -19,12 +19,13 @@ class PrecioscompetenciaRepository extends EntityRepository {
      * cierre del evento
      * ** */
 
-    public function BuscaPreciosCompetencia($idcompetencia){
+    public function BuscaPreciosCompetencia($idcompetencia,$idmoneda=null){
+        $filtromoneda=  is_null($idmoneda)?"":" and p.idmoneda=" . $idmoneda;
         $precios = $this->getEntityManager()
             ->createQuery(
                     "select p.cantidad, p.precio, p.hasta, p.imagen, p.texto, p.moneda "
                     . "from FraterSoftPiaWebBundle:Precioscompetencia p join p.idcompetencia c "
-                    . "where p.idcompetencia=c.id and p.idcompetencia = " . $idcompetencia 
+                    . "where p.idcompetencia=c.id and p.idcompetencia = " . $idcompetencia . $filtromoneda
                     . " order by p.precio"
             )
             ->getResult();        

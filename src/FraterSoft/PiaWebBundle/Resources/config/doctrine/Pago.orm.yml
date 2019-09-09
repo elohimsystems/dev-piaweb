@@ -2,6 +2,22 @@ FraterSoft\PiaWebBundle\Entity\Pago:
     type: entity
     table: piaaccess.tmpagos
     repositoryClass: FraterSoft\PiaWebBundle\Entity\PagoRepository        
+    indexes:
+        IDX_E658DD60F4F43B:
+            columns:
+                - idformapago
+        IDX_E658DD60A1DB8DC8:
+            columns:
+                - idbanco
+        IDX_E658DD60D4B68681:
+            columns:
+                - idmoneda
+        IDX_E658DD609890313D:
+            columns:
+                - idinscrito
+        IDX_E658DD60557A1263:
+            columns:
+                - idcuenta
     id:
         id:
             type: bigint
@@ -11,10 +27,6 @@ FraterSoft\PiaWebBundle\Entity\Pago:
             id: true
             generator:
                 strategy: SEQUENCE
-            #sequenceGenerator:
-            #    sequenceName: piaaccess.tmpagos_id_sq
-            #    allocationSize: 100
-            #    initialValue: 1                   
     fields:
         fechahora:
             type: datetime
@@ -67,15 +79,96 @@ FraterSoft\PiaWebBundle\Entity\Pago:
         idliquidacion:
             type: bigint
             nullable: true
-            comment: ''    
+            unsigned: false
+            comment: ''
         notificado:
             type: datetime
             nullable: true
-            comment: ''   
+            comment: ''
         texto:
             type: string
             nullable: true
             length: 100
             fixed: false
-            comment: ''            
+            comment: ''
+        idpagador:
+            type: string
+            nullable: true
+            length: 20
+            fixed: false
+            comment: ''
+        nombrepagador:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        correopagador:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''
+        fechapago:
+            type: date
+            nullable: true
+            comment: 'Es la fecha en la que el participante realizo el pago'
+        precio:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            comment: ''
+        recargas:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            comment: ''
+    manyToOne:
+        idformapago:
+            targetEntity: Formaspago
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idformapago:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idbanco:
+            targetEntity: Banco
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idbanco:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idmoneda:
+            targetEntity: Moneda
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idmoneda:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idinscrito:
+            targetEntity: Inscrito
+            cascade: {  }
+            mappedBy: null
+            inversedBy: pagos
+            joinColumns:
+                idinscrito:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idcuenta:
+            targetEntity: Organizadorcuentas
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idcuenta:
+                    referencedColumnName: id
+            orphanRemoval: false
     lifecycleCallbacks: {  }

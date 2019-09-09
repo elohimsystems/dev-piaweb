@@ -12,27 +12,52 @@ use Doctrine\ORM\EntityRepository;
  */
 class FormaspagoeventoRepository extends EntityRepository {
 
-    public function listar($idevento) {
+//    public function listarPublicos($idevento) {
+//        //Busca el precio por fecha hasta
+//        $formaspago = $this->getEntityManager()
+//                ->createQuery(
+//                        "select fp,fpe from FraterSoftPiaWebBundle:Formaspagoevento fpe "
+//                        . "inner join fpe.idformapago fp "
+//                        . "where fpe.idevento = " . $idevento . " and fpe.publico=true and fpe.status=1"
+//                )
+//                ->getArrayResult();
+//        return $formaspago;
+//    }  
+    
+    public function listarPublicos($idevento,$idmoneda=null) {
+        //Busca el precio por fecha hasta
+        $formaspago = $this->getEntityManager()
+                ->createQuery(
+                        "select fpe,fp from FraterSoftPiaWebBundle:Formaspagoevento fpe "
+                        . "inner join fpe.idformapago fp "
+                        . "where fpe.idevento = " . $idevento . " and fpe.publico=true and fpe.status=1 and fp.idmoneda=" . $idmoneda
+                )
+                ->getResult();
+        return $formaspago;
+    }  
+
+    public function listarTodos($idevento) {
         //Busca el precio por fecha hasta
         $formaspago = $this->getEntityManager()
                 ->createQuery(
                         "select fp.id,fp.nombre from FraterSoftPiaWebBundle:Formaspagoevento fpe "
                         . "inner join fpe.idformapago fp "
-                        . "where fpe.idevento = " . $idevento 
+                        . "where and fpe.status=1 and fpe.idevento = " . $idevento 
                 )
                 ->getArrayResult();
         return $formaspago;
     }  
-    
+
     public function arrayFormapagoEvento($idevento)
     {
         $query = $this->getEntityManager()
             ->createQuery(
-                'SELECT fpe.id,e.id as idevento,fp.id as idformapago,fp.nombre as nombre,fpe.status,fpe.incremento '
+                'SELECT fpe.id,e.id as idevento,fp.id as idformapago,fp.nombre as nombre,fpe.status,fpe.incremento,fpe.publico, m.codigolocal '
                     . 'FROM FraterSoftPiaWebBundle:Formaspagoevento fpe ' 
                     . 'JOIN fpe.idformapago fp '                  
+                    . 'LEFT JOIN fp.idmoneda m '                  
                     . 'JOIN fpe.idevento e '                  
-                    . 'WHERE fpe.idevento =' . $idevento 
+                    . 'WHERE fpe.status=1 and fpe.idevento =' . $idevento 
             );
          return $query->getResult();
     }          

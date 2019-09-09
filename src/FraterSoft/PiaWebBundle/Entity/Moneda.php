@@ -1,0 +1,233 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Moneda
+ */
+class Moneda
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $codigolocal;
+
+    /**
+     * @var string
+     */
+    private $codigointernacional;
+
+    /**
+     * @var integer
+     */
+    private $estatus;
+
+    /**
+     * @var string
+     */
+    private $nombre;
+
+    /**
+     * @var integer
+     */
+    private $idpais;
+
+    /**
+     * @var string
+     */
+    private $icono;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Organizador
+     */
+    private $idorganizador;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set codigolocal
+     *
+     * @param string $codigolocal
+     * @return Moneda
+     */
+    public function setCodigolocal($codigolocal)
+    {
+        $this->codigolocal = $codigolocal;
+    
+        return $this;
+    }
+
+    /**
+     * Get codigolocal
+     *
+     * @return string 
+     */
+    public function getCodigolocal()
+    {
+        return $this->codigolocal;
+    }
+
+    /**
+     * Set codigointernacional
+     *
+     * @param string $codigointernacional
+     * @return Moneda
+     */
+    public function setCodigointernacional($codigointernacional)
+    {
+        $this->codigointernacional = $codigointernacional;
+    
+        return $this;
+    }
+
+    /**
+     * Get codigointernacional
+     *
+     * @return string 
+     */
+    public function getCodigointernacional()
+    {
+        return $this->codigointernacional;
+    }
+
+    /**
+     * Set estatus
+     *
+     * @param integer $estatus
+     * @return Moneda
+     */
+    public function setEstatus($estatus)
+    {
+        $this->estatus = $estatus;
+    
+        return $this;
+    }
+
+    /**
+     * Get estatus
+     *
+     * @return integer 
+     */
+    public function getEstatus()
+    {
+        return $this->estatus;
+    }
+
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     * @return Moneda
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+    
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string 
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    /**
+     * Set idpais
+     *
+     * @param integer $idpais
+     * @return Moneda
+     */
+    public function setIdpais($idpais)
+    {
+        $this->idpais = $idpais;
+    
+        return $this;
+    }
+
+    /**
+     * Get idpais
+     *
+     * @return integer 
+     */
+    public function getIdpais()
+    {
+        return $this->idpais;
+    }
+
+    /**
+     * Set icono
+     *
+     * @param string $icono
+     * @return Moneda
+     */
+    public function setIcono($icono)
+    {
+        $this->icono = $icono;
+    
+        return $this;
+    }
+
+    /**
+     * Get icono
+     *
+     * @return string 
+     */
+    public function getIcono()
+    {
+        return $this->icono;
+    }
+
+    /**
+     * Set idorganizador
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Organizador $idorganizador
+     * @return Moneda
+     */
+    public function setIdorganizador(\FraterSoft\PiaWebBundle\Entity\Organizador $idorganizador = null)
+    {
+        $this->idorganizador = $idorganizador;
+    
+        return $this;
+    }
+
+    /**
+     * Get idorganizador
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Organizador 
+     */
+    public function getIdorganizador()
+    {
+        return $this->idorganizador;
+    }
+    
+    /**
+     * to string
+     *
+     * @return string 
+     */
+    public function __toString() {
+        return $this->nombre;
+    }        
+    
+}

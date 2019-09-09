@@ -1,0 +1,91 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Banco
+ */
+class Banco
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $nombre;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Pais
+     */
+    private $idpais;
+
+    /**
+     * to string
+     *
+     * @return string 
+     */
+    public function __toString() {
+        return $this->nombre;
+    }        
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     * @return Banco
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+    
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string 
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    /**
+     * Set idpais
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Pais $idpais
+     * @return Banco
+     */
+    public function setIdpais(\FraterSoft\PiaWebBundle\Entity\Pais $idpais = null)
+    {
+        $this->idpais = $idpais;
+    
+        return $this;
+    }
+
+    /**
+     * Get idpais
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Pais 
+     */
+    public function getIdpais()
+    {
+        return $this->idpais;
+    }
+}

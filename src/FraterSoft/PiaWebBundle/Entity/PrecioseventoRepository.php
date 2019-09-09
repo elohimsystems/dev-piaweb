@@ -53,12 +53,13 @@ class PrecioseventoRepository extends EntityRepository {
         return null;
     }
     
-    public function BuscaPreciosEvento($idevento){
+    public function BuscaPreciosEvento($idevento,$idmoneda=null){
+        $filtromoneda=  is_null($idmoneda)?"":" and p.idmoneda=" . $idmoneda;
         $precios = $this->getEntityManager()
             ->createQuery(
                     "select p.cantidad, p.precio, p.hasta, p.imagen, p.texto, p.moneda "
                     . "from FraterSoftPiaWebBundle:Preciosevento p "
-                    . "where p.idevento = " . $idevento 
+                    . "where p.idevento = " . $idevento . $filtromoneda
                     . " order by p.precio"
             )
             ->getResult();        
@@ -151,9 +152,10 @@ class PrecioseventoRepository extends EntityRepository {
     {
         $query = $this->getEntityManager()
             ->createQuery(
-                'SELECT pe.id,e.id as idevento,pe.precio,pe.cantidad,pe.hasta,pe.prioridad,pe.texto,pe.imagen,pe.moneda '
+                'SELECT pe.id,e.id as idevento,pe.precio,pe.cantidad,pe.hasta,pe.prioridad,pe.texto,pe.imagen,m.id as idmoneda,m.codigolocal as moneda '
                     . 'FROM FraterSoftPiaWebBundle:Preciosevento pe ' 
                     . 'JOIN pe.idevento e '                  
+                    . 'LEFT JOIN pe.idmoneda m '
                     . 'WHERE pe.idevento =' . $idevento 
             );
          return $query->getResult();

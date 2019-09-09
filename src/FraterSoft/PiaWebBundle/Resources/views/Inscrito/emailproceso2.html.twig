@@ -1,0 +1,105 @@
+{% extends '::base.html.twig' %}
+{% import "FraterSoftPiaWebBundle:Default:FS-TWIG-Library.html.twig" as twiglib %}
+{% block poweredby %}
+<div style="text-align: center">
+    <a href="http://www.sistemapia.com" target="_blank">
+        <p style="font-family:verdana;font-size:11px">
+        powered by
+        <img width="40" align="center" 
+             src="http://www.sistemapia.com/images/logopiaft.png"/>
+        </p>
+    </a>
+</div>
+{% endblock %}
+{% block style %}
+<style type="text/css">
+    th{
+        text-align:left;
+    }
+    table{
+        padding: 10px;
+        width:650px;
+        border: 1px solid black;
+    }
+</style>
+{% endblock %}
+{% block body -%}
+    
+
+    <table class="record_properties" align="center" border="0">
+        <tbody>
+            
+            {% if entity.idevento.idorganizador.logo is not null %}
+            <tr>
+                <td colspan='3' align='center'>
+                    <img width="300 px" 
+                         src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/images/') ~ entity.idevento.idorganizador.logo }}">                    
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td colspan='3' align='center'>
+                    <h1>Confirmaci&oacute;n de Pre-Inscripci&oacute;n</h1>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="{{entity.idevento.atributos|length + 3}}">
+                    <img width="300 px" 
+                         src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ entity.idevento.logo }}">
+                </td>
+            </tr>            
+            {% for atributo in entity.idevento.atributos %}
+            {% if atributo.etiqueta is null %}
+            <tr><th>{{atributo.idatributo.nombre|capitalize}}</th><td>{{twiglib.imprimirAtributo(atributo,attribute(entity.idpia,'get'~atributo.idatributo.nombre))}}</td></tr>
+            {% else %}
+            <tr><th>{{atributo.etiqueta}}</th><td>{{ twiglib.imprimirAtributo(atributo,attribute(entity.idpia,'get'~atributo.idatributo.nombre)) }}</td></tr>
+            {% endif %}
+            {% endfor %}
+            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>            
+            <tr>
+                <th>PreInscrito el</th>
+                <td>{{ entity.fechahora|date('d-m-Y H:i:s') }}</td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <p>
+                    Estimad@ Atleta,<br>
+                    Un gusto saludarle<br>
+                    </p>
+                    <p>
+                    Para formalizar la inscripci&oacute;n en la {{ entity.idevento.nombre }} a realizarse el domingo 15 de diciembre en la C&aacute;rcava del Hotel Eurobuilding, Ciudad Guayana, estado Bol&iacute;var, debe responder dicho correo adjuntando el soporte de pago.
+                    </p>
+                    <p>    
+                    {% if precios|length > 1 %}
+                    Costos <br>
+                        {% for precio in precios %}
+                            {{precio.precio}} {{precio.texto}}<br>
+                        {% endfor %}
+                    &oacute; a la tasa del d&iacute;a y hora de @monitordolarvzla_ (intagram)
+                    {% else %}
+                    Costo {{precios[0].precio}}$ &oacute; a la tasa del d&iacute;a y hora de @monitordolarvzla_ (intagram)
+                    {% endif %}
+                    </p>    
+                    <p>
+                    INFORMACION BANCARIA<br>
+                    Banesco<br>
+                    Rafael Rodriguez<br>
+                    C&eacute;dula 6.973.974<br>
+                    0134 0348 1234 8108 2621<br>
+                    </p>
+                    <p>
+                    NOTA: Si el pago lo realiza desde otro banco por favor enviar nombre, apellido y  c&eacute;dula del titular de la cuenta desde donde realiz&oacute; el pago, si la cuenta es jur&iacute;dica env&iacute;e raz&oacute;n social y RIF
+                    </p>    
+                    <p>
+                    Cualquier pregunta o inquietud no dude en contactarnos.
+                    </p>
+                    <p>
+                    {{ entity.idevento.idorganizador.contacto }}<br>
+                    {{ entity.idevento.idorganizador.telefonocontacto }}<br>
+                    </p>
+                </td>
+            </tr>              
+        </tbody>
+    </table>
+</ul>
+{% endblock %}

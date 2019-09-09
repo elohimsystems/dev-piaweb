@@ -7654,3 +7654,6 @@ Stack trace:
 [05-Dec-2018 01:19:52 America/Caracas] PHP Notice:  Undefined variable: ub in /home/sistem19/public_html/piaweb2.4.1/src/FraterSoft/PiaWebBundle/Controller/CompetidorController.php on line 900
 [05-Dec-2018 01:20:05 America/Caracas] PHP Notice:  Undefined variable: ub in /home/sistem19/public_html/piaweb2.4.1/src/FraterSoft/PiaWebBundle/Controller/CompetidorController.php on line 888
 [05-Dec-2018 01:20:05 America/Caracas] PHP Notice:  Undefined variable: ub in /home/sistem19/public_html/piaweb2.4.1/src/FraterSoft/PiaWebBundle/Controller/CompetidorController.php on line 900
+[08-Sep-2019 11:36:21 America/Caracas] PHP Fatal error:  Call to a member function getId() on null in /home2/sistem19/public_html/piaweb2.5.01dev/src/FraterSoft/PiaWebBundle/Controller/commonPIAClass.php on line 806
+[08-Sep-2019 11:36:45 America/Caracas] PHP Fatal error:  Call to a member function getId() on null in /home2/sistem19/public_html/piaweb2.5.01dev/src/FraterSoft/PiaWebBundle/Controller/commonPIAClass.php on line 806
+[08-Sep-2019 11:43:53 America/Caracas] PHP Fatal error:  Call to a member function getId() on null in /home2/sistem19/public_html/piaweb2.5.01dev/src/FraterSoft/PiaWebBundle/Controller/commonPIAClass.php on line 806

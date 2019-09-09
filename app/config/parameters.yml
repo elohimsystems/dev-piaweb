@@ -3,17 +3,26 @@ parameters:
     database_driver: pdo_pgsql
     database_host: 127.0.0.1
     database_port: null
-    database_name: sistem19_bdpiav104
+    database_name: sistem19_bdpiav105
     database_user: sistem19
-    database_password: fdgc2401
-    #database_password: I4X7k33fpc
+    #database_password: fdgc2401
+    database_password: I4X7k33fpc
 
     mailer_transport: smtp
     mailer_host: mail.sistemapia.com.ve
     mailer_port: 465
     mailer_encryption: ssl
-    mailer_user: pre-inscripcion@sistemapia.com.ve
-    mailer_password: fdgg2013
+    mailer_user: puroeventospzo@sistemapia.com.ve
+    mailer_password: kuffner1bonchi
+
+    #mailer_transport: smtp
+    #mailer_host: smtp.gmail.com
+    #mailer_port: 465
+    #mailer_encryption: ssl
+    #mailer_user: puroeventospzo@gmail.com
+    #mailer_password: kuffner1bonchi
+    #mailer_user: sistemapia@gmail.com
+    #mailer_password: fdgc2401
 
     locale: en
     secret: ThisTokenIsNotSoSecretChangeIt

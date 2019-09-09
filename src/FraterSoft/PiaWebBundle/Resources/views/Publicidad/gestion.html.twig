@@ -68,7 +68,7 @@
                         }
                 }}]
         );
-        tabla.column(7).visible( false );
+        tabla.column(2).visible( false );
         dialogGuardar($('#formulario'),{{campos|json_encode|raw}});
         dialogEliminar('{{ path(entidad ~ '_delete',{'id':'_id_'})}}');
         dialogMensaje();

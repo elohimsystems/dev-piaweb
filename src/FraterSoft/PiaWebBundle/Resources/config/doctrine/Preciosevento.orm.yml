@@ -62,5 +62,13 @@ FraterSoft\PiaWebBundle\Entity\Preciosevento:
             joinColumns:
                 idevento:
                     referencedColumnName: id
+        idmoneda:
+            targetEntity: Moneda
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idmoneda:
+                    referencedColumnName: id
             orphanRemoval: false
     lifecycleCallbacks: {  }

@@ -61,7 +61,7 @@
                 "{{ path('eventoatributos_create')}}", //Url para crear
                 "{{ path('eventoatributos_update',{'id':'_id_'})}}", //Url para editar
                 "{{ path('eventoatributos_listaajax',{'idevento': idevento }) }}", //Url para buscar los datos a listar
-                [{posicion:4, config:{title:"Atributo",data:"atributo"}}]
+                [{posicion:2, config:{title:"Atributo",data:"atributo"}}]
         );
         dialogGuardar($('#formulario'),{{campos|json_encode|raw}});
         dialogEliminar('{{ path('eventoatributos_delete',{'id':'_id_'})}}');

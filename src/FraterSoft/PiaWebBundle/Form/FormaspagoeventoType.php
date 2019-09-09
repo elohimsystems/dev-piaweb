@@ -19,6 +19,7 @@ class FormaspagoeventoType extends AbstractType
             ->add('idformapago')
             ->add('status')
             ->add('incremento')
+            ->add('publico')
         ;
     }
     

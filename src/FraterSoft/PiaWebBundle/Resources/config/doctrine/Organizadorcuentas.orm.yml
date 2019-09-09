@@ -1,0 +1,69 @@
+FraterSoft\PiaWebBundle\Entity\Organizadorcuentas:
+    type: entity
+    table: piaaccess.tmorganizadorescuentas
+    indexes:
+        IDX_8C5CB014A1DB8DC8:
+            columns:
+                - idbanco
+        IDX_8C5CB0146FAFBFF6:
+            columns:
+                - idorganizador
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        numero:
+            type: string
+            nullable: true
+            length: 20
+            fixed: false
+            comment: ''
+        titular:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        identificacion:
+            type: string
+            nullable: true
+            length: 15
+            fixed: false
+            comment: ''
+        correo:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        tipo:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: '1: Cuenta Corriente, 2: Cuenta de Ahorro'
+    manyToOne:
+        idbanco:
+            targetEntity: Banco
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idbanco:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idorganizador:
+            targetEntity: Organizador
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idorganizador:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

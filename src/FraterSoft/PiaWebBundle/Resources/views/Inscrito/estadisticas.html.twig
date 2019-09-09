@@ -8,7 +8,6 @@
 <style type="text/css">
     #seccionTabla{     
         display: none;
-        /*width: 70%;*/
         margin: auto;
         margin-top: 15px;
     }    
@@ -178,6 +177,7 @@
             var criterios = "idevento=" + {{ idevento }} + "&entity=" + $("#select_atributos_opcion").val();
             var orden=($("#select_atributos_opcion").val()=='Inscrito:fechahora')?0:1;
             var torden=($("#select_atributos_opcion").val()=='Inscrito:fechahora')?'asc':'desc';
+            console.log(criterios);
             $.ajax({
                 type: "GET",
                 data: criterios,

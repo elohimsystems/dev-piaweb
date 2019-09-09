@@ -6,17 +6,30 @@ pago_show:
     pattern:  /{id}/show
     defaults: { _controller: "FraterSoftPiaWebBundle:Pago:show" }
 
+pago_showgrupo:
+    pattern:  /{idpago}/{idevento}/{idgrupo}/showgrupo
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:showgrupo" }
+
 pago_new:
-    pattern:  /new/{idinscripcion}
-    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:new" }
+    pattern:  /new/{idinscripcion}/{email}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:new",email:null }
 
 pago_newtdc:
     pattern:  /newtdc/{idinscripcion}
     defaults: { _controller: "FraterSoftPiaWebBundle:Pago:newtdc" }
 
+pago_newgrupo:
+    pattern:  /newgrupo/{idevento}/{idcompetencia}/{idgrupo}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:newgrupo" }
+
 pago_create:
-    pattern:  /create
+    pattern:  /create/{idinscripcion}
     defaults: { _controller: "FraterSoftPiaWebBundle:Pago:create" }
+    requirements: { _method: post }
+
+pago_creategrupo:
+    pattern:  /creategrupo/{idevento}/{idgrupo}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:creategrupo" }
     requirements: { _method: post }
 
 pago_edit:
@@ -48,3 +61,12 @@ pago_conciliar_lote:
 pago_email_tdcnoconciliados:    
     pattern:  /emailtdcnoconciliados/{idevento}
     defaults: { _controller: "FraterSoftPiaWebBundle:Pago:emailtdcnoconciliados" }        
+
+pago_registro:
+    pattern:  /{id}/{email}/registro
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:registro",email:null }
+    
+pago_formaspago_ajax:
+    pattern:  /formaspagoajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Pago:buscarFormasPagoAjax" }
+

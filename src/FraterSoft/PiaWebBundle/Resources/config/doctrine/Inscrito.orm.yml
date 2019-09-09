@@ -15,9 +15,6 @@ FraterSoft\PiaWebBundle\Entity\Inscrito:
         IDX_9AF786163C3F6B05:
             columns:
                 - idpia
-        IDX_9AF786162710AE9E:
-            columns:
-                - idpago
     id:
         id:
             type: bigint
@@ -59,7 +56,7 @@ FraterSoft\PiaWebBundle\Entity\Inscrito:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: "Posibles valores:\n\n1 Activo\n\n2 Anulado"
         publicado:
             type: integer
             nullable: true
@@ -73,7 +70,13 @@ FraterSoft\PiaWebBundle\Entity\Inscrito:
         notificado:
             type: boolean
             nullable: true
-            comment: 'Es verdadero si se envio el correo de confirmacion manual masivo'            
+            comment: 'Es verdadero si se envio el correo de confirmacion manual masivo'
+        idgrupo:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
     manyToOne:
         idcategoria:
             targetEntity: Categoria
@@ -111,13 +114,8 @@ FraterSoft\PiaWebBundle\Entity\Inscrito:
                 idpia:
                     referencedColumnName: id
             orphanRemoval: false
-        idpago:
+    oneToMany:
+        pagos:
             targetEntity: Pago
-            cascade: {  }
-            mappedBy: null
-            inversedBy: null
-            joinColumns:
-                idpago:
-                    referencedColumnName: id
-            orphanRemoval: false
+            mappedBy: idinscrito           
     lifecycleCallbacks: {  }

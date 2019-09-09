@@ -1,0 +1,40 @@
+FraterSoft\PiaWebBundle\Entity\Notificador:
+    type: entity
+    table: piaaccess.notificador
+    indexes:
+        IDX_E279F36F6FAFBFF6:
+            columns:
+                - idorganizador
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nombre:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        destinatarios:
+            type: string
+            nullable: true
+            length: 500
+            fixed: false
+            comment: ''
+    manyToOne:
+        idorganizador:
+            targetEntity: Organizador
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idorganizador:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

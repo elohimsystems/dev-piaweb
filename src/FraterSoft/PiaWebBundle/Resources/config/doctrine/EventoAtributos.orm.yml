@@ -57,7 +57,7 @@ FraterSoft\PiaWebBundle\Entity\EventoAtributos:
             targetEntity: Evento
             cascade: {  }
             mappedBy: null
-            inversedBy: null
+            inversedBy: atributos
             joinColumns:
                 idevento:
                     referencedColumnName: id

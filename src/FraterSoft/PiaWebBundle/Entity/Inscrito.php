@@ -81,6 +81,15 @@ class Inscrito
     
     private $notificado;    
 
+    /**
+     * @var string
+     */
+    private $idgrupo;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $pagos;
 
     /**
      * Get id
@@ -421,4 +430,68 @@ class Inscrito
     public function __toString() {
         return $this->nombre;
     }       
+    
+    /**
+     * Set idgrupo
+     *
+     * @param string $idgrupo
+     * @return Inscrito
+     */
+    public function setIdgrupo($idgrupo)
+    {
+        $this->idgrupo = $idgrupo;
+
+        return $this;
+    }
+
+    /**
+     * Get idgrupo
+     *
+     * @return string 
+     */
+    public function getIdgrupo()
+    {
+        return $this->idgrupo;
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->pagos = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add pagos
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Pago $pagos
+     * @return Inscrito
+     */
+    public function addPago(\FraterSoft\PiaWebBundle\Entity\Pago $pagos)
+    {
+        $this->pagos[] = $pagos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove pagos
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Pago $pagos
+     */
+    public function removePago(\FraterSoft\PiaWebBundle\Entity\Pago $pagos)
+    {
+        $this->pagos->removeElement($pagos);
+    }
+
+    /**
+     * Get pagos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPagos()
+    {
+        return $this->pagos;
+    }
 }

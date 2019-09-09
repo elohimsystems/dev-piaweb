@@ -1,0 +1,66 @@
+FraterSoft\PiaWebBundle\Entity\Precioscategoria:
+    type: entity
+    table: piaaccess.tmprecioscategorias
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\PrecioscategoriaRepository 
+    indexes:
+        IDX_377477BB300BBBD8:
+            columns:
+                - idcategoria
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        precio:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            comment: ''
+        cantidad:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
+        hasta:
+            type: datetimetz
+            nullable: true
+            comment: 'Guarda la fecha hasta donde se asignara dicho precio'
+        prioridad:
+            type: string
+            nullable: true
+            length: 15
+            fixed: false
+            comment: 'Determina cual de los dos factores (cantidad o fecha hasta) sera tomado primero en cuenta cuando se configuren ambos parametros'
+        texto:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+        imagen:
+            type: string
+            nullable: true
+            length: 300
+            fixed: false
+            comment: 'Se usa para mostrar las imagenes de las opciones que incluyen el precio'
+        moneda:
+            type: string
+            nullable: true
+            length: 5
+            fixed: false            
+    manyToOne:
+        idcategoria:
+            targetEntity: Categoria
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idcategoria:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

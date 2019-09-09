@@ -207,9 +207,184 @@
                 return false;
             }        
         );
-        
     }
+
+    /* 
+    * FUNCION QUE CREA UN ARRAY CON LA CONFIGURACION NECESARIAA PARA EL DATATABLE 
+    * SI ALGUN CAMPO DEL QUERY COMIENZA POR ID, ESTA COLUMNA SE OCULTARA 
+    * AUTOMATICAMENTE. TABIEN VALIDA QUE EL VALOR DE CAMPO QUE COMIENZA POR ID
+    * TENGA UN VALOR NUMERICO. 
+    * */
     
+    function getNamesColumsFromObject(data){
+        var configcols=[];
+        var j=0;
+        $.each(data, function( key, value ) {
+            if(key.substr(0, 2)=='id' && !isNaN(Number(value)))
+                configcols[j++]={ title: toTitleCase(key), data: key, visible:false };
+            else
+                if (typeof value === 'string' || value instanceof String)
+                    configcols[j++]={ title: toTitleCase(key), data: key, render: function(data){ return data.toUpperCase()}  };
+                else
+                    configcols[j++]={ title: toTitleCase(key), data: key  };
+        });
+        return(configcols);
+    }
+
+    function getNamesColumsFromData(configcols,arraycolumns,data,keydata){
+        var j=0;
+        keydata=(keydata==null || keydata=="")?"":keydata+".";
+        $.each(data, function( key, value ){
+            if($.type(value)=="object")
+                getNamesColumsFromData(configcols,arraycolumns,value,key);
+            else{
+                if(key=="date" || key=="timezone_type" || key=="timezone")
+                    return(null);
+                configcols.push(($.inArray(keydata+key,arraycolumns)!=-1)?{title:key.toUpperCase(),data:(keydata+key),visible:true,render: function(data){ return data.toUpperCase()}}:{title:key,data:keydata+key,visible:false});
+            }
+        });
+        return(null);
+    }
+
+    function nameColumsDataTable(arraycampos){
+        var configcols=[];
+        var i=0;
+        $.each(arraycampos, function( key, value ) {
+            if(key!='entity'){
+                switch(value['constraint']){
+                    case 'primarykey':
+                        configcols[i]={ title: value['nombre'], data: key, visible: true  };
+                        break;
+                    case 'foreingkey':
+                        switch(value['tipoRelacion']){
+                            case 1:
+                                var j=i;
+                                var contador=0;
+                                $.each(value['campos'], function( keyf, valuef ) {
+                                    if(valuef['constraint']==""){
+                                        configcols[j++]={ title: toTitleCase(valuef['nombre']), data: keyf, visible: true  };
+                                        contador++;
+                                    }
+                                });
+                                if(contador>0)i+=contador-1;
+                                break;
+                            case 2:
+                                configcols[i]={ title: value['nombre'], data: key, visible: true  };
+                                break;                                
+                        }
+                        break;
+                    default:
+                        configcols[i]={ title: toTitleCase(value['nombre']), data: key };
+                        break;
+                }
+                if(value['tipo']=='boolean')
+                    configcols[i]['render']=function(data){
+                        return(data==true?"<spam class='ui-icon ui-icon-check'></spam>":"");
+                    };
+                if(value['tipo']=='datetime' || value['tipo']=='datetimetz')
+                    configcols[i]['render']=function(data){
+                        //var formatted=(data!=null)?$.datepicker.formatDate("d/m/Y H:i", data):data;
+                        var formatted=(data!=null)?getFormattedTimestamp(data.timestamp):data;
+                        return formatted;
+                    };
+                i++;
+            }
+        });
+        return(configcols);        
+    }
+
+    function tablaDatosArrayObjetos(nombretabla,arraydatos,caption,actions){
+        var table;
+        var configcols=[];
+        configcols=getNamesColumsFromObject(arraydatos[0]);
+        table = $('#'+nombretabla).DataTable({
+            dom: 'rt',
+            data: arraydatos,
+            autoWidth: false,
+            language: {
+                emptyTable: "No hay datos para mostrar",
+            },
+            columns: configcols,
+            columnDefs:[
+                {"targets":0,"visible":false }, //debe ocultar la primera columnda que debe correpnder con el id del registro
+                { 
+                    "targets": (actions)?actions[0].posicion:null,  
+                    "title": (actions)?actions[0].titulo:null,
+                    "className":(actions)?actions[0].alineacion:null,
+                    "render": function ( data, type, row, meta ) {
+                        console.log();
+                        var html='';
+                        if(actions){
+                            html="<ul id='icons' class='ui-widget'>";
+                            for(i=0;i<actions[0].botones.length;i++){
+                                var ini=actions[0].botones[i].onclick.lastIndexOf("(")+1;
+                                var fin=actions[0].botones[i].onclick.lastIndexOf(")");
+                                var nombrecampo=actions[0].botones[i].onclick.substring(ini,fin);
+                                var ocfun=actions[0].botones[i].onclick;
+                                //ocfun=ocfun.replace(nombrecampo,row[nombrecampo]);meta.row
+                                ocfun=ocfun.replace(nombrecampo,meta.row);
+                                //console.log(ocfun);
+                                html+="<a onClick='"+ocfun+"'>"
+                                + "<li class='ui-state-default ui-corner-all' title='"+actions[0].botones[i].title+"'>"
+                                + "<span class='ui-icon "+actions[0].botones[i].icon+"'></span></li>"
+                                + "</a>";                            
+
+                            }
+                            html+="</ul>";
+                        }
+                        return html;
+                    }
+                }    
+            ]
+        }); 
+        $('#'+nombretabla).append("<caption><b>" + caption + "</b></caption>");
+        return(table);
+    }
+
+    function tablaDatosObjetos(nombretabla,arraydatos,arraycols,caption,actions){
+        var configcols=[];
+        getNamesColumsFromData(configcols,arraycols,arraydatos[0],null);
+        var table;
+        table = $('#'+nombretabla).DataTable({
+            dom: 'rt',
+            data: arraydatos,
+            autoWidth: false,
+            language: {
+                emptyTable: "No hay datos para mostrar",
+            },
+            columns: configcols,
+            columnDefs:[
+                {"targets":0,"visible":false }, //debe ocultar la primera columnda que debe correpnder con el id del registro
+                { 
+                    "targets": (actions)?actions[0].posicion:null,  
+                    "title": (actions)?actions[0].titulo:null,
+                    "className":(actions)?actions[0].alineacion:null,
+                    "render": function ( data, type, row, meta ) {
+                        var html='';
+                        if(actions){
+                            html="<ul id='icons' class='ui-widget'>";
+                            for(i=0;i<actions[0].botones.length;i++){
+                                var ini=actions[0].botones[i].onclick.lastIndexOf("(")+1;
+                                var fin=actions[0].botones[i].onclick.lastIndexOf(")");
+                                var nombrecampo=actions[0].botones[i].onclick.substring(ini,fin);
+                                var ocfun=actions[0].botones[i].onclick;
+                                ocfun=ocfun.replace(nombrecampo,row[nombrecampo]);
+                                //console.log(ocfun);
+                                html+="<a onClick='"+ocfun+"'>"
+                                + "<li class='ui-state-default ui-corner-all' title='"+actions[0].botones[i].title+"'>"
+                                + "<span class='ui-icon "+actions[0].botones[i].icon+"'></span></li>"
+                                + "</a>";                            
+
+                            }
+                            html+="</ul>";
+                        }
+                        return html;
+                    }
+                }    
+            ]
+        }); 
+    }
+
     /*
     * Construye una tabla de datos
 
@@ -229,35 +404,7 @@
          * los campos en el archivo de mapeo de doctrine
          */
         var configcols=[];
-        var i=0;
-        //console.log(arraycampos);
-        $.each(arraycampos, function( key, value ) {
-            if(key!='entity'){
-                switch(value['constraint']){
-                    case 'primarykey':
-                        configcols[i]={ title: value['nombre'], data: key, visible: true  };
-                        break;
-                    case 'foreingkey':
-                        configcols[i]={ title: value['nombre'], data: key, visible: false  };
-                        break;
-                    default:
-                        configcols[i]={ title: toTitleCase(value['nombre']), data: key };
-                        break;
-                }
-                if(value['tipo']=='boolean')
-                    configcols[i]['render']=function(data){
-                        return(data==true?"<spam class='ui-icon ui-icon-check'></spam>":"");
-                    };
-                if(value['tipo']=='datetime' || value['tipo']=='datetimetz')
-                    configcols[i]['render']=function(data){
-                        //var formatted=(data!=null)?$.datepicker.formatDate("d/m/Y H:i", data):data;
-                        var formatted=(data!=null)?getFormattedTimestamp(data.timestamp):data;
-                        return formatted;
-                    };
-                i++;
-            }
-        });
-        //console.log(configcols);
+        configcols=nameColumsDataTable(arraycampos);
         /*
          * Agregar las comulnas independientes en la posicion indicada. El data del la
          * columna debe venir en la data devuelta del ajax
@@ -316,6 +463,7 @@
                             url_action_edit=url_action_edit.replace('_id_',rows[0].id)
                             formulario.attr('action',url_action_edit);
                             //carga la informacion seleccionada de la tabla en el formulario                            
+                            //console.log(arraycampos);
                             $.each(arraycampos, function( key, value ) {
                                 if($("#fratersoft_piawebbundle_"+ entidad + "_" + key).prop('disabled')==true)
                                     $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',false);
@@ -332,17 +480,27 @@
                                             break;
                                         default:
                                             if(value['constraint']=='foreingkey'){ //Si es foreingkey es un select
-                                                if($("#fratersoft_piawebbundle_"+ entidad + "_" + key + " option").length>1){
-                                                    $.each($("#fratersoft_piawebbundle_"+ entidad + "_" + key + " option"), function(i) {
-                                                        $("#fratersoft_piawebbundle_"+ entidad + "_" + key).find('[value="'+$(this).val()+'"]').show();
-                                                    });
+                                                switch(value['tipoRelacion']){
+                                                    case 1:
+                                                        $.each(value['campos'], function( keyf, valuef ) {
+                                                            if(valuef['constraint']=="")
+                                                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key + "_" + keyf).val(rows[0][keyf]);
+                                                        });
+                                                        break;
+                                                    case 2:
+                                                        if($("#fratersoft_piawebbundle_"+ entidad + "_" + key + " option").length>1){
+                                                            $.each($("#fratersoft_piawebbundle_"+ entidad + "_" + key + " option"), function(i) {
+                                                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).find('[value="'+$(this).val()+'"]').show();
+                                                            });
+                                                        }
+                                                        $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val(rows[0][key]);
+                                                        /* 
+                                                         * Habilita o no la seleccion del select de clave foranea, si esta falso, en el new o gestion del controlador
+                                                         * se debe ocultar mediante ccs el select, ver caso Publicidad 
+                                                         */
+                                                        $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',false);
+                                                        break;
                                                 }
-                                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val(rows[0][key]);
-                                                /* 
-                                                 * Habilita o no la seleccion del select de clave foranea, si esta falso, en el new o gestion del controlador
-                                                 * se debe ocultar mediante ccs el select, ver caso Publicidad 
-                                                 */
-                                                $("#fratersoft_piawebbundle_"+ entidad + "_" + key).attr('disabled',false);
                                             }
                                             else
                                                 $("#fratersoft_piawebbundle_"+ entidad + "_" + key).val(rows[0][key]);
@@ -375,7 +533,6 @@
                         rows = table.rows({selected: true}).data();
                         $("#eliminar").html("");
                         if (rows.length == 1) {
-                            console.log();
                             $("#eliminar").append(rows[0]['id']);
                             $("#dialogelimiar").dialog({ title: "Eliminar " + caption });
                             $("#dialogelimiar").data('id',rows[0].id).dialog("open");                            
@@ -658,4 +815,293 @@
             default: return("DEFINIR");
         }
     }    
+    
+    function idform(arrayform,campo){
+        for(i=0;i<arrayform[0].length;i++) {
+            var id=arrayform[0][i]['id'];
+            if(id.indexOf(campo)!=-1)
+                return('#'+arrayform[0][i]['id']);
+        }
+        if(i==arrayform[0].length)
+            alert("Error en funcion idform. campo " + campo + " no existe en el formulario");
+        return(null);
+    }
+
+    function ocultaCamposPagoForm(formulario){
+        $(idform(formulario,'referencia')).parent().children(0).hide();
+        $(idform(formulario,'referencia')).prop("required", false);
+
+        $(idform(formulario,'idbanco')).parent().children(0).hide();
+        $(idform(formulario,'idbanco')).prop("required", false);
+
+        $(idform(formulario,'idcuenta')).parent().children(0).hide();
+        $(idform(formulario,'idcuenta')).prop("required", false);
+
+        $(idform(formulario,'idpagador')).parent().children(0).hide();
+        $(idform(formulario,'idpagador')).prop("required", false);
+
+        $(idform(formulario,'nombrepagador')).parent().children(0).hide();
+        $(idform(formulario,'nombrepagador')).prop("required", false);
+
+        $(idform(formulario,'correopagador')).parent().children(0).hide();
+        $(idform(formulario,'correopagador')).prop("required", false);
+
+        $(idform(formulario,'fechapago')).parent().children(0).hide();
+        $(idform(formulario,'fechapago')).prop("required", false);
+        
+        /*for(i=0;i<arrayform[0].length;i++) {
+            var id=arrayform[0][i]['id'];
+            if(id.indexOf(nombreform)!=-1){
+                $('#'+arrayform[0][i]['id']).hide();
+                $('#'+arrayform[0][i]['id']).parent().children(0).hide();                
+            }
+                for(j=0;j<excepciones.length;j++){
+                    if(id.indexOf(excepciones[j])==-1){
+                        //$('#'+arrayform[0][i]['id']).parent().hide();
+                        //$('#'+arrayform[0][i]['id']).parent().children(0).hide();                
+                    }
+                    else{
+                        console.log($('#'+arrayform[0][i]['id']).parent()[0].outerHTML);
+                        //s$('#'+arrayform[0][i]['id']).parent().show();
+                        //$('#'+arrayform[0][i]['id']).parent().show();
+                    }
+                }
+        }*/
+    }
+    
+    function buscaPrecio(idevento, idcompetencia, idcategoria,formulario,recargas,idmoneda) {
+        //Busca el precio segun configuracion
+        var id_campo_precio=idform(formulario,'precio');
+        var id_campo_moneda=idform(formulario,'idmoneda');
+        var id_campo_monto=idform(formulario,'monto');
+        var id_campo_banco=idform(formulario,'banco');
+        var id_campo_referencia=idform(formulario,'referencia');
+        var id_campo_idformapago=idform(formulario,'idformapago');
+        var id_campo_texto=idform(formulario,'texto');
+        var criterios = "idevento=" + idevento
+                + "&idcompetencia=" + idcompetencia
+                + "&idcategoria=" + idcategoria
+                + "&idmoneda=" + idmoneda;
+        $(id_campo_precio).find('option').remove();
+        //Oculta el total a pagar
+        $(id_campo_monto).hide();
+        $(id_campo_monto).parent().children(0).hide();
+        $.each(recargas, function (key, value) {
+            $("#recarga"+key).remove();
+        });
+        $.ajax({
+            type: "GET",
+            data: criterios,
+            url: "{{ path('inscrito_precio') }}",
+            dataType: "json",
+            success: function (datos)
+            {
+                if(datos['values'][0]['values'].length>1)
+                    $(id_campo_precio).append("<option selected value=''>Seleccione un Precio</option>");
+                var texto="";
+                $.each(datos['values'][0]['values'], function (key, value) {
+                    var recarga=[];
+                    var indexrecarga=0;
+                    var div;
+                    var montorecargo;
+                    //var precio=precios[0];
+                    var total=0;
+                    var textoprecio=(value.texto==null)?'':'texto=\'' + value.texto + '\'';
+                    texto=((value.texto==null)?'':value.texto + ' ')  + ((value.moneda==null)?'':value.moneda + ' ') + value.precio;
+                    if(value.precio!=-1){
+                        if(datos['values'][0]['values'].length==1){
+                            $(id_campo_precio).append('<option selected '+textoprecio+' value='+value.precio+'>'+texto+'</option>');
+                            calcularTotalPagar(
+                                    $(id_campo_precio),
+                                    $(id_campo_monto),
+                                    recargas
+                            );                            
+                        }
+                        else
+                            $(id_campo_precio).append('<option '+textoprecio+' value='+value.precio+'>'+texto+'</option>');
+                        setTextoPrecio($(id_campo_precio + ' option:selected'),$(id_campo_texto));
+                        $(id_campo_precio).prop("disabled", false);
+                        $(id_campo_banco).prop("disabled", false);
+                        $(id_campo_referencia).prop("disabled", false);
+                        $(id_campo_idformapago).prop("disabled", false);                                      
+                    }
+                    else{
+                        $(id_campo_precio).append($('<option>', {
+                            value: 0,
+                            text: "EXONERADO"
+                        }));
+                        $(id_campo_monto).val(0);
+                        $(id_campo_texto).val(value.texto);
+                        $(id_campo_precio).prop("disabled", true);
+                        $(id_campo_banco).prop("disabled", true);
+                        $(id_campo_referencia).prop("disabled", true);
+                        $(id_campo_idformapago).prop("disabled", true);                                
+                    }
+                });             
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert("PIA Ajax Error: " + jqXHR.responseText);
+            }
+        });
+    }            
+    
+    function setTextoPrecio(campoprecio,campotexto){
+        var texto;
+        texto=campoprecio.attr('texto');
+        campotexto.val(texto);
+    }
+    
+    function manejoFormularioPago(campoprecio,formulario,parametrosfp){
+        var id_campo_idformapago=idform(formulario,'idformapago');
+        var id_campo_idbanco=idform(formulario,'idbanco');
+        var id_campo_idmoneda=idform(formulario,'idmoneda');
+               
+        $.each(parametrosfp, function(i,item){
+            $(idform(formulario,item.campo)).parent().children(0).show();                
+            $(idform(formulario,item.campo)).prop("required", true);
+            $(idform(formulario,item.campo)).val('');
+            $(idform(formulario,item.campo)).parent().children(0)[0].innerHTML=item.etiqueta;
+        });        
+/*        switch ($(id_campo_tipo).val()) {
+            case '':
+                $(id_campo_banco).val(null);
+                $("#codigo123pago").remove();
+                $("#mensajepagotarjeta").hide();
+                $(id_campo_referencia).removeAttr("read_only");
+                $(id_campo_banco).removeAttr("disabled");
+                $(id_campo_submit).html('<span class="ui-button-text">Inscribir</span>')
+                break;
+            case '1': //Selecciono Deposito
+                if ($(campoprecio).val() == 0){
+                    alert("Error el precio no puede ser 0");
+                    $(id_campo_tipo).val('');                                
+                }                                
+                else {                             
+                    $("#label_pago_referencia").html('Numero Operacion');
+                    $(id_campo_submit).show();
+                    if(bancoorganizador!=null) //Valida que se haya configurado el organizador en el evento
+                        $(id_campo_banco).val(bancoorganizador);
+                    $(id_campo_referencia).prop("disabled", false);
+                    $(id_campo_banco).prop("disabled",true);
+                    $("#mensajepago").show();
+                    $("#mensajepagotarjeta").hide();
+                    $("#codigo123pago").remove();
+                    $(id_campo_submit).html('<span class="ui-button-text">Inscribir</span>')
+                }
+                break;
+            case '2': //Selecciono Transferencia
+                if ($(campoprecio).val() == 0){
+                    alert("Error el precio no puede ser 0");
+                    $(id_campo_tipo).val('');
+                }
+                else {                            
+                    $("#label_pago_referencia").html('Numero Operacion');
+                    $(id_campo_submit).show();
+                    $(id_campo_banco).val("");
+                    $(id_campo_referencia).prop("disabled", false);
+                    $(id_campo_banco).removeAttr("disabled");
+                    $("#mensajepago").show();
+                    $("#mensajepagotarjeta").hide();
+                    $(id_campo_submit).html('<span class="ui-button-text">Inscribir</span>');
+                }
+                break;
+            case '3': //Selecciono Tarjeta de Credito
+                if ($(campoprecio).val() == 0){
+                    alert("Error el precio no puede ser 0");
+                    $(id_campo_tipo).val('');                                
+                }
+                else {
+                    $("#label_pago_referencia").html('Numero Operacion');
+                    $(id_campo_referencia).val('');
+                    $("#mensajepago").hide();
+                    $(id_campo_banco).prop("disabled", true);
+                    $(id_campo_referencia).prop("disabled", true);
+                    $(id_campo_submit).html('<span class="ui-button-text">Continuar</span>');
+                    $("#mensajepagotarjeta").show();
+                }
+                $("#incremento").html(incremento); 
+                break;                        
+            case '5': //Selecciono Cortesia
+                if ($(campoprecio).val() == 0){
+                    alert("Error el precio no puede ser 0");
+                    $(id_campo_tipo).val('');                                
+                }
+                else {
+                    $(id_campo_submit).show();
+                    $("#label_pago_referencia").html('Codigo');
+                    $("#mensajepago").hide();
+                    $("#mensajepagotarjeta").hide();
+                    $(id_campo_referencia).prop("disabled", false);
+                    $(id_campo_banco).prop("disabled", true);
+                    $(id_campo_submit).html('<span class="ui-button-text">Inscribir</span>');
+                }
+                if(incremento != null ) $("#incremento").html(incremento);
+                break;                        
+        }*/
+    }
+    
+    function calcularTotalPagar(campo_precio,campo_monto,recargas){
+        if(recargas.length > 0){
+            var recarga=[];
+            var texto_porcentaje="";
+            var div;
+            var montorecargo;
+            var total=parseFloat(campo_precio.val());
+            $.each(recargas, function (key, value) {
+                $("#recarga"+key).remove();
+                if(campo_precio.val()){
+                    div=campo_precio.parent().get(0);
+                    montorecargo=campo_precio.val()*(value['porcentaje']/100);
+                    total+=parseFloat(montorecargo);
+                    texto_porcentaje=(value['verporcentaje']!=null)?" "+value['porcentaje']+"%":"";
+                    recarga.push($("<div id='recarga"+key+"'><label>"+value['nombre']+texto_porcentaje+"</label><spam id='montorecarga'>"+montorecargo.toFixed(2)+"</spam></div>"));
+                    recarga[key].insertAfter(div);
+                    campo_monto.val(total.toFixed(2));
+                    campo_monto.show();
+                    campo_monto.parent().children(0).show();
+                    console.log(montorecargo);
+                }
+                else{
+                    campo_monto.hide();
+                    campo_monto.parent().children(0).hide();
+                }            
+            });
+        }
+        else
+            campo_monto.val(campo_precio.val());
+    }
+
+    function setSession(key,value){
+        window.sessionStorage.setItem('idfp'+key.toString(), value);
+    }
+    
+    function buscarFormasPago(formulario,idevento,idmoneda) {
+        //Busca el precio segun configuracion
+        var id_campo_idformapago=idform(formulario,'idformapago');
+        var criterios = "idevento=" + idevento
+                + "&idmoneda=" + idmoneda;
+        $(id_campo_idformapago).find('option').remove();
+        window.sessionStorage.clear();
+        $.ajax({
+            type: "GET",
+            data: criterios,
+            url: "{{ path('pago_formaspago_ajax') }}",
+            dataType: "json",
+            success: function (datos)
+            {                
+                $(id_campo_idformapago).append("<option selected value=''>Seleccione una Forma de Pago</option>");
+                $.each(datos.data, function (key, value) {
+                    $(id_campo_idformapago).append('<option value=' + key + '>' + value.nombre + '</option>');
+                    if(value.parametros!=null)
+                        setSession(key.toString(),value.parametros);
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert("PIA Ajax Error: " + jqXHR.responseText);
+            }
+        });
+    }            
+
 </script>

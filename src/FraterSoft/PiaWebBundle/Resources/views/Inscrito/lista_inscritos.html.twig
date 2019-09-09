@@ -13,6 +13,7 @@
 
         $(document).ready(function () {
             url="{{ path('inscrito_lista_inscritosajax',{'idevento': idevento }) }}";
+            var emails=[];
             var table = $('#tablaInscritos').DataTable({
                 "dom": 'Bflit<"bottom"Bl<"clear">p>',
                 processing: true,
@@ -21,7 +22,7 @@
 		buttons: [  
                     {extend: 'excelHtml5',
                         text: 'Exportar',
-                        title: 'ListadoInscritos'
+                        title: 'Listado Inscritos {{nombreevento}}'
                     }, 
                     { extend: 'print', text: 'Imprimir' },
                     {text: 'Asignar Numeros',
@@ -89,24 +90,33 @@
                 },
                 'scrollX': true,
                 columns: [
-                    { title: "Sec.", data: "secuencia" },
-                    { title: "Competencia", data: "idcompetencia.descripcion" },
                     { title: "Numero", data: "numero" },
                     {% for atributo in atributos %}
+                    {% if atributo.idatributo.nombre=='emailpersonal'%}
+                        {title:"Email",data:"idpia.emailpersonal",render: function(data, type, row){
+                                if(row.idpia.emailpersonal==row.idpia.email)
+                                    return row.idpia.emailpersonal
+                                else if(row.idpia.emailpersonal==null)
+                                    return row.idpia.email
+                                else if(row.idpia.email==null)
+                                    return row.idpia.emailpersonal
+                                else return row.idpia.emailpersonal+","+row.idpia.email}},
+                    {% elseif atributo.idatributo.nombre!='email'%}
+                    {% if atributo.orden!=99 %}
                     { 
-                        title: {% if atributo.etiqueta is null=='S' %}"{{ atributo.idatributo.nombre }}"{% else %}"{{ atributo.etiqueta }}"{% endif %}, 
+                        title: {% if atributo.etiqueta is null %}"{{ atributo.idatributo.nombre|capitalize }}"{% else %}"{{ atributo.etiqueta }}"{% endif %}, 
                         {% if atributo.idatributo.tipodato=='E' %} 
                         data: "idpia.{{atributo.idatributo.nombre|lower}}.nombre",
                         {% else %}
                         data: "idpia.{{atributo.idatributo.nombre|lower}}",
                         {% endif %}
                         {% if atributo.idatributo.tipodato=='S' %} 
-                        render: function(data){return data==null?"":data.toUpperCase();} 
+                        render: function(data){return data==null?"":data.toUpperCase();}, 
                         {% elseif  atributo.idatributo.tipodato=='D' %} 
                         render: function(data){
                             var formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
                             return formatted;
-                        }
+                        },
                         {% elseif  atributo.idatributo.tipodato=='I' %} 
                         render: function(data){
                             if(data){
@@ -117,13 +127,23 @@
                                 var url = "{{asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}";
                                 return "<img id='imagen_foto' src='"+url+"'/></a>";
                             }
-                        }                        
-                        {% endif %}},            
+                        },                        
+                        {% endif %}
+                        {% if atributo.idatributo.tipo=="U" %}
+                            visible:true,
+                        {% endif %}
+                    },            
+                    {% endif %}
+                    {% endif %}
                     {% endfor %}
+                    { title: "Distancia", data: "idcompetencia.descripcion" },
                     { title: "Categoria", data: "idcategoria.descripcion" },
                     { title: "Punto", data: "punto" },
-                    { title: "Monto", data: "idpago.monto" },   
+                    { title: "Precio", data: "pagos[0].precio" },   
+                    { title: "Recarga", data: "pagos[0].regarga" },
+                    { title: "Total", data: "pagos[0].monto" },   
                     { title: "Notificado", data: "notificado",render: function(data){return data!=true?"NO":"SI";} },
+                    { title: "Sec.", data: "secuencia" },
                     { title: "Acciones", data:"id",render:
                                 function(data, type, row){
                                     var urlshow="{{ path('inscrito_show', { 'id': '_id_' }) }}";
@@ -145,17 +165,7 @@
                                 },
                         "width": "98px","orderable": false
                     },                     
-                ],
-                "columnDefs": [ //Oculta las columnas en la tabla
-                    {% set target=3 %}
-                    {% for atributo in atributos %}
-                    {% if atributo.idatributo.tipo=='U' %}
-                    { "visible": false, "targets": {{ target }} },
-                    {% endif %}
-                    {% set target=target+1 %}
-                    {% endfor %}
-                ],           
-                
+                ],                
             });
             //Muestra la ventana de confirmacion
             $("#notificacion").dialog({
@@ -224,7 +234,7 @@
                     }
                 ]
             });           
-            //Muestra la ventana de confirmacion
+            //Muestra la ventna de confirmacion
             $("#correosatodos").dialog({
                 autoOpen: false,
                 width: 400,
@@ -288,12 +298,25 @@
             $('#tabs a[href="#tabs-6"]').on("click", function () {
                 $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento,'email':email}) }}')
             });         
+            
+            $("#seccionCargando").hide();        
+            $("#contenido").show();        
+            
         });
 
     </script>           
 {% endblock %} 
 {% block style %}
 <style type="text/css">
+    #contenido{     
+        display: none;
+    }
+    #seccionCargando > img{
+        width: 50px;
+    }        
+    #seccionCargando{
+        text-align: center;
+    }    
     td,th{
         font-size: 10px;
     }
@@ -318,39 +341,44 @@
 </style>
 {% endblock %}  
 {% block body -%}
-    <div id="evento">{{nombreevento}}</div>
-    <div id="tabs">
-        <ul>
-            <li><a href="#tabs-1">Pre-Inscritos</a></li>
-            <li><a href="#tabs-2">Inscritos</a></li>
-            <li><a href="#tabs-3">Anulados</a></li>
-            <li><a href="#tabs-4">Operaciones TDC</a></li>
-            <li><a href="#tabs-5">Estadisticas</a></li>    
-            <li><a href="#tabs-6">Auditoria</a></li>   
-        </ul>
-        <div id="tabs-1"></div>
-        <div id="tabs-3"></div>  
-        <div id="tabs-4"></div>        
-        <div id="tabs-5"></div>  
-        <div id="tabs-2">
-            <table id="tablaInscritos" class="display row-border hover">
-            </table>     
-            <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+    <div id="seccionCargando">
+        <img src="{{ asset('bundles/fratersoftpiaweb/images/loading.gif') }}">
+    </div>        
+    <div id="contenido">
+        <div id="evento">{{nombreevento}}</div>
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1">Pre-Inscritos</a></li>
+                <li><a href="#tabs-2">Inscritos</a></li>
+                <li><a href="#tabs-3">Anulados</a></li>
+                <li><a href="#tabs-4">Operaciones TDC</a></li>
+                <li><a href="#tabs-5">Estadisticas</a></li>    
+                <li><a href="#tabs-6">Auditoria</a></li>   
+            </ul>
+            <div id="tabs-1"></div>
+            <div id="tabs-3"></div>  
+            <div id="tabs-4"></div>        
+            <div id="tabs-5"></div>  
+            <div id="tabs-2">
+                <table id="tablaInscritos" class="display row-border hover">
+                </table>     
+                <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+            </div>
+            <div id="notificacion" title="Advertencia!!!">
+                <p id="msgconc">Desea reenviar las notificaciones de Confirmacion de Inscripcion de las siguintes secuencias: <div id="ids"></div></p>
+            </div>
+            <div id="anumeros" title="Advertencia!!!">
+                <p id="msgconc">¿Esta seguro que desea ASIGNAR los numeros?</p>
+            </div>  
+            <div id="rnumeros" title="Advertencia!!!">
+                <p id="msgconc">¿Esta seguro que desea RESETEAR los numeros?</p>
+            </div>  
+            <div id="correosatodos" title="Advertencia!!!">
+                <p id="msgconc">¿Esta seguro que desea enviar la confirmacion a todos los inscritos? El proceso tardara varios minutos.</p>
+            </div> 
+            <div id="dialog" title="Advertencia!!!">
+                <p>Esta seguro que desea anular inscripcion con la secuencia <b id="sec"></b> ?</p>
+            </div>        
         </div>
-        <div id="notificacion" title="Advertencia!!!">
-            <p id="msgconc">Desea reenviar las notificaciones de Confirmacion de Inscripcion de las siguintes secuencias: <div id="ids"></div></p>
-        </div>            
-        <div id="anumeros" title="Advertencia!!!">
-            <p id="msgconc">¿Esta seguro que desea ASIGNAR los numeros?</div></p>
-        </div>  
-        <div id="rnumeros" title="Advertencia!!!">
-            <p id="msgconc">¿Esta seguro que desea RESETEAR los numeros?</div></p>
-        </div>  
-        <div id="correosatodos" title="Advertencia!!!">
-            <p id="msgconc">¿Esta seguro que desea enviar la confirmacion a todos los inscritos? El proceso tardara varios minutos.</div></p>
-        </div> 
-        <div id="dialog" title="Advertencia!!!">
-            <p>Esta seguro que desea anular inscripcion con la secuencia <b id="sec"></b> ?</p>
-        </div>        
     </div>
 {% endblock %}

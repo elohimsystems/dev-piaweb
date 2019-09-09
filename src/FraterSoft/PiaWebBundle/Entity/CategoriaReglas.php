@@ -39,6 +39,15 @@ class CategoriaReglas
      */
     private $idcategoria;
 
+    /**
+     * @var string
+     */
+    private $accion;
+
+    /**
+     * @var integer
+     */
+    private $cantidad;
 
     /**
      * Get id
@@ -164,4 +173,51 @@ class CategoriaReglas
     {
         return $this->idcategoria;
     }
+    
+    /**
+     * Set accion
+     *
+     * @param string $accion
+     * @return CategoriaReglas
+     */
+    public function setAccion($accion)
+    {
+        $this->accion = $accion;
+
+        return $this;
+    }
+
+    /**
+     * Get accion
+     *
+     * @return string 
+     */
+    public function getAccion()
+    {
+        return $this->accion;
+    }
+
+    /**
+     * Set cantidad
+     *
+     * @param integer $cantidad
+     * @return CategoriaReglas
+     */
+    public function setCantidad($cantidad)
+    {
+        $this->cantidad = $cantidad;
+
+        return $this;
+    }
+
+    /**
+     * Get cantidad
+     *
+     * @return integer
+     */
+    public function getCantidad()
+    {
+        return $this->cantidad;
+    }
+
 }

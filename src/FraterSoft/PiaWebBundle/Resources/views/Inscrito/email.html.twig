@@ -16,14 +16,13 @@
         text-align:left;
     }
     table{
+        padding: 10px;
         width:650px;
         border: 1px solid black;
     }
 </style>
 {% endblock %}
 {% block body -%}
-    
-
     <table class="record_properties" align="center" border="0">
         <tbody>
             
@@ -45,22 +44,20 @@
                     <img width="300 px" 
                          src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ entity.idevento.logo }}">
                 </td>
-            </tr>            
-            <tr><th>Cedula</th><td>{{ entity.idpia.iddocumento }}</td></tr>
-            <tr><th>Apellido</th><td>{{ entity.idpia.apellido }}</td></tr>
-            <tr><th>Nombre</th><td>{{ entity.idpia.nombre }}</td></tr>
-            <tr><th>Fecha de Nacimiento</th><td>{{ entity.idpia.fechanacimiento|date('d-m-Y') }}</td></tr>
-            <tr><th>Sexo</th><td>{{ entity.idpia.sexo }}</td></tr>
-            <tr><th>Equipo</th><td>{{ entity.idpia.equipo }}</td></tr>
-            <tr><th>Estado</th><td>{{ entity.idpia.idestado.estado }}</td></tr>
+            </tr>           
+            {% for atributo in entity.idevento.atributos %}
+            {% if atributo.idatributo.tipo == "U" %}
+            {% if atributo.etiqueta is null %}
+            <tr><th>{{atributo.idatributo.nombre|capitalize}}</th><td>{{ attribute(entity.idpia,'get'~atributo.idatributo.nombre) }}</td></tr>
+            {% else %}
+            <tr><th>{{atributo.etiqueta}}</th><td>{{ attribute(entity.idpia,'get'~atributo.idatributo.nombre) }}</td></tr>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
             <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>            
             <tr>
                 <th>PreInscrito el</th>
                 <td>{{ entity.fechahora|date('d-m-Y H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Punto</th>
-                <td>{{ entity.punto }}</td>
             </tr>
             <tr>
                 <th>Precio</th>
@@ -71,10 +68,6 @@
                     Su pre-incripci&oacute;n ser&aacute; certificada una vez verifiquemos los datos del pago.
                 </td>
             </tr>  
-
-
-
-            
             {#<tr>
                 <td rowspan="16">
                     <img width="320 px" 

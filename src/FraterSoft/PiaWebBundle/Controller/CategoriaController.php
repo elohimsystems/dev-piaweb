@@ -80,6 +80,7 @@ class CategoriaController extends commonPIAClass
         $formCategoriaReglas   = $this->createCreateFormCategoriaReglas($categoriareglas);     
         
         $formCategoriaReglas->add('idcategoria','entity',array(
+                'label' => 'Categoria',
                 'class' => 'FraterSoftPiaWebBundle:Categoria',
                 'query_builder' => function (EntityRepository $er) use ( $idevento ) {
                     return $er->createQueryBuilder('ca')
@@ -110,12 +111,21 @@ class CategoriaController extends commonPIAClass
         
         $formCategoriaReglas->add('tipo','choice',array(
                 'label'=>'Tipo',
-                'choices' => array('R'=>'Rango','V'=>'Valor'),
-                'empty_value' => 'Seleccione un Tipo'
-            ));
+                'choices' => array(
+                    'empty_value' => 'Seleccione un Tipo',
+                    '[]'=>'Rango',
+                    '='=>'Igual',
+                    //'>='=>'Mayor o Igual',
+                    //'>'=>'Mayor',
+                    //'<='=>'Menor o Igual',
+                    //'<'=>'Menor',
+                    //'<>'=>'Distinto'),
+            )));
 
         $entities = $em->getRepository('FraterSoftPiaWebBundle:Categoria')->listaCategorias($idevento);
         $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')->findBy(array('idevento'=>$idevento));
+        
+        $camposCompetencia=$this->getCampos($em,'Competencia');
         
         return $this->render('FraterSoftPiaWebBundle:Categoria:new.html.twig', array(
             'entity' => $entity,
@@ -124,7 +134,7 @@ class CategoriaController extends commonPIAClass
             'idevento' => $idevento,
             'campos' => $this->getCampos($em,'Categoria'),            
             'estado' => $estado,   
-            'competencias' => $competencias,
+            'competencias' => $this->EntitiesToArray($competencias,$camposCompetencia),
         ));
     }
     

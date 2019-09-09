@@ -132,10 +132,10 @@
                         return false;
                     }
                     {% endif %}        
-                    if(!validaRequiredHidden($("#{{ edit_form.idpia.foto.vars.id }}"))) return false;
+                        {#if(!validaRequiredHidden($("#{{ edit_form.idpia.foto.vars.id }}"))) return false;
                     if(!validaRequiredHidden($("#{{ edit_form.idpia.fileiddocumento.vars.id }}"))) return false;
                     if(!validaRequiredHidden($("#{{ edit_form.idpia.filepartidanacimiento.vars.id }}"))) return false;
-                    if(!validaRequiredHidden($("#{{ edit_form.idpia.filecertificadodeportivo.vars.id }}"))) return false;
+                    if(!validaRequiredHidden($("#{{ edit_form.idpia.filecertificadodeportivo.vars.id }}"))) return false;#}
                 });                    
             {% endif %}
 
@@ -448,10 +448,10 @@
         /***********************************************************************
         * Da formato al formulario del competidor *
         ***********************************************************************/
-        #formulario > div:nth-child(5){
+        #formulario > div:nth-child(4){
             margin: 0px;
         }
-        #formulario > div:nth-child(5) > label{
+        #formulario > div:nth-child(4) > label{
             display:none;
         }
         #{{edit_form.idpia.vars.id}} > div:nth-child(n+0){
@@ -480,7 +480,7 @@
         /***********************************************************************
         * Da formato al formulario de Pago*
         ***********************************************************************/
-        #{{edit_form.idpago.vars.id}} > div:nth-child(1){
+        {# #{{edit_form.idpago.vars.id}} > div:nth-child(1){
             display: none;
         }         
         #{{edit_form.idpago.vars.id}} > div:nth-child(n+0){
@@ -508,7 +508,7 @@
         }
         #{{edit_form.idpago.vars.id}} > div:nth-child(n+0) > select {
             height: 21px;
-        }    
+        }  #}  
         .group_fields {
             width: 96% !important;
             border: 1px solid black;

@@ -29,7 +29,11 @@ class Formaspagoevento
      */
     private $idformapago;
 
-
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Formaspago
+     */
+    private $incremento;
+    
     /**
      * Get id
      *
@@ -108,4 +112,36 @@ class Formaspagoevento
     {
         return $this->idformapago;
     }
+
+    /**
+     * Set idformapago
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Formaspago $idformapago
+     * @return Formaspagoevento
+     */
+    public function setIncremento($incremento)
+    {
+        $this->incremento = $incremento;
+
+        return $this;
+    }
+
+    /**
+     * Get idformapago
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Formaspago 
+     */
+    public function getIncremento()
+    {
+        return $this->incremento;
+    }
+    
+    /**
+     * to string
+     *
+     * @return integer 
+     */
+    public function __toString() {
+        return $this->getIdformapago()->getNombre();//$this->idformapago;
+    }      
 }

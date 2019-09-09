@@ -6,6 +6,9 @@ FraterSoft\PiaWebBundle\Entity\Precioscategoria:
         IDX_377477BB300BBBD8:
             columns:
                 - idcategoria
+        IDX_377477BBD4B68681:
+            columns:
+                - idmoneda
     id:
         id:
             type: bigint
@@ -37,22 +40,24 @@ FraterSoft\PiaWebBundle\Entity\Precioscategoria:
             length: 15
             fixed: false
             comment: 'Determina cual de los dos factores (cantidad o fecha hasta) sera tomado primero en cuenta cuando se configuren ambos parametros'
+        moneda:
+            type: string
+            nullable: true
+            length: 5
+            fixed: false
+            comment: ''
         texto:
             type: string
             nullable: true
             length: 100
             fixed: false
+            comment: ''
         imagen:
             type: string
             nullable: true
             length: 300
             fixed: false
-            comment: 'Se usa para mostrar las imagenes de las opciones que incluyen el precio'
-        moneda:
-            type: string
-            nullable: true
-            length: 5
-            fixed: false            
+            comment: ''
     manyToOne:
         idcategoria:
             targetEntity: Categoria
@@ -61,6 +66,15 @@ FraterSoft\PiaWebBundle\Entity\Precioscategoria:
             inversedBy: null
             joinColumns:
                 idcategoria:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idmoneda:
+            targetEntity: Moneda
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idmoneda:
                     referencedColumnName: id
             orphanRemoval: false
     lifecycleCallbacks: {  }

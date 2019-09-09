@@ -1,7 +1,7 @@
 FraterSoft\PiaWebBundle\Entity\CategoriaReglas:
     type: entity
     table: piaaccess.tmcategoriasreglas
-    repositoryClass: FraterSoft\PiaWebBundle\Entity\CategoriaReglasRepository
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\CategoriaReglasRepository    
     indexes:
         IDX_B88B7685300BBBD8:
             columns:
@@ -29,7 +29,7 @@ FraterSoft\PiaWebBundle\Entity\CategoriaReglas:
         tipo:
             type: string
             nullable: true
-            length: 1
+            length: 2
             fixed: false
             comment: 'Indica los tipos de valores que usa regla. Pueden ser R: rango y V: Valor'
         valor1:
@@ -44,6 +44,17 @@ FraterSoft\PiaWebBundle\Entity\CategoriaReglas:
             length: 10
             fixed: false
             comment: ''
+        accion:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: ''
+        cantidad:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: 'Se usa en juego con la accion, determina que cantidad o sumar los valores del atributo'
     manyToOne:
         idcategoria:
             targetEntity: Categoria

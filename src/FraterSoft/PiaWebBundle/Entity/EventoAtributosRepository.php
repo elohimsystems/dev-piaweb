@@ -64,5 +64,29 @@ class EventoAtributosRepository extends EntityRepository
          return $query->getResult();
     }          
     
+    public function arrayEtiquetasAtributos($idevento,$arraycampos)
+    {
+        if(is_array($arraycampos)){
+            $cantidad=count($arraycampos);
+            $i=1;
+            $strcampos="";
+            foreach($arraycampos as $campo){
+                $strcampos.="'".$campo."'";
+                $strcampos.=($i++<$cantidad)?",":"";
+            }
+        }
+        else
+            return null;
+        
+        $query = $this->getEntityManager()
+            ->createQuery(
+                'SELECT a.id as idatributo,a.nombre as atributo,ea.etiqueta '
+                    . 'FROM FraterSoftPiaWebBundle:EventoAtributos ea ' 
+                    . 'JOIN ea.idatributo a '                  
+                    . 'JOIN ea.idevento e '                  
+                    . 'WHERE a.nombre in (' . $strcampos . ') and ea.idevento=' .  $idevento
+            );
+         return $query->getResult();
+    }
     
 }

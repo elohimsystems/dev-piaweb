@@ -25,6 +25,16 @@ where ca.idcampeonato=' . $idcampeonato
             )
             ->getResult();
     }
+
+    public function listaCategoriasGrupos($idevento,$idcompetencia)
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'select ca from FraterSoftPiaWebBundle:Evento ev inner join FraterSoftPiaWebBundle:Competencia co WITH ev.id = co.idevento inner join FraterSoftPiaWebBundle:Categoria ca WITH co.id = ca.idcompetencia '
+                . 'where ev.id=' . $idevento . ' and co.id=' . $idcompetencia
+            )
+            ->getResult();
+    }
     
     public function arrayCategorias($idcompetencia)
     {

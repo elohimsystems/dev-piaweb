@@ -32,7 +32,7 @@ FraterSoft\PiaWebBundle\Entity\Atributo:
         tipo:
             type: string
             nullable: true
-            length: null
+            length: 1
             fixed: true
             comment: 'Indica si el atributo es de Sistema o de Usuario. Posibles valores: S-> Sistema, U->Usuario'
     lifecycleCallbacks: {  }

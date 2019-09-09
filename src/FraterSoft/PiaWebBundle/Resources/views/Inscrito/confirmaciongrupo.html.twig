@@ -1,0 +1,73 @@
+{% extends '::base.html.twig' %}
+{% if evento.tema is defined and evento.tema is not null %}{% set temastyle=evento.tema.styles %}{% endif %}
+
+{% block style %}
+    <style type="text/css">  
+        .contenido{    
+            margin: auto;
+            width: 690px;
+        }        
+        #espere{
+            margin: auto;            
+            text-align: center;
+            font-size: 16px;
+            width: 400px
+        }
+        #botonera{
+            margin-top: 30px;
+            text-align: center;
+        }              
+        .ui-button{
+            padding: 9px;
+        }
+    </style>
+{% endblock %} 
+{% block body -%}
+    <div class="contenido">
+        <p id="espere">
+            <img width="50px" src="{{ asset('bundles/fratersoftpiaweb/images/') ~ 'loading.gif' }}"><br>
+            Espera mientras se procesa la operacion...
+        </p>
+        <div id="titulo" align="center"></div>
+        <table id="datos" class="display compact" width="50%"></table>
+        <div id="botonera">
+            <button class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'>
+            <a href='{{ app.request.headers.get('referer') }}'>Cancelar</a></button>        
+            <button class='ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only'>
+            <a href='{{ path('competidor_findgrupo',{'idevento':idevento,'idcompetencia':idcompetencia,'idgrupo':idgrupo}) }}'>Agregar Otro Integrante</a></button>
+        </div>    
+    </div>    
+{% endblock %}
+{% block javascripts %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':idevento}) }}                    
+    <script>
+        $(document).ready(function () {
+            $("#titulo" ).append("<h1>Integrantes Grupo</h1>");
+            $("#espere" ).hide();   
+            var arraydatos={{integrantes|json_encode|raw}};
+            var botones;
+            if(arraydatos.length>1)
+                botones=[//Agregar una columna de botones en la posicion indicada, con los parametros descritos
+                        {
+                            "posicion":6,
+                            "titulo": "Opciones",
+                            "botones":[
+                                {"icon":'ui-icon-search',"title":'Ver Integrante',"onclick":'openVerInscrito(id);'},
+                                {"icon":'ui-icon-closethick',"title":'Eliminar Integrante',"onclick":'openDialogEliminar(id);'},
+                            ],
+                            "alineacion":"dt-right"
+                        }
+                    ];
+             else
+                 botones=null;
+
+            tablaDatosArrayObjetos(
+                "datos",                           //nombre de la tabla
+                arraydatos,     //conjunto de datos a mostrar
+                "",                     //titulo
+                botones,
+            );
+        
+        });
+    </script>           
+{% endblock %}     

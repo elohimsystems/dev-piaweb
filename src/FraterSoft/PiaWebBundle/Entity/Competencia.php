@@ -34,6 +34,10 @@ class Competencia
      */
     private $idevento;
 
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Grupo
+     */
+    private $grupo;
 
     /**
      * Get id
@@ -145,4 +149,27 @@ class Competencia
     public function __toString() {
         return $this->descripcion;
     }      
+    
+    /**
+     * Set Grupo
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Grupo $grupo
+     * @return Evento
+     */
+    public function setGrupo(\FraterSoft\PiaWebBundle\Entity\Grupo $grupo = null)
+    {
+        $this->grupo = $grupo;
+        return $this;
+    }
+
+    /**
+     * Get Grupo
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Grupo 
+     */
+    public function getGrupo()
+    {
+        return $this->grupo;
+    }
+    
 }

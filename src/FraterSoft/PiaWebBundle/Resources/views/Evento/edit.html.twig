@@ -13,7 +13,7 @@
     {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}
     <style>
         #tabs{
-            display: none; 
+            display: none;
         }        
         .contenido{    
             margin: auto;
@@ -36,6 +36,7 @@
             background-color: #a1aec7;
             border: 1px dashed #CCCCCC;
             padding: 5px;
+            //height: 295px;
         }
         .qq-file-info{
             color: black;
@@ -122,10 +123,10 @@
             width: 200px;
             border-radius: 10%;
         }
-        #boton_rutamapa,#boton_rutaperfil,#boton_rutavideo{
+        #boton_rutamapa,#boton_rutaperfil,#boton_rutavideo,#boton_codigo{
             width: 165px;
         }
-        #seccion_rutamapa,#seccion_rutaperfil,#seccion_rutavideo{
+        #seccion_rutamapa,#seccion_rutaperfil,#seccion_rutavideo,#seccion_codigo{
             padding-top: 3px;
         }
         #reproductor{
@@ -135,268 +136,6 @@
     </style>
 {% endblock %}
 
-{% block javascripts %}
-    <script>	
-        $(function() {              
-            //Carga los tabs en lo que se haya cargado todo el html
-            $("#tabs").css("display","block");            
-            
-            if($("#{{edit_form.tipo.vars.id}}").val()=='U')
-                $("#{{edit_form.idcampeonato.vars.id}}").prop("disabled", true);
-                
-            $("#{{ edit_form.tipo.vars.id }}").change(function () {
-                if($("#{{edit_form.tipo.vars.id}}").val()=='U'){
-                    $("#{{edit_form.idcampeonato.vars.id}} option").attr("selected", false);
-                    $("#{{edit_form.idcampeonato.vars.id}}").prop("disabled", true);
-                }
-                else
-                    $("#{{edit_form.idcampeonato.vars.id}}").prop("disabled", false);
-            });                  
-
-            if($("#{{edit_form.cupocontrol.vars.id}}").prop('checked')==true)
-                $("#{{edit_form.cupomaximo.vars.id}}").prop("disabled", false);
-            else
-                $("#{{edit_form.cupomaximo.vars.id}}").prop("disabled", true);                
-
-            $("#{{ edit_form.cupocontrol.vars.id }}").change(function () {
-                if($("#{{edit_form.cupocontrol.vars.id}}").prop('checked')==true)
-                    $("#{{edit_form.cupomaximo.vars.id}}").prop("disabled", false);
-                else
-                    $("#{{edit_form.cupomaximo.vars.id}}").prop("disabled", true);
-            });                  
-
-            if($("#{{edit_form.mapalugar.vars.id}}").val()!=undefined && $("#{{edit_form.mapalugar.vars.id}}").val()!=""){
-                var json = JSON.parse($("#{{edit_form.mapalugar.vars.id}}").val());
-                uluru = {lat:json.lat,lng:json.lng};
-                zoom = json.zoom;
-            }
-            
-            //Agrega los botonos al lado del input text
-            $("#{{edit_form.lugar.vars.id}}").parent().append(
-                "<button type='button' id='btn_setmapa'></button>"
-            );      
-            $('#btn_setmapa').append("<img id='icon-setmapa' src='{{asset('bundles/fratersoftpiaweb/images/marcador-posicion.png')}}'/>").button();
-    
-            $("#btn_setmapa").on('click', function() {
-                if(map==undefined)
-                    initMap();
-                $("#mapa").dialog("open");
-            });
-            ////////////////////////////////////////////////////////
-            
-            $("#{{edit_form.emailcontacto.vars.id}}").parent().append(
-                "<button type='button' id='btn_checkemail'></button>"
-            );           
-            $('#btn_checkemail').append("<img id='icon-checkemail' src='{{asset('bundles/fratersoftpiaweb/images/comprobado.png')}}'/>").button();
-
-            $("#btn_checkemail").on('click', function() {
-                deshabilitaRetroceso();
-                $("#dialog_checkemail").dialog("open");
-            });            
-            
-
-            $("#boton_logo").on('click', function() {
-                cargar_imagen($("#{{ edit_form.logo.vars.id }}"),$("#imagen_logo"),500,300);
-            });
-
-            $("#boton_rutamapa").on('click', function() {
-                cargar_imagen($("#{{ edit_form.rutamapa.vars.id }}"),$("#imagen_rutamapa"),800,500);
-            });
-
-            $("#boton_rutaperfil").on('click', function() {
-                cargar_imagen($("#{{ edit_form.rutaperfil.vars.id }}"),$("#imagen_rutaperfil"),800,500);
-            });
-            
-            $("#{{edit_form.fecha.vars.id}}").datetimepicker({
-                format: "d/m/Y H:i",
-                defaultSelect: true,
-                lang: 'es',
-            });
-            $("#{{edit_form.fechacierre.vars.id}}").datetimepicker({
-                format: "d/m/Y H:i",
-                defaultSelect: true,
-                lang: 'es',
-            });           
-            $("#{{edit_form.fechainicio.vars.id}}").datetimepicker({
-                format: "d/m/Y H:i",
-                defaultSelect: true,
-                lang: 'es',
-            });   
-            
-            {% if edit_form.logo.vars.data is not empty %}
-                {% set logoyruta = edit_form.logo.vars.data|split('/') %}            
-                var uuid = "{{ logoyruta[0] }}";
-                var file = "{{ logoyruta[1] }}";
-            {% else %}
-                var uuid = null;
-                var file = null;
-            {% endif %}
-            
-        
-            $("#mapa").dialog({
-                autoOpen: false,
-                width: 800,
-                height: 600,
-                modal: true,
-                buttons: [
-                    {
-                        text: "Aceptar",
-                        click: function () {
-                            $("#{{edit_form.mapalugar.vars.id}}").val(
-                                    '{"lat":' + marker.position.lat().toString() + 
-                                    ',"lng":' + marker.position.lng().toString() + 
-                                    ',"zoom":' + map.getZoom().toString() + '}'
-                            );
-                            $("#{{edit_form.lugar.vars.id}}").val(lugar);
-                            $(this).dialog("close");
-                        }
-                    },
-                    {
-                        text: "Cerrar",
-                        click: function () {
-                            $(this).dialog("close");
-                        }
-                    }
-                ]
-            });
-            $("#dialog_checkemail").dialog({
-                autoOpen: false,
-                width: 400,
-                height: 300,
-                modal: true,
-                buttons: [
-                    {
-                        text: "Aceptar",
-                        click: function () {
-                            $(this).dialog("close");
-                        }
-                    },
-                    {
-                        text: "Cerrar",
-                        click: function () {
-                            $(this).dialog("close");
-                        }
-                    }
-                ]
-            });            
-            
-            $("#uploadimage").dialog({
-                autoOpen: false,
-                modal: true,
-                buttons: [
-                    {
-                        text: "Aceptar",
-                        click: function () {
-                            $(this).dialog("close");
-                        }
-                    },
-                    {
-                        text: "Cerrar",
-                        click: function () {
-                            $(this).dialog("close");
-                        }
-                    }
-                ]
-            });
-            
-            $("#boton_insertar").on('click', function() {
-                $("#reproductor").html($("#codigoyoutube").val());
-                $("#imagen_rutavideo").attr("src","{{asset('bundles/fratersoftpiaweb/images/youtube.png')}}");
-            });
-
-            $("#boton_borrar").on('click', function() {
-                $("#codigoyoutube").val('');
-                $("#reproductor").html('');
-                $("#imagen_rutavideo").attr("src","{{asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}");
-            });            
-            
-            $("#boton_rutavideo").on('click', function() {
-                {% if edit_form.rutavideo.vars.data is not empty %}
-                    $("#codigoyoutube").val('{{edit_form.rutavideo.vars.data|raw}}');
-                    $("#reproductor").html($("#codigoyoutube").val());
-                {% endif %}
-                $("#uploadvideo").dialog("open");
-            });            
-            
-            $("#uploadvideo").dialog({
-                autoOpen: false,
-                width: 585,
-                modal: true,
-                buttons: [
-                    {
-                        text: "Aceptar",
-                        click: function () {
-                            $("#{{edit_form.rutavideo.vars.id}}").val($("#codigoyoutube").val());
-                            $(this).dialog("close");
-                        }
-                    },
-                    {
-                        text: "Cerrar",
-                        click: function () {
-                            $(this).dialog("close");
-                        }
-                    }
-                ]
-            });            
-
-
-            //Oculta los campos que no se usaran si el eventos es externo
-            condicionaCampos();
-            $("#{{ edit_form.externo.vars.id }}").change(function () {
-                condicionaCampos();
-            });             
-            function setCampos(valor){
-                $("#{{edit_form.lugar.vars.id}}").prop('disabled',valor);
-                setVisual($("#{{edit_form.lugar.vars.id}}"),valor);
-                $("#{{edit_form.proceso.vars.id}}").prop('disabled',valor);
-                setVisual($("#{{edit_form.proceso.vars.id}}"),valor);
-                $("#{{edit_form.fechainicio.vars.id}}").prop('disabled',valor);                    
-                setVisual($("#{{edit_form.fechainicio.vars.id}}"),valor);
-                $("#{{edit_form.fechacierre.vars.id}}").prop('disabled',valor);                    
-                setVisual($("#{{edit_form.fechacierre.vars.id}}"),valor);
-                $("#{{edit_form.tipo.vars.id}}").prop('disabled',valor);
-                setVisual($("#{{edit_form.tipo.vars.id}}"),valor);
-                if($("#{{edit_form.tipo.vars.id}}").val()=='C')
-                    $("#{{edit_form.idcampeonato.vars.id}}").prop("disabled", valor);
-                setVisual($("#{{edit_form.idcampeonato.vars.id}}"),valor);
-                $("#{{edit_form.cupocontrol.vars.id}}").prop('disabled',valor);                    
-                setVisual($("#{{edit_form.cupocontrol.vars.id}}"),valor);
-                if($("#{{edit_form.cupocontrol.vars.id}}").prop('checked')==true)
-                    $("#{{edit_form.cupomaximo.vars.id}}").prop("disabled", valor);
-                setVisual($("#{{edit_form.cupomaximo.vars.id}}"),valor);
-                $("#{{edit_form.criteriocalculoedad.vars.id}}").prop('disabled',valor);                    
-                setVisual($("#{{edit_form.criteriocalculoedad.vars.id}}"),valor);
-                $("#{{edit_form.zonahoraria.vars.id}}").prop('disabled',valor);                    
-                setVisual($("#{{edit_form.zonahoraria.vars.id}}"),valor);
-                $("#{{edit_form.idorganizador.vars.id}}").prop('disabled',valor);                                    
-                setVisual($("#{{edit_form.idorganizador.vars.id}}"),valor);
-                $("#btn_setmapa").button({disabled: valor});
-                $("#boton_rutamapa").button({disabled: valor});
-                $("#boton_rutaperfil").button({disabled: valor});
-                $("#boton_rutavideo").button({disabled: valor});
-            }
-            function setVisual(element,valor){
-                if(valor==true){
-                    $("#formulario > div:nth-child(" + (element.parent().index()+1) + ")").hide();
-                }
-                else{
-                    $("#formulario > div:nth-child(" + (element.parent().index()+1) + ")").show();
-                }
-            }
-            function condicionaCampos(){
-                if($("#{{edit_form.externo.vars.id}}").prop('checked')==true){
-                    setCampos(true);
-                    $( "#tabs" ).tabs({disabled: [1,2,3]});
-                }
-                else{
-                    setCampos(false);
-                    $( "#tabs" ).tabs("enable");
-                }                
-            }
-            menuTabsConfigEvento();
-        });    
-    </script>
-{% endblock %}
 {% block body -%}
     <div id="tabs">        
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
@@ -435,154 +174,453 @@
                             <img id="imagen_rutavideo" src="{{asset('bundles/fratersoftpiaweb/images/youtube.png') }}">
                         {%endif%}
                     </div>
+                    <div id="seccion_codigo">
+                        <button type="button" id="boton_codigo">Codigo</button>
+                    </div>
                 </div>
                 <div id="contenedor-form">
                 {{ form_start(edit_form) }}
                 {{ form_end(edit_form) }} 
                 </div>
             </div> 
+            <div id="mapa">        
+                <input id="pac-input" class="controls" type="text" placeholder="Buscar lugar">
+                <div id='map'></div>
+            </div>
+            <div id="dialog_checkemail">    
+                Ingrese el codigo de confirmacion enviado al correo<br>
+                <input id="codigo" type="text" placeholder="Ingrese codigo">
+            </div>
+            <div id="uploadimage">    
+                <div id="fine-uploader"></div>  
+                {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
+            </div>
+            <div id="uploadvideo">
+                <b>Pegue el codigo de youtube, y presione Insertar</b>
+                <textarea id="codigoyoutube" rows="4" cols="89"></textarea>
+                <button id="boton_insertar">Insertar</button>
+                <button id="boton_borrar">Borrar</button>
+                <div id="reproductor"></div>
+            </div>  
+            <div id="codigoweb">
+                <b>Copie el siguiente codigo y peguelo en su pagina web</b>
+                <textarea id="textcodigoweb" rows="4" cols="67" readonly></textarea>
+            </div>  
+            
         </div>
     </div>
+{% endblock %}
+{% block javascripts %}
+{{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':entity.id}) }}
+<script>
+    function deshabilitaRetroceso(){
+        window.location.hash="no-back-button";
+        window.location.hash="Again-No-back-button" //chrome
+        window.onhashchange=function(){window.location.hash="no-back-button";}
+    }     
+    
+    var contmark=0;
+    var marker;      
+    var map;
+    var infowindow;
+    var uluru={lat: 10.480200, lng: -66.904101};
+    var zoom=6;
+    var lugar="";
+    function addMarker(location, map) {
+        marker = new google.maps.Marker({
+            position: location,                
+            map: map
+        });
+        marker.addListener('click', function() {
+            infowindow.open(map, marker);
+        });             
+    }
+    
+    function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), { 
+            center: uluru,
+            zoom: zoom,
+            disableDefaultUI: true,
+            zoomControl: true,
+        });
         
-    <div id="mapa">        
-        <input id="pac-input" class="controls" type="text" placeholder="Buscar lugar">
-        <div id='map'></div>
-    </div>
-
-    <div id="dialog_checkemail">    
-        Ingrese el codigo de confirmacion enviado al correo<br>
-        <input id="codigo" type="text" placeholder="Ingrese codigo">
-    </div>
-
-    <div id="uploadimage">    
-        <div id="fine-uploader"></div>  
-        {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
-    </div>
-    <div id="uploadvideo">
-        <b>Pegue el codigo de youtube, y presione Insertar</b>
-        <textarea id="codigoyoutube" rows="4" cols="89"></textarea>
-        <button id="boton_insertar">Insertar</button>
-        <button id="boton_borrar">Borrar</button>
-        <div id="reproductor"></div>
-    </div>  
-    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':entity.id}) }}
-    <script>
-        function deshabilitaRetroceso(){
-            window.location.hash="no-back-button";
-            window.location.hash="Again-No-back-button" //chrome
-            window.onhashchange=function(){window.location.hash="no-back-button";}
-        }     
+        addMarker(uluru, map);
+        contmark++;
         
-        var contmark=0;
-        var marker;      
-        var map;
-        var infowindow;
-        var uluru={lat: 10.480200, lng: -66.904101};
-        var zoom=6;
-        var lugar="";
-        function addMarker(location, map) {
-            marker = new google.maps.Marker({
-                position: location,                
-                map: map
-            });
-            marker.addListener('click', function() {
-                infowindow.open(map, marker);
-            });             
-        }        
-        function initMap() {
-            map = new google.maps.Map(document.getElementById('map'), { 
-                center: uluru,
-                zoom: zoom,
-                disableDefaultUI: true,
-                zoomControl: true,
-            });
-            
-            addMarker(uluru, map);
-            contmark++;
-            
-            var contentString = '<div id="content">'+
-                '<div id="siteNotice">'+
-                '</div>'+
-                '<h1 id="firstHeading" class="firstHeading">Ubicacion Evento</h1>'+
-                '<div id="bodyContent">'+
-                '<p><b>' + $("#{{edit_form.nombre.vars.id}}").val() + '</b></p>' +
-                '</div>'+
-                '</div>';            
-            infowindow = new google.maps.InfoWindow({
-                content: contentString
-            });  
-            
-            /* EVENTO CLICK DEL MAPA */
-            google.maps.event.addListener(map, 'click', function(event) {
-                if(contmark==0){
-                    addMarker(event.latLng, map);
-                    contmark++;
-                    var geocoder = new google.maps.Geocoder;      
-                    geocoder.geocode({'location': event.latLng}, function(results, status) {
-                        if (status === 'OK') {
-                            if (results[1]) {
-                                map.setZoom(14);
-                                infowindow.setContent(results[1].address_components[0].short_name);
-                                lugar = results[1].address_components[0].short_name;
-                                infowindow.open(map, marker);
-                            } else {
-                              window.alert('No results found');
-                            }
-                          } else {
-                            window.alert('Geocoder failed due to: ' + status);
-                          }
-                    });                    
-                }
-                else{
-                    contmark=0;
-                    marker.setMap(null);
-                }
-            });  
+        var contentString = '<div id="content">'+
+            '<div id="siteNotice">'+
+            '</div>'+
+            '<h1 id="firstHeading" class="firstHeading">Ubicacion Evento</h1>'+
+            '<div id="bodyContent">'+
+            '<p><b>' + $("#{{edit_form.nombre.vars.id}}").val() + '</b></p>' +
+            '</div>'+
+            '</div>';            
+        infowindow = new google.maps.InfoWindow({
+            content: contentString
+        });  
         
-            // Create the search box and link it to the UI element.
-            var input = document.getElementById('pac-input');
-            var searchBox = new google.maps.places.SearchBox(input);
-            map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-            
-            // Bias the SearchBox results towards current map's viewport.
-            map.addListener('bounds_changed', function() {
-              searchBox.setBounds(map.getBounds());
-            });
-            
-            searchBox.addListener('places_changed', function() {
-                var places = searchBox.getPlaces();
-
-                 if (places.length == 0) {
-                  return;
-                }
-                
-                if (places.length > 1) {
-                     alert("Existe mas de un lugar para esa busqueda, por favor sea mas especifico");
-                  return;
-                }
-
+        /* EVENTO CLICK DEL MAPA */
+        google.maps.event.addListener(map, 'click', function(event) {
+            if(contmark==0){
+                addMarker(event.latLng, map);
+                contmark++;
+                var geocoder = new google.maps.Geocoder;      
+                geocoder.geocode({'location': event.latLng}, function(results, status) {
+                    if (status === 'OK') {
+                        if (results[1]) {
+                            map.setZoom(14);
+                            infowindow.setContent(results[1].address_components[0].short_name);
+                            lugar = results[1].address_components[0].short_name;
+                            infowindow.open(map, marker);
+                        } else {
+                          window.alert('No results found');
+                        }
+                      } else {
+                        window.alert('Geocoder failed due to: ' + status);
+                      }
+                });                    
+            }
+            else{
+                contmark=0;
                 marker.setMap(null);
-                
-                // For each place, get the icon, name and location.
-                var bounds = new google.maps.LatLngBounds();
-                places.forEach(function(place) {
-                    if (!place.geometry) {
-                      console.log("Returned place contains no geometry");
-                      return;
-                    }
+            }
+        });  
+    
+        // Create the search box and link it to the UI element.
+        var input = document.getElementById('pac-input');
+        var searchBox = new google.maps.places.SearchBox(input);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+        
+        // Bias the SearchBox results towards current map's viewport.
+        map.addListener('bounds_changed', function() {
+          searchBox.setBounds(map.getBounds());
+        });
+        
+        searchBox.addListener('places_changed', function() {
+            var places = searchBox.getPlaces();
 
-                    addMarker(place.geometry.location, map);
-                    lugar = place.name;
+             if (places.length == 0) {
+              return;
+            }
+            
+            if (places.length > 1) {
+                 alert("Existe mas de un lugar para esa busqueda, por favor sea mas especifico");
+              return;
+            }
 
-                    if (place.geometry.viewport) {
-                      // Only geocodes have viewport.
-                      bounds.union(place.geometry.viewport);
-                    } else {
-                      bounds.extend(place.geometry.location);
-                    }
-                });
-                map.fitBounds(bounds);
+            marker.setMap(null);
+            
+            // For each place, get the icon, name and location.
+            var bounds = new google.maps.LatLngBounds();
+            places.forEach(function(place) {
+                if (!place.geometry) {
+                  console.log("Returned place contains no geometry");
+                  return;
+                }
+
+                addMarker(place.geometry.location, map);
+                lugar = place.name;
+
+                if (place.geometry.viewport) {
+                  // Only geocodes have viewport.
+                  bounds.union(place.geometry.viewport);
+                } else {
+                  bounds.extend(place.geometry.location);
+                }
             });
+            map.fitBounds(bounds);
+        });
+    }
+    
+    $(function() {              
+        //Carga los tabs en lo que se haya cargado todo el html
+        $("#tabs").css("display","grid");            
+
+        $("#boton_codigo").on('click', function() {
+            $("#textcodigoweb").val("<iframe align='middle' frameborder='0' height='850' scrolling='no' src='{{ app.request.getSchemeAndHttpHost() }}{{ app.request.getBaseURL() }}/competidor/findform/{{entity.id}}' width='100%'></iframe>");
+            $("#codigoweb").dialog("open");
+        });            
+
+        
+        if($("#{{edit_form.tipo.vars.id}}").val()=='U')
+            $("#{{edit_form.idcampeonato.vars.id}}").prop("disabled", true);
+            
+        $("#{{ edit_form.tipo.vars.id }}").change(function () {
+            if($("#{{edit_form.tipo.vars.id}}").val()=='U'){
+                $("#{{edit_form.idcampeonato.vars.id}} option").attr("selected", false);
+                $("#{{edit_form.idcampeonato.vars.id}}").prop("disabled", true);
+            }
+            else
+                $("#{{edit_form.idcampeonato.vars.id}}").prop("disabled", false);
+        });                  
+
+        if($("#{{edit_form.cupocontrol.vars.id}}").prop('checked')==true)
+            $("#{{edit_form.cupomaximo.vars.id}}").prop("disabled", false);
+        else
+            $("#{{edit_form.cupomaximo.vars.id}}").prop("disabled", true);                
+
+        $("#{{ edit_form.cupocontrol.vars.id }}").change(function () {
+            if($("#{{edit_form.cupocontrol.vars.id}}").prop('checked')==true)
+                $("#{{edit_form.cupomaximo.vars.id}}").prop("disabled", false);
+            else
+                $("#{{edit_form.cupomaximo.vars.id}}").prop("disabled", true);
+        });                  
+
+        if($("#{{edit_form.mapalugar.vars.id}}").val()!=undefined && $("#{{edit_form.mapalugar.vars.id}}").val()!=""){
+            var json = JSON.parse($("#{{edit_form.mapalugar.vars.id}}").val());
+            uluru = {lat:json.lat,lng:json.lng};
+            zoom = json.zoom;
         }
-    </script>         
+        
+        //Agrega los botonos al lado del input text
+        $("#{{edit_form.lugar.vars.id}}").parent().append(
+            "<button type='button' id='btn_setmapa'></button>"
+        );      
+        $('#btn_setmapa').append("<img id='icon-setmapa' src='{{asset('bundles/fratersoftpiaweb/images/marcador-posicion.png')}}'/>").button();
+
+        $("#btn_setmapa").on('click', function() {
+            if(map==undefined)
+                initMap();
+            $("#mapa").dialog("open");
+        });
+        ////////////////////////////////////////////////////////
+        
+        $("#{{edit_form.emailcontacto.vars.id}}").parent().append(
+            "<button type='button' id='btn_checkemail'></button>"
+        );           
+        $('#btn_checkemail').append("<img id='icon-checkemail' src='{{asset('bundles/fratersoftpiaweb/images/comprobado.png')}}'/>").button();
+
+        $("#btn_checkemail").on('click', function() {
+            deshabilitaRetroceso();
+            $("#dialog_checkemail").dialog("open");
+        });            
+        
+
+        $("#boton_logo").on('click', function() {
+            cargar_imagen($("#{{ edit_form.logo.vars.id }}"),$("#imagen_logo"),500,300);
+        });
+
+        $("#boton_rutamapa").on('click', function() {
+            cargar_imagen($("#{{ edit_form.rutamapa.vars.id }}"),$("#imagen_rutamapa"),800,500);
+        });
+
+        $("#boton_rutaperfil").on('click', function() {
+            cargar_imagen($("#{{ edit_form.rutaperfil.vars.id }}"),$("#imagen_rutaperfil"),800,500);
+        });
+        
+        $("#{{edit_form.fecha.vars.id}}").datetimepicker({
+            format: "d/m/Y H:i",
+            defaultSelect: true,
+            lang: 'es',
+        });
+        $("#{{edit_form.fechacierre.vars.id}}").datetimepicker({
+            format: "d/m/Y H:i",
+            defaultSelect: true,
+            lang: 'es',
+        });           
+        $("#{{edit_form.fechainicio.vars.id}}").datetimepicker({
+            format: "d/m/Y H:i",
+            defaultSelect: true,
+            lang: 'es',
+        });   
+        
+        {% if edit_form.logo.vars.data is not empty %}
+            {% set logoyruta = edit_form.logo.vars.data|split('/') %}            
+            var uuid = "{{ logoyruta[0] }}";
+            var file = "{{ logoyruta[1] }}";
+        {% else %}
+            var uuid = null;
+            var file = null;
+        {% endif %}
+        
+    
+        $("#mapa").dialog({
+            autoOpen: false,
+            width: 800,
+            height: 600,
+            modal: true,
+            buttons: [
+                {
+                    text: "Aceptar",
+                    click: function () {
+                        $("#{{edit_form.mapalugar.vars.id}}").val(
+                                '{"lat":' + marker.position.lat().toString() + 
+                                ',"lng":' + marker.position.lng().toString() + 
+                                ',"zoom":' + map.getZoom().toString() + '}'
+                        );
+                        $("#{{edit_form.lugar.vars.id}}").val(lugar);
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "Cerrar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });
+        $("#dialog_checkemail").dialog({
+            autoOpen: false,
+            width: 400,
+            height: 300,
+            modal: true,
+            buttons: [
+                {
+                    text: "Aceptar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "Cerrar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });            
+        
+        $("#uploadimage").dialog({
+            autoOpen: false,
+            modal: true,
+            buttons: [
+                {
+                    text: "Aceptar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "Cerrar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });
+        
+        $("#boton_insertar").on('click', function() {
+            $("#reproductor").html($("#codigoyoutube").val());
+            $("#imagen_rutavideo").attr("src","{{asset('bundles/fratersoftpiaweb/images/youtube.png')}}");
+        });
+
+        $("#boton_borrar").on('click', function() {
+            $("#codigoyoutube").val('');
+            $("#reproductor").html('');
+            $("#imagen_rutavideo").attr("src","{{asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}");
+        });            
+        
+        $("#boton_rutavideo").on('click', function() {
+            {% if edit_form.rutavideo.vars.data is not empty %}
+                $("#codigoyoutube").val('{{edit_form.rutavideo.vars.data|raw}}');
+                $("#reproductor").html($("#codigoyoutube").val());
+            {% endif %}
+            $("#uploadvideo").dialog("open");
+        });            
+        
+        $("#uploadvideo").dialog({
+            autoOpen: false,
+            width: 585,
+            modal: true,
+            buttons: [
+                {
+                    text: "Aceptar",
+                    click: function () {
+                        $("#{{edit_form.rutavideo.vars.id}}").val($("#codigoyoutube").val());
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "Cerrar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });           
+        
+        $("#codigoweb").dialog({
+            autoOpen: false,
+            width: 585,
+            modal: true,
+            buttons: [
+                {
+                    text: "Copiar",
+                    click: function () {
+                        var copyText = document.getElementById("textcodigoweb");
+                        copyText.select();
+                        document.execCommand("copy");
+                        alert("Vaya a su pagina web y pegue el codigo con CONTROL + V");
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "Cerrar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });            
+
+        //Oculta los campos que no se usaran si el eventos es externo
+        condicionaCampos();
+        $("#{{ edit_form.externo.vars.id }}").change(function () {
+            condicionaCampos();
+        });             
+        function setCampos(valor){
+            $("#{{edit_form.lugar.vars.id}}").prop('disabled',valor);
+            setVisual($("#{{edit_form.lugar.vars.id}}"),valor);
+            $("#{{edit_form.proceso.vars.id}}").prop('disabled',valor);
+            setVisual($("#{{edit_form.proceso.vars.id}}"),valor);
+            $("#{{edit_form.fechainicio.vars.id}}").prop('disabled',valor);                    
+            setVisual($("#{{edit_form.fechainicio.vars.id}}"),valor);
+            $("#{{edit_form.fechacierre.vars.id}}").prop('disabled',valor);                    
+            setVisual($("#{{edit_form.fechacierre.vars.id}}"),valor);
+            $("#{{edit_form.tipo.vars.id}}").prop('disabled',valor);
+            setVisual($("#{{edit_form.tipo.vars.id}}"),valor);
+            if($("#{{edit_form.tipo.vars.id}}").val()=='C')
+                $("#{{edit_form.idcampeonato.vars.id}}").prop("disabled", valor);
+            setVisual($("#{{edit_form.idcampeonato.vars.id}}"),valor);
+            $("#{{edit_form.cupocontrol.vars.id}}").prop('disabled',valor);                    
+            setVisual($("#{{edit_form.cupocontrol.vars.id}}"),valor);
+            if($("#{{edit_form.cupocontrol.vars.id}}").prop('checked')==true)
+                $("#{{edit_form.cupomaximo.vars.id}}").prop("disabled", valor);
+            setVisual($("#{{edit_form.cupomaximo.vars.id}}"),valor);
+            $("#{{edit_form.criteriocalculoedad.vars.id}}").prop('disabled',valor);                    
+            setVisual($("#{{edit_form.criteriocalculoedad.vars.id}}"),valor);
+            $("#{{edit_form.zonahoraria.vars.id}}").prop('disabled',valor);                    
+            setVisual($("#{{edit_form.zonahoraria.vars.id}}"),valor);
+            $("#{{edit_form.idorganizador.vars.id}}").prop('disabled',valor);                                    
+            setVisual($("#{{edit_form.idorganizador.vars.id}}"),valor);
+            $("#btn_setmapa").button({disabled: valor});
+            $("#boton_rutamapa").button({disabled: valor});
+            $("#boton_rutaperfil").button({disabled: valor});
+            $("#boton_rutavideo").button({disabled: valor});
+            $("#boton_codigo").button({disabled: valor});
+        }
+        function setVisual(element,valor){
+            if(valor==true){
+                $("#formulario > div:nth-child(" + (element.parent().index()+1) + ")").hide();
+            }
+            else{
+                $("#formulario > div:nth-child(" + (element.parent().index()+1) + ")").show();
+            }
+        }
+        function condicionaCampos(){
+            if($("#{{edit_form.externo.vars.id}}").prop('checked')==true){
+                setCampos(true);
+                $( "#tabs" ).tabs({disabled: [1,2,3]});
+            }
+            else{
+                setCampos(false);
+                $( "#tabs" ).tabs("enable");
+            }                
+        }
+        $('#tabs a[href="#tabs-2"]').on("click", function () {
+            $(location).attr('href', '{{ path('eventoatributos_new',{'idevento':entity.id}) }}')
+        });            
+    });        
+</script>         
 {% endblock %}

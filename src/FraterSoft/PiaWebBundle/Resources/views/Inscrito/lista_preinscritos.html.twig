@@ -25,39 +25,19 @@
                 columns: [
                     { title: "Sec.", data: "secuencia" },
                     { title: "Competencia", data: "idcompetencia.descripcion" },
-                    {% if atributos[0].idevento.proceso==1 %}
-                    { title: "Banco", data: "idpago.banco",render: function(data){return data==null?"":data;}},
-                    { title: "Tipo", data: "idpago.tipo",
+                    { title: "Forma Pago", data: "pagos[0].idformapago.nombre"},
+                    { title: "Precio", data: "pagos[0].precio" },
+                    { title: "Banco", data: "pagos[0].idbanco.nombre",render: function(data){return data==null?"":data;}},
+                    { title: "Referencia", data: "pagos[0].referencia",render: function(data){return data==null?"":data;}},
+                    { title: "Fecha Pago", data: "pagos[0].fechahora",
                         render: function(data){
-                            var valor;
-                            if(data!=null)
-                                valor=CodigoFormaPago(data);
-                                /*switch (data){
-                                    case "1":
-                                        valor="DEP";
-                                        break;
-                                    case "2":
-                                        valor="TRA";
-                                        break;
-                                    case "5":
-                                        valor="COR";
-                                        break;
-                                    default:
-                                        break
-                                }*/
-                            else valor="";
-                            return valor;
-                        }
-                    },
-                    { title: "Referencia", data: "idpago.referencia",render: function(data){return data==null?"":data;}},
-                    { title: "Fecha", data: "idpago.fechahora",
-                        render: function(data){
-                            var formatted=(data!=null)?$.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000)):"";
+                            var formatted="";
+                            if(data!=null)  
+                                formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
                             return formatted;
                         }
                     },
-                    { title: "Monto", data: "idpago.monto" },
-                    {% endif %}
+                    { title: "Monto", data: "pagos[0].monto" },
                     {% for atributo in atributos %}
                     { 
                         title: {% if atributo.etiqueta is null=='S' %}"{{ atributo.idatributo.nombre }}"{% else %}"{{ atributo.etiqueta }}"{% endif %}, 
@@ -67,7 +47,6 @@
                         render: function(data){return data==null?"":data.toUpperCase();} 
                         {% elseif  atributo.idatributo.tipodato=='D' %} 
                         render: function(data){
-                            console.log(data);
                             var formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
                             return formatted;
                         }         
@@ -101,6 +80,8 @@
                                     urlshow = urlshow.replace('_id_', data);
                                     var urledit="{{ path('inscrito_edit', { 'id': '_id_' }) }}";
                                     urledit = urledit.replace('_id_', data);
+                                    var urlpago="{{ path('pago_new', { 'idinscripcion': '_id_','email':email }) }}";
+                                    urlpago = urlpago.replace('_id_', data);                                    
                                     var html=
                                         "<ul id='icons' class='ui-widget ui-helper-clearfix'>"
                                         + "<a href='" + urlshow + "'>"
@@ -109,6 +90,11 @@
                                         + "<a href='" + urledit + "' >"
                                         + "<li class='ui-state-default ui-corner-all' title='Editar'><span class='ui-icon ui-icon-pencil'></span></li>"
                                         + "</a>"
+                                        {%if atributos[0].idevento.registropago==2 %}
+                                        + "<a href='" + urlpago + "'>"
+                                        + "<li class='ui-state-default ui-corner-all' title='Registrar Pago'><span class='ui-icon ui-icon-calculator'></span></li>"
+                                        + "</a>"                                
+                                        {% endif %}
                                         + "<a href='' onclick='anular(" + data + "," + row.secuencia + ");return false;'>"
                                         + "<li class='ui-state-default ui-corner-all' title='Anular'><span class='ui-icon ui-icon-closethick'></span></li>"
                                         + "</a></ul>"                                            
@@ -120,11 +106,10 @@
                 buttons: [
                     {extend: 'excelHtml5',
                         text: 'Exportar',
-                        title: 'ListadoPreInscritos'
+                        title: 'Listado PreInscritos {{nombreevento}}'
                     }, 
                     {extend: 'print',
                         text: 'Imprimir'},
-                    {% if atributos[0].idevento.proceso==1 %}                    
                     {text: 'Conciliar',
                         action: function (e, dt, node, config) {
                             var countelement = 0;
@@ -136,10 +121,17 @@
                                 $("#ids").html("");
                                 $("#tacr").html("");
                                 for (var i = 0; i < rows.length; i++) {
-                                    separador = (countelement == 0) ? "" : ",";
-                                    $("#ids").append(separador + rows[i].secuencia);
-                                    id[countelement] = rows[i].secuencia;
-                                    countelement++;
+                                    console.log(rows[i].pagos.length);
+                                    if(rows[i].pagos.length>0){
+                                        separador = (countelement == 0) ? "" : ",";
+                                        $("#ids").append(separador + rows[i].secuencia);
+                                        id[countelement] = rows[i].secuencia;
+                                        countelement++;
+                                    }
+                                    else{
+                                        alert("No es posible conciliar una Pre-Inscripcion sin pago");
+                                        return(null);
+                                    }
                                 }
                                 //Muestra u oculta el mensaje de TACR
                                 if(counttacr==0) $("#msgtacr").hide(); else $("#msgtacr").show();
@@ -150,13 +142,39 @@
                                     $("#confirmacion").dialog("open");
                                 }
                                 else{
-                                    alert("Debe seleccionar por lo menos una pre-inscripcion distinta de TACR")
+                                    alert("Debe seleccionar por lo menos una pre-inscripcion distinta de TACR");
                                 }
                             }
                             else
                                 alert("Seleccione las pre-inscripciones que desea coinciliar");
                         }},
-                    {% endif %}
+                    {text: 'Notificar',
+                        action: function (e, dt, node, config) {
+                            var countelement = 0;
+                            var separador;
+                            var rows = table.rows({selected: true}).data();
+                            if (rows.length > 0) {
+                                var id = new Object();
+                                $("#ids").html("");
+                                for (var i = 0; i < rows.length; i++) {
+                                    separador = (countelement == 0) ? "" : ",";
+                                    $("#ids").append(separador + rows[i].secuencia);
+                                    id[countelement] = rows[i].secuencia;
+                                    countelement++;
+                                }
+                                //Muestra u oculta el mensaje de secuencias a conciliar
+                                if(countelement==0) $("#msgconc").hide(); else $("#msgconc").show();
+                                if(countelement>0){
+                                    data_json = JSON.stringify(id);
+                                    $("#notificacion").dialog("open");
+                                }
+                                else{
+                                    alert("Debe seleccionar por lo menos una inscripcion distinta de TACR")
+                                }
+                            }
+                            else
+                                alert("Debe seleccionar por lo menos una Pre-Inscripcion");
+                    }},                
                 ],
                 'scrollX': true,
                 'select': {
@@ -183,81 +201,107 @@
                 },
 
             });
-
-                //Muestra la ventana de confirmacion
-                $("#confirmacion").dialog({
-                    autoOpen: false,
-                    width: 400,
-                    modal:true,
-                    buttons: [
-                        {
-                            text: "SI",
-                            click: function () {
-                                url = "{{ path('pago_conciliar_lote', { 'data_json':'_data_json_','idevento':idevento}) }}";
-                                url = url.replace('_data_json_', data_json);
-                                //alert(data_json);
-                                window.open(url, "_self");
-                                $(this).dialog("close");
-                            }
-                        },
-                        {
-                            text: "NO",
-                            click: function () {
-                                $(this).dialog("close");
-                            }
+            $("#notificacion").dialog({
+                autoOpen: false,
+                width: 400,
+                modal: true,
+                buttons: [
+                    {
+                        text: "SI",
+                        click: function () {
+                            url = "{{ path('inscrito_notificar_preinscritos_lote', { 'data_json':'_data_json_','idevento':idevento}) }}";
+                            url = url.replace('_data_json_', data_json);
+                            window.open(url, "_self");
+                            $(this).dialog("close");
                         }
-                    ]
-                });
+                    },
+                    {
+                        text: "NO",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                ]
+            });
+            //Muestra la ventana de confirmacion
+            $("#confirmacion").dialog({
+                autoOpen: false,
+                width: 400,
+                modal:true,
+                buttons: [
+                    {
+                        text: "SI",
+                        click: function () {
+                            url = "{{ path('pago_conciliar_lote', { 'data_json':'_data_json_','idevento':idevento}) }}";
+                            url = url.replace('_data_json_', data_json);
+                            //alert(data_json);
+                            window.open(url, "_self");
+                            $(this).dialog("close");
+                        }
+                    },
+                    {
+                        text: "NO",
+                        click: function () {
+                            $(this).dialog("close");
+                        }
+                    }
+                ]
+            });
         });
         
-                $(function () {
-                    $("#tabs").tabs();
-                        //Redireccion a la pagina de los inscritos al hacer click en el tab
-                        $('#tabs a[href="#tabs-2"]').on("click", function () {
-                            $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
-                        });
-                        //Redireccion a la pagina de los anulados al hacer click en el tab
-                        $('#tabs a[href="#tabs-3"]').on("click", function () {
-                            $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
-                        });
-                        //Redireccion a la pagina de los operaciones TCD al hacer click en el tab
-                        $('#tabs a[href="#tabs-4"]').on("click", function () {
-                            $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
-                        });                        
-                        $('#tabs a[href="#tabs-5"]').on("click", function () {
-                            $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
-                        });                         
-                        $('#tabs a[href="#tabs-6"]').on("click", function () {
-                            $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento,'email':email}) }}')
-                        });         
-                        
-                        //Muestra la ventana de dialogo
-                        $("#dialog").dialog({
-                            autoOpen: false,
-                            width: 400,
-                            buttons: [
-                                {
-                                    text: "SI",
-                                    click: function () {
-                                        url = "{{ path('inscrito_anular', { 'id':'_idinscrito_'}) }}";
-                                        url = url.replace('_idinscrito_', idinscrito);
-                                        window.open(url, "_self")
-                                        $(this).dialog("close");
-                                    }
-                                },
-                                {
-                                    text: "NO",
-                                    click: function () {
-                                        $(this).dialog("close");
-                                    }
-                                }
-                            ]
-                        });
-                    });
-    </script>           
+$(function () {
+    $("#tabs").tabs();
+        //Redireccion a la pagina de los inscritos al hacer click en el tab
+        $('#tabs a[href="#tabs-2"]').on("click", function () {
+            $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
+        });
+        //Redireccion a la pagina de los anulados al hacer click en el tab
+        $('#tabs a[href="#tabs-3"]').on("click", function () {
+            $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
+        });
+        //Redireccion a la pagina de los operaciones TCD al hacer click en el tab
+        $('#tabs a[href="#tabs-4"]').on("click", function () {
+            $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
+        });                        
+        $('#tabs a[href="#tabs-5"]').on("click", function () {
+            $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
+        });                         
+        $('#tabs a[href="#tabs-6"]').on("click", function () {
+            $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento,'email':email}) }}')
+        });         
+
+        //Muestra la ventana de dialogo
+        $("#dialog").dialog({
+            autoOpen: false,
+            width: 400,
+            buttons: [
+                {
+                    text: "SI",
+                    click: function () {
+                        url = "{{ path('inscrito_anular', { 'id':'_idinscrito_'}) }}";
+                        url = url.replace('_idinscrito_', idinscrito);
+                        window.open(url, "_self")
+                        $(this).dialog("close");
+                    }
+                },
+                {
+                    text: "NO",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });
+        $("#seccionCargando").hide();        
+        $("#contenido").show();        
+    });
+</script>           
     {% endblock %}    
 {% block style %}
 <style type="text/css">
+    #contenido{     
+        display: none;
+    }
     td,th{
         font-size: 10px;
     }
@@ -285,34 +329,48 @@
         border-radius: 6px;
         font-weight: bold;        
     }
+    #seccionCargando > img{
+        width: 50px;
+    }        
+    #seccionCargando{
+        text-align: center;
+    }    
 </style>
 {% endblock %}     
     {% block body -%}
-    <div id="evento">{{nombreevento}}</div>
-    <div id="tabs">
-        <ul>
-            <li><a href="#tabs-1">Pre-Inscritos</a></li>
-            <li><a href="#tabs-2">Inscritos</a></li>
-            <li><a href="#tabs-3">Anulados</a></li>
-            <li><a href="#tabs-4">Operaciones TDC</a></li>
-            <li><a href="#tabs-5">Estadisticas</a></li>            
-            <li><a href="#tabs-6">Auditoria</a></li>   
-        </ul>
-        <div id="tabs-2"></div>
-        <div id="tabs-3"></div>  
-        <div id="tabs-4"></div>        
-        <div id="tabs-5"></div>    
-        <div id="tabs-1">
-            <table id="tablaPreInscritos" class="display row-border hover">
-            </table>        
-            <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+    <div id="seccionCargando">
+        <img src="{{ asset('bundles/fratersoftpiaweb/images/loading.gif') }}">
+    </div>        
+    <div id="contenido">
+        <div id="evento">{{nombreevento}}</div>
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-1">Pre-Inscritos</a></li>
+                <li><a href="#tabs-2">Inscritos</a></li>
+                <li><a href="#tabs-3">Anulados</a></li>
+                <li><a href="#tabs-4">Operaciones TDC</a></li>
+                <li><a href="#tabs-5">Estadisticas</a></li>            
+                <li><a href="#tabs-6">Auditoria</a></li>   
+            </ul>
+            <div id="tabs-2"></div>
+            <div id="tabs-3"></div>  
+            <div id="tabs-4"></div>        
+            <div id="tabs-5"></div>    
+            <div id="tabs-1">
+                <table id="tablaPreInscritos" class="display row-border hover">
+                </table>        
+                <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+            </div>
+            <div id="dialog" title="Advertencia!!!">
+                <p>Esta seguro que desea anular inscripcion con la secuencia <b id="sec"></b> ?</p>
+            </div>
+            <div id="confirmacion" title="Advertencia!!!">
+                <p id="msgconc">Esta seguro que desea conciliar las siguiente secuencias de insripciones: <div id="ids"></div></p>
+                <p id="msgtacr">Las secuencias de las pre-inscripciones: <b id="tacr"></b> no seran conciliadas, ya que son tipo TACR (Tarjetas de Credito)</p>
+            </div>            
+            <div id="notificacion" title="Advertencia!!!">
+                <p id="msgconc">Desea reenviar las notificaciones de Confirmacion de Pre-Inscripcion de las siguintes secuencias: <div id="ids"></div></p>
+            </div>
         </div>
-        <div id="dialog" title="Advertencia!!!">
-            <p>Esta seguro que desea anular inscripcion con la secuencia <b id="sec"></b> ?</p>
-        </div>
-        <div id="confirmacion" title="Advertencia!!!">
-            <p id="msgconc">Esta seguro que desea conciliar las siguiente secuencias de insripciones: <div id="ids"></div></p>
-            <p id="msgtacr">Las secuencias de las pre-inscripciones: <b id="tacr"></b> no seran conciliadas, ya que son tipo TACR (Tarjetas de Credito)</p>
-        </div>            
     </div>
     {% endblock %}

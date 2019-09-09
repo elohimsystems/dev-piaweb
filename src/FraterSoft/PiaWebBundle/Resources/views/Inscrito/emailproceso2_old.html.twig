@@ -1,0 +1,120 @@
+{% extends '::base.html.twig' %}
+{% block poweredby %}
+<div style="text-align: center">
+    <a href="http://www.sistemapia.com" target="_blank">
+        <p style="font-family:verdana;font-size:11px">
+        powered by
+        <img width="40" align="center" 
+             src="http://www.sistemapia.com/images/logopiaft.png"/>
+        </p>
+    </a>
+</div>
+{% endblock %}
+{% block style %}
+<style type="text/css">
+    th{
+        text-align:left;
+    }
+    table{
+        width:650px;
+        border: 1px solid black;
+    }
+</style>
+{% endblock %}
+{% block body -%}
+    
+
+    <table class="record_properties" align="center" border="0">
+        <tbody>
+            
+            {% if entity.idevento.idorganizador.logo is not null %}
+            <tr>
+                <td colspan='3' align='center'>
+                    <img width="300 px" 
+                         src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/images/') ~ entity.idevento.idorganizador.logo }}">                    
+                </td>
+            </tr>
+            {% endif %}
+            <tr>
+                <td colspan='3' align='center'>
+                    <h1>Confirmaci&oacute;n de Pre-Inscripci&oacute;n</h1>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="12">
+                    <img width="300 px" 
+                         src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ entity.idevento.logo }}">
+                </td>
+            </tr>            
+            <tr><th>Cedula</th><td>{{ entity.idpia.iddocumento }}</td></tr>
+            <tr><th>Apellido</th><td>{{ entity.idpia.apellido }}</td></tr>
+            <tr><th>Nombre</th><td>{{ entity.idpia.nombre }}</td></tr>
+            <tr><th>Fecha de Nacimiento</th><td>{{ entity.idpia.fechanacimiento|date('d-m-Y') }}</td></tr>
+            <tr><th>Sexo</th><td>{{ entity.idpia.sexo }}</td></tr>
+            <tr><th>Equipo</th><td>{{ entity.idpia.equipo }}</td></tr>
+            <tr><th>Estado</th><td>{{ entity.idpia.idestado.estado }}</td></tr>
+            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>            
+            <tr>
+                <th>PreInscrito el</th>
+                <td>{{ entity.fechahora|date('d-m-Y H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Punto</th>
+                <td>{{ entity.punto }}</td>
+            </tr>
+            <tr>
+                <td colspan="3" align="center">
+                    Precio:
+                    {{ entity.precio|number_format(2,',','.') }}$ o su equivalente en Bolivares Soberanos al cambio del dia segun la pagina xxxx                </td>
+            </tr>  
+            <tr>
+                <td colspan="3" align="center">
+                    Formas de Pago:
+                    Transferencia o Deposito Nacional:
+                    Banco Banesco Cuenta Corriente Numero 9890809890809809 Titular Pedro Perez Ci 12878798
+                    Tranferencia Zelle
+                    Recipiente Pedro Perez correo
+                    Su pre-incripci&oacute;n ser&aacute; certificada una vez verifiquemos los datos del pago.
+                </td>
+            </tr>  
+
+
+
+            
+            {#<tr>
+                <td rowspan="16">
+                    <img width="320 px" 
+                         src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/images/') ~ entity.idevento.logo }}">
+                </td>
+                <td colspan="2" align="center">
+                    <h1>Confirmaci&oacute;n de Pre-Inscripci&oacute;n</h1>
+                </td>
+            </tr>            
+            <tr><th>Id</th><td>{{ entity.id }}</td></tr>#}
+            {#<tr><th>Secuencia</th><td>{{ entity.secuencia }}</td></tr>
+            <tr><th>Numero</th><td>{{ entity.numero }}</td></tr>#}{#
+            <tr><th>Cedula</th><td>{{ entity.idpia.iddocumento }}</td></tr>
+            <tr><th>Apellido</th><td>{{ entity.idpia.apellido }}</td></tr>
+            <tr><th>Nombre</th><td>{{ entity.idpia.nombre }}</td></tr>
+            <tr><th>Fecha de Nacimiento</th><td>{{ entity.idpia.fechanacimiento|date('d-m-Y') }}</td></tr>
+            <tr><th>Sexo</th><td>{{ entity.idpia.sexo }}</td></tr>
+            <tr><th>Equipo</th><td>{{ entity.idpia.equipo }}</td></tr>
+            <tr><th>Estado</th><td>{{ entity.idpia.idestado.estado }}</td></tr>
+            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>            
+            <tr>
+                <th>Fecha y Hora</th>
+                <td>{{ entity.fechahora|date('d-m-Y H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Punto</th>
+                <td>{{ entity.punto }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    Su incripci&oacute;n ser&aacute; certificada una vez verifiquemos los datos del pago.
+                </td>
+            </tr>                              #}
+        </tbody>
+    </table>
+</ul>
+{% endblock %}

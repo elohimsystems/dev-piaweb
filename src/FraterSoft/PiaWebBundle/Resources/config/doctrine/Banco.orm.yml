@@ -1,0 +1,34 @@
+FraterSoft\PiaWebBundle\Entity\Banco:
+    type: entity
+    table: piaaccess.tmbancos
+    indexes:
+        IDX_8A21BEADAD92DF5F:
+            columns:
+                - idpais
+    id:
+        id:
+            type: integer
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        nombre:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+    manyToOne:
+        idpais:
+            targetEntity: Pais
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idpais:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

@@ -3,6 +3,9 @@ FraterSoft\PiaWebBundle\Entity\Evento:
     table: piaaccess.tmeventos
     repositoryClass: FraterSoft\PiaWebBundle\Entity\EventoRepository       
     indexes:
+        IDX_1B29C54DEA3BA832:
+            columns:
+                - idciudad
         IDX_1B29C54D6FAFBFF6:
             columns:
                 - idorganizador
@@ -15,10 +18,6 @@ FraterSoft\PiaWebBundle\Entity\Evento:
             id: true
             generator:
                 strategy: SEQUENCE
-            sequenceGenerator:
-                sequenceName: piaaccess.tmeventos_id_sq
-                allocationSize: 100
-                initialValue: 1                    
     fields:
         nombre:
             type: string
@@ -73,7 +72,7 @@ FraterSoft\PiaWebBundle\Entity\Evento:
         puntoinscripcion:
             type: string
             nullable: true
-            length: 35
+            length: 200
             fixed: false
             comment: ''
         fechacierre:
@@ -117,11 +116,16 @@ FraterSoft\PiaWebBundle\Entity\Evento:
             type: boolean
             nullable: true
             comment: ''
+        #idcampeonato:
+        #    type: bigint
+        #    nullable: true
+        #    unsigned: false
+        #    comment: ''
         criteriocalculoedad:
             type: integer
             nullable: true
             unsigned: false
-            comment: ''
+            comment: "1: Calculo Edad Calendario = Anio Actual - Anio Fecha de Nacimiento\n\n2: Calculo Edad Al Evento = \n\n               Si FechaNacimiento < FechaEvento \n\n                             Anio Actual - Anio Fecha de Nacimiento - 1\n\n               Si FechaNacimiento >= FechaEvento \n\n                             Anio Actual - Anio Fecha de Nacimiento"
         controlamenores16:
             type: boolean
             nullable: true
@@ -142,59 +146,63 @@ FraterSoft\PiaWebBundle\Entity\Evento:
             length: 100
             fixed: false
             comment: ''
-        inforepresentante:
-            type: boolean
-            nullable: true
-            comment: 'Activa solicitar Info del Representante, esto para eventos de solo ninos' 
-        proceso:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: ''         
-        mapalugar:
-            type: string
-            nullable: true
-            length: 200
-            fixed: false
-            comment: ''            
-        rutamapa:
-            type: string
-            nullable: true
-            length: 100
-            fixed: false
-            comment: ''   
-        rutaperfil:
-            type: string
-            nullable: true
-            length: 100
-            fixed: false
-            comment: ''   
-        rutavideo:
-            type: string
-            nullable: true
-            length: 100
-            fixed: false
-            comment: ''               
-        externo:
-            type: boolean
-            nullable: true
-            comment: ''               
         url:
             type: string
             nullable: true
             length: 255
             fixed: false
-            comment: '' 
+            comment: 'URL de eventos externos al sistema'
+        externo:
+            type: boolean
+            nullable: false
+            comment: ''
+            default: false
         clasificacion:
             type: string
             nullable: true
             length: 100
             fixed: false
-            comment: '' 
-        inforepresentante:    
+            comment: ''
+        rutamapa:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        rutaperfil:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        rutavideo:
+            type: string
+            nullable: true
+            length: 300
+            fixed: false
+            comment: ''
+        inforepresentante:
             type: boolean
             nullable: true
-            comment: ''               
+            comment: ''
+            default: false
+        proceso:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: "Indica el tipo de proceso que se manejara en el evento.\n\n1: Proceso por Defecto, el usuario debe realizar la transferencia antes de preinscribirse. 2: El proceso de pre-inscripcion no requiere de pago, el pago es ingresado el fechas posteriores"
+            default: '1'
+        mapalugar:
+            type: string
+            nullable: true
+            length: 200
+            fixed: false
+            comment: ''
+        registropago:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: "Indica si el pago lo registra el participante o el organizaodor\nValores posibles: 1 el pago lo registra el participante, 2 el pago lo registra el organizador"
     manyToOne:
         idorganizador:
             targetEntity: Organizador
@@ -247,4 +255,9 @@ FraterSoft\PiaWebBundle\Entity\Evento:
                         name: idrecarga
                         referencedColumnName: id
             orderBy: null        
+    oneToMany:
+        atributos:
+            targetEntity: EventoAtributos
+            mappedBy: idevento
+            orderBy: { 'orden': 'ASC' }
     lifecycleCallbacks: {  }

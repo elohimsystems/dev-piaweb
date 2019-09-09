@@ -28,25 +28,21 @@
             <tr>
                 <td colspan="2" align="center"><p id="evento"><strong>{{ inscrito.idevento.nombre }}</strong></p></td>
             </tr>        
-            <tr><th>Id</th><td>{{ inscrito.id }}</td></tr>
-            <tr><th>Secuencia</th><td>{{ inscrito.secuencia }}</td></tr>
-            <tr><th>Numero</th><td>{{ inscrito.numero }}</td></tr>
             <tr><th>Cedula</th><td>{{ inscrito.idpia.iddocumento }}</td></tr>
             <tr><th>Apellido</th><td>{{ inscrito.idpia.apellido }}</td></tr>
             <tr><th>Nombre</th><td>{{ inscrito.idpia.nombre }}</td></tr>
-            <tr><th>Fecha de Nacimiento</th><td>{{ inscrito.idpia.fechanacimiento|date('d-m-Y') }}</td></tr>
-            <tr><th>Sexo</th><td>{{ inscrito.idpia.sexo }}</td></tr>
-            <tr><th>Equipo</th><td>{{ inscrito.idpia.equipo }}</td></tr>
-            <tr><th>Estado</th><td>{{ inscrito.idpia.idestado.estado }}</td></tr>
-            <tr><th>Categoria</th><td>{{ inscrito.idcategoria.descripcion }}</td></tr>            
             <tr>
                 <th>Fecha y Hora</th>
                 <td>{{ inscrito.fechahora|date('d-m-Y H:i:s') }}</td>
             </tr>
+            {% if  idgrupo is defined %}
             <tr>
-                <th>Punto</th>
-                <td>{{ inscrito.punto }}</td>
-            </tr>           
+                <td colspan="2" align="center">
+                    Su inscripcion grupal fue anulada. Puede volver a inscribirse
+                    en el mismo grupo o en otro si asi lo desea.
+                </td>
+            </tr>               
+            {% else %}
             <tr>
                 <td colspan="2" align="center">
                     El Organizador ha decido anular esta pre-inscripci&oacute;n. Para mayor
@@ -55,7 +51,7 @@
                     {{ inscrito.idevento.idorganizador.emailcontacto }}
                 </td>
             </tr>               
-            </tr>                  
+            {% endif %}
         </tbody>
     </table>
 {% endblock %}

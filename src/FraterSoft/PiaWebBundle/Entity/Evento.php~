@@ -140,21 +140,88 @@ class Evento
     private $zonahoraria;
 
     /**
-     * @var boolean
-     */
-    private $inforepresentante;
-
-    /**
-     * @var \FraterSoft\PiaWebBundle\Entity\Tema
-     */
-    private $tema;
-
-    /**
      * @var \FraterSoft\PiaWebBundle\Entity\Organizador
      */
     private $idorganizador;
+    
+    /**
+     * @var boolean
+     */
+    private $inforepresentante;    
+    
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Tema
+     */
+    private $tema;    
+    
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Numeracion
+     */
+    private $numeracion;      
+    
+    /**
+     * @var integer
+     */
+    private $proceso;    
+    
+    /**
+     * @var string
+     */
+    private $mapalugar;    
 
+    /**
+     * @var string
+     */
+    private $rutamapa;    
 
+    /**
+     * @var string
+     */
+    private $rutaperfil;    
+
+    /**
+     * @var string
+     */
+    private $rutavideo;    
+
+    /**
+     * @var string
+     */
+    private $externo;    
+
+    /**
+     * @var string
+     */
+    private $url;    
+
+    /**
+     * @var string
+     */
+    private $clasificacion;
+    
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Ciudad
+     */
+    private $idciudad;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $idrecarga;    
+    
+    /**
+     * @var integer
+     */
+    private $registropago;
+    
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->idrecarga = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+    
     /**
      * Get id
      *
@@ -741,52 +808,6 @@ class Evento
     }
 
     /**
-     * Set inforepresentante
-     *
-     * @param boolean $inforepresentante
-     * @return Evento
-     */
-    public function setInforepresentante($inforepresentante)
-    {
-        $this->inforepresentante = $inforepresentante;
-
-        return $this;
-    }
-
-    /**
-     * Get inforepresentante
-     *
-     * @return boolean 
-     */
-    public function getInforepresentante()
-    {
-        return $this->inforepresentante;
-    }
-
-    /**
-     * Set Tema
-     *
-     * @param \FraterSoft\PiaWebBundle\Entity\Tema $tema
-     * @return Evento
-     */
-    public function setTema(\FraterSoft\PiaWebBundle\Entity\Tema $tema = null)
-    {
-        $this->tema = $tema;
-
-        return $this;
-    }
-
-    /**
-     * Get Tema
-     *
-     * @return \FraterSoft\PiaWebBundle\Entity\Tema 
-     */
-    public function getTema()
-    {
-        return $this->tema;
-    }
-
-    /**
      * Set idorganizador
      *
      * @param \FraterSoft\PiaWebBundle\Entity\Organizador $idorganizador
@@ -816,13 +837,53 @@ class Evento
      */
     public function __toString() {
         return $this->nombre;
-    }     
+    }        
+    
     /**
-     * @var \FraterSoft\PiaWebBundle\Entity\Numeracion
+     * Set inforepresentante
+     *
+     * @param boolean $inforepresentante
+     * @return Evento
      */
-    private $numeracion;
+    public function setInforepresentante($inforepresentante)
+    {
+        $this->inforepresentante = $inforepresentante;
 
+        return $this;
+    }
 
+    /**
+     * Get inforepresentante
+     *
+     * @return boolean 
+     */
+    public function getInforepresentante()
+    {
+        return $this->inforepresentante;
+    }    
+    
+    /**
+     * Set Tema
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Tema $tema
+     * @return Evento
+     */
+    public function setTema(\FraterSoft\PiaWebBundle\Entity\Tema $tema = null)
+    {
+        $this->tema = $tema;
+        return $this;
+    }
+
+    /**
+     * Get Tema
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Tema 
+     */
+    public function getTema()
+    {
+        return $this->tema;
+    }
+    
     /**
      * Set numeracion
      *
@@ -845,5 +906,280 @@ class Evento
     {
         return $this->numeracion;
     }
-        
+    
+    /**
+     * Set proceso
+     *
+     * @param integer $proceso
+     * @return Evento
+     */
+    public function setProceso($proceso)
+    {
+        $this->proceso = $proceso;
+        return $this;
+    }
+
+    /**
+     * Get proceso
+     *
+     * @return integer 
+     */
+    public function getProceso()
+    {
+        return $this->proceso;
+    }    
+    
+    /**
+     * Set mapalugar
+     *
+     * @param string $mapalugar
+     * @return Evento
+     */
+    public function setMapalugar($mapalugar)
+    {
+        $this->mapalugar = $mapalugar;
+
+        return $this;
+    }
+
+    /**
+     * Get mapalugar
+     *
+     * @return string 
+     */
+    public function getMapalugar()
+    {
+        return $this->mapalugar;
+    }    
+
+    /**
+     * Set rutamapa
+     *
+     * @param string $rutamapa
+     * @return Evento
+     */
+    public function setRutamapa($rutamapa)
+    {
+        $this->rutamapa = $rutamapa;
+        return $this;
+    }
+
+    /**
+     * Get rutamapa
+     *
+     * @return string 
+     */
+    public function getRutamapa()
+    {
+        return $this->rutamapa;
+    }       
+    
+    /**
+     * Set rutaperfil
+     *
+     * @param string $rutamapa
+     * @return Evento
+     */
+    public function setRutaperfil($rutaperfil)
+    {
+        $this->rutaperfil = $rutaperfil;
+        return $this;
+    }
+
+    /**
+     * Get rutaperfil
+     *
+     * @return string 
+     */
+    public function getRutaperfil()
+    {
+        return $this->rutaperfil;
+    }       
+
+    /**
+     * Set rutavideo
+     *
+     * @param string $rutavideo
+     * @return Evento
+     */
+    public function setRutavideo($rutavideo)
+    {
+        $this->rutavideo = $rutavideo;
+        return $this;
+    }
+
+    /**
+     * Get rutavideo
+     *
+     * @return string 
+     */
+    public function getRutavideo()
+    {
+        return $this->rutavideo;
+    }       
+
+    /**
+     * Set externo
+     *
+     * @param string $externo
+     * @return Evento
+     */
+    public function setExterno($externo)
+    {
+        $this->externo = $externo;
+        return $this;
+    }
+
+    /**
+     * Get externo
+     *
+     * @return string 
+     */
+    public function getExterno()
+    {
+        return $this->externo;
+    }       
+
+    /**
+     * Set url
+     *
+     * @param string $url
+     * @return Evento
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+        return $this;
+    }
+
+    /**
+     * Get url
+     *
+     * @return string 
+     */
+    public function getUrl()
+    {
+        return $this->url;
+    }       
+
+    /**
+     * Set clasificacion
+     *
+     * @param string $clasificacion
+     * @return Evento
+     */
+    public function setClasificacion($clasificacion)
+    {
+        $this->clasificacion = $clasificacion;
+        return $this;
+    }
+
+    /**
+     * Get clasificacion
+     *
+     * @return string 
+     */
+    public function getClasificacion()
+    {
+        return $this->clasificacion;
+    }           
+    
+    /**
+     * Set idciudad
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Ciudad $idciudad
+     * @return Evento
+     */
+    public function setIdciudad(\FraterSoft\PiaWebBundle\Entity\Ciudad $idciudad = null)
+    {
+        $this->idciudad = $idciudad;
+        return $this;
+    }
+
+    /**
+     * Get idciudad
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Ciudad 
+     */
+    public function getIdciudad()
+    {
+        return $this->idciudad;
+    }
+    
+    /**
+     * Set idrecarga
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga
+     * @return Club
+     */
+    public function setIdrecarga($idrecarga = null)
+    {
+        $this->idrecarga = $idrecarga;
+
+        return $this;
+    }
+
+    /**
+     * Add idrecarga
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga
+     * @return Club
+     */
+    public function addIdrecarga(\FraterSoft\PiaWebBundle\Entity\Recarga $recarga)
+    {
+        $this->idrecarga[] = $recarga;
+        return $this;
+    }
+    
+    /**
+     * Remove idrecarga
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga
+     */
+    public function removeIdrecarga(\FraterSoft\PiaWebBundle\Entity\Recarga $recarga)
+    {
+        $this->idrecarga->removeElement($recarga);
+    }
+    
+    /**
+     * Remove idrecarga
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Recarga $idrecarga
+     */
+    public function removeAllrecargas()
+    {
+        unset($this->idrecarga);
+    }
+    /**
+     * Get idrecarga
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Recarga 
+     */
+    public function getIdrecarga()
+    {
+        return $this->idrecarga;
+    }
+    
+    /**
+     * Set registropago
+     *
+     * @param integer $registropago
+     * @return Evento
+     */
+    public function setRegistropago($registropago)
+    {
+        $this->registropago = $registropago;
+    
+        return $this;
+    }
+
+    /**
+     * Get registropago
+     *
+     * @return integer 
+     */
+    public function getRegistropago()
+    {
+        return $this->registropago;
+    }
 }

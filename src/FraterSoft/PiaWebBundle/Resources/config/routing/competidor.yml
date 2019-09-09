@@ -33,6 +33,10 @@ competidor_find:
     pattern:  /findform/{idevento}
     defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:findform" }
     
+competidor_findgrupo:
+    pattern:  /findgrupo/{idevento}/{idcompetencia}/{idgrupo}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:findgrupo" }
+
 competidor_buscar:
     pattern:  /buscar/{idevento}
     defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:buscar" }    

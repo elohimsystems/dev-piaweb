@@ -16,7 +16,8 @@ class EventoType extends AbstractType
     {
         $builder
             ->add('externo', null, array(
-                'label' => 'Inscripciones Externas'
+                'label' => 'Inscripciones Externas',
+                'required' => false,
             ))
             ->add('logo','hidden')
             ->add('nombre')
@@ -32,6 +33,15 @@ class EventoType extends AbstractType
                 'choices' => array(
                     1 => 'Pago -> PreInscripcion', 
                     2 => 'PreInscripcion -> Pago'
+                 ),
+                'required' => true,
+                'empty_value' => 'Seleccione Tipo de Evento'
+            ))                
+            ->add('registropago','choice',array(
+                'label'=>'Registro del pago',
+                'choices' => array(
+                    1 => 'Registro por el Participantes', 
+                    2 => 'Registro por el Organizador'
                  ),
                 'required' => true,
                 'empty_value' => 'Seleccione Tipo de Evento'

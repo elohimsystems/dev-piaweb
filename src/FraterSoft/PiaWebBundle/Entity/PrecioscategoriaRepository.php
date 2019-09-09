@@ -13,12 +13,13 @@ use Doctrine\Common\Collections\ArrayCollection;
  */
 class PrecioscategoriaRepository extends EntityRepository {
 
-    public function BuscaPreciosCategoria($idcategoria){
+    public function BuscaPreciosCategoria($idcategoria,$idmoneda=null){
+        $filtromoneda=  is_null($idmoneda)?"":" and p.idmoneda=" . $idmoneda;
         $precios = $this->getEntityManager()
             ->createQuery(
                     "select p.cantidad, p.precio, p.hasta, p.imagen, p.texto, p.moneda "
                     . "from FraterSoftPiaWebBundle:Precioscategoria p "
-                    . "where p.idcategoria = " . $idcategoria 
+                    . "where p.idcategoria = " . $idcategoria . $filtromoneda
                     . " order by p.precio"
             )
             ->getResult();        

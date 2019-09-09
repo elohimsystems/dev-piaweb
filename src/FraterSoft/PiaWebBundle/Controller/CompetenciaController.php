@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Doctrine\ORM\EntityRepository;
 
 use FraterSoft\PiaWebBundle\Entity\Competencia;
+use FraterSoft\PiaWebBundle\Entity\Grupo;
 use FraterSoft\PiaWebBundle\Form\CompetenciaType;
 
 /**
@@ -30,11 +31,19 @@ class CompetenciaController extends commonPIAClass
     public function createAction(Request $request)
     {
         $entity = new Competencia();
+        
         $form = $this->createCreateForm($entity);
         $form->handleRequest($request);
-
+        
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            
+            if(!is_null($entity->getgrupo()->getIntegrantes()) && !is_null($entity->getgrupo()->getSecuencia())){
+                $entity->getgrupo()->setIdcompetencia($entity);
+                $em->persist($entity->getgrupo());
+            }
+            else $entity->setGrupo(null);
+            
             $em->persist($entity);
             $em->flush();
             
@@ -149,6 +158,16 @@ class CompetenciaController extends commonPIAClass
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
+            
+            if(!is_null($entity->getgrupo()->getIntegrantes()) && !is_null($entity->getgrupo()->getSecuencia())){
+                $entity->getgrupo()->setIdcompetencia($entity);
+                $em->persist($entity->getgrupo());
+            }
+            else{
+                $em->remove($entity->getgrupo());                
+                $entity->setGrupo(null);
+            }
+            
             $em->flush();
 
             return $this->redirect($this->generateUrl('competencia_new', array(
@@ -176,12 +195,30 @@ class CompetenciaController extends commonPIAClass
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Competencia entity.');
         }
+        
+        
+        if(!is_null($entity->getgrupo())){
+            $em->remove($entity->getgrupo());
+        }
+        
         $em->remove($entity);
-        $em->flush();
-        return $this->redirect($this->generateUrl('competencia_new', array(
-            'idevento' => $entity->getIdevento()->getId(),
-            'estado' => 1
-        )));            
+        try{
+            $em->flush();
+            return $this->redirect($this->generateUrl('competencia_new', array(
+                'idevento' => $entity->getIdevento()->getId(),
+                'estado' => 1
+            )));
+        }
+        catch(\Exception $e){
+            if($this->container->getParameter('kernel.environment')!="dev")
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => null,
+                            'texto' => "Error al intentar borrar la Competencia, aun existe un registro relacionado.",
+                ));
+            else{
+                throw new \Exception($e->getMessage());                
+            }
+        }
     }
 
 }

@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% set NAMESPACE='FraterSoft\\PiaWebBundle\\Controller\\commonPIAClass::' %}
 <html>
     <head>
         <!-- <meta charset="UTF-8" /> -->
@@ -90,8 +91,6 @@
                 $( "button" ).button();
             });
         </script>   
-        {% block javascripts %}
-        {% endblock %} 
 
         
         <!-- FIN DE BLOQUE -->
@@ -114,6 +113,9 @@
         {% block body %}{% endblock %}
     </body>
 </html>
+{% block javascripts %}
+{% endblock %} 
+
 <!--
 
 favicon.ico

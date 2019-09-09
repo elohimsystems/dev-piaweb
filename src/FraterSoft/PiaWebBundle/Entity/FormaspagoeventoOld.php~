@@ -1,0 +1,175 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Formaspagoevento
+ */
+class FormaspagoeventoOld
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var integer
+     */
+    private $status;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Evento
+     */
+    private $idevento;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Formaspago
+     */
+    private $idformapago;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Formaspago
+     */
+    private $incremento;
+    
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set status
+     *
+     * @param integer $status
+     * @return Formaspagoevento
+     */
+    public function setStatus($status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * Get status
+     *
+     * @return integer 
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set idevento
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Evento $idevento
+     * @return Formaspagoevento
+     */
+    public function setIdevento(\FraterSoft\PiaWebBundle\Entity\Evento $idevento = null)
+    {
+        $this->idevento = $idevento;
+
+        return $this;
+    }
+
+    /**
+     * Get idevento
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Evento 
+     */
+    public function getIdevento()
+    {
+        return $this->idevento;
+    }
+
+    /**
+     * Set idformapago
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Formaspago $idformapago
+     * @return Formaspagoevento
+     */
+    public function setIdformapago(\FraterSoft\PiaWebBundle\Entity\Formaspago $idformapago = null)
+    {
+        $this->idformapago = $idformapago;
+
+        return $this;
+    }
+
+    /**
+     * Get idformapago
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Formaspago 
+     */
+    public function getIdformapago()
+    {
+        return $this->idformapago;
+    }
+
+    /**
+     * Set idformapago
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Formaspago $idformapago
+     * @return Formaspagoevento
+     */
+    public function setIncremento($incremento)
+    {
+        $this->incremento = $incremento;
+
+        return $this;
+    }
+
+    /**
+     * Get idformapago
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Formaspago 
+     */
+    public function getIncremento()
+    {
+        return $this->incremento;
+    }
+    
+    /**
+     * to string
+     *
+     * @return integer 
+     */
+    public function __toString() {
+        return $this->getIdformapago()->getNombre();//$this->idformapago;
+    }      
+    /**
+     * @var boolean
+     */
+    private $publico;
+
+
+    /**
+     * Set publico
+     *
+     * @param boolean $publico
+     * @return Formaspagoevento
+     */
+    public function setPublico($publico)
+    {
+        $this->publico = $publico;
+    
+        return $this;
+    }
+
+    /**
+     * Get publico
+     *
+     * @return boolean 
+     */
+    public function getPublico()
+    {
+        return $this->publico;
+    }
+}
