@@ -769,7 +769,7 @@ class commonPIAClass extends Controller
                             $inscrito->getIdevento()->getid(), 
                             $inscrito->getIdcompetencia()->getid(), 
                             $inscrito->getIdcategoria()->getid(),
-                            $default_moneda
+                            null
                         );                        
                 $parametros=array('entity' => $inscrito,'precios'=>$precio);
             }
@@ -801,11 +801,23 @@ class commonPIAClass extends Controller
     public function MonedasEvento($em,&$default_moneda,$evento){
         $monedas = $em->getRepository('FraterSoftPiaWebBundle:Moneda')->MonedasEnEvento($evento->getId());
         $arraymonedas=array();
-        //print_r();
+        //print_r($monedas);
+        //print_r('moneda organizador' . (is_null ( $evento->getIdorganizador()->getIdmoneda() ))?'es null':' no es null');
         foreach ($monedas as $moneda){
-            if($moneda['id']==$evento->getIdorganizador()->getIdmoneda()->getId())
-                $default_moneda=$moneda['id'];
-            $arraymonedas[$moneda['id']]=$moneda['nombre'];
+            if(!is_null($evento->getIdorganizador()->getIdmoneda())){
+                if($moneda['id']==$evento->getIdorganizador()->getIdmoneda()->getId())
+                    $default_moneda=$moneda['id'];
+                $arraymonedas[$moneda['id']]=$moneda['nombre'];
+            }
+            else{
+                print_r('No se han configurado la moneda por defecto del Organizador<br>');
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_find', array('idevento' => $evento->getId())),
+                            'texto' => "No se han configurado la moneda por defecto del Organizador",
+                            'tema' => $evento->getTema()
+                ));
+                $arraymonedas=null;
+            }
         }        
         return($arraymonedas);
     }

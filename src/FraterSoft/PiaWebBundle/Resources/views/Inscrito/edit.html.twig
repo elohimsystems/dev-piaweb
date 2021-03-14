@@ -37,15 +37,15 @@
                                 {
                                     $("#{{ edit_form.idcategoria.vars.id }}").empty();
                                     $("#{{ edit_form.idcategoria.vars.id }}").prop("required", true);
-                                    if (datos['values'].length > 1)
+                                    if (datos.length > 1)
                                         $("#{{ edit_form.idcategoria.vars.id }}").append("<option selected value=''>Seleccione una Categoría</option>");
                                     else
                                         buscaPrecio(
                                                 $('#{{ edit_form.idevento.vars.id }}').val(),
                                                 $('#{{ edit_form.idcompetencia.vars.id }}').val(),
-                                                datos['values'][0].id
+                                                datos[0].id
                                         );                                        
-                                    $.each(datos['values'], function (key, value) {
+                                    $.each(datos, function (key, value) {
                                         $('#{{ edit_form.idcategoria.vars.id }}').append($('<option>', {
                                             value: value.id,
                                             text: value.descripcion

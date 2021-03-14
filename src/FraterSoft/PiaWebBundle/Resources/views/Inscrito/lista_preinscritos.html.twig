@@ -23,19 +23,19 @@
                 serverSide: false, 
                 ajax: url,    
                 columns: [
-                    { title: "Sec.", data: "secuencia" },
+                    { title: "Sec.", data: "secuencia",visible:false },
                     { title: "Competencia", data: "idcompetencia.descripcion" },
                     { title: "Forma Pago", data: "pagos[0].idformapago.nombre"},
                     { title: "Precio", data: "pagos[0].precio" },
                     { title: "Banco", data: "pagos[0].idbanco.nombre",render: function(data){return data==null?"":data;}},
-                    { title: "Referencia", data: "pagos[0].referencia",render: function(data){return data==null?"":data;}},
+                    { title: "Referencia", data: "pagos[0].referencia",render: function(data){return data==null?"":data;},visible:false},
                     { title: "Fecha Pago", data: "pagos[0].fechahora",
                         render: function(data){
                             var formatted="";
                             if(data!=null)  
                                 formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
                             return formatted;
-                        }
+                        },visible:false
                     },
                     { title: "Monto", data: "pagos[0].monto" },
                     {% for atributo in atributos %}
@@ -90,7 +90,7 @@
                                         + "<a href='" + urledit + "' >"
                                         + "<li class='ui-state-default ui-corner-all' title='Editar'><span class='ui-icon ui-icon-pencil'></span></li>"
                                         + "</a>"
-                                        {%if atributos[0].idevento.registropago==2 %}
+                                        {%if atributos[0].idevento.proceso==2 and atributos[0].idevento.registropago==2 %}
                                         + "<a href='" + urlpago + "'>"
                                         + "<li class='ui-state-default ui-corner-all' title='Registrar Pago'><span class='ui-icon ui-icon-calculator'></span></li>"
                                         + "</a>"                                
@@ -110,6 +110,7 @@
                     }, 
                     {extend: 'print',
                         text: 'Imprimir'},
+                    {%if atributos[0].idevento.proceso!=2 and atributos[0].idevento.registropago!=2 %}
                     {text: 'Conciliar',
                         action: function (e, dt, node, config) {
                             var countelement = 0;
@@ -148,6 +149,7 @@
                             else
                                 alert("Seleccione las pre-inscripciones que desea coinciliar");
                         }},
+                    {% endif %}
                     {text: 'Notificar',
                         action: function (e, dt, node, config) {
                             var countelement = 0;

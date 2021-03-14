@@ -73,9 +73,19 @@
                     <p>Por medio de la presente le informamos que su  pago ha sido confirmado.</p>
                     <p>A continuaci&oacute;n los datos suministrados por usted. En caso de existir alg&uacute;n error, por favor notif&iacute;quelo por esta v&iacute;a lo antes posible.</p>
                     <p>ENTREGA DE KIT</p>
-                    <p>Sabado 14 diciembre 2019</p>
+                    {% if inscrito.idevento.id == 32 %}
+                    <p>Sabado 28 de Marzo 2020</p>
                     <p>Horario: 9apm a 1pm</p>
-                    <p>Lugar: Hotel Eurobuilding, Ciudad Guayana. </p>
+                    <p>Lugar: CTE Cachamay, Ciudad Guayana. </p>
+                    {% elseif inscrito.idevento.id == 15 %}
+                    <p>01 de Mayo 2020</p>
+                    <p>Horario: De 1:00 pm a 5:00 pm</p>
+                    <p>Lugar: Hotel Eurobuilding</p>
+                    {% elseif inscrito.idevento.id == 45872350 %}
+                    <p>29 de Febrero 2020</p>
+                    <p>Horario: De 2:00 pm a 4:00 pm</p>
+                    <p>Lugar: Club Italo Venezolano</p>
+                    {% endif %}
                     <p>POR NINGUN MOTIVO SE ENTREGARAN KITS FUERA DEL HORARIO ESTABLECIDO</p>
                     <br>
                     <p><h2>NO GARANTIZAMOS LA TALLA DE LA FRANELA</h2></p>
