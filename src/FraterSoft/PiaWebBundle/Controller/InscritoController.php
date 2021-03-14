@@ -27,6 +27,7 @@ use FraterSoft\PiaWebBundle\Entity\Pago;
 use FraterSoft\PiaWebBundle\Entity\Grupo;
 use FraterSoft\PiaWebBundle\Form\InscritoType;
 use FraterSoft\PiaWebBundle\Form\CompetidorType;
+use FraterSoft\PiaWebBundle\Form\PagoType;
 
 /**
  * Inscrito controller.
@@ -430,7 +431,7 @@ class InscritoController extends commonPIAClass {
                                 $entity->getIdevento()->getid(), 
                                 $entity->getIdcompetencia()->getid(), 
                                 $entity->getIdcategoria()->getid(),
-                                2
+                                null
                             );
                     $mailer = $this->get('app.mail_controller');
                     $mailer->enviarPreinscripcion(
@@ -523,10 +524,10 @@ class InscritoController extends commonPIAClass {
                     'label' => false,
                 ))
         ;
-        $form->add('submit', 'submit', array(
-            'attr' => ['class' => 'submit'],
-            'label' => 'Inscribir'
-        ));
+//        $form->add('submit', 'submit', array(
+//            'attr' => ['class' => 'submit'],
+//            'label' => 'Inscribir'
+//        ));
 
         return $form;
     }
@@ -936,7 +937,17 @@ class InscritoController extends commonPIAClass {
         $arrayrecargas=array();
         $formaspago=null;
         if($evento->getProceso()==1){
-            
+
+            $default_moneda=null;
+            $arraymonedas=$this->MonedasEvento($em,$default_moneda,$entity->getIdevento());    
+            if(is_null($arraymonedas)){
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_find', array('idevento' => $evento->getId())),
+                            'texto' => "No se han configurado la moneda por defecto del Organizador",
+                            'tema' => $evento->getTema()
+                ));                
+            }
+
             //Agrega las formas de pago del evento
             $formasdepagoarray = array();
             $formasdepago = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')
@@ -948,13 +959,22 @@ class InscritoController extends commonPIAClass {
             }
             if ($formasdepagoarray)
                 $form
+                        ->add('info',null,array(
+                            'mapped' => false,
+                            'label'=>'INFORMACION DE PAGO',
+                            'label_attr'=>array('class'=>'group_fields'),
+                            'attr'=> array('style'=>'display:none'),
+                        ))
+                        ->add('idpago', new PagoType(), array(
+                            'label'=>false,
+                        ))
                         ->get('idpago')
                         ->add('idformapago', 'choice', array(
                             'label' => 'Forma  de Pago',
                             'choices' => $formasdepagoarray,
                             'required' => true,
                             'empty_value' => 'Seleccione Forma de Pago',
-                ));
+                        ));
             else {
                 return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                             'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
@@ -971,8 +991,13 @@ class InscritoController extends commonPIAClass {
             foreach($formaspago as $formapago){
                 $arrayincrementos[$formapago->getIdformapago()->getId()]=$formapago->getIncremento();
             }
-            $arrayrecargas=$this->EntitiesToArray($evento->getIdrecarga(),$this->getCampos($em,'Recarga'));
+            if(method_exists($evento->getIdrecarga(),'getId'))
+                $arrayrecargas=$this->EntitiesToArray($evento->getIdrecarga(),$this->getCampos($em,'Recarga'));
                         
+            $form->add('submit', 'submit', array(
+                'attr' => ['class' => 'submit'],
+                'label' => 'Inscribir'
+            ));
         }
         else{
             $form

@@ -192,7 +192,24 @@
         width: 500px
     }
 </style>
-{% endblock %}    
+{% endblock %}   
+{% block poweredby %}
+<div style="text-align: center;">
+    <img width="1350" height="100" src="https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones.jpg" data-lazy-src="https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones.jpg" class="vc_single_image-img attachment-full     lazyloaded" alt="" srcset="https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones.jpg 1350w, https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones-300x22.jpg 300w, https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones-1024x76.jpg 1024w, https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones-768x57.jpg 768w" sizes="(max-width: 1350px) 100vw, 1350px">
+</div>
+<div id="poweredby" style="text-align: center;margin: 10px 20px 30px;border: 1px">
+    <a href="http://www.sistemapia.com" target="_blank" style="text-decoration:none">
+        <b style="font-size: 9px">
+            V-{{ asset('')|slice(7,asset('')|length-5-7) }}
+        </b><br>
+        <strong>
+        powered by
+        <img width="40" align="center" 
+             src="{{asset('bundles/fratersoftpiaweb/images/logopiaft.png')}}"/>
+        </strong>
+    </a>
+</div>
+{% endblock %}
 {% block body -%}  
     
     

@@ -260,4 +260,7 @@ FraterSoft\PiaWebBundle\Entity\Evento:
             targetEntity: EventoAtributos
             mappedBy: idevento
             orderBy: { 'orden': 'ASC' }
-    lifecycleCallbacks: {  }
+        publicidad:
+            targetEntity: Publicidad
+            mappedBy: idevento
+            lifecycleCallbacks: {  }

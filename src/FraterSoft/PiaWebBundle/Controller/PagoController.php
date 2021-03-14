@@ -66,15 +66,38 @@ class PagoController extends commonPIAClass {
             $em->flush();
 
             $emails = array();
-            $this->ValidarEmail($inscripcion->getIdpia()->getEmail(),$inscripcion->getIdpia()->getEmailPersonal());
+            $emails = $this->ValidarEmail($inscripcion->getIdpia()->getEmail(),$inscripcion->getIdpia()->getEmailPersonal());
                     
-            if($inscripcion->getIdevento()->getProceso()==2 && $inscripcion->getIdevento()->getRegistropago()==1){
-                $mailer = $this->get('app.mail_controller');
-                $mailer->enviarConfirmacion(
-                    "Registro de Pago " . $inscripcion->getIdevento()->getNombre(), 
-                    $emails, 
-                    $this->renderView('FraterSoftPiaWebBundle:Pago:email_registropago.html.twig', array('inscrito' => $inscripcion))
-                );
+            switch(true){
+                case $inscripcion->getIdevento()->getProceso()==1:
+                    $mailer = $this->get('app.mail_controller');
+                    $mailer->enviarPreinscripcion(
+                            "Pre-Inscripcion " . $entity->getIdevento()->getNombre(), 
+                            $emails,
+                            $this->renderView('FraterSoftPiaWebBundle:Inscrito:email.html.twig', array('entity' => $entity))
+                    );         
+                    return $this->redirect($this->generateUrl('inscrito_confirmacion', array('id' => $entity->getId())));
+                    break;
+                case $inscripcion->getIdevento()->getProceso()==2 && $inscripcion->getIdevento()->getRegistropago()==1:
+                    $mailer = $this->get('app.mail_controller');
+                    $mailer->enviarConfirmacion(
+                        "Registro de Pago " . $inscripcion->getIdevento()->getNombre(), 
+                        $emails, 
+                        $this->renderView('FraterSoftPiaWebBundle:Pago:email_registropago.html.twig', array('inscrito' => $inscripcion))
+                    );
+                    break;
+                case $inscripcion->getIdevento()->getProceso()==2 && $inscripcion->getIdevento()->getRegistropago()==2:
+                    $entity->setConciliado(true);
+                    $entity->setConciliadoel(new \DateTime('now'));
+                    $em->persist($entity);
+                    $em->flush();
+                    $mailer = $this->get('app.mail_controller');
+                    $mailer->enviarConfirmacion(
+                        "Confirmacion de Inscripcion " . $inscripcion->getIdevento()->getNombre(), 
+                        $emails, 
+                        $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailok.html.twig', array('inscrito' => $inscripcion))
+                    );
+                    break;
             }
             return $this->redirect($this->generateUrl('pago_registro', array(
                 'id' => $entity->getId(),

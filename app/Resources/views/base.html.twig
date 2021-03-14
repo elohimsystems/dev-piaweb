@@ -2,7 +2,6 @@
 {% set NAMESPACE='FraterSoft\\PiaWebBundle\\Controller\\commonPIAClass::' %}
 <html>
     <head>
-        <!-- <meta charset="UTF-8" /> -->
         <!-- <link rel="icon" type="image/x-icon" href="{# {{ asset('favicon.ico') }} #}" /> -->
 
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -97,18 +96,6 @@
     </head>
     <body style="font-family: Droid Sans, arial, serif">
         {% block poweredby %}
-        <div id="poweredby" style="text-align: center;margin: 10px 20px 30px;border: 1px">
-            <a href="http://www.sistemapia.com" target="_blank" style="text-decoration:none">
-                <b style="font-size: 9px">
-                    V-{{ asset('')|slice(7,asset('')|length-5-7) }}
-                </b><br>
-                <strong>
-                powered by
-                <img width="40" align="center" 
-                     src="{{asset('bundles/fratersoftpiaweb/images/logopiaft.png')}}"/>
-                </strong>
-            </a>
-        </div>
         {% endblock %}
         {% block body %}{% endblock %}
     </body>

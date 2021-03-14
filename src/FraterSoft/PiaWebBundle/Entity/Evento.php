@@ -220,12 +220,18 @@ class Evento
     private $atributos;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $publicidad;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->idrecarga = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->atribitos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->atributos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->publicidad = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -1222,4 +1228,38 @@ class Evento
     {
         return $this->atributos;
     }
+
+    /**
+     * Add publicidad
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Publicidad $publicidad
+     * @return Evento
+     */
+    public function addPublicidad(\FraterSoft\PiaWebBundle\Entity\Publicidad $publicidad)
+    {
+        $this->publicidad[] = $publicidad;
+        return $this;
+    }
+
+    /**
+     * Remove publicidad
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\EventoAtributos $publicidad
+     */
+    public function removePublicidad(\FraterSoft\PiaWebBundle\Entity\Publicidad $publicidad)
+    {
+        $this->publicidad->removeElement($publicidad);
+    }
+
+    /**
+     * Get publicidad
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPublicidad()
+    {
+        return $this->publicidad;
+    }
+    
+    
 }

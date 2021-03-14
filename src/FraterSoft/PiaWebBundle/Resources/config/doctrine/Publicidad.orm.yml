@@ -29,6 +29,12 @@ FraterSoft\PiaWebBundle\Entity\Publicidad:
             nullable: true
             unsigned: false
             comment: ''
+        imagen:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: ''  
     manyToOne:
         idevento:
             targetEntity: Evento

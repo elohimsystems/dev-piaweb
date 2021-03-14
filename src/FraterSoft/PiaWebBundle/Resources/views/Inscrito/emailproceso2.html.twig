@@ -66,30 +66,36 @@
                     Estimad@ Atleta,<br>
                     Un gusto saludarle<br>
                     </p>
-                    <p>
-                    Para formalizar la inscripci&oacute;n en la {{ entity.idevento.nombre }} a realizarse el domingo 15 de diciembre en la C&aacute;rcava del Hotel Eurobuilding, Ciudad Guayana, estado Bol&iacute;var, debe responder dicho correo adjuntando el soporte de pago.
-                    </p>
-                    <p>    
-                    {% if precios|length > 1 %}
-                    Costos <br>
-                        {% for precio in precios %}
-                            {{precio.precio}} {{precio.texto}}<br>
+                    <p>Para formalizar la inscripci&oacute;n en el evento: {{ entity.idevento.nombre }}, a realizarse el {{ entity.idevento.fecha|date("d/m/Y") }} en {{ entity.idevento.lugar }}, {{ entity.idevento.idciudad.nombre }}, Estado {{ entity.idevento.idciudad.idestado.nombre }}.</p>
+                    <p><span style="background-color:yellow"><b>Debe responder dicho correo adjuntando el soporte de pago.</b></span></p>
+                    <p> 
+                        Costo:<br>
+                        {% for prc in precios %}
+                        Moneda:{{prc.texto}} - Monto:{{prc.precio|number_format(2, ',', '.')}} 
                         {% endfor %}
-                    &oacute; a la tasa del d&iacute;a y hora de @monitordolarvzla_ (intagram)
-                    {% else %}
-                    Costo {{precios[0].precio}}$ &oacute; a la tasa del d&iacute;a y hora de @monitordolarvzla_ (intagram)
-                    {% endif %}
-                    </p>    
-                    <p>
-                    INFORMACION BANCARIA<br>
-                    Banesco<br>
+                    </p>
+                    <p><b>FORMAS DE PAGO EN BOL&Iacute;VARES <br><br>
+                    TRANSFERENCIA</b><br>
+                    SOLO de Banesco a Banesco<br>
                     Rafael Rodriguez<br>
                     C&eacute;dula 6.973.974<br>
-                    0134 0348 1234 8108 2621<br>
-                    </p>
-                    <p>
-                    NOTA: Si el pago lo realiza desde otro banco por favor enviar nombre, apellido y  c&eacute;dula del titular de la cuenta desde donde realiz&oacute; el pago, si la cuenta es jur&iacute;dica env&iacute;e raz&oacute;n social y RIF
-                    </p>    
+                    0134 0348 1234 8108 2621<br><br>
+                    <b>PAGO MOVIL</b><br>
+                    De otros Bancos a Banesco<br>
+                    04148928433<br>
+                    10.933.738<br>
+                    Banesco<br><br>
+                    <b>FORMAS DE PAGO EN DIVISAS</b><br>
+                    <b>ZELLE</b><br>
+                    Carolina Cortes<br>
+                    puroeventospzo@gmail.com<br>
+                    Enivar Nombre del titular de la cuenta<br><br>
+                    <b>EFECTIVO</b><br>
+                    Puedes pagar en efectivo en:<br>
+                        - Kioto Orinokia Mall, Puerto Ordaz<br>
+                        - Kioto Avenida Principal de Lecher&iacute;a<br>
+                    Coordinar la entrega v&iacute;a WhatsApp<br>
+                    04148928433<br>
                     <p>
                     Cualquier pregunta o inquietud no dude en contactarnos.
                     </p>

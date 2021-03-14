@@ -34,7 +34,11 @@ class Publicidad
      */
     private $idpatrocinante;
 
-
+    /**
+     * @var string
+     */
+    private $imagen;
+    
     /**
      * Get id
      *
@@ -136,4 +140,27 @@ class Publicidad
     {
         return $this->idpatrocinante;
     }
+    
+    /**
+     * Set imagen
+     *
+     * @param integer $imagen
+     * @return Publicidad
+     */
+    public function setImagen($imagen)
+    {
+        $this->imagen = $imagen;
+    
+        return $this;
+    }
+
+    /**
+     * Get imagen
+     *
+     * @return string 
+     */
+    public function getImagen()
+    {
+        return $this->imagen;
+    }    
 }
