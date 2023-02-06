@@ -195,7 +195,10 @@
 {% endblock %}   
 {% block poweredby %}
 <div style="text-align: center;">
-    <img width="1350" height="100" src="https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones.jpg" data-lazy-src="https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones.jpg" class="vc_single_image-img attachment-full     lazyloaded" alt="" srcset="https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones.jpg 1350w, https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones-300x22.jpg 300w, https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones-1024x76.jpg 1024w, https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones-768x57.jpg 768w" sizes="(max-width: 1350px) 100vw, 1350px">
+    <!--img width="1350" height="100" src="https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones.jpg" data-lazy-src="https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones.jpg" class="vc_single_image-img attachment-full     lazyloaded" alt="" srcset="https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones.jpg 1350w, https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones-300x22.jpg 300w, https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones-1024x76.jpg 1024w, https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones-768x57.jpg 768w" sizes="(max-width: 1350px) 100vw, 1350px"-->
+    <img width="1350" align="center" 
+        src="{{asset('bundles/fratersoftpiaweb/images/org_' ~ evento.idorganizador.id ~ '_eve_' ~ evento.id ~ '_banner-verifica.jpg')}}"/>
+    </strong>    
 </div>
 <div id="poweredby" style="text-align: center;margin: 10px 20px 30px;border: 1px">
     <a href="http://www.sistemapia.com" target="_blank" style="text-decoration:none">
@@ -224,7 +227,7 @@
         </tr>        
         <tr>
             <td align="center">
-                <h1>Consulta el estatus de tu {% if evento.proceso == 1 %}Inscripción{% else %}Pre-Inscripción{% endif %}</h1>
+                <h1>Consulta el estatus de tu {% if evento.proceso == 1 %}Inscripción{% else %}Inscripción{% endif %}</h1>
             </td>
         </tr>
         <tr>
@@ -232,7 +235,7 @@
         </tr>
         {% if form.siniddocumento is defined %}
         <tr>
-            <td align="center">No posee {{form_label(form.buscar)}}?, marque aqui:{{form_widget(form.siniddocumento)}} e ingrese {{form_label(form.buscar)}} del Representante</td>
+            <!--td align="center">No posee {{form_label(form.buscar)}}?, marque aqui:{{form_widget(form.siniddocumento)}} e ingrese {{form_label(form.buscar)}} del Representante</td-->
         </tr>
         {% endif %}
         <tr>
@@ -248,7 +251,7 @@
         {% if numero is defined and numero is not null %}
         <tr>
             <td align="center">
-                <div id="mensaje"><h3>Su Numero de Participacion es el {{ numero }}</h3></div>
+                <div id="mensaje" style="font-size: 42px;"><h3>Su N&uacute;mero de Participaci&oacute;n es el {{ numero }}</h3></div>
             </td>
         </tr>         
         {% endif %}        

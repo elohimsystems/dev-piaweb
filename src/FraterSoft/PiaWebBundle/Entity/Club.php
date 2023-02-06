@@ -22,12 +22,12 @@ class Club
     /**
      * @var integer
      */
-    private $tipoIdentificacion;
+    private $tipo_identificacion;
 
     /**
      * @var string
      */
-    private $numIdentificacion;
+    private $num_identificacion;
 
     /**
      * @var string
@@ -123,9 +123,9 @@ class Club
      * @param integer $tipoIdentificacion
      * @return Club
      */
-    public function setTipoIdentificacion($tipoIdentificacion)
+    public function setTipoIdentificacion($tipo_identificacion)
     {
-        $this->tipoIdentificacion = $tipoIdentificacion;
+        $this->tipo_identificacion = $tipo_identificacion;
 
         return $this;
     }
@@ -137,7 +137,7 @@ class Club
      */
     public function getTipoIdentificacion()
     {
-        return $this->tipoIdentificacion;
+        return $this->tipo_identificacion;
     }
 
     /**
@@ -146,9 +146,9 @@ class Club
      * @param string $numIdentificacion
      * @return Club
      */
-    public function setNumIdentificacion($numIdentificacion)
+    public function setNumIdentificacion($num_identificacion)
     {
-        $this->numIdentificacion = $numIdentificacion;
+        $this->num_identificacion = $num_identificacion;
 
         return $this;
     }
@@ -160,7 +160,7 @@ class Club
      */
     public function getNumIdentificacion()
     {
-        return $this->numIdentificacion;
+        return $this->num_identificacion;
     }
 
     /**

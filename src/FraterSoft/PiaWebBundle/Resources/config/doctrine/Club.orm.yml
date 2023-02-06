@@ -30,19 +30,19 @@ FraterSoft\PiaWebBundle\Entity\Club:
             length: 50
             fixed: false
             comment: ''
-        tipoIdentificacion:
+        tipo_identificacion:
             type: bigint
             nullable: true
             unsigned: false
             comment: ''
-            column: tipo_identificacion
-        numIdentificacion:
+            # column: tipo_identificacion
+        num_identificacion:
             type: string
             nullable: true
             length: 50
             fixed: false
             comment: ''
-            column: num_identificacion
+            # column: num_identificacion
         email:
             type: string
             nullable: true

@@ -63,7 +63,9 @@
                         render: function(data){return data==null?"":data.toUpperCase();} 
                         {% elseif  atributo.idatributo.tipodato=='D' %} 
                         render: function(data){
-                            var formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
+                            var formatted=null;
+                            if(data)
+                                formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
                             return formatted;
                         }
                         {% elseif  atributo.idatributo.tipodato=='I' %} 
@@ -84,7 +86,7 @@
                     { title: "Precio", data: "precio" },   
                     { title: "Estatus", data: "status",
                         render: function(data, type, row){
-                            if(data==1 && row.pagos.length==0)
+                            if(data==1 && row.pagos[0].length==0)
                                 return('SIN PAGO');
                             else if(data==1 && row.pagos[0].conciliado==true)
                                 return('INSCRITO');
@@ -98,7 +100,7 @@
                         }
                     },
                     /* INFORMACION DEL PAGO */
-                    { title: "FechaPago", data: "pagos[0].fechapago",
+                    { title: "FechaPago", data: "fechapago",
                         render: function(data){
                             var formatted = (data)?$.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000)):'';
                             return formatted;
@@ -109,14 +111,14 @@
                     { title: "Moneda", data: "pagos[0].moneda" },        
                     { title: "Referencia", data: "pagos[0].referencia" },        
                     { title: "Comprobante", data: "pagos[0].comprobante" },                            
-                    { title: "Forma de Pago", data: "pagos[0].idformpago.nombre"},   
+                    { title: "Forma de Pago", data: "pagos[0].idformapago.nombre"},   
                     { title: "Banco", data: "pagos[0].idbanco.nombre" },        
                     { title: "Conciliado?", data: "pagos[0].conciliado",
                         render: function(data){
                             return(data=='true'?"SI":"NO");
                         }
                     },        
-                    { title: "ConciliadoEl", data: "pagos[0].conciliadoel",
+                    { title: "ConciliadoEl", data: "conciliadoel",
                         render: function(data){
                             if(data)
                                 return $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));

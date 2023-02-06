@@ -67,6 +67,6 @@ pago_registro:
     defaults: { _controller: "FraterSoftPiaWebBundle:Pago:registro",email:null }
     
 pago_formaspago_ajax:
-    pattern:  /formaspagoajax
+    pattern:  /{idevento}/{idmoneda}/formaspagoajax/
     defaults: { _controller: "FraterSoftPiaWebBundle:Pago:buscarFormasPagoAjax" }
 

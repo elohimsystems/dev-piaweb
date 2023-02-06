@@ -43,7 +43,7 @@ class PagoController extends commonPIAClass {
     }
 
     /**
-     * Creates a new Pago entity.
+     * Creates a new Pago entity
      *
      */
     public function createAction(Request $request,$idinscripcion) {
@@ -72,6 +72,7 @@ class PagoController extends commonPIAClass {
                 case $inscripcion->getIdevento()->getProceso()==1:
                     $mailer = $this->get('app.mail_controller');
                     $mailer->enviarPreinscripcion(
+                            "pre-inscripcion@sistemapia.com.ve",
                             "Pre-Inscripcion " . $entity->getIdevento()->getNombre(), 
                             $emails,
                             $this->renderView('FraterSoftPiaWebBundle:Inscrito:email.html.twig', array('entity' => $entity))
@@ -81,6 +82,7 @@ class PagoController extends commonPIAClass {
                 case $inscripcion->getIdevento()->getProceso()==2 && $inscripcion->getIdevento()->getRegistropago()==1:
                     $mailer = $this->get('app.mail_controller');
                     $mailer->enviarConfirmacion(
+                        "confirmacion@sistemapia.com.ve",
                         "Registro de Pago " . $inscripcion->getIdevento()->getNombre(), 
                         $emails, 
                         $this->renderView('FraterSoftPiaWebBundle:Pago:email_registropago.html.twig', array('inscrito' => $inscripcion))
@@ -93,6 +95,7 @@ class PagoController extends commonPIAClass {
                     $em->flush();
                     $mailer = $this->get('app.mail_controller');
                     $mailer->enviarConfirmacion(
+                        "confirmacion@sistemapia.com.ve",
                         "Confirmacion de Inscripcion " . $inscripcion->getIdevento()->getNombre(), 
                         $emails, 
                         $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailok.html.twig', array('inscrito' => $inscripcion))
@@ -261,6 +264,7 @@ class PagoController extends commonPIAClass {
             ->add('idcuenta', 'choice', array(
                 'choices' => $arraycuentas,
             ))
+            ->remove('info')
             ->add('submit', 'submit', array('label' => 'Registrar Pago'));
         ;
         
@@ -268,6 +272,12 @@ class PagoController extends commonPIAClass {
          * Busca las formas de pago, con la moneda por defecto
          */
         $formaspago=$this->addFormasPago($form,$inscripcion->getIdevento(),$default_moneda);
+        if(is_null($formaspago))
+            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                        'url' => $this->generateUrl('competidor_find', array('idevento' => $inscripcion->getIdevento()->getId())),
+                        'texto' => "No se ha configurado al menos una Forma De Pago Publica para este Evento",
+                        'tema' => $inscripcion->getIdevento()->getTema()
+            ));         
         $parametros=array();
         foreach($formaspago as $formapago){
             $parametros[$formapago->getIdformapago()->getId()]=$formapago->getIdformapago()->getParametros();
@@ -684,6 +694,7 @@ class PagoController extends commonPIAClass {
 //                $this->get('mailer')->send($mensaje);  
                 $mailer = $this->get('app.mail_controller');
                 $mailer->enviarConfirmacion(
+                        "confirmacion@sistemapia.com.ve",
                         "Confirmacion de Inscripcion " . $inscrito->getIdevento()->getNombre(), 
                         $emails,
                         $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailok.html.twig', array('inscrito' => $inscrito))
@@ -1005,16 +1016,14 @@ class PagoController extends commonPIAClass {
         ));
     }    
     
-    public function buscarFormasPagoAjaxAction() {
+    public function buscarFormasPagoAjaxAction($idevento,$idmoneda) {
+        //print_r($idevento);
         $encoders = array(new XmlEncoder(), new JsonEncoder());
         $normalizers = array(new GetSetMethodNormalizer());
         $formaspagoselect = new ArrayCollection();
 
         $serializer = new Serializer($normalizers, $encoders);
-
-        $idevento = $this->get('request')->query->get('idevento');
-        $idmoneda = $this->get('request')->query->get('idmoneda');
-
+        
         $formaspago = 0;
         $formaspago = $this->buscarFormasPago($idevento,$idmoneda);
 
@@ -1023,7 +1032,7 @@ class PagoController extends commonPIAClass {
             $jsonContent = $serializer->serialize(['count'=>count($formaspago),'data'=>$formaspago], 'json');
             return new response($jsonContent);
         }
-        return new response(0);
+        return new response(-1);
     }
     
 }

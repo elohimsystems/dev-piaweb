@@ -68,6 +68,7 @@
         #formulario > div:nth-child(1) {
             display:none;
         }
+        {#
         #formulario > div:nth-child(2):hover{
             font-weight: bold;
         }
@@ -76,7 +77,8 @@
         }  
         #formulario > div:nth-child(7):hover{
             font-weight: bold;
-        }          
+        } 
+        #}
         #formulario > div:nth-child(3){
             margin: 0px;
         }
@@ -87,6 +89,11 @@
             width: 180px;
             text-transform: capitalize;
         }
+        #formulario > div:nth-child(n+0) > select {
+            height: 21px;
+            width: 204px;
+        }
+
         /***********************************************************************
         * Da formato al formulario del competidor *
         ***********************************************************************/
@@ -110,6 +117,7 @@
         }
         #{{form.idpia.vars.id}} > div:nth-child(n+0) > select {
             height: 21px;
+            width: 204px;
         }
         #{{form.idpia.vars.id}} > div:nth-child(n+0) > label[class="error"]{
             width: 20px;
@@ -118,40 +126,70 @@
             font-weight: bold;
         }         
         
-        {%if form.idpago is defined %}
+        {%if form.pagos is defined %}
+        
         /****************************************************/
         /*  Configura el estilo del subformulario pago ******/
         /****************************************************/
-        #{{form.idpago.vars.id}} > div:nth-child(1){
+        {##{{form.idpago.vars.id}} > div:nth-child(1){
             /*display: none;*/
         }         
-        #{{form.idpago.vars.id}} > div:nth-child(n+0){
+        #{{form.pagos.vars.id}} > div:nth-child(n+0){
             margin-top: 5px;
         }         
-        #{{form.idpago.vars.id}} > div:nth-child(n+0) > label{
+        #fratersoft_piawebbundle_inscrito_pagos > div:nth-child(n+0){
+            margin-top: 5px;
+        }
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > label{
             display: inline-block;
             width: 180px;
             text-align: left;   
             vertical-align: middle;
         }
-        #{{form.idpago.vars.id}} > div:nth-child(n+0) > input[type="checkbox"]{
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > input[type="checkbox"]{
             vertical-align: middle;
             margin-left: 0;
         }
-        #{{form.idpago.vars.id}} > div:nth-child(n+0) > label[class="error"]{
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > label[class="error"]{
             width: 20px;
         }
-        #{{form.idpago.vars.id}} > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea{
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0):hover{
+            font-weight: bold;
+        }        
+        #}
+        div[id*=idmoneda]{
+            width: 204px;
+            float: right;        
+        }
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea{
             vertical-align: middle;
             width: 196px;
         }
-        #{{form.idpago.vars.id}} > div:nth-child(n+0) > select {
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > select {
             height: 21px;
+            width: 204px;
         }
-        #{{form.idpago.vars.id}} > div:nth-child(n+0):hover{
-            font-weight: bold;
-        }         
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > label{
+            display: inline-block;
+            width: 180px;
+            text-align: left;   
+            vertical-align: middle;
+        }
+        #fratersoft_piawebbundle_inscrito_pagos > div > label{
+            display:none;
+        }        
+        #fratersoft_piawebbundle_inscrito_pagos_0 > div:nth-child(1) {
+            width: 98% !important;
+            border: 1px solid black;
+            text-align: center !important;
+            font-size: 10px;
+            padding:3px;
+        }
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) {
+            margin-top: 5px;
+        }
         {% endif %}
+        /***********************************************************************************************************/
         
         table, th, td {
             border: 0px solid black;
@@ -183,13 +221,6 @@
         label.error {
             display:none !important; 
         }                  
-        .group_fields {
-            width: 98% !important;
-            border: 1px solid black;
-            text-align: center !important;
-            font-size: 10px;
-            padding:3px;
-        }        
         #montorecarga{
             -webkit-appearance: textarea;
             border: 1px solid gray;
@@ -208,9 +239,13 @@
    </style>
 {% endblock %}    
 {% block poweredby %}
-<div style="text-align: center;">
-    <img width="1350" height="100" src="https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones.jpg" data-lazy-src="https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones.jpg" class="vc_single_image-img attachment-full     lazyloaded" alt="" srcset="https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones.jpg 1350w, https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones-300x22.jpg 300w, https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones-1024x76.jpg 1024w, https://www.puroeventos.com/lanocturna/wp-content/uploads/2020/12/encabezado-inscripciones-768x57.jpg 768w" sizes="(max-width: 1350px) 100vw, 1350px">
-</div>
+{% for publicidad in entity.idevento.publicidad %}
+    {% if publicidad.idubicacion == 3 and publicidad.estatus==1 %}
+        <div style="text-align: center;">
+            <img width="1350" height="100" src="{{asset('bundles/fratersoftpiaweb/images/' ~ publicidad.imagen)}}"/>
+        </div>
+    {% endif %}
+{% endfor %}
 <div id="poweredby" style="text-align: center;margin: 10px 20px 30px;border: 1px">
     <a href="http://www.sistemapia.com" target="_blank" style="text-decoration:none">
         <b style="font-size: 9px">
@@ -224,6 +259,7 @@
     </a>
 </div>
 {% endblock %}
+{% set index_pago = form.pagos|length %}
 {% block body -%}   
     <div class="contenido">    
         <div id="titulogrupos">    
@@ -242,6 +278,27 @@
 {% block javascripts %}
     {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':entity.idevento.id}) }}            
     <script>
+    
+        function addPagoForm(collectionHolder, $newLinkLi) {
+            // Obtiene los datos del prototipo explicado anteriormente
+            var prototype = collectionHolder.data('prototype');
+        
+            // Consigue el nuevo índice
+            var index = collectionHolder.data('index');
+        
+            // Sustituye el '__name__' en el prototipo HTML para que
+            // en su lugar sea un número basado en cuántos elementos hay
+            var newForm = prototype.replace(/__name__/g, index);
+            
+        
+            // Incrementa en uno el índice para el siguiente elemento
+            collectionHolder.data('index', index + 1);
+        
+            // Muestra el formulario en la página en un elemento li,
+            // antes del enlace 'Agregar una etiqueta'
+            var $newFormLi = $('<li></li>').append(newForm);
+            $newLinkLi.before($newFormLi);
+        }    
         var precios=[];
         function buscaCategorias() {
         {% if form.idcategoria is defined %}
@@ -261,7 +318,7 @@
                     criterios += "&";
             {% endif %}
         {% endfor %}      
-                    alert(criterios);
+                    console.log("{{ path('inscrito_categorias') }}?" + criterios);
                     $.ajax(
                             {
                                 type: "GET",
@@ -279,13 +336,15 @@
                                     if (datos.length > 1)
                                         $("#{{ form.idcategoria.vars.id }}").append("<option selected value=''>Seleccione una Categoría</option>");
                                     else
-                                        {% if form.idpago is defined and entity.idevento.proceso == 1%}
+                                        {% if entity.idevento.proceso == 1 %}
+                                        //console.log($("#formulario input[type='radio']:checked").val());
                                         buscaPrecio(
                                                 $('#{{ form.idevento.vars.id }}').val(),
                                                 $('#{{ form.idcompetencia.vars.id }}').val(),
                                                 datos[0].id,
                                                 $('#formulario'),
-                                                {{recargas|json_encode|raw}}
+                                                {{recargas|json_encode|raw}},
+                                                $("#formulario input[type='radio']:checked").val()
                                         );    
                                         {% endif %}
                                     $.each(datos, function (key, value) {
@@ -305,6 +364,7 @@
         }
 
         $().ready(function () {
+            
         
             {% if idgrupo is not null %}
             $('#{{form.idcompetencia.vars.id}}').val({{idcompetencia}});
@@ -323,14 +383,14 @@
                 {% if idgrupo is not null %}
                 $('#{{form.idcompetencia.vars.id}}').removeAttr("disabled");
                 {% endif %}
-                {% if form.idpago is defined %}
-                $("#{{ form.precio.vars.id }}").removeAttr("disabled");
-                if($("#{{ form.idpago.idformapago.vars.id }}").val()=='1')
-                    $("#{{ form.idpago.idbanco.vars.id }}").removeAttr("disabled");
-                if($("#{{ form.idpago.idformapago.vars.id }}").val()=='0'){
-                    $("#{{ form.idpago.idbanco.vars.id }}").removeAttr("required");
-                    $("#{{ form.idpago.idformapago.vars.id }}").removeAttr("disabled");
-                }
+                {% if form.pagos is defined %}
+                $("#{{ form.pagos[0].precio.vars.id }}").removeAttr("disabled");
+                {#if($("#{{ form.pagos.idformapago.vars.id }}").val()=='1')
+                    $("#{{ form.pagos.idbanco.vars.id }}").removeAttr("disabled");
+                if($("#{{ form.pagos.idformapago.vars.id }}").val()=='0'){
+                    $("#{{ form.pagos.idbanco.vars.id }}").removeAttr("required");
+                    $("#{{ form.pagos.idformapago.vars.id }}").removeAttr("disabled");
+                }#}
                 {% endif %}
                 
                 //Valida que no se envien ambos correos vacios
@@ -343,21 +403,22 @@
             var competenciasgrupo={{competenciasgrupo|json_encode|raw}};
             if($.inArray($("#{{ form.idcompetencia.vars.id }}").val(),competenciasgrupo)!=-1){
                 $("#{{form.idcategoria.vars.id}}").prop("disabled", true);
-                $("#{{form.precio.vars.id}}").prop("disabled", true);
-                $("#{{ form.precio.vars.id }}").attr('required',false);
-                {% for campopago in form.idpago %}
+                $("#{{form.pagos[0].precio.vars.id}}").prop("disabled", true);
+                $("#{{ form.pagos[0].precio.vars.id }}").attr('required',false);
+                {% for campopago in form.pagos[0] %}
                     $("#{{campopago.vars.id}}").prop("disabled", true);
                 {% endfor %}
-                $("#{{form.info.vars.id}}").parent().hide();  
+                {# $("#{{form.info.vars.id}}").parent().hide();  #}
                 $("#titulogrupos").show();
             }
             else{
-                {% if form.idcategoria is defined and form.idpago is defined and entity.idevento.proceso == 1%}
+                {% if form.idcategoria is defined and form.pagos is defined and entity.idevento.proceso == 1%}
                 buscaPrecio($('#{{ form.idevento.vars.id }}').val(),
                             $('#{{ form.idcompetencia.vars.id }}').val()?$('#{{ form.idcompetencia.vars.id }}').val():'',
                             $('#{{ form.idcategoria.vars.id }}').val()?$('#{{ form.idcategoria.vars.id }}').val():'',
                             $('#formulario'),
-                            {{recargas|json_encode|raw}}
+                            {{recargas|json_encode|raw}},
+                            $("#formulario input[type='radio']:checked").val()
                 );
                 {% endif %}                
             }
@@ -365,28 +426,28 @@
             $("#{{ form.idcompetencia.vars.id }}").change(function () {
                 if($.inArray($("#{{ form.idcompetencia.vars.id }}").val(),competenciasgrupo)!=-1){
                     $("#{{form.idcategoria.vars.id}}").prop("disabled", true);
-                    $("#{{form.precio.vars.id}}").prop("disabled", true);
-                    $("#{{ form.precio.vars.id }}").attr('required',false);
-                    {% for campopago in form.idpago %}
+                    $("#{{form.pagos[0].precio.vars.id}}").prop("disabled", true);
+                    $("#{{ form.pagos[0].precio.vars.id }}").attr('required',false);
+                    {% for campopago in form.pagos %}
                         $("#{{campopago.vars.id}}").prop("disabled", true);
                     {% endfor %}
                     {#$("#{{form.idcategoria.vars.id}}").parent().hide();#}
                     {#$("#{{form.precio.vars.id}}").parent().hide();  #}
-                    {#$("#{{form.idpago.vars.id}}").parent().hide();  #}
-                    $("#{{form.info.vars.id}}").parent().hide();  
+                    {#$("#{{form.pagos[0].vars.id}}").parent().hide();  #}
+                    $("#{{form.pagos[0].info.vars.id}}").parent().hide();
                     $("#titulogrupos").show();
                     $("#{{ form.submit.vars.id }}").html('<span class="ui-button-text">Agregar</span>');
                 }
                 else{
                     $("#{{form.idcategoria.vars.id}}").parent().show();
                     $("#{{form.idcategoria.vars.id}}").removeAttr("disabled");
-                    $("#{{form.precio.vars.id}}").parent().show();
-                    $("#{{form.precio.vars.id}}").removeAttr("disabled");
-                    $("#{{form.idpago.vars.id}}").parent().show();
-                    {% for campopago in form.idpago %}
+                    $("#{{form.pagos[0].precio.vars.id}}").parent().show();
+                    $("#{{form.pagos[0].precio.vars.id}}").removeAttr("disabled");
+                    $("#{{form.pagos.vars.id}}").parent().show();
+                    {% for campopago in form.pagos %}
                         $("#{{campopago.vars.id}}").removeAttr("disabled");
                     {% endfor %}
-                    $("#{{form.info.vars.id}}").parent().show();
+                    $("#{{form.pagos[0].info.vars.id}}").parent().show();
                     $("#titulogrupos").hide();
                     if ($("#{{ form.idcompetencia.vars.id }}").val() != '') {
                         buscaCategorias();
@@ -442,6 +503,7 @@
             $("input#{{ form.idpia.telefono.vars.id }}").mask("(9999) 999-9999");
             $("input#{{ form.idpia.telefonoemergencia.vars.id }}").mask("(9999) 999-9999");
             $("input#{{ form.idpia.fechanacimiento.vars.id }}").mask("99/99/9999");
+            $("input[id*=fechapago]").mask("99/99/9999");
 
             //Valida que el email tenga el formato adecuado
             $("input#{{ form.idpia.email.vars.id }}").verimail({
@@ -528,31 +590,41 @@
             buscaCategorias();
         });
 
-        {% if form.idcategoria is defined and form.idpago is defined and entity.idevento.proceso == 1%}
+        {% if form.idcategoria is defined and form.pagos is defined and entity.idevento.proceso == 1%}
         $("#{{ form.idcategoria.vars.id }}").change(function () {
             buscaPrecio(
                     $('#{{ form.idevento.vars.id }}').val(),
                     $('#{{ form.idcompetencia.vars.id }}').val(),
                     $('#{{ form.idcategoria.vars.id }}').val(),
                     $('#formulario'),
-                    {{recargas|json_encode|raw}}
+                    {{recargas|json_encode|raw}},
+                    $("#formulario input[type='radio']:checked").val()
             );
         });   
         {% endif %}
 
-        {%if entity.idevento.proceso == 1 and form.idpago is defined %}
+        {%if entity.idevento.proceso == 1 and form.pagos is defined %}
         
         ocultaCamposPagoForm($('#formulario'));
-        $("#{{ form.idpago.idformapago.vars.id }}").change(function () {
+        parametros={{formasdepago|json_encode|raw}};
+        $("select[id*=idformapago]").change(function () {
+            console.log(window.sessionStorage);
+            if(window.sessionStorage.getItem('idfp'+$("select[id*=idformapago]").val())==null)
+                if(parametros!=null && parametros[$("select[id*=idformapago]").val()]){
+                    consolo.log('entre');
+                    jparametros=jQuery.parseJSON(parametros[$("select[id*=idformapago]").val()]);
+                }
+                else
+                    jparametros=[];
+            else
+                jparametros=jQuery.parseJSON(window.sessionStorage.getItem('idfp'+$("select[id*=idformapago]").val()));
             ocultaCamposPagoForm($('#formulario'));
             manejoFormularioPago(
-                    $("#{{ form.precio.vars.id }}"),
-                    $('#formulario'),
-                    {{formasdepago|json_encode|raw}}
-                    {#{% if incremento[3] is defined %}{{incremento[3]}}{%else%}null{% endif %},
-                    {% if entity.idevento.idorganizador %}{{ entity.idevento.idorganizador.banco }}{%else%}null{% endif %}#}
+                $("input[id*=precio]"),
+                $('#formulario'),
+                jparametros
             ); 
-        });
+        }); 
         {% endif %}
 
         if($("#{{form.idpia.foto.vars.id}}").attr("type")!="hidden"){
@@ -612,7 +684,24 @@
             );
         });   
         {% endif %}
-        
+
+        {#$("#{{ form.pagos[0].idmoneda.vars.id }}").change(function () {#}
+        $("input[id*=idmoneda]").change(function () {
+            console.log($(this).attr('id'));
+            ocultaCamposPagoForm($('#formulario'));
+            buscarFormasPago(
+                $('#formulario'),
+                {{entity.idevento.id}},
+                $("#formulario input[type='radio']:checked").val()
+            );
+            buscaPrecio({{entity.idevento.id}},
+                $('#{{ form.idcompetencia.vars.id }}').val(),
+                $('#{{ form.idcategoria.vars.id }}').val(),
+                $('#formulario'),
+                {{recargas|json_encode|raw}},
+                $("#formulario input[type='radio']:checked").val()
+            );
+        });
         
     });    
     </script>   

@@ -82,7 +82,7 @@
         {% endfor %}            
         //crea un array de las paises del sistema, para validar los datos cargados
         {% for formapago in formaspago %}
-            formaspago.push("{{formapago.nombre}}");
+            formaspago.push("{{formapago.idformapago.nombre}}");
         {% endfor %}            
         console.log(formaspago);
             
@@ -97,6 +97,7 @@
         titulos.push("discapacitado");
         titulos.push("tipodiscapacidad");
         titulos.push("confranela");
+        titulos.push("estatus");
         
         
         var dataSet=[];
@@ -246,8 +247,9 @@
                     {data:'banco',title:'Banco'},
                     {data:'confranela',title:'Con Franela?'},
                     {data:'tallafranela',title:'Talla Franela'},
-                    {data:'categoria',title:'Categoria'}]
-            });
+                    {data:'categoria',title:'Categoria'},
+                    {data:'estatus',title:'Estatus'}]
+                });
 
             $('#imagen_archivo').on('load', function () {
                 if($('#imagen_archivo').attr('src').endsWith('csv-128.png')){

@@ -1,10 +1,10 @@
 {% extends '::base.html.twig' %}
 {% block javascripts %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}
     <script type="text/javascript" language="javascript" src="//cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
     <script type="text/javascript" language="javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/pdfmake.min.js"></script>
     <script type="text/javascript" language="javascript" src="//cdn.rawgit.com/bpampuch/pdfmake/0.1.27/build/vfs_fonts.js"></script>      
-    <script type="text/javascript" language="javascript" src="//cdn.datatables.net/plug-ins/1.10.16/dataRender/datetime.js"></script> 
-    <script src="{{asset('bundles/fratersoftpiaweb/js/jquery.datetimepicker.full.js')}}" type="text/javascript"></script>    
+    <script type="text/javascript" language="javascript" src="//cdn.datatables.net/plug-ins/1.10.16/dataRender/datetime.js"></script>  
     <script>
         var idinscrito = 0;
         function anular(id) {
@@ -13,60 +13,17 @@
         }
 
         $(document).ready(function () {
-            url="{{ path('inscrito_lista_inscritosajax',{'idevento': idevento }) }}";
-            var emails=[];
-            var table = $('#tablaInscritos').DataTable({
+            url="{{ path('inscrito_lista_auditoriaajax',{'idevento': idevento }) }}";
+            var table = $('#tablaAuditoria').DataTable({
                 "dom": 'Bflit<"bottom"Bl<"clear">p>',
-                processing: true,
+                //processing: true,
                 serverSide: false, 
                 ajax: url,                
 		buttons: [  
                     {extend: 'excelHtml5',
                         text: 'Exportar',
-                        title: 'Listado Inscritos {{nombreevento}}'
+                        title: 'Listado Auditoria {{nombreevento}}'
                     }, 
-                    { extend: 'print', text: 'Imprimir' },
-                    {text: 'Asignar Numeros',
-                        action: function (e, dt, node, config) {
-                            $("#anumeros").dialog("open");
-                    }},                 
-                    {text: 'Resetear Numeros',
-                        action: function (e, dt, node, config) {
-                            $("#rnumeros").dialog("open");
-                    }},                 
-                    {text: 'Importar',
-                        action: function (e, dt, node, config) {
-                            url = "{{ path('inscrito_importar', { 'idevento':idevento}) }}";
-                            //url = url.replace('_data_json_', data_json);
-                            window.open(url, "_self");
-                    }},                 
-                    {text: 'Notificar',
-                        action: function (e, dt, node, config) {
-                            var countelement = 0;
-                            var separador;
-                            var rows = table.rows({selected: true}).data();
-                            if (rows.length > 0) {
-                                var id = new Object();
-                                $("#ids").html("");
-                                for (var i = 0; i < rows.length; i++) {
-                                    separador = (countelement == 0) ? "" : ",";
-                                    $("#ids").append(separador + rows[i].secuencia);
-                                    id[countelement] = rows[i].secuencia;
-                                    countelement++;
-                                }
-                                //Muestra u oculta el mensaje de secuencias a conciliar
-                                if(countelement==0) $("#msgconc").hide(); else $("#msgconc").show();
-                                if(countelement>0){
-                                    data_json = JSON.stringify(id);
-                                    $("#notificacion").dialog("open");
-                                }
-                                else{
-                                    alert("Debe seleccionar por lo menos una inscripcion distinta de TACR")
-                                }
-                            }
-                            else
-                                $("#correosatodos").dialog("open");
-                    }},                
                 ],
                 'select': {
                     style: 'os',   
@@ -90,38 +47,25 @@
                     },                    
                 },
                 'scrollX': true,
-                "order":[17,'asc'],
-                "pageLength": 100,
                 columns: [
+                    { title: "Sec.", data: "secuencia" },
+                    { title: "Competencia", data: "idcompetencia.descripcion" },
                     { title: "Numero", data: "numero" },
                     {% for atributo in atributos %}
-                    {% if atributo.idatributo.nombre=='emailpersonal'%}
-                        {title:"Email",data:"idpia.emailpersonal",render: function(data, type, row){
-                                if(row.idpia.emailpersonal==row.idpia.email)
-                                    return row.idpia.emailpersonal
-                                else if(row.idpia.emailpersonal==null)
-                                    return row.idpia.email
-                                else if(row.idpia.email==null)
-                                    return row.idpia.emailpersonal
-                                else return row.idpia.emailpersonal+","+row.idpia.email}},
-                    {% elseif atributo.idatributo.nombre!='email'%}
-                    {% if atributo.orden!=99 %}
                     { 
-                        title: {% if atributo.etiqueta is null %}"{{ atributo.idatributo.nombre|capitalize }}"{% else %}"{{ atributo.etiqueta }}"{% endif %}, 
+                        title: {% if atributo.etiqueta is null=='S' %}"{{ atributo.idatributo.nombre }}"{% else %}"{{ atributo.etiqueta }}"{% endif %}, 
                         {% if atributo.idatributo.tipodato=='E' %} 
                         data: "idpia.{{atributo.idatributo.nombre|lower}}.nombre",
                         {% else %}
                         data: "idpia.{{atributo.idatributo.nombre|lower}}",
                         {% endif %}
                         {% if atributo.idatributo.tipodato=='S' %} 
-                        render: function(data){return data==null?"":data.toUpperCase();}, 
+                        render: function(data){return data==null?"":data.toUpperCase();} 
                         {% elseif  atributo.idatributo.tipodato=='D' %} 
                         render: function(data){
-                            var formatted=null;
-                            if(data)
-                                formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
+                            var formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
                             return formatted;
-                        },
+                        }
                         {% elseif  atributo.idatributo.tipodato=='I' %} 
                         render: function(data){
                             if(data){
@@ -132,59 +76,66 @@
                                 var url = "{{asset('bundles/fratersoftpiaweb/images/sinimagen.png')}}";
                                 return "<img id='imagen_foto' src='"+url+"'/></a>";
                             }
-                        },                        
-                        {% endif %}
-                        {% if atributo.idatributo.tipo=="U" %}
-                            visible:true,
-                        {% endif %}
-                    },            
-                    {% endif %}
-                    {% endif %}
+                        }                        
+                        {% endif %}},            
                     {% endfor %}
-                    { title: "Distancia", data: "idcompetencia.descripcion" },
                     { title: "Categoria", data: "idcategoria.descripcion" },
-                    { title: "Punto", data: "punto", visible:false },
-                    { title: "Precio", data: "pagos[0].precio" },   
-                    { title: "Recarga", data: "pagos[0].regarga", visible:false },
-                    { title: "Total", data: "pagos[0].monto", visible:false },   
-                    { title: "Conciliado el", data: "pagos",
-                        render: function(data){
-                            //console.log($.formatDateTime('mm/dd/y g:ii a', new Date('2012/07/05 09:55:03')));
-                            //console.log($.datetimepicker.formatDateTime('mm/dd/y g:ii a',new Date(data[0].conciliadoel.timestamp * 1000)));
-                            //var formatted="";
-                            //if(data[0].conciliadoel!=null)  
-                            //    formatted = $.datepicker.formatDate("dd/mm/yyT00:00:00", new Date(data[0].conciliadoel.timestamp * 1000));
-                            //return formatted;
-                            fecha = new Date(data[0].conciliadoel.timestamp * 1000);
-                            //return ('0' + fecha.getDay()).slice(-2) + "/" + ('0' + fecha.getMonth()).slice(-2) + "/" + fecha.getFullYear();
-                            return fecha.getFullYear() + "/" + ('0' + (fecha.getMonth()+1)).slice(-2) + "/" + ('0' + fecha.getDate()).slice(-2) + " " 
-                                + ('0' + fecha.getHours()).slice(-2) + ":" + ('0' + fecha.getMinutes()).slice(-2) + ":" + ('0' + fecha.getSeconds()).slice(-2);
+                    { title: "Punto", data: "punto" },
+                    { title: "Precio", data: "precio" },   
+                    { title: "Estatus", data: "status",
+                        render: function(data, type, row){
+                            if(data==1 && row.pagos.length==0)
+                                return('SIN PAGO');
+                            else if(data==1 && row.pagos[0].conciliado==true)
+                                return('INSCRITO');
+                            else if(data==1 && row.pagos[0].conciliado==null && row.pagos[0].tipo!='3')
+                                return('PREINSCRITO');
+                            else if(data==1 && row.pagos[0].conciliado==null && row.pagos[0].tipo=='3')
+                                return('TDC NO PAGADO');
+                            else if(data==0)
+                                return('ANULADO');
+                            else return('');
                         }
-                    },   
-                    { title: "Notificado", data: "notificado",render: function(data){return data!=true?"NO":"SI";} },
-                    { title: "Sec.", data: "secuencia" },
-                    { title: "Acciones", data:"id",render:
-                                function(data, type, row){
-                                    var urlshow="{{ path('inscrito_show', { 'id': '_id_' }) }}";
-                                    urlshow = urlshow.replace('_id_', data);
-                                    var urledit="{{ path('inscrito_edit', { 'id': '_id_' }) }}";
-                                    urledit = urledit.replace('_id_', data);
-                                    var html=
-                                        "<ul id='icons' class='ui-widget ui-helper-clearfix'>"
-                                        + "<a href='" + urlshow + "'>"
-                                        + "<li class='ui-state-default ui-corner-all' title='Ver'><span class='ui-icon ui-icon-search'></span></li>"
-                                        + "</a>"
-                                        + "<a href='" + urledit + "' >"
-                                        + "<li class='ui-state-default ui-corner-all' title='Editar'><span class='ui-icon ui-icon-pencil'></span></li>"
-                                        + "</a>"
-                                        + "<a href='' onclick='anular(" + data + "," + row.secuencia + ");return false;'>"
-                                        + "<li class='ui-state-default ui-corner-all' title='Anular'><span class='ui-icon ui-icon-closethick'></span></li>"
-                                        + "</a></ul>"                                            
-                                    return html;
-                                },
-                        "width": "98px","orderable": false
-                    },                     
-                ],  
+                    },
+                    /* INFORMACION DEL PAGO */
+                    { title: "FechaPago", data: "pagos[0].fechapago",
+                        render: function(data){
+                            var formatted = (data)?$.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000)):'';
+                            return formatted;
+                        }
+                    },
+                    { title: "Texto", data: "pagos[0].texto" },        
+                    { title: "Monto", data: "pagos[0].monto" },        
+                    { title: "Moneda", data: "pagos[0].moneda" },        
+                    { title: "Referencia", data: "pagos[0].referencia" },        
+                    { title: "Comprobante", data: "pagos[0].comprobante" },                            
+                    { title: "Forma de Pago", data: "pagos[0].idformpago.nombre"},   
+                    { title: "Banco", data: "pagos[0].idbanco.nombre" },        
+                    { title: "Conciliado?", data: "pagos[0].conciliado",
+                        render: function(data){
+                            return(data=='true'?"SI":"NO");
+                        }
+                    },        
+                    { title: "ConciliadoEl", data: "pagos[0].conciliadoel",
+                        render: function(data){
+                            if(data)
+                                return $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
+                            else
+                                return null;
+                        }            
+                    },
+                    { title: "Liquidado", data: "pagos[0].idliquidacion" },
+                ],
+                "columnDefs": [ //Oculta las columnas en la tabla
+                    {% set target=3 %}
+                    {% for atributo in atributos %}
+                    {% if atributo.idatributo.tipo=='U' %}
+                    { "visible": false, "targets": {{ target }} },
+                    {% endif %}
+                    {% set target=target+1 %}
+                    {% endfor %}
+                ],           
+                
             });
             //Muestra la ventana de confirmacion
             $("#notificacion").dialog({
@@ -253,7 +204,7 @@
                     }
                 ]
             });           
-            //Muestra la ventna de confirmacion
+            //Muestra la ventana de confirmacion
             $("#correosatodos").dialog({
                 autoOpen: false,
                 width: 400,
@@ -300,27 +251,24 @@
 
         $(function () {
             $("#tabs").tabs();
-            $('#tabs a[href="#tabs-2"]').click();
+            $('#tabs a[href="#tabs-6"]').click();
             $('#tabs a[href="#tabs-1"]').on("click", function () {
                 $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento,'email':email}) }}')
+            });
+            $('#tabs a[href="#tabs-2"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
             });
             $('#tabs a[href="#tabs-3"]').on("click", function () {
                 $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
             });
-            //Redireccion a la pagina de los operaciones TCD al hacer click en el tab
             $('#tabs a[href="#tabs-4"]').on("click", function () {
                 $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
             });       
             $('#tabs a[href="#tabs-5"]').on("click", function () {
                 $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
             });             
-            $('#tabs a[href="#tabs-6"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento,'email':email}) }}')
-            });         
-            
             $("#seccionCargando").hide();        
             $("#contenido").show();        
-            
         });
 
     </script>           
@@ -363,7 +311,7 @@
     <div id="seccionCargando">
         <img src="{{ asset('bundles/fratersoftpiaweb/images/loading.gif') }}">
     </div>        
-    <div id="contenido">
+    <div id="contenido">            
         <div id="evento">{{nombreevento}}</div>
         <div id="tabs">
             <ul>
@@ -372,20 +320,21 @@
                 <li><a href="#tabs-3">Anulados</a></li>
                 <li><a href="#tabs-4">Operaciones TDC</a></li>
                 <li><a href="#tabs-5">Estadisticas</a></li>    
-                <li><a href="#tabs-6">Auditoria</a></li>   
+                <li><a href="#tabs-6">Audutoria</a></li>    
             </ul>
             <div id="tabs-1"></div>
+            <div id="tabs-2"></div>  
             <div id="tabs-3"></div>  
             <div id="tabs-4"></div>        
             <div id="tabs-5"></div>  
-            <div id="tabs-2">
-                <table id="tablaInscritos" class="display row-border hover">
+            <div id="tabs-6">
+                <table id="tablaAuditoria" class="display row-border hover">
                 </table>     
                 <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
             </div>
             <div id="notificacion" title="Advertencia!!!">
                 <p id="msgconc">Desea reenviar las notificaciones de Confirmacion de Inscripcion de las siguintes secuencias: <div id="ids"></div></p>
-            </div>
+            </div>            
             <div id="anumeros" title="Advertencia!!!">
                 <p id="msgconc">¿Esta seguro que desea ASIGNAR los numeros?</p>
             </div>  

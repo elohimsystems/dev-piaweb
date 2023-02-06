@@ -118,4 +118,5 @@ FraterSoft\PiaWebBundle\Entity\Inscrito:
         pagos:
             targetEntity: Pago
             mappedBy: idinscrito           
+            cascade: [persist]            
     lifecycleCallbacks: {  }

@@ -45,6 +45,11 @@ class Formaspago
     private $idmoneda;
 
     /**
+     * @var boolean
+     */
+    private $verificable;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -200,4 +205,27 @@ class Formaspago
     {
         return $this->idmoneda;
     }
+
+    /**
+     * Set verificable
+     *
+     * @param Boolean $verificable
+     * @return Pago
+     */
+    public function setVerificable($verificable)
+    {
+        $this->verificable = $verificable;
+    
+        return $this;
+    }
+
+    /**
+     * Get verificable
+     *
+     * @return Boolean 
+     */
+    public function getVerificable()
+    {
+        return $this->verificable;
+    }    
 }

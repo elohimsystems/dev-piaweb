@@ -26,13 +26,23 @@ class FormaspagoeventoRepository extends EntityRepository {
     
     public function listarPublicos($idevento,$idmoneda=null) {
         //Busca el precio por fecha hasta
-        $formaspago = $this->getEntityManager()
-                ->createQuery(
-                        "select fpe,fp from FraterSoftPiaWebBundle:Formaspagoevento fpe "
-                        . "inner join fpe.idformapago fp "
-                        . "where fpe.idevento = " . $idevento . " and fpe.publico=true and fpe.status=1 and fp.idmoneda=" . $idmoneda
-                )
-                ->getResult();
+        if($idmoneda!=null){
+            $sql = "select fpe,fp from FraterSoftPiaWebBundle:Formaspagoevento fpe "
+                            . "inner join fpe.idformapago fp "
+                            . "where fpe.idevento = " . $idevento . " and fpe.publico=true and fpe.status=1 and fp.idmoneda=" . $idmoneda;
+            $formaspago = $this->getEntityManager()
+                    ->createQuery($sql)
+                    ->getResult();
+        }
+        else{
+            $sql = "select fpe,fp from FraterSoftPiaWebBundle:Formaspagoevento fpe "
+                            . "inner join fpe.idformapago fp "
+                            . "where fpe.idevento = " . $idevento . " and fpe.publico=true and fpe.status=1";
+            $formaspago = $this->getEntityManager()
+                    ->createQuery($sql)
+                    ->getResult();
+        }
+        //print_r($sql);
         return $formaspago;
     }  
 
