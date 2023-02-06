@@ -87,7 +87,7 @@ class InscritoRepository extends EntityRepository
                     . 'JOIN i.idcompetencia c '
                     . 'JOIN i.idcategoria ca '
                     . 'JOIN i.idpia co '                    
-                    . 'JOIN co.idestado es '                    
+                    . 'LEFT JOIN co.idestado es '                    
                     . 'LEFT JOIN p.idbanco b '
                     . 'LEFT JOIN p.idformapago fp '
                     . 'WHERE '

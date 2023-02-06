@@ -690,7 +690,7 @@ class CompetidorController extends commonPIAClass {
             } else {
                 $entity = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->buscarInscrito($idevento, $competidor->getId());
                 if ($entity != null) {               
-                    if($entity[0]->getIdpago()->getConciliado()){
+                    if(!is_null($entity[0]->getPagos()[0]) && $entity[0]->getPagos()[0]->getConciliado()){
                         return $this->render('FraterSoftPiaWebBundle:Competidor:consultar.html.twig', array(
                                     'evento' => $evento,
                                     'form' => $form->createView(),
@@ -698,7 +698,7 @@ class CompetidorController extends commonPIAClass {
                                     . "fu&eacute; conciliado satisfactoriamente. "
                                     . "El participante con <b>" . $atributo . "=" . $buscar . "</b> ingresado, "
                                     . "est&aacute; oficialmente inscrito para el evento <b>" 
-                                    . $evento->getNombre() . "</b>",
+                                    . $evento->getNombre() . "</b>.",
                                     'tema' => $evento->getTema(),
                                     'numero' => $entity[0]->getNumero(),
                         ));                              

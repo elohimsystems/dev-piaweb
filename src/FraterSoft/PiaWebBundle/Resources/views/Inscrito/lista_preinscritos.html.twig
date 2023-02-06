@@ -47,7 +47,9 @@
                         render: function(data){return data==null?"":data.toUpperCase();} 
                         {% elseif  atributo.idatributo.tipodato=='D' %} 
                         render: function(data){
-                            var formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
+                            var formatted="";
+                            if(data!=null)
+                                formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
                             return formatted;
                         }         
                         {% elseif  atributo.idatributo.tipodato=='N' %} 

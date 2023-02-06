@@ -7,3 +7,4 @@ app/logs/.gitkeep
 /nbproject/private/
 app/logs/
 app/cache/
+web/bundles/fratersoftpiaweb/fine-uploader/files

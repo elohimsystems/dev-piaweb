@@ -43,7 +43,7 @@
                 </td>
             </tr>
             <tr>
-                <td rowspan="{{entity.idevento.atributos|length + 3}}">
+                <td rowspan="{{entity.idevento.atributos|length + 4}}">
                     <img width="300 px" 
                          src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ entity.idevento.logo }}">
                 </td>
@@ -55,7 +55,8 @@
             <tr><th>{{atributo.etiqueta}}</th><td>{{ twiglib.imprimirAtributo(atributo,attribute(entity.idpia,'get'~atributo.idatributo.nombre)) }}</td></tr>
             {% endif %}
             {% endfor %}
-            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>            
+            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>     
+            <tr><th>Competencia</th><td>{{ entity.idcompetencia.descripcion }}</td></tr>
             <tr>
                 <th>PreInscrito el</th>
                 <td>{{ entity.fechahora|date('d-m-Y H:i:s') }}</td>
@@ -66,12 +67,12 @@
                     Estimad@ Atleta,<br>
                     Un gusto saludarle<br>
                     </p>
-                    <p>Para formalizar la inscripci&oacute;n en el evento: {{ entity.idevento.nombre }}, a realizarse el {{ entity.idevento.fecha|date("d/m/Y") }} en {{ entity.idevento.lugar }}, {{ entity.idevento.idciudad.nombre }}, Estado {{ entity.idevento.idciudad.idestado.nombre }}.</p>
+                    <p>Para formalizar la inscripci&oacute;n en el evento: {{ entity.idevento.nombre }}, a realizarse el {{ entity.idevento.fecha|date("d/m/Y") }} en {{ entity.idevento.lugar }}, {{ entity.idevento.idciudad.nombre }}, Estado {{ entity.idevento.idciudad.idestado.nombre }}. Hora de Salida: {{ entity.idevento.fecha|date("H:i") }}</p>
                     <p><span style="background-color:yellow"><b>Debe responder dicho correo adjuntando el soporte de pago.</b></span></p>
                     <p> 
                         Costo:<br>
                         {% for prc in precios %}
-                        Moneda:{{prc.texto}} - Monto:{{prc.precio|number_format(2, ',', '.')}} 
+                        {{ entity.idcompetencia.descripcion }} - {{prc.moneda}}{{prc.precio|number_format(0, ',', '.')}} 
                         {% endfor %}
                     </p>
                     <p><b>FORMAS DE PAGO EN BOL&Iacute;VARES <br><br>
@@ -89,15 +90,15 @@
                     <b>ZELLE</b><br>
                     Carolina Cortes<br>
                     puroeventospzo@gmail.com<br>
-                    Enivar Nombre del titular de la cuenta<br><br>
-                    <b>EFECTIVO</b><br>
-                    Puedes pagar en efectivo en:<br>
-                        - Kioto Orinokia Mall, Puerto Ordaz<br>
-                        - Kioto Avenida Principal de Lecher&iacute;a<br>
-                    Coordinar la entrega v&iacute;a WhatsApp<br>
-                    04148928433<br>
+                    Enivar Nombre del titular de la cuenta<br>
+                    <br>
+                    {{ entity.idevento.puntoinscripcion|raw }} 
                     <p>
-                    Cualquier pregunta o inquietud no dude en contactarnos.
+                    {{ entity.idevento.rutavideo|raw }}
+                    <br>
+                    {{ entity.idevento.rutaperfil|raw }}
+                    <br>
+                    Cualquier pregunta o inquietud no dude en contactarnos.<br>
                     </p>
                     <p>
                     {{ entity.idevento.idorganizador.contacto }}<br>

@@ -41,6 +41,10 @@ FraterSoft\PiaWebBundle\Entity\Formaspago:
             length: 500
             fixed: false
             comment: ''
+        verificable:
+            type: boolean
+            nullable: false
+            comment: 'Determina si el pago realizado con la forma de pago seleccionada, debe ser verificado en el distino del pago'    
     manyToOne:
         idmoneda:
             targetEntity: Moneda

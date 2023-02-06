@@ -24,6 +24,14 @@ class InscritoType extends AbstractType
             ->add('equipo','hidden')
             ->add('idcompetencia')
             ->add('idcategoria')
+            ->add('pagos', 'collection', array(
+                'type' => new PagoType(),
+                'allow_add'    => true,
+                'by_reference' => false,
+                'attr' => array('class'=>'pagos'),
+                'label_attr' => array('style'=>'display:none;'),
+            ))
+            
 //            ->add('info',null,array(
 //                'mapped' => false,
 //                'label'=>'INFORMACION DE PAGO',

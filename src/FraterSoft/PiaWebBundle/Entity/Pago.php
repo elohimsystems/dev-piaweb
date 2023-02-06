@@ -668,4 +668,5 @@ class Pago
     {
         return $this->idcuenta;
     }
+
 }

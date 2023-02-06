@@ -417,6 +417,7 @@
         table = $('#'+entidad).DataTable({
             "dom": 'B<"top"<"#length"lf>>rt<"clear">p',
             processing: true,
+            pageLength: 100,
             serverSide: false, 
             ajax: urldatostabla,            
             autoWidth: false,
@@ -923,19 +924,26 @@
                         $(id_campo_precio).prop("disabled", false);
                         $(id_campo_banco).prop("disabled", false);
                         $(id_campo_referencia).prop("disabled", false);
-                        $(id_campo_idformapago).prop("disabled", false);                                      
+                        //$(id_campo_idformapago).prop("readonly", false); 
+                        $(id_campo_idformapago).removeAttr("style");
                     }
                     else{
                         $(id_campo_precio).append($('<option>', {
                             value: 0,
-                            text: "EXONERADO"
+                            text: "0"
                         }));
                         $(id_campo_monto).val(0);
                         $(id_campo_texto).val(value.texto);
                         $(id_campo_precio).prop("disabled", true);
                         $(id_campo_banco).prop("disabled", true);
                         $(id_campo_referencia).prop("disabled", true);
-                        $(id_campo_idformapago).prop("disabled", true);                                
+                        $(id_campo_idformapago).empty();
+                        $(id_campo_idformapago).append($('<option>', {
+                            value: 14,
+                            text: "EXONERADO"
+                        }));
+                        $(id_campo_idformapago).val(14);
+                        $(id_campo_idformapago).attr("style", "pointer-events: none;");                                
                     }
                 });             
             },
@@ -1083,10 +1091,14 @@
                 + "&idmoneda=" + idmoneda;
         $(id_campo_idformapago).find('option').remove();
         window.sessionStorage.clear();
+        var url="{{ path('pago_formaspago_ajax',{'idevento':'_idevento_','idmoneda':'_idmoneda_'}) }}";
+        url=url.replace('_idevento_',idevento);
+        url=url.replace('_idmoneda_',idmoneda);
+        //console.log(url);
         $.ajax({
             type: "GET",
-            data: criterios,
-            url: "{{ path('pago_formaspago_ajax') }}",
+            //data: criterios,
+            url: url,
             dataType: "json",
             success: function (datos)
             {                

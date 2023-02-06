@@ -16,7 +16,13 @@ class PagoType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         
-        $builder              
+        $builder          
+            ->add('info',null,array(
+                'mapped' => false,
+                'label'=>'INFORMACION DE PAGO',
+                'label_attr'=>array('class'=>'group_fields'),
+                'attr'=> array('style'=>'display:none'),
+            ))
             ->add('idmoneda')
             ->add('precio')
             ->add('monto','text', array(
@@ -28,6 +34,7 @@ class PagoType extends AbstractType
             ->add('idformapago')             
             ->add('idbanco','entity', array(
                 'class' => 'FraterSoftPiaWebBundle:Banco',
+                'empty_value' => 'Seleccione un Banco',
                 'label' => 'Banco de donde pago',
 //                'attr' => array('style' => 'display:none'), //Oculta el control
                 'query_builder' => function (EntityRepository $b) {
@@ -43,7 +50,7 @@ class PagoType extends AbstractType
             ->add('texto','hidden')                
             ->add('moneda','hidden')
             ->add('referencia','text', array(
-                'label'=>'Número Operación ',
+                'label'=>'N&uacute;mero Operaci&oacute;n ',
                 'label_attr' => array('id' => 'label_pago_referencia')
             ))
             ->add('comprobante','hidden')

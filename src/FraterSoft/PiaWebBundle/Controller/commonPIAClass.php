@@ -596,6 +596,7 @@ class commonPIAClass extends Controller
                             'label' => 'Forma de Pago',
                             'choices' => $formasdepagoarray,
                             'required' => true,
+                            'empty_value' => 'Seleccione Forma de Pago',
                 ));
             else
                 $formulario
@@ -608,11 +609,12 @@ class commonPIAClass extends Controller
             return($formasdepago);
         }
         else {
-            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-                        'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
-                        'texto' => "No se han configurado las Formas De Pago para este Evento",
-                        'tema' => $evento->getTema()
-            ));            
+            return(null);
+            //return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+             //           'url' => $this->generateUrl('competidor_find', array('idevento' => $evento->getId())),
+             //           'texto' => "No se han configurado las Formas De Pago para este Evento",
+             //           'tema' => $evento->getTema()
+            //));            
         }        
     }      
     
@@ -725,6 +727,17 @@ class commonPIAClass extends Controller
     public function EnviarConfirmacion($inscritos,$em){
         //Envia los correo a los inscritos conciliados
         $num_notifiaciones = 0;        
+        
+        $emailfrom="";
+        if(!is_null($inscritos[0]->getIdevento()->getIdorganizador()->getEmail()) && filter_var($inscritos[0]->getIdevento()->getIdorganizador()->getEmail(), FILTER_VALIDATE_EMAIL))
+            $emailfrom = $inscritos[0]->getIdevento()->getIdorganizador()->getEmail();
+        else
+            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                        'url' => $this->generateUrl('competidor_find', array('idevento' => $inscritos[0]->getIdevento()->getId())),
+                        'texto' => 'El correo del Organizador no posee en formato adecuado',
+                        'tema' => $inscritos[0]->getIdevento()->getTema()
+            ));
+        
         foreach ($inscritos as $inscrito) {
 
             $emails = array();
@@ -740,6 +753,7 @@ class commonPIAClass extends Controller
                         "Dorsal Numero " . $inscrito->getNumero() . ". " . $inscrito->getIdevento()->getNombre();            
                 $mailer = $this->get('app.mail_controller');
                 $mailer->enviarConfirmacion(
+                        $emailfrom,
                         $subject, 
                         $emails,
                         $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailok.html.twig', array('inscrito' => $inscrito))
@@ -755,6 +769,17 @@ class commonPIAClass extends Controller
     public function EnviarConfirmacionPreinscritos($inscritos,$em){
         //Envia los correo a los inscritos conciliados
         $num_notifiaciones = 0;        
+        
+        $emailfrom="";
+        if(!is_null($inscritos[0]->getIdevento()->getIdorganizador()->getEmail()) && filter_var($inscritos[0]->getIdevento()->getIdorganizador()->getEmail(), FILTER_VALIDATE_EMAIL))
+            $emailfrom = $inscritos[0]->getIdevento()->getIdorganizador()->getEmail();
+        else
+            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                        'url' => $this->generateUrl('competidor_find', array('idevento' => $inscritos[0]->getIdevento()->getId())),
+                        'texto' => 'El correo del Organizador no posee en formato adecuado',
+                        'tema' => $inscritos[0]->getIdevento()->getTema()
+            ));
+        
         if($inscritos[0]->getIdevento()->getProceso()==1)
             $templateemail='FraterSoftPiaWebBundle:Inscrito:email.html.twig';
         else{
@@ -786,6 +811,7 @@ class commonPIAClass extends Controller
                         "Dorsal Numero " . $inscrito->getNumero() . ". " . $inscrito->getIdevento()->getNombre();            
                 $mailer = $this->get('app.mail_controller');
                 $mailer->enviarPreinscripcion(
+                        $emailfrom,
                         $subject, 
                         $emails,
                         $this->renderView($templateemail, $parametros)
@@ -845,8 +871,10 @@ class commonPIAClass extends Controller
         //Agrega las formas de pago del evento
         $em = $this->getDoctrine()->getManager();
         $formasdepagoarray = array();
+        //print_r('idmoneda:' . $idmoneda);
         $formasdepago = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')
                 ->listarPublicos($idevento,$idmoneda);
+        //print_r($formasdepago);
         foreach ($formasdepago as $formadepago) {
             if ($formadepago->getIdFormapago()->getNombre()) {
                 $formasdepagoarray[$formadepago->getIdFormapago()->getId()] = [
@@ -855,6 +883,7 @@ class commonPIAClass extends Controller
                 ];
             }
         }
+        //print_r($formasdepagoarray);
         return($formasdepagoarray);
     }      
     
