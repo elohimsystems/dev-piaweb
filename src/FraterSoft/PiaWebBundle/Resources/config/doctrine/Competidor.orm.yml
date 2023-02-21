@@ -234,6 +234,24 @@ FraterSoft\PiaWebBundle\Entity\Competidor:
             length: 100
             fixed: false
             comment: ''
+        generico01:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
+        condicion:
+            type: string
+            nullable: true
+            length: 1
+            fixed: false
+            comment: ''
+        discapacitado:
+            type: string
+            nullable: true
+            length: 2
+            fixed: false
+            comment: ''
     manyToOne:
         idestado:
             targetEntity: Estado

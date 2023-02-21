@@ -29,6 +29,11 @@
                     { title: "Precio", data: "pagos[0].precio" },
                     { title: "Banco", data: "pagos[0].idbanco.nombre",render: function(data){return data==null?"":data;}},
                     { title: "Referencia", data: "pagos[0].referencia",render: function(data){return data==null?"":data;},visible:false},
+                    { title: "Pagador", data: "pagos[0].nombrepagador",
+                        render: function(data){
+                            return data.toUpperCase();
+                        }                        
+                    },
                     { title: "Fecha Pago", data: "pagos[0].fechahora",
                         render: function(data){
                             var formatted="";

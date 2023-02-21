@@ -184,7 +184,21 @@ class Competidor
      */
     private $localidad;
 
+    /**
+     * @var string
+     */
+    private $generico01;
     
+    /**
+     * @var string
+     */
+    private $condicion;
+
+    /**
+     * @var string
+     */
+    private $discapacitado;
+
     /**
      * to string
      *
@@ -1107,4 +1121,74 @@ class Competidor
     {
         return $this->localidad;
     }
+    
+    /**
+     * Set generico01
+     *
+     * @param string $generico01
+     * @return Competidor
+     */
+    public function setGenerico01($generico01)
+    {
+        $this->generico01 = $generico01;
+    
+        return $this;
+    }
+
+    /**
+     * Get generico01
+     *
+     * @return string 
+     */
+    public function getGenerico01()
+    {
+        return $this->generico01;
+    }
+
+    /**
+     * Set condicion
+     *
+     * @param string $condicion
+     * @return Competidor
+     */
+    public function setCondicion($condicion)
+    {
+        $this->condicion = $condicion;
+    
+        return $this;
+    }
+
+    /**
+     * Get condicion
+     *
+     * @return string 
+     */
+    public function getCondicion()
+    {
+        return $this->condicion;
+    }
+
+    /**
+     * Set discapacitado
+     *
+     * @param string $discapacitado
+     * @return Competidor
+     */
+    public function setDiscapacitado($discapacitado)
+    {
+        $this->discapacitado = $discapacitado;
+    
+        return $this;
+    }
+
+    /**
+     * Get discapacitado
+     *
+     * @return string 
+     */
+    public function getDiscapacitado()
+    {
+        return $this->discapacitado;
+    }
+    
 }

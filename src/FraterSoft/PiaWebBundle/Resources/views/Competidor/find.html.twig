@@ -197,11 +197,38 @@
     #{{form.Buscar.vars.id}}{
         margin: 10px;
     }
-    #texto{
+    .texto{
         display: block;
         font-size: 2em;
         font-weight: bold;
     }
+    
+    #container{
+        text-align: center;
+    }
+    
+    .soporte,#mejorcon{
+        margin: 10px 0px 10px 0px;
+    }
+    
+    @media screen and (max-width: 547px){
+        .texto{
+            font-size: 1.5em;
+        }
+        #form_Buscar {
+            font-size: 1em;
+        }    
+        #countercierre {
+            font-size: 0.7em;
+        }        
+        .soporte{
+            font-size: 0.7em;
+        }
+        #mejorcon{
+            font-size: 0.7em;
+        }
+    }	
+
 </style>
 {% endblock %}    
 {% block poweredby %}
@@ -226,6 +253,70 @@
 </div>
 {% endblock %}
 {% block body -%}  
+<div id="container">
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    {% set etiquetabuscar = form_label(form.buscar) %}
+    <div class="texto">{{ form_label(form.atributo) }} {{ form_widget(form.atributo) }}</div>
+    {% if form.siniddocumento is defined %}
+    <div><h2>No posee {{form_label(form.buscar)}}?, marque aqui:{{form_widget(form.siniddocumento)}} e ingrese {{form_label(form.buscar)}} del Representante</h2></div>
+    {% endif %}
+    <div> {{ form_widget(form.buscar) }}</td>       
+    <div class="texto">Pulsa el botón para</div>       
+    <div> {{ form_widget(form.Buscar) }}</td>       
+    {# Busca si el precio tiene cupos #}
+    {% set cupoPrecio = '' %}
+    {% set montoPrecio = 0 %}
+    {% set textoPrecio = '' %}
+    {% set monedaPrecio = '' %}
+    {% for precioEvento in preciosEvento %}
+        {% if precioEvento.cantidad != ''  %}
+            {% set cupoPrecio = precioEvento.cantidad %}
+            {% set montoPrecio = precioEvento.precio %}
+            {% set textoPrecio = precioEvento.texto %}
+            {% set monedaPrecio = precioEvento.idmoneda.codigolocal %}
+        {% endif %}
+    {% endfor %}
+    {% if cupoPrecio == '' %}
+    <div>
+        <div id="countercierre">
+        <H1>Este proceso cierra en</H1>
+        <div class="centrar">
+            <div id="counter"></div>
+            <div class="desc">
+                <div id='label_counter_dia'>Días</div>
+                <div id='label_counter_horas'>Horas</div>
+                <div id='label_counter_minutos'>Minutos</div>
+                <div id='label_counter_segundos'>Segundos</div>
+            </div>  
+        </div>
+        </div>
+    </div>
+    {% else %}
+    <div>
+        <div id="countercierre">
+        <H1>{{textoPrecio}} {{cupoPrecio}} CUPOS</H1>
+        <div>
+            <H1>{{monedaPrecio}} {{montoPrecio}}</H1>
+        </div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="soporte">Para soporte o consulta puede escríbirnos o llámarnos por <br><b>WhatsApp 
+        <a href="https://wa.me/{{ evento.idorganizador.telefonocontacto|replace({' ':"",'-':"",'.':""})}}" target="_blank"><img id="logowhatsapp" alt="{{ evento.idorganizador.telefonocontacto }}"  src="{{asset('bundles/fratersoftpiaweb/images/whatsapp.png')}}" ></a>
+         al numero {{ evento.idorganizador.telefonocontacto }}</b><br>
+         O escríbenos por <b>WhatsApp Web</b> en el siguiente enlace: <a href="https://wa.me/{{ evento.idorganizador.telefonocontacto|replace({' ':"",'-':"",'.':""}) }}" target="_blank">Link</a>
+    </div>
+    <div id="mejorcon">
+        Mejor con: <img width="24" align="center" src="{{asset('bundles/fratersoftpiaweb/images/cromo.png')}}"/>
+        <img width="24" align="center" src="{{asset('bundles/fratersoftpiaweb/images/opera.png')}}"/>
+        <img width="24" align="center" src="{{asset('bundles/fratersoftpiaweb/images/mozilla.png')}}"/>                
+    </div>
+</div>
+{{ form_end(form) }} 
+
+
+{#
 <div id="contenedor_findform">
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -244,11 +335,24 @@
             <td align="center"> {{ form_widget(form.buscar) }}</td>       
         </tr>        
         <tr>
-            <td align="center"><spam id="texto">Pulsa el boton para</spam></td>       
+            <td align="center"><spam id="texto">Pulsa el botón para</spam></td>       
         </tr>        
         <tr>
             <td align="center"> {{ form_widget(form.Buscar) }}</td>       
         </tr>
+        {% set cupoPrecio = '' %}
+        {% set montoPrecio = 0 %}
+        {% set textoPrecio = '' %}
+        {% set monedaPrecio = '' %}
+        {% for precioEvento in preciosEvento %}
+            {% if precioEvento.cantidad != ''  %}
+                {% set cupoPrecio = precioEvento.cantidad %}
+                {% set montoPrecio = precioEvento.precio %}
+                {% set textoPrecio = precioEvento.texto %}
+                {% set monedaPrecio = precioEvento.idmoneda.codigolocal %}
+            {% endif %}
+        {% endfor %}
+        {% if cupoPrecio == '' %}
         <tr>
             <td align="center">
                 <div id="countercierre">
@@ -264,7 +368,19 @@
                 </div>
                 </div>
             </td>
-        </tr>           
+        </tr>
+        {% else %}
+        <tr>
+            <td align="center">
+                <div id="countercierre">
+                <H1>{{textoPrecio}} {{cupoPrecio}} CUPOS</H1>
+                <div class="centrar">
+                    <H1>{{monedaPrecio}} {{montoPrecio}}</H1>
+                </div>
+                </div>
+            </td>
+        </tr>
+        {% endif %}
         <tr>
             <td align="center">
                 <br>
@@ -274,16 +390,19 @@
                      O escríbenos por <b>WhatsApp Web</b> en el siguiente enlace: <a href="https://wa.me/{{ evento.idorganizador.telefonocontacto|replace({' ':"",'-':"",'.':""}) }}" target="_blank">Link</a>
                 </div>
                 <br>
+                <div id="mejorcon">
                 Mejor con: <img width="24" align="center" src="{{asset('bundles/fratersoftpiaweb/images/cromo.png')}}"/>
                 <img width="24" align="center" src="{{asset('bundles/fratersoftpiaweb/images/opera.png')}}"/>
                 <img width="24" align="center" src="{{asset('bundles/fratersoftpiaweb/images/mozilla.png')}}"/>                
+                </div>
             </td>
-        </tr>       
+        </tr>
     </table>
-    {{ form_end(form) }}   
+    {{ form_end(form) }} 
 </div>
 <div id="representados" title="Seleccione o Cree la {{ form.buscar.vars.label }} Asociada">
     <table id="tablaasociados" class="display compact row-border hover" width="100%">
     </table>
 </div> 
+#}
 {% endblock %}

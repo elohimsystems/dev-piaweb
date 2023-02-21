@@ -317,34 +317,34 @@ class CompetidorController extends commonPIAClass {
         $atributo = '';
         $competidor = new Competidor();
         
-        //Si el tipo de evento es campeonato, agrega formulario para buscar por cedula o numero
+        //Si el tipo de evento es campeonato, agrega formulario para buscar por Cédula o numero
         if ($evento->getIdCampeonato()) {
-            $form = $this->createFormBuilder(null)
+            $form = $this->createFormBuilder(null,array('csrf_protection' => false))
                 ->add('atributo', 'choice', array(
-                    'choices' => array('iddocumento' => 'Cedula', 'numero' => 'Número'),
+                    'choices' => array('iddocumento' => 'Cédula', 'numero' => 'Número'),
                     'data'=>'iddocumento',
                     'label' => 'Buscar Por',
                     'expanded' => true,
                 ))
                 ->add('buscar', 'text', array(
-                    'label' => 'Cedula',
+                    'label' => 'Cédula',
                     'method' => 'POST',
                     'attr' => array('placeholder' => 'Ej: 12660131'),
                 )) 
-                ->add('Buscar', 'submit', array('label' => 'Iniciar o Consultar tu Inscripcion'))
+                ->add('Buscar', 'submit', array('label' => 'Iniciar o Consultar tu Inscripción'))
                 ->getForm();
         }
-        else{//Si el evento no es tipo campeonato busca solo por cedula
-            $form = $this->createFormBuilder(null)
+        else{//Si el evento no es tipo campeonato busca solo por Cédula
+            $form = $this->createFormBuilder(null,array('csrf_protection' => false))
                 ->add('atributo', 'hidden', array(
-                    'label' => 'Ingresa tu Cedula',
+                    'label' => 'Ingresa tu Cédula',
                 ))
                 ->add('buscar', 'text', array(
-                    'label' => 'Cedula',
+                    'label' => 'Cédula',
                     'method' => 'POST',
                     'attr' => array('placeholder' => 'Ej: 12660131'),
                 ))
-                ->add('Buscar', 'submit', array('label' => 'Iniciar o Consultar tu Inscripcion'))
+                ->add('Buscar', 'submit', array('label' => 'Iniciar o Consultar tu Inscripción'))
                 ->getForm();            
         }
         
@@ -359,6 +359,10 @@ class CompetidorController extends commonPIAClass {
         }        
 
         $form->handleRequest($request);
+
+        //Buscar los precios del evento
+        $preciosPorEvento =  $em->getRepository('FraterSoftPiaWebBundle:Preciosevento')
+                        ->findBy(array('idevento' => $idevento));
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
@@ -422,6 +426,7 @@ class CompetidorController extends commonPIAClass {
         return $this->render('FraterSoftPiaWebBundle:Competidor:find.html.twig', array(
                     'evento' => $evento,
                     'form' => $form->createView(),
+                    'preciosEvento' => $preciosPorEvento,
         ));
     }
     
@@ -468,29 +473,29 @@ class CompetidorController extends commonPIAClass {
         $atributo = '';
         $competidor = new Competidor();
         
-        //Si el tipo de evento es campeonato, agrega formulario para buscar por cedula o numero
+        //Si el tipo de evento es campeonato, agrega formulario para buscar por Cédula o numero
         if ($evento->getIdCampeonato()) {
             $form = $this->createFormBuilder(null)
                 ->add('atributo', 'choice', array(
-                    'choices' => array('iddocumento' => 'Cedula', 'numero' => 'Número'),
+                    'choices' => array('iddocumento' => 'Cédula', 'numero' => 'Número'),
                     'data'=>'iddocumento',
                     'label' => 'Buscar Por',
                     'expanded' => true,
                 ))
                 ->add('buscar', 'text', array(
-                    'label' => 'Cedula',
+                    'label' => 'Cédula',
                     'method' => 'POST',
                 )) 
                 ->add('Buscar', 'submit')
                 ->getForm();
         }
-        else{//Si el evento no es tipo campeonato busca solo por cedula
+        else{//Si el evento no es tipo campeonato busca solo por Cédula
             $form = $this->createFormBuilder(null)
                 ->add('atributo', 'hidden', array(
-                    'label' => 'Ingresa tu Cedula',
+                    'label' => 'Ingresa tu Cédula',
                 ))
                 ->add('buscar', 'text', array(
-                    'label' => 'Cedula',
+                    'label' => 'Cédula',
                     'method' => 'POST',
                 ))
                 ->add('Buscar', 'submit')
@@ -615,29 +620,29 @@ class CompetidorController extends commonPIAClass {
         $atributo = '';
         $competidor = new Competidor();
         
-        //Si el tipo de evento es campeonato, agrega formulario para buscar por cedula o numero
+        //Si el tipo de evento es campeonato, agrega formulario para buscar por Cédula o numero
         if ($evento->getIdCampeonato()) {
             $form = $this->createFormBuilder(null)
                 ->add('atributo', 'choice', array(
-                    'choices' => array('iddocumento' => 'Cedula', 'numero' => 'Número'),
+                    'choices' => array('iddocumento' => 'Cédula', 'numero' => 'Número'),
                     'data'=>'iddocumento',
                     'label' => 'Buscar Por',
                     'expanded' => true,
                 ))
                 ->add('buscar', 'text', array(
-                    'label' => 'Cedula',
+                    'label' => 'Cédula',
                     'method' => 'GET',
                 )) 
                 ->add('Buscar', 'submit')
                 ->getForm();
         }
-        else{//Si el evento no es tipo campeonato busca solo por cedula
+        else{//Si el evento no es tipo campeonato busca solo por Cédula
             $form = $this->createFormBuilder(null)
                 ->add('atributo', 'hidden', array(
-                    'label' => 'Ingresa tu Cedula',
+                    'label' => 'Ingresa tu Cédula',
                 ))
                 ->add('buscar', 'text', array(
-                    'label' => 'Cedula',
+                    'label' => 'Cédula',
                     'method' => 'GET',
                 ))
                 ->add('Buscar', 'submit')
@@ -1075,7 +1080,7 @@ class CompetidorController extends commonPIAClass {
             ->add('Importar', 'submit')
         ->getForm();     
         
-        $this->addBotonRegresar($form,$this->generateUrl('campeonatocompetidores_new', array('idcampeonato' => $idcampeonato)));
+        $this->addbotónRegresar($form,$this->generateUrl('campeonatocompetidores_new', array('idcampeonato' => $idcampeonato)));
         
         $form->handleRequest($request);
 
@@ -1344,30 +1349,30 @@ class CompetidorController extends commonPIAClass {
         $atributo = '';
         $competidor = new Competidor();
         
-        //Si el tipo de evento es campeonato, agrega formulario para buscar por cedula o numero
+        //Si el tipo de evento es campeonato, agrega formulario para buscar por Cédula o numero
         if ($evento->getIdCampeonato()) {
             $form = $this->createFormBuilder(null)
                 ->add('atributo', 'choice', array(
-                    'choices' => array('iddocumento' => 'Cedula', 'numero' => 'Número'),
+                    'choices' => array('iddocumento' => 'Cédula', 'numero' => 'Número'),
                     'data'=>'iddocumento',
                     'label' => 'Buscar Por',
                     'expanded' => true,
                 ))
                 ->add('buscar', 'text', array(
-                    'label' => 'Cedula',
+                    'label' => 'Cédula',
                     'method' => 'POST',
                     'attr' => array('placeholder' => 'Ej: 12660131'),
                 )) 
                 ->add('Buscar', 'submit', array('label' => 'Agregar Integrante N° ' . strval($cantidad_integrantes+1)))
                 ->getForm();
         }
-        else{//Si el evento no es tipo campeonato busca solo por cedula
+        else{//Si el evento no es tipo campeonato busca solo por Cédula
             $form = $this->createFormBuilder(null)
                 ->add('atributo', 'hidden', array(
-                    'label' => 'Ingresa tu Cedula',
+                    'label' => 'Ingresa tu Cédula',
                 ))
                 ->add('buscar', 'text', array(
-                    'label' => 'Cedula',
+                    'label' => 'Cédula',
                     'method' => 'POST',
                     'attr' => array('placeholder' => 'Ej: 12660131'),
                 ))

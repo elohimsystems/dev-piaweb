@@ -1,0 +1,4 @@
+[06-Feb-2023 14:09:55 America/Caracas] PHP Fatal error:  Call to undefined function php_get_modules() in /home/sistem19/public_html/piaweb/phpinfo.php on line 2
+[06-Feb-2023 14:17:41 America/Caracas] PHP Warning:  get_extension_funcs() expects exactly 1 parameter, 0 given in /home/sistem19/public_html/piaweb/phpinfo.php on line 2
+[06-Feb-2023 14:18:30 America/Caracas] PHP Warning:  extension_loaded() expects exactly 1 parameter, 0 given in /home/sistem19/public_html/piaweb/phpinfo.php on line 2
+[06-Feb-2023 15:02:39 America/Caracas] PHP Warning:  extension_loaded() expects exactly 1 parameter, 0 given in /home/sistem19/public_html/piaweb/phpinfo.php on line 2

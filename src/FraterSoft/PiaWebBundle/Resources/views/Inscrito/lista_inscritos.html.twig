@@ -11,7 +11,7 @@
             idinscrito = id;
             $("#dialog").dialog("open");
         }
-
+        console.log("{{ path('inscrito_lista_inscritosajax',{'idevento': idevento }) }}");
         $(document).ready(function () {
             url="{{ path('inscrito_lista_inscritosajax',{'idevento': idevento }) }}";
             var emails=[];

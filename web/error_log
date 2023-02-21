@@ -244,3 +244,375 @@ Stack trace:
 [19-Mar-2022 15:54:50 America/Caracas] PHP Catchable fatal error:  Argument 1 passed to Symfony\Component\Form\Extension\Core\ChoiceList\SimpleChoiceList::__construct() must be of the type array, object given, called in /home/sistem19/public_html/piaweb2.5.01dev/vendor/symfony/symfony/src/Symfony/Component/Form/Extension/Core/Type/ChoiceType.php on line 172 and defined in /home/sistem19/public_html/piaweb2.5.01dev/vendor/symfony/symfony/src/Symfony/Component/Form/Extension/Core/ChoiceList/SimpleChoiceList.php on line 45
 [20-Mar-2022 09:00:08 America/Caracas] PHP Fatal error:  Call to a member function getIncremento() on null in /home/sistem19/public_html/piaweb2.5.01dev/src/FraterSoft/PiaWebBundle/Controller/InscritoController.php on line 448
 [20-Mar-2022 09:03:56 America/Caracas] PHP Fatal error:  Call to a member function getIncremento() on null in /home/sistem19/public_html/piaweb2.5.01dev/src/FraterSoft/PiaWebBundle/Controller/InscritoController.php on line 448
+[06-Feb-2023 11:37:28 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 11:38:38 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 11:38:57 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 11:39:37 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 12:10:35 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 12:27:10 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 12:27:15 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 13:08:16 America/Caracas] PHP Warning:  "continue" targeting switch is equivalent to "break". Did you mean to use "continue 2"? in /home/sistem19/public_html/piaweb/vendor/doctrine/orm/lib/Doctrine/ORM/UnitOfWork.php on line 2621
+[06-Feb-2023 13:09:17 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 13:27:43 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 13:27:47 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 13:28:00 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 13:28:01 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 13:28:05 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 13:33:57 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 13:33:58 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 13:33:58 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 13:33:59 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 13:34:24 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 13:41:45 America/Caracas] PHP Fatal error:  Class 'DOMDocument' not found in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Config/Util/XmlUtils.php on line 52
+[06-Feb-2023 15:03:34 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:06:39 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:06:40 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:08:13 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:08:14 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:08:36 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:08:37 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:40 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:40 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:41 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:41 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:42 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:42 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:43 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:43 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:44 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:44 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:45 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:45 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:46 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:46 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:47 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:47 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:48 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:48 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:49 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:49 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:50 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:50 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:51 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:51 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:52 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:52 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:53 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:53 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:54 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:54 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:55 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:55 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:56 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:57 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:10:57 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:11:36 America/Caracas] PHP Fatal error:  Uncaught exception 'UnexpectedValueException' with message 'The stream or file "/home/sistem19/public_html/piaweb2.5.01dev/app/logs/prod.log" could not be opened: failed to open stream: No such file or directory' in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php:4964
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4913): Monolog\Handler\StreamHandler->write(Array)
+#1 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(4838): Monolog\Handler\AbstractProcessingHandler->handle(Array)
+#2 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5031): Monolog\Handler\AbstractHandler->handleBatch(Array)
+#3 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5247): Monolog\Handler\FingersCrossedHandler->handle(Array)
+#4 /home/sistem19/public_html/piaweb/app/cache/prod/classes.php(5347): Monolog\Logger->addRecord(500, 'Uncaught PHP Ex...', Array)
+#5 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/E in /home/sistem19/public_html/piaweb/app/cache/prod/classes.php on line 4964
+[06-Feb-2023 15:13:10 America/Caracas] PHP Fatal error:  Uncaught exception 'Symfony\Component\Routing\Exception\ResourceNotFoundException' in /home/sistem19/public_html/piaweb/app/cache/prod/appProdUrlMatcher.php:1600
+Stack trace:
+#0 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Routing/Matcher/UrlMatcher.php(106): appProdUrlMatcher->match('/bundles/frater...')
+#1 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/Routing/Router.php(233): Symfony\Component\Routing\Matcher\UrlMatcher->matchRequest(Object(Symfony\Component\HttpFoundation\Request))
+#2 /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/RouterListener.php(124): Symfony\Component\Routing\Router->matchRequest(Object(Symfony\Component\HttpFoundation\Request))
+#3 [internal function]: Symfony\Component\HttpKernel\EventListener\RouterListener->onKernelRequest(Object(Symfony\Component\HttpKernel\Event\GetResponseEvent), 'kernel.request', Object(Symfony\Component\EventDispatcher\ContainerAwareEvent in /home/sistem19/public_html/piaweb/vendor/symfony/symfony/src/Symfony/Component/HttpKernel/EventListener/RouterListener.php on line 144
+[07-Feb-2023 11:39:30 America/Caracas] PHP Fatal error:  Allowed memory size of 536870912 bytes exhausted (tried to allocate 505679872 bytes) in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Extension/Debug.php on line 66
+[07-Feb-2023 11:48:58 America/Caracas] PHP Fatal error:  Cannot access private property FraterSoft\PiaWebBundle\Entity\Preciosevento::$cantidad in /home/sistem19/public_html/piaweb/src/FraterSoft/PiaWebBundle/Controller/CompetidorController.php on line 367
