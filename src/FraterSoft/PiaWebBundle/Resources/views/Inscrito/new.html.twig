@@ -236,6 +236,32 @@
             display:none;
         }    
         {#% endif %#}
+        
+    @media screen and (max-width: 547px){
+        form{
+            font-size: 0.9em;
+            width: 344px;
+        }
+        #{{form.idpia.vars.id}} > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea,
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > input[type="text"], input[type="number"], textarea{
+            width: 166px;
+            font-size: 0.8em;
+        }
+        #fratersoft_piawebbundle_inscrito_idpia > div:nth-child(n+0) > select,
+        #formulario > div:nth-child(n+0) > select,
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > select,
+        div[id*=idmoneda] {        
+            height: 18px;
+            width: 174px;
+            font-size: 0.8em;
+        }
+        #fratersoft_piawebbundle_inscrito_idpia > div:nth-child(n+0) > label,
+        #formulario > div:nth-child(n+0) > label ,
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > label {
+            width: 160px;
+        }   
+    }
+        
    </style>
 {% endblock %}    
 {% block poweredby %}
@@ -604,14 +630,17 @@
         {% endif %}
 
         {%if entity.idevento.proceso == 1 and form.pagos is defined %}
+        buscarFormasPago(
+            $('#formulario'),
+            {{entity.idevento.id}},
+            $("#formulario input[type='radio']:checked").val()
+        );
         
         ocultaCamposPagoForm($('#formulario'));
         parametros={{formasdepago|json_encode|raw}};
         $("select[id*=idformapago]").change(function () {
-            console.log(window.sessionStorage);
             if(window.sessionStorage.getItem('idfp'+$("select[id*=idformapago]").val())==null)
                 if(parametros!=null && parametros[$("select[id*=idformapago]").val()]){
-                    consolo.log('entre');
                     jparametros=jQuery.parseJSON(parametros[$("select[id*=idformapago]").val()]);
                 }
                 else

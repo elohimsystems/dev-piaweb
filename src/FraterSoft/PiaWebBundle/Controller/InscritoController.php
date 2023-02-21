@@ -955,17 +955,20 @@ class InscritoController extends commonPIAClass {
         //));
                         
         //Muestra la etiqueta de la edad segun el tipo de calculo
-        if ($evento->getCriteriocalculoedad() == 1) {
-            $form->get('idpia')->add('edad', 'text', array(
-                'label' => 'Edad Calendario',
-                'read_only' => true,
-            ));
-        } else {
-            $form->get('idpia')->add('edad', 'text', array(
-                'label' => 'Edad al Evento',
-                    'read_only' => true,
-            ));
+        $etiquetaEdad = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')
+                ->findOneBy(array('idatributo'=>6,'idevento'=>$idevento));
+        if($etiquetaEdad->getEtiqueta()!=''){
+            $labelEdad = $etiquetaEdad->getEtiqueta();
         }
+        else if ($evento->getCriteriocalculoedad() == 1) {
+            $labelEdad = 'Edad Calendario';
+        } else {
+            $labelEdad = 'Edad al Evento';
+        }
+        $form->get('idpia')->add('edad', 'text', array(
+            'label' => $labelEdad,
+            'read_only' => true,
+        ));
         
         //Busca los atributos criterios del evento y los envia al formulario, 
         //para las busqueda en ajax de las categorias
