@@ -1,0 +1,4 @@
+[19-Feb-2025 09:26:52 America/Caracas] PHP Fatal error:  Interface 'Swift_InputByteStream' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/ByteStream/ArrayByteStream.php on line 18
+[08-Mar-2025 09:30:03 America/Caracas] PHP Fatal error:  Class 'Swift_ByteStream_FileByteStream' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/ByteStream/TemporaryFileByteStream.php on line 17
+[13-Mar-2025 21:16:45 America/Caracas] PHP Fatal error:  Interface 'Swift_InputByteStream' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/ByteStream/AbstractFilterableInputStream.php on line 18
+[21-Mar-2025 02:14:33 America/Caracas] PHP Fatal error:  Class 'Swift_ByteStream_AbstractFilterableInputStream' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/ByteStream/FileByteStream.php on line 18

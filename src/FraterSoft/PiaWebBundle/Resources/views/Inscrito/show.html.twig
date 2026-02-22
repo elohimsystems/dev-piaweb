@@ -122,7 +122,7 @@
     {% if entity.pagos[0] is defined %}
     <table id="tablaPago" class="display compact">
         <tbody>          
-            <tr><th>Forma de Pago</th><td>{{ entity.pagos[0].idformapago.nombre }}</td></tr>
+            <tr><th>Forma de Pago</th><td>{% if entity.pagos[0].idformapago is null %}""{% else %}{{entity.pagos[0].idformapago.nombre}}{% endif %}</td></tr>
             <tr><th>Precio</th><td>{{ entity.pagos[0].precio }}</td></tr>
             {% for parametro in parametros %}
             {% if attribute(entity.pagos[0],'get' ~ parametro.campo).timestamp is defined %}

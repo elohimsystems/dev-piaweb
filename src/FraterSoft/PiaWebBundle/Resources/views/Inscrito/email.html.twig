@@ -26,33 +26,44 @@
     <table class="record_properties" align="center" border="0">
         <tbody>
             
-            {% if entity.idevento.idorganizador.logo is not null %}
+            {# % if entity.idevento.idorganizador.logo is not null % #}
             <tr>
                 <td colspan='3' align='center'>
-                    <img width="300 px" 
-                         src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/images/') ~ entity.idevento.idorganizador.logo }}">                    
+                    {% if entity.idevento.rutavideo is not null %}
+                    <img width="624 px" 
+                         {# src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/images/') ~ entity.idevento.idorganizador.logo }}">  #}  
+                         src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/images/') ~ entity.idevento.rutavideo }}">    
+                    {% endif %}     
                 </td>
             </tr>
-            {% endif %}
+            {# % endif % #}
             <tr>
                 <td colspan='3' align='center'>
                     <h1>Confirmaci&oacute;n de Pre-Inscripci&oacute;n</h1>
                 </td>
             </tr>
             <tr>
-                <td rowspan="12">
+                <td rowspan="{{entity.idevento.atributos|length}}">
                     <img width="300 px" 
                          src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ entity.idevento.logo }}">
                 </td>
             </tr>           
             {% for atributo in entity.idevento.atributos %}
-            {% if atributo.idatributo.tipo == "U" %}
-            {% if atributo.etiqueta is null %}
-            <tr><th>{{atributo.idatributo.nombre|capitalize}}</th><td>{{ attribute(entity.idpia,'get'~atributo.idatributo.nombre) }}</td></tr>
-            {% else %}
-            <tr><th>{{atributo.etiqueta}}</th><td>{{ attribute(entity.idpia,'get'~atributo.idatributo.nombre) }}</td></tr>
-            {% endif %}
-            {% endif %}
+            {# {% if atributo.idatributo.tipo == "U" %} #}
+                {% if atributo.etiqueta is null %}
+                {% if atributo.idatributo.tipodato != "D" %}
+                <tr><th>{{atributo.idatributo.nombre|capitalize}}</th><td>{{ attribute(entity.idpia,'get'~atributo.idatributo.nombre) }}</td></tr>
+                {% else %}
+                <tr><th>{{atributo.idatributo.nombre|capitalize}}</th><td>{{ attribute(entity.idpia,'get'~atributo.idatributo.nombre)|date('d-m-Y') }}</td></tr>
+                {% endif %}
+                {% else %}
+                {% if atributo.idatributo.tipodato != "D" %}
+                <tr><th>{{atributo.etiqueta}}</th><td>{{ attribute(entity.idpia,'get'~atributo.idatributo.nombre) }}</td></tr>
+                {% else %}
+                <tr><th>{{atributo.etiqueta}}</th><td>{{ attribute(entity.idpia,'get'~atributo.idatributo.nombre)|date('d-m-Y') }}</td></tr>
+                {% endif %}
+                {% endif %}
+            {# {% endif %} #}
             {% endfor %}
             <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>            
             <tr>

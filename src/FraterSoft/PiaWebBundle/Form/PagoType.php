@@ -36,7 +36,6 @@ class PagoType extends AbstractType
                 'class' => 'FraterSoftPiaWebBundle:Banco',
                 'empty_value' => 'Seleccione un Banco',
                 'label' => 'Banco de donde pago',
-//                'attr' => array('style' => 'display:none'), //Oculta el control
                 'query_builder' => function (EntityRepository $b) {
                     return $b->createQueryBuilder('b')
                             ->where('b.idpais=:idpais')
@@ -61,13 +60,13 @@ class PagoType extends AbstractType
                 'attr'=> array('style'=>'display:none'),
             ))                
             ->add('conciliado','hidden')
-            ->add('conciliadoel','hidden')
-//            ->add('conciliadoel','datetime', array(
-//                'widget' => 'single_text',
-//                'data' => new \DateTime('now'),
-//                'attr'=> array('style'=>'display:none'),
-//                'label'=>false,
-//            ))
+            //->add('conciliadoel','hidden')
+            ->add('conciliadoel','datetime', array(
+                'widget' => 'single_text',
+                'data' => new \DateTime('now'),
+                'attr'=> array('style'=>'display:none'),
+                'label'=>false,
+            ))
             ->add('fechapago','date',array(
                 'attr' => ['class' => 'fechaESP'],
                 'label'=>'Fecha del Pago',

@@ -1,0 +1,2 @@
+[27-Apr-2025 08:53:10 America/Caracas] PHP Fatal error:  Interface 'Assetic\Factory\Worker\WorkerInterface' not found in /home/sistem19/public_html/piaweb/vendor/kriswallsmith/assetic/src/Assetic/Factory/Worker/EnsureFilterWorker.php on line 24
+[09-May-2025 15:57:12 America/Caracas] PHP Fatal error:  Interface 'Assetic\Factory\Worker\WorkerInterface' not found in /home/sistem19/public_html/piaweb/vendor/kriswallsmith/assetic/src/Assetic/Factory/Worker/CacheBustingWorker.php on line 24

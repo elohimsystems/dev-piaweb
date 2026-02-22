@@ -26,11 +26,11 @@
 {% block body -%}
     <table align="center">
         <tbody>
-            {% if inscrito.idevento.idorganizador.logo is not null %}
+            {% if inscrito.idevento.rutaperfil is not null %}
             <tr>
                 <td colspan='3' align='center'>
                     <img width="300 px" 
-                         src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/images/') ~ inscrito.idevento.idorganizador.logo }}">                    
+                         src="{{ app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ inscrito.idevento.rutaperfil }}">                    
                 </td>
             </tr>
             {% endif %}

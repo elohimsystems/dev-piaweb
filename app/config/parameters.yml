@@ -5,24 +5,14 @@ parameters:
   database_port: null
   database_name: sistem19_bdpiav105
   database_user: sistem19
-  #database_password: fdgc2401
-  database_password: I4X7k33fpc
+  database_password: ZC_v?ZOr_pc-
 
   mailer_transport: smtp
-  mailer_host: mail.sistemapia.com
+  mailer_host: mail.sistemapia.com.ve
   mailer_port: 465
   mailer_encryption: ssl
-  mailer_user: notificacion@sistemapia.com
-  mailer_password: ~_b3rg)gZ-xH
-
-  #mailer_transport: smtp
-  #mailer_host: smtp.gmail.com
-  #mailer_port: 465
-  #mailer_encryption: ssl
-  #mailer_user: puroeventospzo@gmail.com
-  #mailer_password: kuffner1bonchi
-  #mailer_user: sistemapia@gmail.com
-  #mailer_password: fdgc2401
+  mailer_user: notificacion@sistemapia.com.ve
+  mailer_password: 7c)I8WE6QH7?dRm[
 
   locale: en
   secret: ThisTokenIsNotSoSecretChangeIt

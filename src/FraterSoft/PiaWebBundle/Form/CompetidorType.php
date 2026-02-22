@@ -56,6 +56,7 @@ class CompetidorType extends AbstractType
             ->add('textodorsal')
             ->add('telefonoemergencia')
             ->add('seguromedico')
+            ->add('discapacitado')
         ;                
     }
     

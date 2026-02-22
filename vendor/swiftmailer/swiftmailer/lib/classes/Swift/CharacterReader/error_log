@@ -1,0 +1,3 @@
+[18-Oct-2025 18:35:52 UTC] PHP Fatal error:  Interface 'Swift_CharacterReader' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/CharacterReader/Utf8Reader.php on line 20
+[24-Oct-2025 22:02:37 UTC] PHP Fatal error:  Interface 'Swift_CharacterReader' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/CharacterReader/UsAsciiReader.php on line 19
+[27-Oct-2025 00:09:20 UTC] PHP Fatal error:  Interface 'Swift_CharacterReader' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/CharacterReader/GenericFixedWidthReader.php on line 20

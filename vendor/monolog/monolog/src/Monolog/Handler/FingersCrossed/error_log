@@ -1,0 +1,1 @@
+[26-Nov-2024 18:31:56 America/Caracas] PHP Fatal error:  Interface 'Monolog\Handler\FingersCrossed\ActivationStrategyInterface' not found in /home/sistem19/public_html/piaweb/vendor/monolog/monolog/src/Monolog/Handler/FingersCrossed/ErrorLevelActivationStrategy.php on line 20

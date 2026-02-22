@@ -47,23 +47,16 @@ where ev.id=' . $idevento . ')'
     
     public function enproceso($email)
     {
-        //$currentdate = new \Datetime("now");   
-        //$sql='';
-        //if($email=='admin')
-        //    $sql='SELECT e FROM FraterSoftPiaWebBundle:Evento e WHERE e.fecha >= \'' . $currentdate->format('Y-m-d H:i:s') . '\'';
-        //else
-        //    $sql='SELECT e FROM FraterSoftPiaWebBundle:Evento e WHERE e.fecha >= \'' . $currentdate->format('Y-m-d H:i:s') . '\' and e.emailcontacto =\'' . $email . '\'';
-        //return $this->getEntityManager()->createQuery($sql)->getResult();
         $currentdate = new \Datetime("now");   
         $sql='SELECT '
     	. 'e.logo,e.id,e.nombre,e.fecha,e.fechacierre,e.cupomaximo,e.activo, '
-    	. '(select count(i.id) from FraterSoftPiaWebBundle:Inscrito i left join FraterSoftPiaWebBundle:Pago p with p.idinscrito=i.id where i.idevento=e.id and i.status=1 and p.id is null) as preinscritos, '
+    	. '(select count(i.id) from FraterSoftPiaWebBundle:Inscrito i left join FraterSoftPiaWebBundle:Pago p with p.idinscrito=i.id where i.idevento=e.id and i.status=1 and (p.id is null or p.conciliado is null) as preinscritos, '
     	. '(select count(j.id) from FraterSoftPiaWebBundle:Inscrito j left join FraterSoftPiaWebBundle:Pago q with q.idinscrito=j.id where j.idevento=e.id and q.conciliado = true and j.status=1) as inscritos, '
     	. '(select count(k.id) from FraterSoftPiaWebBundle:Inscrito k left join FraterSoftPiaWebBundle:Pago r with r.idinscrito=k.id where k.idevento=e.id and r.conciliado is null and k.status=1 and r.tipo=\'3\') as tdcsinpago ';
         if($email=='admin')
             $sql.='FROM FraterSoftPiaWebBundle:Evento e WHERE e.fecha >= \'' . $currentdate->format('Y-m-d H:i:s') . '\'';
         else
-            $sql.='FROM FraterSoftPiaWebBundle:Evento e WHERE e.fecha >= \'' . $currentdate->format('Y-m-d H:i:s') . '\' and e.emailcontacto =\'' . $email . '\'';
+            $sql.='FROM FraterSoftPiaWebBundle:Evento e WHERE e.fecha >= \'' . $currentdate->format('Y-m-d H:i:s') . '\' and e.emailcontacto like \'%' . $email . '%\'';
         return $this->getEntityManager()->createQuery($sql)->getResult();        
     } 
 
@@ -77,5 +70,22 @@ where ev.id=' . $idevento . ')'
             $sql='SELECT e FROM FraterSoftPiaWebBundle:Evento e WHERE e.fecha < \'' . $currentdate->format('Y-m-d H:i:s') . '\' and e.emailcontacto =\'' . $email . '\'';
         return $this->getEntityManager()->createQuery($sql)->getResult();
     } 
+    
+    public function enprocesoPatrocinantes($email)
+    {
+        $currentdate = new \Datetime("now");   
+        $sql='SELECT '
+    	. 'e.logo,e.id,e.nombre,e.fecha,e.fechacierre,e.cupomaximo,e.activo, '
+    	. '(select count(i.id) from FraterSoftPiaWebBundle:Inscrito i left join FraterSoftPiaWebBundle:Pago p with p.idinscrito=i.id where i.idevento=e.id and i.status=1 and (p.id is null or p.conciliado is null) as preinscritos, '
+    	. '(select count(j.id) from FraterSoftPiaWebBundle:Inscrito j left join FraterSoftPiaWebBundle:Pago q with q.idinscrito=j.id where j.idevento=e.id and q.conciliado = true and j.status=1) as inscritos, '
+    	. '(select count(k.id) from FraterSoftPiaWebBundle:Inscrito k left join FraterSoftPiaWebBundle:Pago r with r.idinscrito=k.id where k.idevento=e.id and r.conciliado is null and k.status=1 and r.tipo=\'3\') as tdcsinpago '
+        . 'FROM FraterSoftPiaWebBundle:Evento e '
+        . 'LEFT JOIN FraterSoftPiaWebBundle:Publicidad pu with e.id = pu.idevento '
+        . 'INNER JOIN FraterSoftPiaWebBundle:Patrocinante pa with pa.id = pu.idpatrocinante '
+        . 'INNER JOIN FraterSoftPiaWebBundle:Organizador o with o.id = pa.idorganizador '
+        . 'WHERE e.fecha >= \'' . $currentdate->format('Y-m-d H:i:s') . '\' and o.email =\'' . $email . '\'';
+        return $this->getEntityManager()->createQuery($sql)->getResult();        
+    } 
+    
     
 }

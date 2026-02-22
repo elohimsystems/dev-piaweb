@@ -4,6 +4,7 @@
 {% endblock %}
 {% block jsQuery %}    
     <script src="{{asset('bundles/fratersoftpiaweb/fine-uploader/fine-uploader.min.js')}}" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 {% endblock %}
 {% block style %}
     {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}
@@ -93,6 +94,7 @@
         titulos.push("precio");
         titulos.push("formapago");
         titulos.push("referencia");
+        titulos.push("conciliadoel");
         titulos.push("banco");
         titulos.push("discapacitado");
         titulos.push("tipodiscapacidad");
@@ -103,16 +105,16 @@
         var dataSet=[];
         var camposSet=[];
         function processData(allText) {
+            var MessageErrors = "";
             var allTextLines = allText.split(/\r\n|\n/);
             var header = allTextLines[0].split(',');            
-            
             //Valida que la primera fila del archivo poseea los titulos adecuados
             for(i=0;i<header.length;i++){
                 for(j=0;j<titulos.length;j++){
                     if($.inArray(header[i],titulos)==-1){
-                        alert("Nombre del titulo " + header[i] + " no es valido, use el archivo con el formato "
-                                + " adecuado para importar los datos. Borre el archivo, corrijalo y vuelva a cargarlo.");
-                        return false;
+                        MessageErrors += "Nombre del titulo " + header[i] + " no es valido, use el archivo con el formato "
+                        + " adecuado para importar los datos. Borre el archivo, corrijalo y vuelva a cargarlo.\n";
+                        //return false;
                     }
                 }
             }
@@ -150,24 +152,24 @@
                         switch(atributos[header[col]].tipo){
                             case "string":
                                 if(atributos[header[col]].longitud<line[j][col].length){
-                                    alert("Error en la columna " + header[col] + ", linea " + (nl+1) +
-                                            ". Longitud mayor " + atributos[header[col]].longitud);
-                                    return false;
+                                    MessageErrors += "Error en la columna " + header[col] + ", linea " + (nl+1) +
+                                            ", el valor '" + line[j][col] + ". Longitud mayor " + atributos[header[col]].longitud + "<br>";
+                                    //return false;
                                 }
                                 break;
                             case "datetime":
                                 if(isNaN(Date.parse(line[j][col]))){
-                                    alert("Error en la columna: " + header[col] + ", linea: " + (nl+1) +
-                                            ". Formato de fecha incorrecto, formato correcto: aaaa/mm/dd");
-                                    return false;
+                                    MessageErrors += "Error en la columna: " + header[col] + ", linea: " + (nl+1) +
+                                            ", el valor '" + line[j][col] + ". Formato de fecha incorrecto, formato correcto: aaaa/mm/dd<br>";
+                                    //return false;
                                 }
                                 break;
                             case "bigint":
                                 if(isNaN(line[j][col])){
                                     if(header[col]!="idpais"){ //quitar validacion cuando se configure el idpais como clave foranea
-                                        alert("Error en la columna: " + header[col] + ", linea: " + (nl+1) +
-                                                ". Valor no es numerico");
-                                        return false;
+                                        MessageErrors += "Error en la columna: " + header[col] + ", linea: " + (nl+1) +
+                                                ", el valor '" + line[j][col] + ". Valor no es numerico<br>";
+                                        //return false;
                                     }
                                 }
                                 break;
@@ -175,39 +177,55 @@
                     }
                     if(line[j][col]!=""){
                         //VALIDA LA COMPETENCIA DEL ARCHIVO
-                        if(competencias.indexOf(line[j][0])==-1){
-                            alert("Error en la linea: " + (j+1) + ", columna 'COMPETENCIA'" +
-                                    ".El valor '" + line[j][10] + "' no esta configurado en el evento");
-                            return false;
+                        if(col == 0 && competencias.indexOf(line[j][col])==-1){
+                            MessageErrors += "Error en la linea: " + (j+1) + ", columna 'COMPETENCIA'" +
+                                    ", el valor '" + line[j][10] + "', no esta configurado en el evento<br>";
+                            //return false;
                         }
                         //VALIDA EL ESTADO DEL ARCHIVO
-                        if(estados.indexOf(line[j][12])==-1){
-                            alert("Error en la linea: " + (j+1) + ", columna 'ESTADO'" +
-                                    ".El valor '" + line[j][12] + "' no esta configurado en el sistema");
-                            return false;
+                        //console.log('estados:',estados);
+                        if(col == 12 && estados.indexOf(line[j][col])==-1){
+                            MessageErrors += "Error en la linea: " + (j+1) + ", columna 'ESTADO'" +
+                                    ", el valor '" + line[j][12] + "', no esta configurado en el sistema<br>";
+                            console.log('linea',line[j]);
+                            //return false;
                         }
                         //VALIDA EL PAIS DEL ARCHIVO
-                        if(paises.indexOf(line[j][13])==-1){
-                            alert("Error en la linea: " + (j+1) + ", columna 'PAIS'" +
-                                    ".El valor '" + line[j][13] + "' no esta configurado en el sistema");
-                            return false;
+                        if(col == 13 && paises.indexOf(line[j][col])==-1){
+                            MessageErrors += "Error en la linea: " + (j+1) + ", columna 'PAIS'" +
+                                    ", el valor '" + line[j][13] + "', no esta configurado en el sistema<br>";
+                            //return false;
                         }
                         //VALIDA LA FORMA DE PAGO DEL ARCHIVO
-                        if(formaspago.indexOf(line[j][16])==-1){
-                            alert("Error en la linea: " + (j+1) + ", columna 'FORMA DE PAGO'" +
-                                    ".El valor '" + line[j][16] + "' no esta configurado en el evento");
-                            return false;
+                        if(col == 16 && formaspago.indexOf(line[j][col])==-1){
+                           MessageErrors += "Error en la linea: " + (j+1) + ", columna 'FORMA DE PAGO'" +
+                                    ", el valor '" + line[j][16] + "', no esta configurado en el evento<br>";
+                            //return false;
                         }
                         //VALIDA LA CATEGORIA DEL ARCHIVO
-                        if(categorias.indexOf(line[j][21])==-1){
-                            alert("Error en la linea: " + (j+1) + ", columna 'CATEGORIA'" +
-                                    ".El valor '" + line[j][21] + "' no esta configurado en el evento");
-                            return false;
+                        console.log('categoria archivo',line[j][22]);
+                        console.log('categoria sistema',categorias);
+                        if(col == 22 && categorias.indexOf(line[j][col])==-1){
+                            MessageErrors += "Error en la linea: " + (j+1) + ", columna 'CATEGORIA'" +
+                                    ", el valor '" + line[j][22] + "', no esta configurado en el evento<br>";
+                            //return false;
                         }
                     }
                 }
                 dataSet.push(line[j++]);
             }
+            if (MessageErrors!=""){
+                Swal.fire({
+                    title: 'Información Importante',
+                    html: MessageErrors,
+                    //icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar'
+                });
+
+                return false;
+            }            
             //console.log(dataSet);
             return true;
         }        
@@ -225,6 +243,7 @@
 
             $('#csvcompetidor').DataTable( {
                 data: null,
+                pageLength: 100,
                 columns:[
                     {data:'competencia',title:'Competencia'},
                     {data:'numero',title:'Numero'},

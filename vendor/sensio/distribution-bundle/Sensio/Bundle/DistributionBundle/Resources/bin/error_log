@@ -1,0 +1,2 @@
+[24-Jan-2025 11:06:26 America/Caracas] PHP Notice:  Undefined index: argv in /home/sistem19/public_html/piaweb/vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php on line 17
+[25-Apr-2025 23:39:00 America/Caracas] PHP Notice:  Undefined index: argv in /home/sistem19/public_html/piaweb/vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Resources/bin/build_bootstrap.php on line 17

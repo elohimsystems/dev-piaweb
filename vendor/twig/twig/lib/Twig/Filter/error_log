@@ -1,0 +1,4 @@
+[02-Jan-2025 23:00:51 America/Caracas] PHP Fatal error:  Class 'Twig_Filter' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Filter/Node.php on line 21
+[01-Mar-2025 15:22:42 America/Caracas] PHP Fatal error:  Class 'Twig_Filter' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Filter/Method.php on line 21
+[29-Mar-2025 21:52:15 America/Caracas] PHP Fatal error:  Class 'Twig_Filter' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Filter/Function.php on line 21
+[27-Jul-2025 01:57:14 America/Caracas] PHP Fatal error:  Class 'Twig_Filter' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Filter/Method.php on line 21

@@ -1,0 +1,6 @@
+[28-Nov-2024 13:08:59 America/Caracas] PHP Fatal error:  Class 'Swift_DependencyContainer' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/dependency_maps/transport_deps.php on line 3
+[01-Dec-2024 17:02:46 America/Caracas] PHP Fatal error:  Class 'Swift_DependencyContainer' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/dependency_maps/mime_deps.php on line 5
+[06-Dec-2024 17:42:37 America/Caracas] PHP Fatal error:  Class 'Swift_DependencyContainer' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/dependency_maps/message_deps.php on line 3
+[09-Dec-2024 02:06:59 America/Caracas] PHP Fatal error:  Class 'Swift_DependencyContainer' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/dependency_maps/cache_deps.php on line 3
+[11-May-2025 12:41:54 America/Caracas] PHP Fatal error:  Class 'Swift_DependencyContainer' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/dependency_maps/message_deps.php on line 3
+[01-Aug-2025 17:44:29 America/Caracas] PHP Fatal error:  Class 'Swift_DependencyContainer' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/dependency_maps/transport_deps.php on line 3

@@ -1,0 +1,1 @@
+[08-Dec-2024 06:44:54 America/Caracas] PHP Fatal error:  Interface 'Assetic\Exception\Exception' not found in /home/sistem19/public_html/piaweb/vendor/kriswallsmith/assetic/src/Assetic/Exception/FilterException.php on line 22

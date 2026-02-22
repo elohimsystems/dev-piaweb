@@ -1,0 +1,4 @@
+[01-Mar-2025 03:07:43 America/Caracas] PHP Fatal error:  Interface 'Swift_Encoder' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Encoder/Rfc2231Encoder.php on line 19
+[05-Mar-2025 04:19:46 America/Caracas] PHP Fatal error:  Interface 'Swift_Encoder' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Encoder/QpEncoder.php on line 21
+[15-Mar-2025 17:22:13 America/Caracas] PHP Fatal error:  Interface 'Swift_Encoder' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Encoder/Base64Encoder.php on line 19
+[26-Jul-2025 23:29:34 America/Caracas] PHP Fatal error:  Interface 'Swift_Encoder' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Encoder/Rfc2231Encoder.php on line 19

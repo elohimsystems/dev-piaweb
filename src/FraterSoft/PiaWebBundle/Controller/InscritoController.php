@@ -77,10 +77,23 @@ class InscritoController extends commonPIAClass {
                     'emailcontacto' => $evento->getEmailContacto(),
         ));
     }
+    
+    private function getNivelSeguridad($em,$email,$idevento){
+        $nivel_seguridad = 1;
+        $listaEventos = $em->getRepository('FraterSoftPiaWebBundle:Organizador')
+                ->listaIdsEventosPatrocinadosPorEmail($email);
+        foreach($listaEventos as $evento){
+            if($evento['id'] == $idevento)
+                $nivel_seguridad = 2;
+        }
+        return($nivel_seguridad);
+    }
 
     public function listapreinscritosAction($idevento, $email) {
         $em = $this->getDoctrine()->getManager();
         
+        $nivel_seguridad = $this->getNivelSeguridad($em,$email,$idevento);
+
         //Busca los atributos criterios del evento y los envia al formulario
         $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')
                 ->atributosEvento($idevento);
@@ -96,7 +109,8 @@ class InscritoController extends commonPIAClass {
                     'idevento' => $idevento,
                     'atributos' => $atributos,
                     'email' => $email,
-                    'nombreevento'=>$atributos[0]->getIdEvento()->getNombre()
+                    'nombreevento'=>$atributos[0]->getIdEvento()->getNombre(),
+                    'nivel_seguridad' => $nivel_seguridad
         ));
     }    
     
@@ -135,7 +149,8 @@ class InscritoController extends commonPIAClass {
                     'idevento' => $idevento,
                     'atributos' => $atributos,
                     'email' => $email,
-                    'nombreevento'=>$atributos[0]->getIdEvento()->getNombre()
+                    'nombreevento'=>$atributos[0]->getIdEvento()->getNombre(),
+                    'nivel_seguridad' => $nivel_seguridad
         ));
     }        
     
@@ -160,6 +175,8 @@ class InscritoController extends commonPIAClass {
     public function listainscritosAction($idevento,$email) {
         $em = $this->getDoctrine()->getManager();
         
+        $nivel_seguridad = $this->getNivelSeguridad($em,$email,$idevento);
+
         //Busca los atributos del evento y los envia al formulario
         $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')
                 ->atributosEvento($idevento);
@@ -175,7 +192,8 @@ class InscritoController extends commonPIAClass {
                     'atributos' => $atributos,
                     'idevento' => $idevento,
                     'email' => $email,
-                    'nombreevento'=>$atributos[0]->getIdEvento()->getNombre()
+                    'nombreevento'=>$atributos[0]->getIdEvento()->getNombre(),
+                    'nivel_seguridad' => $nivel_seguridad
         ));
     }    
     
@@ -215,6 +233,8 @@ class InscritoController extends commonPIAClass {
     public function listaanuladosAction($idevento,$email) {
         $em = $this->getDoctrine()->getManager();
 
+        $nivel_seguridad = $this->getNivelSeguridad($em,$email,$idevento);
+
         $anuladas = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
                 ->listarAnuladas($idevento);
 
@@ -225,7 +245,8 @@ class InscritoController extends commonPIAClass {
                     'anuladas' => $anuladas,
                     'idevento' => $idevento,
                     'email' => $email,
-                    'nombreevento'=>$evento->getNombre()
+                    'nombreevento'=>$evento->getNombre(),
+                    'nivel_seguridad' => $nivel_seguridad
         ));
     }    
 
@@ -285,6 +306,7 @@ class InscritoController extends commonPIAClass {
             
             if(!is_null($entity->getIdevento()->getIdorganizador()->getEmail()) && filter_var($entity->getIdevento()->getIdorganizador()->getEmail(), FILTER_VALIDATE_EMAIL))
                 $emailfrom = $entity->getIdevento()->getIdorganizador()->getEmail();
+                //$emailfrom = "inscripciones@sistemapia.com";
             else
                 return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                             'url' => $this->generateUrl('competidor_find', array('idevento' => $form->get('idevento')->getData()->getId())),
@@ -403,13 +425,23 @@ class InscritoController extends commonPIAClass {
                         //if ($form->get('pagos')->getData()->getTipo() <> 0) { //INSCRIPCIONES GRATIS
                             //Se envia el correo de confirmacion de preinscripcion
                             $mailer = $this->get('app.mail_controller');
-                            $mailer->enviarPreinscripcion(
+                            /* $mailer->enviarPreinscripcion(
                                     $emailfrom,
                                     "Pre-Inscripcion " . $entity->getIdevento()->getNombre(), 
                                     $emails,
                                     $this->renderView('FraterSoftPiaWebBundle:Inscrito:email.html.twig', array('entity' => $entity))
-                            );         
-                            return $this->redirect($this->generateUrl('inscrito_confirmacion', array('id' => $entity->getId())));
+                            ); */
+                            $mailer->enviar(
+                                    $emailfrom,
+                                    "Pre-Inscripcion " . $entity->getIdevento()->getNombre(), 
+                                    $emails,
+                                    $this->renderView('FraterSoftPiaWebBundle:Inscrito:email.html.twig', array('entity' => $entity))
+                            );
+                            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                                        'url' => $this->generateUrl('inscrito_confirmacion', array('id' => $entity->getId())),
+                                        'texto' => "Se ha enviado la confirmacion de inscripcion a su correo, por favor verifique",
+                            ));
+                            //return $this->redirect($this->generateUrl('inscrito_confirmacion', array('id' => $entity->getId())));
                         /*}
                         else{ //SI LA INSCRIPCION ES GRATUITA SE ENVIA LA CONFIRMACION
                             $mailer = $this->get('app.mail_controller');
@@ -463,10 +495,19 @@ class InscritoController extends commonPIAClass {
                                 null
                             );
                     $mailer = $this->get('app.mail_controller');
-                    $mailer->enviarPreinscripcion(
+                    /* $mailer->enviarPreinscripcion(
                         $emailfrom,
                         "Pre-Inscripcion " . $entity->getIdevento()->getNombre(), 
                         $emails, 
+                        $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailproceso2.html.twig', array(
+                            'entity' => $entity,
+                            'precios'=>$precio,
+                        ))
+                    ); */
+                    $mailer->enviar(
+                        $emailfrom,
+                        "Pre-Inscripcion " . $entity->getIdevento()->getNombre(), 
+                        $emails,
                         $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailproceso2.html.twig', array(
                             'entity' => $entity,
                             'precios'=>$precio,
@@ -684,25 +725,65 @@ class InscritoController extends commonPIAClass {
                 ));
             else{
                 if($entity[0]->getPagos()[0]->getConciliado()){
-//                    if($entity[0]->getPagos()[0]->getIdformapago() == 0){                    
+//                    if($entity[0]->getPagos()[0]->getIdformapago() == 0){  
+
+                        // Busca los rivales del atleta y los muesta en una tabla
+                        //$this->mostrarInfoInscrito($em,$entity[0]);
+                         $rivales=$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->listarRivales(
+                            $idevento,
+                            $entity[0]->getIdcompetencia()->getId(),
+                            $entity[0]->getIdcategoria()->getId(),
+                            $entity[0]->getIdpia()->getSexo()
+                        );
+                        if(count($rivales) > 0){
+                            //print_r(count($rivales));
+                            $cuadrorivales = "<div class='infoTable'><div class='infoTableTitle'>Rivales</div>"
+                                . "<div class='infoTableHeader'>" 
+                                    . "<div class='infoTableCell'>ATLETA</div>"
+                                    //. "<div class='infoTableCell'>CLUB</div>"
+                                . "</div>";
+                            foreach($rivales as $rival){
+                                $cuadrorivales .= "<div class='infoTableRow'><div class='infoTableCell'>" . strtoupper($rival->getIdpia()->getApellido()) . " " . strtoupper($rival->getIdpia()->getNombre()) . "</div>";
+                                //$cuadrorivales .= "<div class='infoTableCell'>" . strtoupper($rival->getIdpia()->getEquipo()) . "</div>";
+                                $cuadrorivales .= "</div>";
+                            }  
+                            $cuadrorivales .= "</div>";
+                        }
+                        $dorsal="";
+                        if($idevento == 7209814356 && $entity[0]->getNumero()<>""){
+                            $desc_competencia = $entity[0]->getIdcategoria()->getIdCompetencia()->getDescripcion();
+                            $color = "black";
+                            $top_numero_dorsal = "75%";
+                            if($desc_competencia == "5K") {
+                                $color = "white";
+                                $top_numero_dorsal = "55%";
+                            }
+                            else if ($desc_competencia == "10K") {
+                                $color = "white";
+                                $top_numero_dorsal = "56%";
+                            }
+                            $dorsal = "<div class='contenedor-dorsal'><div class='titulo-dorsal'>Tu Dorsal</div>"
+                                . "<div class='imagen-dorsal'><img src='/piaweb/web/bundles/fratersoftpiaweb/images/numero-" . $desc_competencia . ".jpg' width='700px' border:'1px solid black'></div>"
+                                . "<div class='texto-dorsal' style='color:" . $color . ";top:" . $top_numero_dorsal  . "'>" . str_pad($entity[0]->getNumero(), 4, "0", STR_PAD_LEFT) . "</div>"
+                                . "</div>";
+                        }                            
+                        $numero = ($entity[0]->getNumero() == null)?"":"<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>N&uacute;mero de Participaci&oacute;n</div><div class='infoTableCell'>" . $entity[0]->getNumero() . "</div></div>"; //
+                        $genero = ($entity[0]->getIdpia()->getSexo()=='M')?'Masculino':'Femenino';
                         return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                                     'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
                                     'texto' => "El portador del Documento de Identidad Nro. " . $entity[0]->getIdpia()->getIdDocumento() . "<br>"
                                     . "est&aacute; oficialmente inscrito para el evento <br><b>" 
-                                    . $evento->getNombre() . "</b><br><br>",
+                                    . $evento->getNombre() . "</b><br><br>"
+                                    . "<div class='infoTable'>"
+                                    . "<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>Categor&iacute;a</div>" 
+                                    . "<div class='infoTableCell'>" . $entity[0]->getIdcategoria()->getDescripcion() . "</div></div>" 
+                                    . "<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>G&eacute;nero</div>" 
+                                    . "<div class='infoTableCell'>" . $genero . "</div></div></div>" 
+                                    //. $numero
+                                    . $dorsal
+                                    . $cuadrorivales,
                                     'tema' => $evento->getTema()
                         ));
-//                    }else{
-//                        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-//                                    'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
-//                                    'texto' => "El pago de la Pre-Inscripci&oacute;n Nro. " . $entity[0]->getSecuencia() . "<br>"
-//                                    . "fu&eacute; conciliado satisfactoriamente. <br>"
-//                                    . "El portador del Documento de Identidad Nro. " . $entity[0]->getIdpia()->getIdDocumento() . "<br>"
-//                                    . "est&aacute; oficialmente inscrito para el evento <br><b>" 
-//                                    . $evento->getNombre() . "</b><br><br>",
-//                                    'tema' => $evento->getTema()
-//                        ));
-//                    }
                 }
                 else
                     return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
@@ -767,6 +848,12 @@ class InscritoController extends commonPIAClass {
 
             //Si existe el competidor en el Campeonato, le asigno su Categoria
             if ($compcamp) {
+    			//Busca la cantidad de competencias por eventos, si hay mas de 1 muestra el combo        
+    			$competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')
+    					->findBy(array(
+    				'idevento' => $idevento,'id' => $compcamp->getIdCompetencia()
+    			));                  
+                
                 $entity->setNumero($compcamp->getNumero());
                 $equipo = $competidor->setEquipo($compcamp->getIdclub()->getNombre());
                 $idcategoria = $compcamp->getIdcategoria();
@@ -787,13 +874,47 @@ class InscritoController extends commonPIAClass {
                                         ->setParameter('id', $idcategoria);
                             },
                             'required' => true,
+                            'read_only' => true,
+                        ))
+                        ->add('numero', 'text', array(
+                            'data' => $compcamp->getNumero(),
+                            'read_only' => true,
                         ))
                 ;
-                $form->get('idpia')
+                $form
+                    ->add('numero', 'text', array(
+                        'read_only' => true,
+                        'required' => false,
+                    ))
+                    ->get('idpia')
                         ->add('equipo', 'text', array(
                             'data' => $compcamp->getIdclub()->getNombre(),
                             'read_only' => true,
                         ))
+                        ->add('nombre', 'text', array(
+                            'read_only' => true,
+                        ))
+                        ->add('apellido', 'text', array(
+                            'read_only' => true,
+                        ))
+                        ->add('fechanacimiento', 'date', array(
+                            'attr' => ['class' => 'fechaESP'],
+                            'label'=>'Fecha de Nacimiento',
+                            'required' => true,
+                            'widget' => 'single_text',
+                            'format' => 'dd/MM/yyyy',                            
+                            'read_only' => true,
+                        ))
+                        ->add('sexo', 'text', array(
+                            'read_only' => true,
+                        ))
+                        /*->add('emailpersonal', 'text', array(
+                            'read_only' => true,
+                            'required' => false,
+                        ))
+                        ->add('telefono', 'text', array(
+                            'read_only' => true,
+                        ))*/
                 ;
                 
                 $desccategoria = $compcamp->getnombrecategoria();
@@ -1253,9 +1374,13 @@ class InscritoController extends commonPIAClass {
 
         $entity = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->find($id);
 
+        $idevento = $entity->getIdevento()->getId();
+
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Inscrito entity.');
         }
+
+        // var_dump($entity->getPagos()[0]);
 
         $editForm = $this->createEditForm($entity);
 
@@ -1325,38 +1450,16 @@ class InscritoController extends commonPIAClass {
         $arraymonedas=$this->MonedasEvento($em,$default_moneda,$entity->getIdevento());        
         
         /**************** Agrega las formas de pago del evento ****************/
-        $formasdepagoarray = array();
-        $formasdepago = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')
-                ->listarPublicos($entity->getIdevento()->getId(),$default_moneda);
-        foreach ($formasdepago as $formadepago) {
-            if ($formadepago->getIdformapago()->getNombre()) {
-                $formasdepagoarray[$formadepago->getId()] = $formadepago->getIdformapago()->getNombre();
-            }
-        }
-//        if ($formasdepagoarray)
-//            $editForm
-//                    ->get('pagos')
-//                    ->add('idformaspago', 'choice', array(
-//                        'label' => 'Forma de Pago',
-//                        'choices' => $formasdepagoarray,
-//                        'required' => true,
-//                        'empty_value' => 'Seleccione Forma de Pago',
-//            ));
-//        else {
-//            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
-//                        'url' => $this->generateUrl('competidor_find', array('idevento' => $entity->getIdevento()->getId())),
-//                        'texto' => "No se han configurado las Formas De Pago para este Evento",
-//                        'tema' => $evento->getTema()
-//            ));            
-//        }        
-//        if ($entity->getIdevento()->getProceso()==2){
-//            $editForm
-//                ->remove('precio')
-//                ->remove('idpago')
-//            ;
-//        }        
-//        $editForm->get('idpago')->add('texto');
-        $editForm->add('numero');
+        // $formasdepagoarray = array();
+        // $formasdepago = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')
+        //         ->listarPublicos($entity->getIdevento()->getId(),$default_moneda);
+        // foreach ($formasdepago as $formadepago) {
+        //     if ($formadepago->getIdformapago()->getNombre()) {
+        //         $formasdepagoarray[$formadepago->getId()] = $formadepago->getIdformapago()->getNombre();
+        //     }
+        // }
+
+        // $editForm->add('numero');
 
         $this->addBotonRegresar($editForm,$this->get('session')->get('urlreturn'));
         
@@ -1370,11 +1473,60 @@ class InscritoController extends commonPIAClass {
             return new response("No hay atributos criterios para este evento");
         }        
 
+        $default_moneda=null;
+        $arraymonedas=$this->MonedasEvento($em,$default_moneda,$entity->getIdevento());    
+        if(is_null($arraymonedas)){
+            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                        'url' => $this->generateUrl('competidor_find', array('idevento' => $evento->getId())),
+                        'texto' => "No se han configurado la moneda por defecto del Organizador",
+                        'tema' => $evento->getTema()
+            ));                
+        }
+
+        //Agrega las formas de pago del evento
+        $formasdepagoarray = array();
+        $formasdepago=null;
+        $formasdepago = $em->getRepository('FraterSoftPiaWebBundle:Formaspagoevento')
+                ->listarPublicos($idevento,$default_moneda);
+        foreach ($formasdepago as $formadepago) {
+            if ($formadepago->getIdFormapago()->getNombre()) {
+                $formasdepagoarray[$formadepago->getIdFormapago()->getId()] = $formadepago->getIdFormapago()->getNombre();
+            }
+        }
+        // var_dump();
+        if ($formasdepagoarray){
+                $editForm
+                        ->get('pagos')[0]
+                        ->add('idmoneda', 'choice', array(
+                            'choices' => $arraymonedas,
+                            'data'=>'idmoneda',
+                            'label' => 'Moneda',
+                            'expanded' => true,
+                            'data'=>$entity->getPagos()[0]->getIdmoneda()->getId(),
+                        ))                     
+                        ->add('precio','text',array(
+                            'label'=>'Precio',
+                            'read_only' => true,
+                        ))  
+                        //->add('idbanco','text',array(
+                        //    'required' => false,
+                        //))                                               
+                        // ->add('idformapago', 'choice', array(
+                        //     'label' => 'Forma  de Pago',
+                        //     'choices' => $formasdepagoarray,
+                        //     'required' => true,
+                        //     'empty_value' => 'Seleccione Forma de Pago',
+                        // ))
+                ;
+            }
+
+
         return $this->render('FraterSoftPiaWebBundle:Inscrito:edit.html.twig', array(
                     'entity' => $entity,
                     'edit_form' => $editForm->createView(),
                     'atributos' => $atributoscriterios,
         ));
+
     }
 
     /**
@@ -1389,6 +1541,15 @@ class InscritoController extends commonPIAClass {
             'action' => $this->generateUrl('inscrito_update', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
+        
+        $form
+                ->add('fechahora', 'datetime', array(
+                    'widget' => 'single_text',
+                    'data' => new \DateTime('now'),
+                    'attr' => array('style' => 'display:none'),
+                    'label' => false,
+                ))
+        ;
 
         $form->add('submit', 'submit', array('label' => 'Guardar'));
 
@@ -1616,6 +1777,7 @@ class InscritoController extends commonPIAClass {
         $emailfrom="";
         if(!is_null($entity->getIdevento()->getIdorganizador()->getEmail()) && filter_var($entity->getIdevento()->getIdorganizador()->getEmail(), FILTER_VALIDATE_EMAIL))
             $emailfrom = $entity->getIdevento()->getIdorganizador()->getEmail();
+            // $emailfrom = "inscripciones@sistemapia.com";
         else
             return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                         'url' => $this->generateUrl('competidor_find', array('idevento' => $entity->getIdevento()->getId())),
@@ -1684,6 +1846,8 @@ class InscritoController extends commonPIAClass {
     public function estadisticasAction($idevento, $email) {
         $em = $this->getDoctrine()->getManager();
         
+        $nivel_seguridad = $this->getNivelSeguridad($em,$email,$idevento);
+        
         //Busca los atributos del evento y los envia al formulario
         $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')
                 ->atributosEstadistica($idevento);
@@ -1697,6 +1861,7 @@ class InscritoController extends commonPIAClass {
                     'total' => $total,
                     'atributos'=>$atributos,
                     'nombreevento'=>$evento->getNombre(),
+                    'nivel_seguridad' => $nivel_seguridad
         ));
     }    
     
@@ -1746,6 +1911,7 @@ class InscritoController extends commonPIAClass {
         $emailfrom="";
         if(!is_null($entity->getIdevento()->getIdorganizador()->getEmail()) && filter_var($entity->getIdevento()->getIdorganizador()->getEmail(), FILTER_VALIDATE_EMAIL))
             $emailfrom = $entity->getIdevento()->getIdorganizador()->getEmail();
+            // $emailfrom = "inscripciones@sistemapia.com";
         else
             return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                         'url' => $this->generateUrl('competidor_find', array('idevento' => $form->get('idevento')->getData()->getId())),
@@ -1958,8 +2124,14 @@ class InscritoController extends commonPIAClass {
         $competencias=$em->getRepository("FraterSoftPiaWebBundle:Competencia")->findBy(array('idevento'=>$idevento));
         $categorias=$em->getRepository("FraterSoftPiaWebBundle:Categoria")->listaCategorias($idevento);
         $estados=$em->getRepository("FraterSoftPiaWebBundle:Estado")->findAll();
+        /*foreach($estados as $estado){
+            print_r($estado->nombre);
+        }*/
         $paises=$em->getRepository("FraterSoftPiaWebBundle:Pais")->findAll();
         $formaspago=$em->getRepository("FraterSoftPiaWebBundle:Formaspagoevento")->listarPublicos($idevento,$default_moneda);
+        /*foreach($formaspago as $formapago){
+            print_r($formapago['nombre']);print_r(',');
+        }*/
         //$precios=$em->getRepository("FraterSoftPiaWebBundle:Preciosevento")->findBy(array('idevento'=>$idevento));
         
         $form->handleRequest($request);
@@ -1979,7 +2151,7 @@ class InscritoController extends commonPIAClass {
             $count_competidores_i=0; //contador de competidores insertados
             $count_competidores_a=0; //contador de competidores actualizados
             foreach($csv as $csvcompetidor){
-                //print_r($csvcompetidor);
+    //            print_r($csvcompetidor);
                 $competidor = new Competidor();
                 //recorre los campos de la linea leida
                 foreach($csvcompetidor as $clave => $valor){
@@ -2012,8 +2184,8 @@ class InscritoController extends commonPIAClass {
                                         /* Quitar ese codigo cuando se configure el campo idpais como clave foranea */
                                         if($campo=="idpais"){
                                             $entity = $em->getRepository("FraterSoftPiaWebBundle:Pais")->findOneBy(array('nombre'=>$valor));
-                                            if($entity)
-                                                $accessor->setValue($competidor,$campo,$entity->getId());
+                                        if($entity)
+                                            $accessor->setValue($competidor,$campo,$entity->getId());
                                         }
                                         /*******************************************************************************/
                                         else
@@ -2040,11 +2212,11 @@ class InscritoController extends commonPIAClass {
                     //Valida si el competidor es un usuario registrado pia, es
                     //decir, si posee email personal, no actualiza los datos.
                     //Solo el usuario puede actualizar sus datos personales
-                    if($competidorfind->getEmailpersonal()==""){ 
-                        $this->actualizaEntity($em, $competidor, $competidorfind);
-                        $em->persist($competidorfind);
-                        $count_competidores_a++;
-                    }
+                    //if($competidorfind->getEmailpersonal()==""){ 
+                        //$this->actualizaEntity($em, $competidor, $competidorfind);
+                        //$em->persist($competidorfind);
+                        //$count_competidores_a++;
+                    //}
                 }
                 
             }            
@@ -2075,6 +2247,7 @@ class InscritoController extends commonPIAClass {
                 $inscrito=$em->getRepository("FraterSoftPiaWebBundle:Inscrito")->findOneBy(array(
                     'idpia'=>$idpia->getId(),'idevento'=>$idevento,'status'=>'1'
                 ));
+
                 if(!$inscrito){ //si no esta inscrito
                     //Validar si hay cupos
                     $cantidad=$em->getRepository("FraterSoftPiaWebBundle:Inscrito")->cantidad($idevento);                    
@@ -2093,17 +2266,19 @@ class InscritoController extends commonPIAClass {
                     $inscrito= new Inscrito();
                     $inscrito->setIdevento($evento);
                     $inscrito->setIdpia($idpia);
-                    $inscrito->setIdCompetencia($categorias[0]->getIdcompetencia());
-                    $inscrito->setNumero($csvcompetidor['numero']==""?null:$csvcompetidor['numero']);
+                    //$inscrito->setIdCompetencia($categorias[0]->getIdcompetencia());
                     foreach($categorias as $categoria){
-                        if($categoria->getDescripcion()==$csvcompetidor['categoria'])
+                        if($categoria->getDescripcion()==$csvcompetidor['categoria']){
                             $inscrito->setIdCategoria($categoria);
+                            $inscrito->setIdCompetencia($categoria->getIdcompetencia());
+                        }
                     }
                     $inscrito->setFechahora(new \DateTime('now'));
                     $inscrito->setPunto('PIAK');
                     $inscrito->setEquipo($csvcompetidor['equipo']);
                     $inscrito->setPrecio($csvcompetidor['precio']);
                     $inscrito->setStatus(1);
+                    $inscrito->setNumero($csvcompetidor['numero']==""?null:$csvcompetidor['numero']);
                     //$inscrito->setIdpago($pago);
                     $maxsec = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->maximaSecuencia($idevento);
                     $inscrito->setSecuencia($maxsec ? $maxsec + 1 : 1);
@@ -2116,21 +2291,33 @@ class InscritoController extends commonPIAClass {
                     $pago->setMonto($csvcompetidor['precio']);
                     $pago->setReferencia($csvcompetidor['referencia']);
                     $pago->setBanco($csvcompetidor['banco']);
-                    $pago->setConciliadoEl(new \DateTime('now'));
-                    $formapago=$em->getRepository("FraterSoftPiaWebBundle:Formaspagoevento")->
-                            buscaPorNombre($idevento,$csvcompetidor['formapago']);
+                    if($csvcompetidor['conciliadoel']=="")
+                        $pago->setConciliadoEl(new \DateTime('now'));
+                    else
+                        $pago->setConciliadoEl(new \DateTime($csvcompetidor['conciliadoel']));
+                    $formapago=$em->getRepository("FraterSoftPiaWebBundle:Formaspagoevento")->buscaPorNombre($idevento,$csvcompetidor['formapago']);
                     $pago->setTipo($formapago[0]['idformapago']['id']);
                     $pago->setConciliado(true);
                     $pago->setIdInscrito($inscrito);
 
                     $em->persist($pago);
                     
-                    $em->flush();                    
-                    
                     $count_inscritos_i++;
                 }
-                else
-                    $count_inscritos_existentes++;               
+                else{
+                    $count_inscritos_existentes++;
+                    $inscrito->setNumero($csvcompetidor['numero']==""?null:$csvcompetidor['numero']);
+                    $em->persist($inscrito); //actualiza el numero por defecto
+                    $pago=$em->getRepository("FraterSoftPiaWebBundle:Pago")->findOneBy(array(
+                        'idinscrito'=>$inscrito->getId()
+                    ));                    
+                    if($csvcompetidor['conciliadoel']=="")
+                        $pago->setConciliadoEl(new \DateTime('now'));
+                    else
+                        $pago->setConciliadoEl(new \DateTime($csvcompetidor['conciliadoel']));
+                    $em->persist($pago);
+                }
+                $em->flush();                  
             }
             if($count_inscritos_i==0)
                 $mensaje='TODAS LAS INSCRIPCIONES YA EXISTEN EN EL EVENTO. NO SE CARGO NINGUA INSCRIPCION.';

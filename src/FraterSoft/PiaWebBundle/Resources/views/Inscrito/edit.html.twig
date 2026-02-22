@@ -1,15 +1,304 @@
 {% extends '::base.html.twig' %}
+{% import "FraterSoftPiaWebBundle:Default:FS-TWIG-Library.html.twig" as twiglib %}
+    
+{#{%macro opeart(operador_art)%}
+    {%if(operador_art=='>')%}>{%elseif(operador_art=='<')%}<{%elseif(operador_art=='>=')%}>={%elseif(operador_art=='<=')%}<={%elseif(operador_art=='==')%}=={%elseif(operador_art=='!=')%}!={%endif%}
+{%endmacro%}
+{%macro opelog(operador_log)%}
+    {%if(operador_log=='&&')%}&&{%elseif(operador_log=='||')%}||{%elseif(operador_log=='!')%}!{%endif%}
+{%endmacro%}#}
+{% if entity.idevento.tema is defined and entity.idevento.tema is not null %}{% set temastyle=entity.idevento.tema.styles %}{% endif %}
 {% block stylesheets %}
     <link href="{{asset('bundles/fratersoftpiaweb/fine-uploader/fine-uploader.min.css')}}" rel="stylesheet" type="text/css"/>
 {% endblock %}
 {% block jsQuery %}    
     <script src="{{asset('bundles/fratersoftpiaweb/fine-uploader/fine-uploader.min.js')}}" type="text/javascript"></script>
-{% endblock %}   
+{% endblock %}
 
+{% block style %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}
+    <style type="text/css">        
+        
+        .contenido{    
+            margin: auto;
+            width: 405px;
+        }
+                
+        #namefile_fileiddocumento,
+        #namefile_foto,
+        #namefile_filepartidanacimiento,
+        #namefile_filecertificadodeportivo{
+            width: 145px !important; 
+        }
+
+        #btn_foto,
+        #btn_fileiddocumento,
+        #btn_filepartidanacimiento,
+        #btn_filecertificadodeportivo{
+            height: 21px;
+            width: 31px;
+        }     
+        #btn_foto > span,
+        #btn_fileiddocumento > span,
+        #btn_filepartidanacimiento > span,
+        #btn_filecertificadodeportivo > span{
+            padding-bottom: 0;
+            padding-top: 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        #icon-foto,
+        #icon-fileiddocumento,
+        #icon-filepartidanacimiento,
+        #icon-filecertificadodeportivo{
+            vertical-align: middle;
+        }
+        #imagen_foto,
+        #imagen_fileiddocumento,
+        #imagen_filepartidanacimiento,
+        #imagen_filecertificadodeportivo{
+            height: 20px;
+            vertical-align: middle;
+            padding-right: 2px;
+        }
+
+        /******************************************************/
+        /*Configura el estilo del formulario de inscripciones */
+        /******************************************************/
+        #formulario > div:nth-child(2) {
+            display:none;
+        }
+        #formulario > div:nth-child(4){
+            margin: 0px;
+        }
+        #formulario > div:nth-child(4) > label{
+            display:none;
+        }
+        #formulario > div:nth-child(n+0) > label{
+            width: 180px;
+            text-transform: capitalize;
+        }
+        #formulario > div:nth-child(n+0) > select {
+            height: 21px;
+            width: 204px;
+        }
+
+        /***********************************************************************
+        * Da formato al formulario del competidor *
+        ***********************************************************************/           
+        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0){
+            margin-top: 5px;
+        }         
+        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0) > label{
+            display: inline-block;
+            width: 180px;
+            text-align: left;   
+            vertical-align: middle;
+            text-transform: capitalize;
+        }
+        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0) > input[type="checkbox"]{
+            vertical-align: middle;
+            margin-left: 0;
+        }
+        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea{
+            vertical-align: middle;
+            width: 196px;
+        }
+        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0) > select {
+            height: 21px;
+            width: 204px;
+        }
+        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0) > label[class="error"]{
+            width: 20px;
+        }
+        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0):hover{
+            font-weight: bold;
+        }         
+        
+        {%if edit_form.pagos is defined %}
+        
+        /****************************************************/
+        /*  Configura el estilo del subformulario pago ******/
+        /****************************************************/
+        div[id*=idmoneda]{
+            width: 204px;
+            float: right;        
+        }
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea{
+            vertical-align: middle;
+            width: 196px;
+        }
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > select {
+            height: 21px;
+            width: 204px;
+        }
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > label{
+            display: inline-block;
+            width: 180px;
+            text-align: left;   
+            vertical-align: middle;
+        }
+        #fratersoft_piawebbundle_inscrito_pagos > div > label{
+            display:none;
+        }        
+        #fratersoft_piawebbundle_inscrito_pagos_0 > div:nth-child(1) {
+            width: 98% !important;
+            border: 1px solid black;
+            text-align: center !important;
+            font-size: 10px;
+            padding:3px;
+        }
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) {
+            margin-top: 5px;
+        }
+        {% endif %}
+        /***********************************************************************************************************/
+        
+        table, th, td {
+            border: 0px solid black;
+            border-collapse: collapse;
+        }        
+        #grupo{
+            border: 1px solid rgb(169, 169, 169);
+            padding: 3px;
+        }
+        #mensajepagotarjeta{
+            display:none;
+            padding-top: 45px;
+            text-align:center;
+        }
+        #camposimple{
+            border: 1px solid rgb(169, 169, 169);
+            height: 19px;
+            width: 198px;
+            display: flex;
+            align-items: center;    
+            background: white;
+        }        
+        input.error,select.error,.verimail-error.valid { 
+            border: 1px solid red; 
+            background-color: #ffa07a;
+        }
+        .valid{
+            background-color: white;
+        }
+        label.error {
+            display:none !important; 
+        }                  
+        #montorecarga{
+            -webkit-appearance: textarea;
+            border: 1px solid gray;
+            font: medium -moz-fixed;
+            font: -webkit-small-control;
+            height: 16px;
+            padding: 2px 0px 2px 0px;
+            resize: both;
+            width: 198px;
+        }
+        #titulogrupos{
+            text-align: center;
+            display:none;
+        }    
+        {#% endif %#}
+        
+    @media screen and (max-width: 547px){
+        form{
+            font-size: 0.9em;
+            width: 344px;
+        }
+        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea,
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > input[type="text"], input[type="number"], textarea{
+            width: 166px;
+            font-size: 0.8em;
+        }
+        #fratersoft_piawebbundle_inscrito_idpia > div:nth-child(n+0) > select,
+        #formulario > div:nth-child(n+0) > select,
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > select,
+        div[id*=idmoneda] {        
+            height: 18px;
+            width: 174px;
+            font-size: 0.8em;
+        }
+        #fratersoft_piawebbundle_inscrito_idpia > div:nth-child(n+0) > label,
+        #formulario > div:nth-child(n+0) > label ,
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > label {
+            width: 160px;
+        }   
+    }
+        
+   </style>
+{% endblock %}    
+{% block poweredby %}
+{% for publicidad in entity.idevento.publicidad %}
+    {% if publicidad.idubicacion == 3 and publicidad.estatus==1 %}
+        <div style="text-align: center;">
+            <img width="1350" height="100" src="{{asset('bundles/fratersoftpiaweb/images/' ~ publicidad.imagen)}}"/>
+        </div>
+    {% endif %}
+{% endfor %}
+<div id="poweredby" style="text-align: center;margin: 10px 20px 30px;border: 1px">
+    <a href="http://www.sistemapia.com" target="_blank" style="text-decoration:none">
+        <b style="font-size: 9px">
+            V-{{ asset('')|slice(7,asset('')|length-5-7) }}
+        </b><br>
+        <strong>
+        powered by
+        <img width="40" align="center" 
+             src="{{asset('bundles/fratersoftpiaweb/images/logopiaft.png')}}"/>
+        </strong>
+    </a>
+</div>
+{% endblock %}
+{% set index_pago = edit_form.pagos|length %}
+{% block body -%}   
+    <div class="contenido">    
+        <div id="titulogrupos">    
+            <div>Inscripciones Grupales</div>
+            <div>Agregre Integrante <b>N° {# {integrante} #}</b> {#% if integrante > 1 %#}o Edite el Grupo{#% endif %#}</div>
+        </div>   
+        {{ form_start(edit_form,{'attr': {'id': 'formulario'}}) }}
+        {{ form_end(edit_form) }} 
+        <div id="uploadimage">    
+            <div id="fine-uploader"></div>  
+            {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
+        </div>   
+        {{twiglib.mensajetdc()}}
+    </div>    
+{% endblock %}
 {% block javascripts %}
+    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':entity.idevento.id}) }}            
     <script>
-
+    
+        function addPagoForm(collectionHolder, $newLinkLi) {
+            // Obtiene los datos del prototipo explicado anteriormente
+            var prototype = collectionHolder.data('prototype');
+        
+            // Consigue el nuevo índice
+            var index = collectionHolder.data('index');
+        
+            // Sustituye el '__name__' en el prototipo HTML para que
+            // en su lugar sea un número basado en cuántos elementos hay
+            var newForm = prototype.replace(/__name__/g, index);
+            
+        
+            // Incrementa en uno el índice para el siguiente elemento
+            collectionHolder.data('index', index + 1);
+        
+            // Muestra el formulario en la página en un elemento li,
+            // antes del enlace 'Agregar una etiqueta'
+            var $newFormLi = $('<li></li>').append(newForm);
+            $newLinkLi.before($newFormLi);
+        }    
+        
+        {% for atributo in atributos %}
+            $("#fratersoft_piawebbundle_inscrito_idpia_{{ atributo.idatributo.nombre|lower }}").change(function () {
+                buscaCategorias();
+            });
+        {% endfor %}      
+        
+        var precios=[];
         function buscaCategorias() {
+        {% if edit_form.idcategoria is defined %}
             //Busca las categorias segun los atributos configurados
             if(!$('#{{ edit_form.idcompetencia.vars.id }}').val()){
                 alert('Debe seleccionar una Competencia');
@@ -26,7 +315,7 @@
                     criterios += "&";
             {% endif %}
         {% endfor %}      
-                    //alert(criterios);
+                    console.log("{{ path('inscrito_categorias') }}?" + criterios);
                     $.ajax(
                             {
                                 type: "GET",
@@ -37,14 +326,24 @@
                                 {
                                     $("#{{ edit_form.idcategoria.vars.id }}").empty();
                                     $("#{{ edit_form.idcategoria.vars.id }}").prop("required", true);
+                                    if (datos.length == 0){
+                                        alert("No existe una Categoria aplicable");
+                                        return(null);
+                                    }
                                     if (datos.length > 1)
                                         $("#{{ edit_form.idcategoria.vars.id }}").append("<option selected value=''>Seleccione una Categoría</option>");
                                     else
+                                        {% if entity.idevento.proceso == 1 %}
+                                        //console.log($("#formulario input[type='radio']:checked").val());
                                         buscaPrecio(
                                                 $('#{{ edit_form.idevento.vars.id }}').val(),
                                                 $('#{{ edit_form.idcompetencia.vars.id }}').val(),
-                                                datos[0].id
-                                        );                                        
+                                                datos[0].id,
+                                                $('#formulario'),
+                                                {{null|json_encode|raw}},
+                                                $("#formulario input[type='radio']:checked").val()
+                                        );    
+                                        {% endif %}
                                     $.each(datos, function (key, value) {
                                         $('#{{ edit_form.idcategoria.vars.id }}').append($('<option>', {
                                             value: value.id,
@@ -58,72 +357,103 @@
                                 }
                             }
                     );
-                }
-
-        function buscaPrecio(idevento, idcompetencia, idcategoria) {
-            {%if entity.idevento.proceso == 1%}
-            //Busca el precio segun configuracion
-            var criterios = "idevento=" + idevento
-                    + "&idcompetencia=" + idcompetencia
-                    + "&idcategoria=" + idcategoria;
-            $('#{{ edit_form.precio.vars.id }}').find('option').remove();
-            $.ajax({
-                type: "GET",
-                data: criterios,
-                url: "{{ path('inscrito_precio') }}",
-                dataType: "json",
-                success: function (datos)
-                {
-                    if(datos['values'][0]['values'].length>1)
-                        $("#{{ edit_form.precio.vars.id }}").append("<option selected value=''>Seleccione un Precio</option>");
-                    $.each(datos['values'][0]['values'], function (key, value) {
-                        if(value.precio!=-1){
-                            $('#{{ edit_form.precio.vars.id }}').append($('<option>', {
-                                value: value.precio,
-                                text: ((value.texto==null)?'':value.texto) + ' ' + value.moneda + ' ' + value.precio
-                            }));
-                            $("#{{ edit_form.precio.vars.id }}").prop("disabled", false);
-                            $("#{{ edit_form.idpago.banco.vars.id }}").prop("disabled", false);
-                            $("#{{ edit_form.idpago.referencia.vars.id }}").prop("disabled", false);
-                            $("#{{ edit_form.idpago.tipo.vars.id }}").prop("disabled", false);                                      
-                        }
-                        else{
-                            $('#{{ edit_form.precio.vars.id }}').append($('<option>', {
-                                value: 0,
-                                text: "EXONERADO"
-                            }));
-                            $("#{{ edit_form.precio.vars.id }}").prop("disabled", true);
-                            $("#{{ edit_form.idpago.banco.vars.id }}").prop("disabled", true);
-                            $("#{{ edit_form.idpago.referencia.vars.id }}").prop("disabled", true);
-                            $("#{{ edit_form.idpago.tipo.vars.id }}").prop("disabled", true);                                
-                        }
-                    });             
-                },
-                error: function (jqXHR, textStatus, errorThrown)
-                {
-                    alert("PIA Ajax Error: " + jqXHR.responseText);
-                }
-            });
-            {% endif %}
-        }        
+        {% endif %}                    
+        }
 
         $().ready(function () {
+            
+            $("#{{ edit_form.pagos[0].info.vars.id }}").removeAttr("required");
+            $("#{{ edit_form.pagos[0].idbanco.vars.id }}").removeAttr("required");
+            {# {% if idgrupo is not null %} #}
+            {# $('#{{edit_form.idcompetencia.vars.id}}').val({{idcompetencia}}); #}
+            {# $('#{{edit_form.idcompetencia.vars.id}}').prop("disabled",true); #}
+            {# {% endif %} #}
+        
+            {# GENERAR CODIGO JAVA SCRIPTS DINAMICO 
+            if({{valor1}}{{_self.opeart(operador_ari)}}{{valor2}}{{_self.opelog(operador_log)}}{{valor1}}{{_self.opeart(operador_ari)}}{{valor2}})
+                console.log('hola'); #}
 
             {%if entity.idevento.proceso == 1%}
             //Busca los precios para los valores por defecto
-            buscaPrecio($('#{{ edit_form.idevento.vars.id }}').val(),
-                        $('#{{ edit_form.idcompetencia.vars.id }}').val()?$('#{{ edit_form.idcompetencia.vars.id }}').val():'',
-                        $('#{{ edit_form.idcategoria.vars.id }}').val()?$('#{{ edit_form.idcategoria.vars.id }}').val():'');
 
             //Habilita el campo del banco justo antes de enviar el formulario
             $("form#formulario" ).submit(function( event ) {
-                if($("#{{ edit_form.idpago.tipo.vars.id }}").val()=='1')
-                    $("#{{ edit_form.idpago.banco.vars.id }}").removeAttr("disabled");
-                if($("#{{ edit_form.idpago.tipo.vars.id }}").val()=='0'){
-                    $("#{{ edit_form.idpago.banco.vars.id }}").removeAttr("required");
-                    $("#{{ edit_form.idpago.tipo.vars.id }}").removeAttr("disabled");
-                }
+                {# {% if idgrupo is not null %} #}
+                {# $('#{{form.idcompetencia.vars.id}}').removeAttr("disabled"); #}
+                {# {% endif %} #}
+                {% if edit_form.pagos is defined %}
+                $("#{{ edit_form.pagos[0].precio.vars.id }}").removeAttr("disabled");
+                {#if($("#{{ edit_form.pagos.idformapago.vars.id }}").val()=='1')
+                    $("#{{ edit_form.pagos.idbanco.vars.id }}").removeAttr("disabled");
+                if($("#{{ edit_form.pagos.idformapago.vars.id }}").val()=='0'){
+                    $("#{{ edit_form.pagos.idbanco.vars.id }}").removeAttr("required");
+                    $("#{{ edit_form.pagos.idformapago.vars.id }}").removeAttr("disabled");
+                }#}
+                {% endif %}
+                
+                //Valida que no se envien ambos correos vacios
+                if($("#{{edit_form.idpia.email.vars.id}}").val()=="" && $("#{{edit_form.idpia.emailpersonal.vars.id}}").val()==""){
+                    alert("Debe ingresar el Email Personal o el Secundario, ambos no pueden estar vacios");
+                    return false;
+                }            
             });
+            
+            var competenciasgrupo={{null|json_encode|raw}};
+            if($.inArray($("#{{ edit_form.idcompetencia.vars.id }}").val(),competenciasgrupo)!=-1){
+                $("#{{edit_form.idcategoria.vars.id}}").prop("disabled", true);
+                $("#{{edit_form.pagos[0].precio.vars.id}}").prop("disabled", true);
+                $("#{{ edit_form.pagos[0].precio.vars.id }}").attr('required',false);
+                {% for campopago in edit_form.pagos[0] %}
+                    $("#{{campopago.vars.id}}").prop("disabled", true);
+                {% endfor %}
+                {# $("#{{edit_form.info.vars.id}}").parent().hide();  #}
+                $("#titulogrupos").show();
+            }
+            else{
+                {% if edit_form.idcategoria is defined and edit_form.pagos is defined and entity.idevento.proceso == 1%}
+                buscaPrecio($('#{{ edit_form.idevento.vars.id }}').val(),
+                            $('#{{ edit_form.idcompetencia.vars.id }}').val()?$('#{{ edit_form.idcompetencia.vars.id }}').val():'',
+                            $('#{{ edit_form.idcategoria.vars.id }}').val()?$('#{{ edit_form.idcategoria.vars.id }}').val():'',
+                            $('#formulario'),
+                            {{null|json_encode|raw}},
+                            $("#formulario input[type='radio']:checked").val()
+                );
+                {% endif %}                
+            }
+            //Recalcula la categoria si es cambiado la competencia
+            $("#{{ edit_form.idcompetencia.vars.id }}").change(function () {
+                if($.inArray($("#{{ edit_form.idcompetencia.vars.id }}").val(),competenciasgrupo)!=-1){
+                    $("#{{edit_form.idcategoria.vars.id}}").prop("disabled", true);
+                    $("#{{edit_form.pagos[0].precio.vars.id}}").prop("disabled", true);
+                    $("#{{ edit_form.pagos[0].precio.vars.id }}").attr('required',false);
+                    {% for campopago in edit_form.pagos %}
+                        $("#{{campopago.vars.id}}").prop("disabled", true);
+                    {% endfor %}
+                    {#$("#{{edit_form.idcategoria.vars.id}}").parent().hide();#}
+                    {#$("#{{edit_form.precio.vars.id}}").parent().hide();  #}
+                    {#$("#{{edit_form.pagos[0].vars.id}}").parent().hide();  #}
+                    $("#{{edit_form.pagos[0].info.vars.id}}").parent().hide();
+                    $("#titulogrupos").show();
+                    $("#{{ edit_form.submit.vars.id }}").html('<span class="ui-button-text">Agregar</span>');
+                }
+                else{
+                    $("#{{edit_form.idcategoria.vars.id}}").parent().show();
+                    $("#{{edit_form.idcategoria.vars.id}}").removeAttr("disabled");
+                    $("#{{edit_form.pagos[0].precio.vars.id}}").parent().show();
+                    $("#{{edit_form.pagos[0].precio.vars.id}}").removeAttr("disabled");
+                    $("#{{edit_form.pagos.vars.id}}").parent().show();
+                    {% for campopago in edit_form.pagos %}
+                        $("#{{campopago.vars.id}}").removeAttr("disabled");
+                    {% endfor %}
+                    $("#{{edit_form.pagos[0].info.vars.id}}").parent().show();
+                    $("#titulogrupos").hide();
+                    if ($("#{{ edit_form.idcompetencia.vars.id }}").val() != '') {
+                        buscaCategorias();
+                    }
+                    $("#{{ edit_form.submit.vars.id }}").html('<span class="ui-button-text">Inscribir</span>');
+                }                
+            });                      
+            
             {% elseif entity.idevento.proceso == 2 %}
                 $("form#formulario" ).submit(function( event ) {
                     {% if edit_form.idpia.email is defined and edit_form.idpia.emailpersonal is defined %}
@@ -138,34 +468,40 @@
                     if(!validaRequiredHidden($("#{{ edit_form.idpia.filecertificadodeportivo.vars.id }}"))) return false;#}
                 });                    
             {% endif %}
+            
+            //Bloquea a solo lecutara los campos que el usurio no debe cambiar si el
+            //evento es de tipo campeonato
+            {%if entity.idevento.idcampeonato.id is defined %}
+                {#$("#{{ edit_form.idpia.equipo.vars.id }}").attr('readonly',true);
+                $("#{{ edit_form.numero.vars.id }}").attr('readonly',true);
+                $("#{{ edit_form.idcategoria.vars.id }}").attr('readonly',true);#}
+            {% endif %}
 
-            {% if entity.idpia.emailpersonal is defined %}
+            {% if edit_form.idpia.emailpersonal.vars.id is defined %}
+            $emailoriginal=$("#{{ edit_form.idpia.emailpersonal.vars.id }}").val();
             $("#{{ edit_form.idpia.emailpersonal.vars.id }}").blur(function () {
-                if($("#{{ edit_form.idpia.emailpersonal.vars.id }}").val()!="{{entity.idpia.emailpersonal}}")
-                    validaEmailPersonal($("#{{edit_form.idpia.emailpersonal.vars.id}}"));
+                if($("#{{ edit_form.idpia.emailpersonal.vars.id }}").val()!="{% if entity.idpia %} {{entity.idpia.emailpersonal}} {% endif %}")
+                    validaEmailPersonal($emailoriginal,$("#{{edit_form.idpia.emailpersonal.vars.id}}"));
             });
             {% endif %}
-            
 
-            //Recalcula la categoria si es cambiado la competencia
-            $("#{{ edit_form.idcompetencia.vars.id }}").change(function () {
-                if ($("#{{ edit_form.idcompetencia.vars.id }}").val() != '') {
-                    buscaCategorias();
-                    buscaPrecio(
-                            $('#{{ edit_form.idevento.vars.id }}').val(),
-                            $('#{{ edit_form.idcompetencia.vars.id }}').val(),
-                            ''
-                    );
-                }
-            });                      
-
-            $("#mensajepago").hide();
+            //Valida que ambos correos no esten vacios
+            {% if edit_form.idpia.email is defined and edit_form.idpia.emailpersonal is defined %}
+            if($("#{{edit_form.idpia.email.vars.id}}").val()=="" && $("#{{edit_form.idpia.emailpersonal.vars.id}}").val()==""){
+                alert("Debe ingresar el Email Personal o el Secundario, ambos no pueden estar vacios");
+                return false;
+            }
+            {% endif %}  
+                            
+            //$("#mensajepago").hide();
             $("#mensajepagotarjeta").hide();
 
             //Enmascara los campos
-            if($('#{{ edit_form.idpia.telefono.vars.id }}').val()=="")
-                $("input#{{ edit_form.idpia.telefono.vars.id }}").mask("(9999) 999-9999");
+            //if($('#{{ edit_form.idpia.telefono.vars.id }}').val()=="")
+            $("input#{{ edit_form.idpia.telefono.vars.id }}").mask("(9999) 999-9999");
+            $("input#{{ edit_form.idpia.telefonoemergencia.vars.id }}").mask("(9999) 999-9999");
             $("input#{{ edit_form.idpia.fechanacimiento.vars.id }}").mask("99/99/9999");
+            $("input[id*=fechapago]").mask("99/99/9999");
 
             //Valida que el email tenga el formato adecuado
             $("input#{{ edit_form.idpia.email.vars.id }}").verimail({
@@ -182,9 +518,6 @@
             });
 
             $("#formulario").validate();
-            jQuery.extend(jQuery.validator.messages, {
-                required: "Campo requerido",
-            });
 
             jQuery.validator.addMethod("fechaESP", function (value, element)
             {
@@ -243,91 +576,68 @@
                                 $("#{{ edit_form.idpia.edad.vars.id }}").val(afe.getFullYear() - afn.getFullYear()-1);
                     {% endif %}
                     buscaCategorias();
-                    buscaPrecio(
-                            $('#{{ edit_form.idevento.vars.id }}').val(),
-                            $('#{{ edit_form.idcompetencia.vars.id }}').val(),
-                            $('#{{ edit_form.idcategoria.vars.id }}').val()
-                    );                        
+                    
                 }
             });
 
-        $("#{{ edit_form.idpia.sexo.vars.id }}").change(function () {
+        {# $("#{{ edit_form.idpia.sexo.vars.id }}").change(function () {
             buscaCategorias();
-            buscaPrecio(
-                    $('#{{ edit_form.idevento.vars.id }}').val(),
-                    $('#{{ edit_form.idcompetencia.vars.id }}').val(),
-                    $('#{{ edit_form.idcategoria.vars.id }}').val()
-            );                    
-        });
+        }); #}
 
+        $("#{{ edit_form.idcompetencia.vars.id }}").change(function () {
+            buscaCategorias();
+        });
+        
+        $("#{{ edit_form.idpia.idestado.vars.id }}").change(function () {
+            
+            if($('#{{ edit_form.idpia.idestado.vars.id }}').val() != 6){
+                $('#{{ edit_form.idpia.equipo.vars.id }}').attr('readonly',false);
+                $('#{{ edit_form.idpia.equipo.vars.id }}').val("");
+            }
+            else{
+                $('#{{ edit_form.idpia.equipo.vars.id }}').attr('readonly',true);
+                $('#{{ edit_form.idpia.equipo.vars.id }}').val("INDEPENDIENTE");
+            }
+        });        
+
+        {% if edit_form.idcategoria is defined and edit_form.pagos is defined and entity.idevento.proceso == 1%}
         $("#{{ edit_form.idcategoria.vars.id }}").change(function () {
             buscaPrecio(
                     $('#{{ edit_form.idevento.vars.id }}').val(),
                     $('#{{ edit_form.idcompetencia.vars.id }}').val(),
-                    $('#{{ edit_form.idcategoria.vars.id }}').val()
+                    $('#{{ edit_form.idcategoria.vars.id }}').val(),
+                    $('#formulario'),
+                    {{null|json_encode|raw}},
+                    $("#formulario input[type='radio']:checked").val()
             );
         });   
+        {% endif %}
 
-        {%if entity.idevento.proceso == 1%}
-        $("#{{ edit_form.idpago.tipo.vars.id }}").change(function () {
-            switch ($("#{{ edit_form.idpago.tipo.vars.id }}").val()) {
-                case '':
-                    $("#{{ edit_form.idpago.banco.vars.id }}").val(null);
-                    $("#codigo123pago").remove();
-                    $("#mensajepagotarjeta").hide();
-                    $("#{{ edit_form.idpago.referencia.vars.id }}").removeAttr("readonly");
-                    $("#{{ edit_form.idpago.banco.vars.id }}").removeAttr("disabled");
-                    $("#mensajepago").hide();
-                    $("#{{ edit_form.submit.vars.id }}").html('<span class="ui-button-text">Inscribir</span>')
-                    break;
-                case '1': //Selecciono Deposito
-                    if ($("#{{ edit_form.precio.vars.id }}").val() == 0){
-                        alert("Error el precio no puede ser 0");
-                        $("#{{ edit_form.idpago.tipo.vars.id }}").val('');                                
-                    }                                
-                    else {                             
-                        $("#{{ edit_form.submit.vars.id }}").show();
-                        {% if entity.idevento.idorganizador %} //Valida que se haya configurado el organizador en el evento
-                            $("#{{ edit_form.idpago.banco.vars.id }}").val("{{ entity.idevento.idorganizador.banco }}");
-                        {% endif %}
-                        $("#{{ edit_form.idpago.referencia.vars.id }}").prop("disabled", false);
-                        $("#{{ edit_form.idpago.banco.vars.id }}").prop("disabled",true);
-                        $("#mensajepago").show();
-                        $("#mensajepagotarjeta").hide();
-                        $("#codigo123pago").remove();
-                        $("#{{ edit_form.submit.vars.id }}").html('<span class="ui-button-text">Inscribir</span>')
-                    }
-                    break;
-                case '2': //Selecciono Transferencia
-                    if ($("#{{ edit_form.precio.vars.id }}").val() == 0){
-                        alert("Error el precio no puede ser 0");
-                        $("#{{ edit_form.idpago.tipo.vars.id }}").val('');
-                    }
-                    else {                            
-                        $("#{{ edit_form.submit.vars.id }}").show();
-                        $("#{{ edit_form.idpago.banco.vars.id }}").val("");
-                        $("#{{ edit_form.idpago.referencia.vars.id }}").prop("disabled", false);
-                        $("#{{ edit_form.idpago.banco.vars.id }}").removeAttr("disabled");
-                        $("#mensajepago").show();
-                        $("#mensajepagotarjeta").hide();
-                        $("#{{ edit_form.submit.vars.id }}").html('<span class="ui-button-text">Inscribir</span>');
-                    }
-                    break;
-                case '3': //Selecciono Tarjeta de Credito
-                    if ($("#{{ edit_form.precio.vars.id }}").val() == 0){
-                        alert("Error el precio no puede ser 0");
-                        $("#{{ edit_form.idpago.tipo.vars.id }}").val('');                                
-                    }
-                    else {
-                        $("#mensajepago").hide();
-                        $("#{{ edit_form.idpago.banco.vars.id }}").prop("disabled", true);
-                        $("#{{ edit_form.idpago.referencia.vars.id }}").prop("disabled", true);
-                        $("#{{ edit_form.submit.vars.id }}").html('<span class="ui-button-text">Continuar</span>');
-                        $("#mensajepagotarjeta").show();
-                    }
-                    break;                        
-            }
-        });
+        {%if entity.idevento.proceso == 1 and edit_form.pagos is defined %}
+        buscarFormasPago(
+            $('#formulario'),
+            {{entity.idevento.id}},
+            $("#formulario input[type='radio']:checked").val()
+        );
+        
+        ocultaCamposPagoForm($('#formulario'));
+        parametros={{null|json_encode|raw}};
+        $("select[id*=idformapago]").change(function () {
+            if(window.sessionStorage.getItem('idfp'+$("select[id*=idformapago]").val())==null)
+                if(parametros!=null && parametros[$("select[id*=idformapago]").val()]){
+                    jparametros=jQuery.parseJSON(parametros[$("select[id*=idformapago]").val()]);
+                }
+                else
+                    jparametros=[];
+            else
+                jparametros=jQuery.parseJSON(window.sessionStorage.getItem('idfp'+$("select[id*=idformapago]").val()));
+            ocultaCamposPagoForm($('#formulario'));
+            manejoFormularioPago(
+                $("input[id*=precio]"),
+                $('#formulario'),
+                jparametros
+            ); 
+        }); 
         {% endif %}
 
         if($("#{{edit_form.idpia.foto.vars.id}}").attr("type")!="hidden"){
@@ -350,7 +660,7 @@
                 cargar_imagen($("#{{ edit_form.idpia.foto.vars.id }}"),$("#imagen_foto"),350,600,null);
             });        
         }
-
+        
         if($("#{{edit_form.idpia.fileiddocumento.vars.id}}").attr("type")!="hidden"){
             controlLoadFile($("#{{edit_form.idpia.fileiddocumento.vars.id}}"),"pdf");
             controlLoadFile($("#{{edit_form.idpia.filepartidanacimiento.vars.id}}"),"pdf");
@@ -376,156 +686,37 @@
                 }
             ]
         });
-    });
+
+        {% if edit_form.precio is defined %}
+        $("#{{edit_form.precio.vars.id}}").change(function () {
+            setTextoPrecio($("#{{edit_form.precio.vars.id}} option:selected"),$("#{{edit_form.idpago.texto.vars.id}}"));
+            calcularTotalPagar(
+                    $("#{{edit_form.precio.vars.id}}"),
+                    $("#{{edit_form.idpago.monto.vars.id}}"),
+                    {# {{recargas|json_encode|raw}} #}
+                    {{null|json_encode|raw}}
+            );
+        });   
+        {% endif %}
+
+        {#$("#{{ edit_form.pagos[0].idmoneda.vars.id }}").change(function () {#}
+        $("input[id*=idmoneda]").change(function () {
+            console.log($(this).attr('id'));
+            ocultaCamposPagoForm($('#formulario'));
+            buscarFormasPago(
+                $('#formulario'),
+                {{entity.idevento.id}},
+                $("#formulario input[type='radio']:checked").val()
+            );
+            buscaPrecio({{entity.idevento.id}},
+                $('#{{ edit_form.idcompetencia.vars.id }}').val(),
+                $('#{{ edit_form.idcategoria.vars.id }}').val(),
+                $('#formulario'),
+                {{null|json_encode|raw}},
+                $("#formulario input[type='radio']:checked").val()
+            );
+        });
+        
+    });    
     </script>   
-{% endblock %}
-{% block style %}
-    {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}
-    <style type="text/css">
-        .contenido{    
-            margin: auto;
-            width: 400px;
-        }        
-        #namefile_fileiddocumento,
-        #namefile_foto,
-        #namefile_filepartidanacimiento,
-        #namefile_filecertificadodeportivo{
-            width: 145px !important; 
-        }
-
-        #btn_foto,
-        #btn_fileiddocumento,
-        #btn_filepartidanacimiento,
-        #btn_filecertificadodeportivo{
-            height: 21px;
-            width: 31px;
-        }     
-        #btn_foto > span,
-        #btn_fileiddocumento > span,
-        #btn_filepartidanacimiento > span,
-        #btn_filecertificadodeportivo > span{
-            padding-bottom: 0;
-            padding-top: 0;
-            padding-left: 0;
-            padding-right: 0;
-        }
-        #icon-foto,
-        #icon-fileiddocumento,
-        #icon-filepartidanacimiento,
-        #icon-filecertificadodeportivo{
-            vertical-align: middle;
-        }
-        #imagen_foto,
-        #imagen_fileiddocumento,
-        #imagen_filepartidanacimiento,
-        #imagen_filecertificadodeportivo{
-            height: 20px;
-            vertical-align: middle;
-            padding-right: 2px;
-        }
-
-        /******************************************************/
-        /*Configura el estilo del formulario de inscripciones */
-        /******************************************************/        
-        #formulario > div:nth-child(7):hover{
-            font-weight: bold;
-        }  
-        #formulario > div:nth-child(8):hover{
-            font-weight: bold;
-        }  
-        #formulario > div:nth-child(3):hover{
-            font-weight: bold;
-        }  
-        #formulario > div:nth-child(2) {/*Oculta el evento*/
-            display:none;
-        }
-        #formulario > div:nth-child(n+0) > label{
-            width: 180px;
-        }           
-        #formulario > div:nth-child(4){
-            margin: 0px;
-        }        
-        /***********************************************************************
-        * Da formato al formulario del competidor *
-        ***********************************************************************/
-        #formulario > div:nth-child(4){
-            margin: 0px;
-        }
-        #formulario > div:nth-child(4) > label{
-            display:none;
-        }
-        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0){
-            margin-top: 5px;
-        }         
-        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0):hover{
-            font-weight: bold;
-        }  
-        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0) > label{
-            display: inline-block;
-            width: 180px;
-            text-align: left;   
-            vertical-align: middle;
-        }
-        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0) > input[type="checkbox"]{
-            vertical-align: middle;
-            margin-left: 0;
-        }
-        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea{
-            vertical-align: middle;
-            width: 196px;
-        }
-        #{{edit_form.idpia.vars.id}} > div:nth-child(n+0) > select {
-            height: 21px;
-        }
-        /***********************************************************************
-        * Da formato al formulario de Pago*
-        ***********************************************************************/
-        {# #{{edit_form.idpago.vars.id}} > div:nth-child(1){
-            display: none;
-        }         
-        #{{edit_form.idpago.vars.id}} > div:nth-child(n+0){
-            margin-top: 5px;
-        }         
-        #{{edit_form.idpago.vars.id}} > div:nth-child(n+0):hover{
-            font-weight: bold;
-        }  
-        #{{edit_form.idpago.vars.id}} > div:nth-child(n+0) > label{
-            display: inline-block;
-            width: 180px;
-            text-align: left;   
-            vertical-align: middle;
-        }
-        #{{edit_form.idpago.vars.id}} > div:nth-child(n+0) > input[type="checkbox"]{
-            vertical-align: middle;
-            margin-left: 0;
-        }
-        #{{edit_form.idpago.vars.id}} > div:nth-child(n+0) > label[class="error"]{
-            width: 20px;
-        }
-        #{{edit_form.idpago.vars.id}} > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea{
-            vertical-align: middle;
-            width: 196px;
-        }
-        #{{edit_form.idpago.vars.id}} > div:nth-child(n+0) > select {
-            height: 21px;
-        }  #}  
-        .group_fields {
-            width: 96% !important;
-            border: 1px solid black;
-            text-align: center !important;
-            font-size: 10px;
-            padding:3px;
-        }           
-   </style>
-{% endblock %}    
-{% block body -%}
-    <div class="contenido">
-        {{ form_start(edit_form,{'attr': {'id': 'formulario'}}) }}
-        {{ form_end(edit_form) }} 
-        <div id="uploadimage">    
-            <div id="fine-uploader"></div>  
-            {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
-        </div>     
-        {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}      
-    </div>     
 {% endblock %}

@@ -40,10 +40,20 @@ class EventoController extends commonPIAClass
         if($email=='admin'){
             $entities = $em->getRepository('FraterSoftPiaWebBundle:Evento')->enproceso('admin');             
             $ejecutados = $em->getRepository('FraterSoftPiaWebBundle:Evento')->ejecutados('admin');
+            $nivelseguridad = 1;
         }
         else{
-            $entities = $em->getRepository('FraterSoftPiaWebBundle:Evento')->enproceso($email);
-            $ejecutados = $em->getRepository('FraterSoftPiaWebBundle:Evento')->ejecutados($email);
+            $eventospatrocinantes = $em->getRepository('FraterSoftPiaWebBundle:Organizador')->eventosPubilidadPatrocinantePorEmail($email);
+            if($eventospatrocinantes == null){
+                $entities = $em->getRepository('FraterSoftPiaWebBundle:Evento')->enproceso($email);
+                $ejecutados = $em->getRepository('FraterSoftPiaWebBundle:Evento')->ejecutados($email);
+                $nivelseguridad = 1;
+            }
+            else{
+                $entities = $eventospatrocinantes;
+                $ejecutados = null;
+                $nivelseguridad = 2;
+            }
         }
         
         $request = $this->container->get('request');
@@ -53,7 +63,8 @@ class EventoController extends commonPIAClass
         return $this->render('FraterSoftPiaWebBundle:Evento:listaporemail.html.twig', array(
             'entities' => $entities,
             'ejecutados' => $ejecutados,
-            'email' => $email
+            'email' => $email,
+            'nivel_seguridad' => $nivelseguridad,
         ));
     }
     /**

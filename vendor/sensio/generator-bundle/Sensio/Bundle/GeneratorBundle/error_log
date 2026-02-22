@@ -1,0 +1,1 @@
+[02-Dec-2024 08:00:45 America/Caracas] PHP Fatal error:  Class 'Symfony\Component\HttpKernel\Bundle\Bundle' not found in /home/sistem19/public_html/piaweb/vendor/sensio/generator-bundle/Sensio/Bundle/GeneratorBundle/SensioGeneratorBundle.php on line 22

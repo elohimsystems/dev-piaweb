@@ -1,0 +1,2 @@
+[22-Apr-2025 04:09:08 America/Caracas] PHP Fatal error:  Class 'Sensio\Bundle\GeneratorBundle\Manipulator\Manipulator' not found in /home/sistem19/public_html/piaweb/vendor/sensio/generator-bundle/Sensio/Bundle/GeneratorBundle/Manipulator/KernelManipulator.php on line 22
+[22-Apr-2025 23:31:46 America/Caracas] PHP Fatal error:  Class 'Sensio\Bundle\GeneratorBundle\Manipulator\Manipulator' not found in /home/sistem19/public_html/piaweb/vendor/sensio/generator-bundle/Sensio/Bundle/GeneratorBundle/Manipulator/RoutingManipulator.php on line 22

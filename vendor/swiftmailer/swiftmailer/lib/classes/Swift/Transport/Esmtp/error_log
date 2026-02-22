@@ -1,0 +1,1 @@
+[23-Apr-2025 18:32:05 America/Caracas] PHP Fatal error:  Interface 'Swift_Transport_EsmtpHandler' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Transport/Esmtp/AuthHandler.php on line 19
