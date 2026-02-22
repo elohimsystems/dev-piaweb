@@ -1,0 +1,6 @@
+[14-Mar-2025 14:04:14 America/Caracas] PHP Fatal error:  Interface 'Swift_Signers_HeaderSigner' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Signers/DKIMSigner.php on line 19
+[15-Mar-2025 00:55:31 America/Caracas] PHP Fatal error:  Class 'Swift_Signers_DKIMSigner' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Signers/OpenDKIMSigner.php on line 21
+[17-Mar-2025 17:58:59 America/Caracas] PHP Fatal error:  Interface 'Swift_Signer' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Signers/HeaderSigner.php on line 18
+[23-Mar-2025 00:51:48 America/Caracas] PHP Fatal error:  Interface 'Swift_Signer' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Signers/BodySigner.php on line 19
+[28-Mar-2025 13:39:28 America/Caracas] PHP Fatal error:  Interface 'Swift_Signers_HeaderSigner' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Signers/DomainKeySigner.php on line 19
+[09-Apr-2025 10:34:58 America/Caracas] PHP Fatal error:  Interface 'Swift_Signers_BodySigner' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Signers/SMimeSigner.php on line 21

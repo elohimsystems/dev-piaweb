@@ -26,20 +26,27 @@
                         title: 'Listado Inscritos {{nombreevento}}'
                     }, 
                     { extend: 'print', text: 'Imprimir' },
-                    {text: 'Asignar Numeros',
+                    {%if nivel_seguridad == 1%}
+                    /*{text: 'Asignar Numeros',
                         action: function (e, dt, node, config) {
                             $("#anumeros").dialog("open");
-                    }},                 
+                    }},*/                 
+                    {% endif %}
+                    {%if nivel_seguridad == 1%}
                     {text: 'Resetear Numeros',
                         action: function (e, dt, node, config) {
                             $("#rnumeros").dialog("open");
                     }},                 
+                    {% endif %}
+                    {%if nivel_seguridad == 1%}
                     {text: 'Importar',
                         action: function (e, dt, node, config) {
                             url = "{{ path('inscrito_importar', { 'idevento':idevento}) }}";
                             //url = url.replace('_data_json_', data_json);
                             window.open(url, "_self");
                     }},                 
+                    {% endif %}
+                    {%if nivel_seguridad == 1%}
                     {text: 'Notificar',
                         action: function (e, dt, node, config) {
                             var countelement = 0;
@@ -67,6 +74,7 @@
                             else
                                 $("#correosatodos").dialog("open");
                     }},                
+                    {% endif %}
                 ],
                 'select': {
                     style: 'os',   
@@ -90,7 +98,7 @@
                     },                    
                 },
                 'scrollX': true,
-                "order":[17,'asc'],
+                "order":[[{{ atributos|length }} +6 ,'asc'],[0,'asc']],
                 "pageLength": 100,
                 columns: [
                     { title: "Numero", data: "numero" },
@@ -174,12 +182,12 @@
                                         + "<a href='" + urlshow + "'>"
                                         + "<li class='ui-state-default ui-corner-all' title='Ver'><span class='ui-icon ui-icon-search'></span></li>"
                                         + "</a>"
-                                        + "<a href='" + urledit + "' >"
+                                        {% if nivel_seguridad == 1 %} + "<a href='" + urledit + "' >"
                                         + "<li class='ui-state-default ui-corner-all' title='Editar'><span class='ui-icon ui-icon-pencil'></span></li>"
-                                        + "</a>"
+                                        + "</a>"{% endif %}
                                         + "<a href='' onclick='anular(" + data + "," + row.secuencia + ");return false;'>"
-                                        + "<li class='ui-state-default ui-corner-all' title='Anular'><span class='ui-icon ui-icon-closethick'></span></li>"
-                                        + "</a></ul>"                                            
+                                        {% if nivel_seguridad == 1 %} + "<li class='ui-state-default ui-corner-all' title='Anular'><span class='ui-icon ui-icon-closethick'></span></li>"
+                                        + "</a>" + {% endif %} + "</ul>"                                            
                                     return html;
                                 },
                         "width": "98px","orderable": false
@@ -370,13 +378,13 @@
                 <li><a href="#tabs-1">Pre-Inscritos</a></li>
                 <li><a href="#tabs-2">Inscritos</a></li>
                 <li><a href="#tabs-3">Anulados</a></li>
-                <li><a href="#tabs-4">Operaciones TDC</a></li>
-                <li><a href="#tabs-5">Estadisticas</a></li>    
-                <li><a href="#tabs-6">Auditoria</a></li>   
+                {% if nivel_seguridad == 1 %}<li><a href="#tabs-4">Operaciones TDC</a></li>{% endif %}
+                <li><a href="#tabs-5">Estadisticas</a></li>
+                {% if nivel_seguridad == 1 %}<li><a href="#tabs-6">Auditoria</a></li>{% endif %}
             </ul>
             <div id="tabs-1"></div>
             <div id="tabs-3"></div>  
-            <div id="tabs-4"></div>        
+            {% if nivel_seguridad == 1 %}<div id="tabs-4"></div>{% endif %}       
             <div id="tabs-5"></div>  
             <div id="tabs-2">
                 <table id="tablaInscritos" class="display row-border hover">

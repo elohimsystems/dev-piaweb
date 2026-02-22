@@ -1,0 +1,2 @@
+[30-Apr-2025 16:29:02 America/Caracas] PHP Fatal error:  Class 'Swift_Encoder_Base64Encoder' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Mime/HeaderEncoder/Base64HeaderEncoder.php on line 18
+[25-May-2025 22:31:59 America/Caracas] PHP Fatal error:  Class 'Swift_Encoder_QpEncoder' not found in /home/sistem19/public_html/piaweb/vendor/swiftmailer/swiftmailer/lib/classes/Swift/Mime/HeaderEncoder/QpHeaderEncoder.php on line 18

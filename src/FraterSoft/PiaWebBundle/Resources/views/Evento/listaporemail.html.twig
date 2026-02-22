@@ -148,8 +148,8 @@
                             <li class="ui-state-default ui-corner-all" title="Ver">
                                 <a href="{{ path('evento_show', { 'id': entity.id, 'email': email }) }}"><span class="ui-icon ui-icon-search"></span></a>
                             </li>
-                            <li class="ui-state-default ui-corner-all {% if email=='admina'%} ui-state-disabled {% endif %}" title="Editar" >
-                                {% if email != 'admina'%}
+                            <li class="ui-state-default ui-corner-all {% if nivel_seguridad != 1 %} ui-state-disabled {% endif %}" title="{{ nivel_seguridad }}" >
+                                {% if nivel_seguridad == 1%}
                                 <a href="{{ path('evento_edit', { 'id': entity.id }) }}"><span class="ui-icon ui-icon-pencil"></span></a>
                                 {% else %}
                                 <span class="ui-icon ui-icon-pencil "></span>
@@ -220,7 +220,7 @@
                                 {% endif %}
                             </li>
                             <li class="ui-state-default ui-corner-all" title="Panel">
-                                <a href="{{ path('inscrito_lista_preinscritos', { 'idevento': entity.id,'email':email }) }}"><span class="ui-icon ui-icon-gear"></span></a>
+                                <a href="{{ path('inscrito_lista_preinscritos', { 'idevento': entity.id,'email':email}) }}"><span class="ui-icon ui-icon-gear"></span></a>
                             </li>
                         </ul>
                         </td>

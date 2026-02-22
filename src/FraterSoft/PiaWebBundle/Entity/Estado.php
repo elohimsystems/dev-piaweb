@@ -17,7 +17,7 @@ class Estado
     /**
      * @var string
      */
-    private $nombre;
+    public $nombre;
 
     /**
      * @var \FraterSoft\PiaWebBundle\Entity\Pais

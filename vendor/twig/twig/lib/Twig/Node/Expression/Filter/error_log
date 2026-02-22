@@ -1,0 +1,1 @@
+[07-Jun-2025 17:21:52 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression_Filter' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Filter/Default.php on line 22

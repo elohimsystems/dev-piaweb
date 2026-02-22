@@ -23,12 +23,12 @@
                 serverSide: false, 
                 ajax: url,    
                 columns: [
-                    { title: "Sec.", data: "secuencia",visible:false },
+                    { title: "Sec.", data: "secuencia",visible:true },
                     { title: "Competencia", data: "idcompetencia.descripcion" },
                     { title: "Forma Pago", data: "pagos[0].idformapago.nombre"},
                     { title: "Precio", data: "pagos[0].precio" },
                     { title: "Banco", data: "pagos[0].idbanco.nombre",render: function(data){return data==null?"":data;}},
-                    { title: "Referencia", data: "pagos[0].referencia",render: function(data){return data==null?"":data;},visible:false},
+                    { title: "Referencia", data: "pagos[0].referencia",render: function(data){return data==null?"":data;},visible:true},
                     { title: "Pagador", data: "pagos[0].nombrepagador",
                         render: function(data){
                             return data.toUpperCase();
@@ -94,17 +94,17 @@
                                         + "<a href='" + urlshow + "'>"
                                         + "<li class='ui-state-default ui-corner-all' title='Ver'><span class='ui-icon ui-icon-search'></span></li>"
                                         + "</a>"
-                                        + "<a href='" + urledit + "' >"
+                                        {% if nivel_seguridad == 1 %} + "<a href='" + urledit + "' >" 
                                         + "<li class='ui-state-default ui-corner-all' title='Editar'><span class='ui-icon ui-icon-pencil'></span></li>"
-                                        + "</a>"
+                                        + "</a>"{% endif %}
                                         {%if atributos[0].idevento.proceso==2 and atributos[0].idevento.registropago==2 %}
                                         + "<a href='" + urlpago + "'>"
                                         + "<li class='ui-state-default ui-corner-all' title='Registrar Pago'><span class='ui-icon ui-icon-calculator'></span></li>"
                                         + "</a>"                                
                                         {% endif %}
-                                        + "<a href='' onclick='anular(" + data + "," + row.secuencia + ");return false;'>"
+                                        {% if nivel_seguridad == 1 %} + "<a href='' onclick='anular(" + data + "," + row.secuencia + ");return false;'>"
                                         + "<li class='ui-state-default ui-corner-all' title='Anular'><span class='ui-icon ui-icon-closethick'></span></li>"
-                                        + "</a></ul>"                                            
+                                        + "</a>" {% endif %} + "</ul>"                                            
                                     return html;
                                 },
                         "width": "98px","orderable": false
@@ -117,7 +117,7 @@
                     }, 
                     {extend: 'print',
                         text: 'Imprimir'},
-                    {%if atributos[0].idevento.proceso!=2 and atributos[0].idevento.registropago!=2 %}
+                    {%if atributos[0].idevento.proceso!=2 and atributos[0].idevento.registropago!=2 and nivel_seguridad == 1%}
                     {text: 'Conciliar',
                         action: function (e, dt, node, config) {
                             var countelement = 0;
@@ -157,6 +157,7 @@
                                 alert("Seleccione las pre-inscripciones que desea coinciliar");
                         }},
                     {% endif %}
+                    {%if nivel_seguridad == 1%}
                     {text: 'Notificar',
                         action: function (e, dt, node, config) {
                             var countelement = 0;
@@ -184,6 +185,7 @@
                             else
                                 alert("Debe seleccionar por lo menos una Pre-Inscripcion");
                     }},                
+                {% endif %}
                 ],
                 'scrollX': true,
                 'select': {
@@ -208,7 +210,7 @@
                         rows: "%d filas marcadas"
                     },
                 },
-
+                "pageLength": 100,
             });
             $("#notificacion").dialog({
                 autoOpen: false,
@@ -357,13 +359,13 @@ $(function () {
                 <li><a href="#tabs-1">Pre-Inscritos</a></li>
                 <li><a href="#tabs-2">Inscritos</a></li>
                 <li><a href="#tabs-3">Anulados</a></li>
-                <li><a href="#tabs-4">Operaciones TDC</a></li>
+                {% if nivel_seguridad == 1 %}<li><a href="#tabs-4">Operaciones TDC</a></li>{% endif %}
                 <li><a href="#tabs-5">Estadisticas</a></li>            
-                <li><a href="#tabs-6">Auditoria</a></li>   
+                {% if nivel_seguridad == 1 %}<li><a href="#tabs-6">Auditoria</a></li>{% endif %}
             </ul>
             <div id="tabs-2"></div>
             <div id="tabs-3"></div>  
-            <div id="tabs-4"></div>        
+            {% if nivel_seguridad == 1 %}<div id="tabs-4"></div>{% endif %}
             <div id="tabs-5"></div>    
             <div id="tabs-1">
                 <table id="tablaPreInscritos" class="display row-border hover">

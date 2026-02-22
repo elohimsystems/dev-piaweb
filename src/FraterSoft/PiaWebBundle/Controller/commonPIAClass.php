@@ -731,6 +731,7 @@ class commonPIAClass extends Controller
         $emailfrom="";
         if(!is_null($inscritos[0]->getIdevento()->getIdorganizador()->getEmail()) && filter_var($inscritos[0]->getIdevento()->getIdorganizador()->getEmail(), FILTER_VALIDATE_EMAIL))
             $emailfrom = $inscritos[0]->getIdevento()->getIdorganizador()->getEmail();
+            //$emailfrom = "inscripciones@sistemapia.com";
         else
             return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                         'url' => $this->generateUrl('competidor_find', array('idevento' => $inscritos[0]->getIdevento()->getId())),
@@ -773,6 +774,7 @@ class commonPIAClass extends Controller
         $emailfrom="";
         if(!is_null($inscritos[0]->getIdevento()->getIdorganizador()->getEmail()) && filter_var($inscritos[0]->getIdevento()->getIdorganizador()->getEmail(), FILTER_VALIDATE_EMAIL))
             $emailfrom = $inscritos[0]->getIdevento()->getIdorganizador()->getEmail();
+            //$emailfrom = "inscripciones@sistemapia.com";
         else
             return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                         'url' => $this->generateUrl('competidor_find', array('idevento' => $inscritos[0]->getIdevento()->getId())),
@@ -885,6 +887,47 @@ class commonPIAClass extends Controller
         }
         //print_r($formasdepagoarray);
         return($formasdepagoarray);
-    }      
+    }
+    
+    public function mostrarInfoInscrito($em,$inscripcion){
+        // Busca los rivales del atleta y los muesta en una tabla
+        $rivales=$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->listarRivales(
+            $inscripcion->getIdevento()->getId(),
+            $inscripcion->getIdcompetencia()->getId(),
+            $inscripcion->getIdcategoria()->getId(),
+            $inscripcion->getIdpia()->getSexo()
+        );
+        if(count($rivales) > 0){
+            //print_r(count($rivales));
+            $cuadrorivales = "<div class='infoTable'><div class='infoTableTitle'>Rivales</div>"
+                . "<div class='infoTableHeader'>" 
+                    . "<div class='infoTableCell'>ATLETA</div>"
+                    . "<div class='infoTableCell'>CLUB</div>"
+                . "</div>";
+            foreach($rivales as $rival){
+                $cuadrorivales .= "<div class='infoTableRow'><div class='infoTableCell'>" . strtoupper($rival->getIdpia()->getApellido()) . " " . strtoupper($rival->getIdpia()->getNombre()) . "</div>";
+                $cuadrorivales .= "<div class='infoTableCell'>" . strtoupper($rival->getIdpia()->getEquipo()) . "</div></div>";
+            }  
+            $cuadrorivales .= "</div>";
+        }
+            
+        $numero = ($inscripcion->getNumero() == null)?"":"<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>N&uacute;mero de Participaci&oacute;n</div><div class='infoTableCell'>" . $inscripcion->getNumero() . "</div></div>"; //
+        $genero = ($inscripcion->getIdpia()->getSexo()=='M')?'Masculino':'Femenino';
+        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => $this->generateUrl('competidor_find', array('idevento' => $inscripcion->getIdevento()->getId())),
+                    'texto' => "El portador del Documento de Identidad Nro. " . $inscripcion->getIdpia()->getIdDocumento() . "<br>"
+                    . "est&aacute; oficialmente inscrito para el evento <br><b>" 
+                    . $inscripcion->getIdevento()->getNombre() . "</b><br><br>"
+                    . "<div class='infoTable'>"
+                    . "<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>Categor&iacute;a</div>" 
+                    . "<div class='infoTableCell'>" . $inscripcion->getIdcategoria()->getDescripcion() . "</div></div>" 
+                    . "<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>G&eacute;nero</div>" 
+                    . "<div class='infoTableCell'>" . $genero . "</div></div>" 
+                    . $numero
+                    . "</div>"
+                    . $cuadrorivales,
+                    'tema' => $inscripcion->getIdevento()->getTema()
+        ));        
+    }
     
 }

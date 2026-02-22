@@ -199,18 +199,22 @@ class InscritoRepository extends EntityRepository
             ->getResult();
     }      
     
-    public function listarRivales($idevento,$idcategoria)
+    public function listarRivales($idevento,$idcompetencia,$idcategoria,$sexo)
     {
         return $this->getEntityManager()
             ->createQuery(
-                'SELECT i FROM FraterSoftPiaWebBundle:Inscrito i '
+                'SELECT i,co FROM FraterSoftPiaWebBundle:Inscrito i '
+                    . 'LEFT JOIN i.pagos p '
                     . 'JOIN '
-                        . 'i.idpago p '
+                        . 'i.idpia co '                    
                     . 'WHERE '
-                        . 'i.idpago=p '
+                        . 'i.status=1 '
                         . 'and p.conciliado=true '
-                        . 'and i.idcategoria=' . $idcategoria 
                         . 'and i.idevento=' . $idevento
+                        . 'and i.idcompetencia=' . $idcompetencia
+                        . 'and i.idcategoria=' . $idcategoria 
+                        . 'and co.sexo=\'' . $sexo . '\''
+                    . 'ORDER BY co.apellido '
             )
             ->getResult();
     }
@@ -478,16 +482,23 @@ class InscritoRepository extends EntityRepository
                     case ($tipo=="datetime" || $tipo=="datetimetz"):
                         $sql = 'select to_date(valor,\'dd/mm/yyyy\') as valor,sum(cantidad) as cantidad from (' 
                             . 'select to_char(i.fechahora,\'dd/mm/yyyy\') as valor,count(i) as cantidad '
-                            . 'from piaaccess.tminscritos i left join piaaccess.tmpagos p on i.idpago=p.id where p.conciliado=true and i.idevento=' . $idevento
+                            . 'from piaaccess.tminscritos i left join piaaccess.tmpagos p on i.id=p.idinscrito where p.conciliado=true and i.idevento=' . $idevento
                             . 'group by i.fechahora) e group by valor order by valor';
                         break;
                     default:
+                        $leftJoinEstado="";
+                        if($atributo == "idestado"){
+                            $leftJoinEstado = "left join piaaccess.tmestados on piaaccess.tmestados.id = piaaccess.tmcompetidores.idestado ";
+                            $nombreTabla = "tmestados";
+                            $atributo = "nombre";
+                        }
                         $sql = "select " . $nombreTabla . "." .$atributo . " as valor, count(".$nombreTabla."." .$atributo .") as cantidad from piaaccess.tminscritos "
                                 . "inner join piaaccess.tmcompetidores on tmcompetidores.id = tminscritos.idpia "
-                                . "inner join piaaccess.tmpagos on tmpagos.id = tminscritos.idpago "
+                                . "inner join piaaccess.tmpagos on tmpagos.idinscrito = tminscritos.id "
                                 . "left join piaaccess.tmcategorias on tmcategorias.id = tminscritos.idcategoria "
                                 . "left join piaaccess.tmcompetencias on tmcompetencias.id = tminscritos.idcompetencia "
-                                . "where tminscritos.idevento=" . $idevento . " and tmpagos.conciliado=true " 
+                                . $leftJoinEstado
+                                . "where tminscritos.idevento=" . $idevento . " and tmpagos.conciliado=true and tminscritos.status=1" 
                                 . "group by ".$nombreTabla.".".$atributo . " order by cantidad desc";
                         break;
                 }

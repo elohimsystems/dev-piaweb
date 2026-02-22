@@ -1,0 +1,6 @@
+[30-Nov-2024 15:50:24 America/Caracas] PHP Fatal error:  Interface 'Assetic\Cache\CacheInterface' not found in /home/sistem19/public_html/piaweb/vendor/kriswallsmith/assetic/src/Assetic/Cache/ArrayCache.php on line 20
+[02-Dec-2024 17:47:49 America/Caracas] PHP Fatal error:  Interface 'Assetic\Cache\CacheInterface' not found in /home/sistem19/public_html/piaweb/vendor/kriswallsmith/assetic/src/Assetic/Cache/ApcCache.php on line 20
+[26-Dec-2024 07:22:39 America/Caracas] PHP Fatal error:  Interface 'Assetic\Cache\CacheInterface' not found in /home/sistem19/public_html/piaweb/vendor/kriswallsmith/assetic/src/Assetic/Cache/FilesystemCache.php on line 20
+[28-Dec-2024 12:00:29 America/Caracas] PHP Fatal error:  Interface 'Assetic\Cache\CacheInterface' not found in /home/sistem19/public_html/piaweb/vendor/kriswallsmith/assetic/src/Assetic/Cache/ExpiringCache.php on line 20
+[28-Jul-2025 11:14:00 America/Caracas] PHP Fatal error:  Interface 'Assetic\Cache\CacheInterface' not found in /home/sistem19/public_html/piaweb/vendor/kriswallsmith/assetic/src/Assetic/Cache/ExpiringCache.php on line 20
+[24-Aug-2025 18:34:31 America/Caracas] PHP Fatal error:  Interface 'Assetic\Cache\CacheInterface' not found in /home/sistem19/public_html/piaweb/vendor/kriswallsmith/assetic/src/Assetic/Cache/FilesystemCache.php on line 20

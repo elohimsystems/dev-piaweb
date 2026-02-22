@@ -1,6 +1,7 @@
 FraterSoft\PiaWebBundle\Entity\Organizador:
     type: entity
     table: piaaccess.tmorganizadores
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\OrganizadorRepository    
     indexes:
         IDX_5E33A14CD4B68681:
             columns:

@@ -58,6 +58,7 @@
         {% endfor %}
         titulos.push("categoria");
         titulos.push("numero");
+        titulos.push("competencia");
         var atributo = new Object();
         atributo.nombre="categoria";
         atributo.tipo="string";
@@ -68,13 +69,18 @@
         atributo.tipo="integer";
         atributo.longitud="3";
         atributos["numero"]=atributo;
+        var atributo = new Object();
+        atributo.nombre="competencia";
+        atributo.tipo="string";
+        atributo.longitud="30";
+        atributos["competencia"]=atributo;
         
         var dataSet=[];
         var camposSet=[];
         function processData(allText) {
+            
             var allTextLines = allText.split(/\r\n|\n/);
             var header = allTextLines[0].split(',');            
-            
             //Valida que la primera fila del archivo poseea los titulos adecuados
             for(i=0;i<header.length;i++){
                 for(j=0;j<titulos.length;j++){
@@ -86,17 +92,18 @@
                 }
             }
             console.log(header);
-            
             //Configura los titulos de la tabla
-            for(i=0;i<header.length-1;i++){
+            for(i=0;i<header.length;i++){
+                console.log(header[i]);
                 camposSet[i]={ title: header[i] };
             }
-            
+            console.log(camposSet);
             //Configura el dataset con que sera llenada la tabla
             var line=[];
             for(nl=1,j=0;nl<allTextLines.length && allTextLines[nl]!="";nl++){
                 line[j]=allTextLines[nl].split(',');
                 for(col=0;col<header.length;col++){
+                    
                     if(line[j][col]!="")
                         switch(atributos[header[col]].tipo){
                             case "string":
@@ -153,6 +160,7 @@
                                 table = $('#csvcompetidor').DataTable( {
                                     data: dataSet,
                                     columns: camposSet,
+                                    pageLength: 100,
                                 });            
                         }
                      });

@@ -161,6 +161,9 @@
 {% endblock %}
 {% block style %}
 <style type="text/css">   
+    #countercierre{
+        display:none;
+    }
     .ui-widget-header{
         background: grey;
     }
@@ -186,6 +189,7 @@
     }
     .centrar {
         width: 536px;
+        margin: auto;
     }
     #logowhatsapp{
         width: 32px;
@@ -253,6 +257,7 @@
 </div>
 {% endblock %}
 {% block body -%}  
+<div id="title-evento" style="text-align:center;"><h1>{{ evento.nombre}}</h1></div>
 <div id="container">
     {{ form_start(form) }}
     {{ form_errors(form) }}
@@ -302,7 +307,8 @@
         </div>
     </div>
     {% endif %}
-    <div class="soporte">Para soporte o consulta puede escríbirnos o llámarnos por <br><b>WhatsApp 
+    <div id="vacio"><br></div>
+    <div class="soporte"><div>Para soporte o consulta puede escríbirnos o llámarnos por </div><b>WhatsApp 
         <a href="https://wa.me/{{ evento.idorganizador.telefonocontacto|replace({' ':"",'-':"",'.':""})}}" target="_blank"><img id="logowhatsapp" alt="{{ evento.idorganizador.telefonocontacto }}"  src="{{asset('bundles/fratersoftpiaweb/images/whatsapp.png')}}" ></a>
          al numero {{ evento.idorganizador.telefonocontacto }}</b><br>
          O escríbenos por <b>WhatsApp Web</b> en el siguiente enlace: <a href="https://wa.me/{{ evento.idorganizador.telefonocontacto|replace({' ':"",'-':"",'.':""}) }}" target="_blank">Link</a>
@@ -382,9 +388,8 @@
         </tr>
         {% endif %}
         <tr>
-            <td align="center">
-                <br>
-                <div class="soporte">Para soporte o consulta puede escríbirnos o llámarnos por <br><b>WhatsApp 
+            <td>
+                <div class="soporte"><div id="textsoporte">PQara soporte o consulta puede escríbirnos o llámarnos por </div><br><b>WhatsApp 
                     <a href="https://wa.me/{{ evento.idorganizador.telefonocontacto|replace({' ':"",'-':"",'.':""})}}" target="_blank"><img id="logowhatsapp" alt="{{ evento.idorganizador.telefonocontacto }}"  src="{{asset('bundles/fratersoftpiaweb/images/whatsapp.png')}}" ></a>
                      al numero {{ evento.idorganizador.telefonocontacto }}</b><br>
                      O escríbenos por <b>WhatsApp Web</b> en el siguiente enlace: <a href="https://wa.me/{{ evento.idorganizador.telefonocontacto|replace({' ':"",'-':"",'.':""}) }}" target="_blank">Link</a>

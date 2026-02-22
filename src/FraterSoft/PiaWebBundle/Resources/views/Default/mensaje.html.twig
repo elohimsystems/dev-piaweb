@@ -15,7 +15,86 @@
         #botonera{
             margin-top: 30px;
             text-align: center;
-        }        
+        }      
+        .infoTable{
+            display: table;
+            margin: auto;
+        }
+        .infoTableTitle{
+            display: table-caption;
+            text-align: center;
+            font-weight: bold;
+            padding: 20px;       }
+        .infoTableHeader{
+            display: table-row;
+            font-weight: bold;
+            text-align: center;            
+        }
+        .infoTableHeaderVertical{
+            display: table-row;
+            font-weight: bold;
+        }
+        .infoTableRow{
+            display: table-row;            
+        }
+        .infoTableCell{
+            display: table-cell;
+            border: solid;
+            border-width: thin;
+            padding-left: 5px;
+            padding-right: 5px;    
+            vertical-align: middle;
+        }
+        .contenedor-dorsal {
+            position: relative;
+        }
+        .titulo-dorsal {
+            text-align: center;
+            padding: 20px;
+            font-weight: bold;
+        }
+        .imagen-dorsal {
+            max-width: 100%;
+            height: auto;
+            background: black;
+            contain: paint;
+            border: 1px solid;      
+        }
+        .texto-dorsal {
+            position: absolute;
+            left: 68%;
+            transform: translate(-50%, -50%);
+
+            font-size: 190px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+        @media screen and (max-width: 547px){
+            .contenido{
+                margin: auto;
+                width: 99%;
+            }
+            img{
+                width: 99%;       
+            }
+            .texto-dorsal {
+                position: absolute;
+                left: 68%;
+                transform: translate(-50%, -39%);
+    
+                font-size: 90px;
+                font-weight: bold;
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            }
+            #numero-dorsal{
+                font-size: 6em;
+                font-style: bold;
+                font-weight: 900;
+                padding-top: 77px;
+                padding-left: 172px;
+                color: white;
+            }             
+        }
     </style>
 {% endblock %} 
 {% block body %}

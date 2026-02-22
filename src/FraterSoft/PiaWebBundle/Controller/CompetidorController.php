@@ -622,7 +622,7 @@ class CompetidorController extends commonPIAClass {
         
         //Si el tipo de evento es campeonato, agrega formulario para buscar por Cédula o numero
         if ($evento->getIdCampeonato()) {
-            $form = $this->createFormBuilder(null)
+            $form = $this->createFormBuilder(null,array('csrf_protection' => false))
                 ->add('atributo', 'choice', array(
                     'choices' => array('iddocumento' => 'Cédula', 'numero' => 'Número'),
                     'data'=>'iddocumento',
@@ -637,7 +637,7 @@ class CompetidorController extends commonPIAClass {
                 ->getForm();
         }
         else{//Si el evento no es tipo campeonato busca solo por Cédula
-            $form = $this->createFormBuilder(null)
+            $form = $this->createFormBuilder(null,array('csrf_protection' => false))
                 ->add('atributo', 'hidden', array(
                     'label' => 'Ingresa tu Cédula',
                 ))
@@ -696,7 +696,78 @@ class CompetidorController extends commonPIAClass {
                 $entity = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->buscarInscrito($idevento, $competidor->getId());
                 if ($entity != null) {               
                     if(!is_null($entity[0]->getPagos()[0]) && $entity[0]->getPagos()[0]->getConciliado()){
-                        return $this->render('FraterSoftPiaWebBundle:Competidor:consultar.html.twig', array(
+                        $rivales=$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->listarRivales(
+                            $entity[0]->getIdevento()->getId(),
+                            $entity[0]->getIdcompetencia()->getId(),
+                            $entity[0]->getIdcategoria()->getId(),
+                            $entity[0]->getIdpia()->getSexo()
+                        );
+                        if(count($rivales) > 0){
+                            //print_r(count($rivales));
+                            $cuadrorivales = "<div class='infoTable'><div class='infoTableTitle'>Rivales</div>"
+                                . "<div class='infoTableHeader'>" 
+                                    . "<div class='infoTableCell'>DORSAL</div>"
+                                    . "<div class='infoTableCell'>ATLETA</div>"
+                                    //. "<div class='infoTableCell'>CLUB</div>"
+                                . "</div>";
+                            foreach($rivales as $rival){
+                                
+                                $cuadrorivales .= "<div class='infoTableRow'>";
+                                $cuadrorivales .= "<div class='infoTableCell'>" . $rival->getNumero() . "</div>";
+                                $cuadrorivales .= "<div class='infoTableCell'>" . strtoupper($rival->getIdpia()->getApellido()) . " " . strtoupper($rival->getIdpia()->getNombre()) . "</div>";
+                                //$cuadrorivales .= "<div class='infoTableCell'>" . strtoupper($rival->getIdpia()->getEquipo()) . "</div>";
+                                $cuadrorivales .= "</div>";
+                            }  
+                            $cuadrorivales .= "</div>";
+                        }
+                            
+                        if($entity[0]->getIdcompetencia()->getDescripcion() == "Caminata 5K"){
+                            $cuadrorivales = "";
+                        }
+                        //$cuadrorivales = "";
+                        
+                        $dorsal="";
+                        if($idevento == 4076230988 && $entity[0]->getNumero()<>""){
+                            $desc_competencia = $entity[0]->getIdcategoria()->getIdCompetencia()->getDescripcion();
+                            $color = "black";
+                            $top_numero_dorsal = "75%";
+                            if($desc_competencia == "5K") {
+                                $color = "rgb(255,0,180)";
+                                $top_numero_dorsal = "58%";
+                            }
+                            else if ($desc_competencia == "10K") {
+                                $color = "black";
+                                $top_numero_dorsal = "58%";
+                            }
+                            else if ($desc_competencia == "21K") {
+                                $color = "white";
+                                $top_numero_dorsal = "58%";
+                            }
+                            $dorsal = "<div class='contenedor-dorsal'><div class='titulo-dorsal'>Tu Dorsal</div>"
+                                . "<div class='imagen-dorsal'><img src='/piaweb/web/bundles/fratersoftpiaweb/images/numero-" . $desc_competencia . ".jpg' width='700px' border='1px solid black'></div>"
+                                . "<div class='texto-dorsal' style='color:" . $color . ";top:" . $top_numero_dorsal  . "'>" . str_pad($entity[0]->getNumero(), 4, "0", STR_PAD_LEFT) . "</div>"
+                                . "</div>";
+                        }                            
+
+                        $numero = ($entity[0]->getNumero() == null)?"":"<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>N&uacute;mero de Participaci&oacute;n</div><div class='infoTableCell'>" . $entity[0]->getNumero() . "</div></div>"; //
+                        $genero = ($entity[0]->getIdpia()->getSexo()=='M')?'Masculino':'Femenino';
+                        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                                    'url' => $this->generateUrl('competidor_find', array('idevento' => $entity[0]->getIdevento()->getId())),
+                                    'texto' => "El portador del Documento de Identidad Nro. " . $entity[0]->getIdpia()->getIdDocumento() . "<br>"
+                                    . "est&aacute; oficialmente inscrito para el evento <br><b>" 
+                                    . $entity[0]->getIdevento()->getNombre() . "</b><br><br>"
+                                    . "<div class='infoTable'>"
+                                    . "<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>Categor&iacute;a</div>" 
+                                    . "<div class='infoTableCell'>" . $entity[0]->getIdcategoria()->getDescripcion() . "</div></div>" 
+                                    . "<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>G&eacute;nero</div>" 
+                                    . "<div class='infoTableCell'>" . $genero . "</div></div>" 
+                                    . "</div>"
+                                    . $dorsal
+                                    . $cuadrorivales,
+                                    'tema' => $entity[0]->getIdevento()->getTema()
+                        ));        
+                        
+                        /*return $this->render('FraterSoftPiaWebBundle:Competidor:consultar.html.twig', array(
                                     'evento' => $evento,
                                     'form' => $form->createView(),
                                     'mensaje' => "El pago de la Pre-Inscripci&oacute;n "
@@ -706,7 +777,7 @@ class CompetidorController extends commonPIAClass {
                                     . $evento->getNombre() . "</b>.",
                                     'tema' => $evento->getTema(),
                                     'numero' => $entity[0]->getNumero(),
-                        ));                              
+                        ));*/                              
                     }
                     else{
                         return $this->render('FraterSoftPiaWebBundle:Competidor:consultar.html.twig', array(
@@ -1029,16 +1100,17 @@ class CompetidorController extends commonPIAClass {
                     }
                 }
                 $competidorfind=$em->getRepository("FraterSoftPiaWebBundle:Competidor")->findOneBy(array('iddocumento'=>$competidor->getIddocumento()));
+                
                 if(!$competidorfind){
                     $count_competidores++;
                     $em->persist($competidor);
                 }
                 else{
                     print_r("entre");
-                    $accessor->setValue($competidor,'equipo', $competidorfind->getequipo());
+                    //$accessor->setValue($competidor,'equipo', $competidorfind->getequipo());
                     $em->persist($competidor);
                     $count_competidores++;
-//                    $competidor->setequipo($competidorfind->getequipo());
+                    //$competidor->setequipo($competidorfind->getequipo());
                 }
             }
             try{
@@ -1048,12 +1120,13 @@ class CompetidorController extends commonPIAClass {
                 print_r("error");
             }
             
-            return $this->render('FraterSoftPiaWebBundle:Competidor:importar.html.twig', array(
+            /*return $this->render('FraterSoftPiaWebBundle:Competidor:importar.html.twig', array(
                         'form' => $form->createView(),
                         'campos'=> $camposCompetidor,
                         'actualizados'=> $count_competidores
-            ));            
-        }        
+            ));   */         
+        }       
+        print_r("aja aqui voy");
         return $this->render('FraterSoftPiaWebBundle:Competidor:importar.html.twig', array(
                     'form' => $form->createView(),
                     'campos'=> $camposCompetidor,
@@ -1080,7 +1153,7 @@ class CompetidorController extends commonPIAClass {
             ->add('Importar', 'submit')
         ->getForm();     
         
-        $this->addbotónRegresar($form,$this->generateUrl('campeonatocompetidores_new', array('idcampeonato' => $idcampeonato)));
+        // $this->addbotónRegresar($form,$this->generateUrl('campeonatocompetidores_new', array('idcampeonato' => $idcampeonato)));
         
         $form->handleRequest($request);
 
@@ -1096,20 +1169,28 @@ class CompetidorController extends commonPIAClass {
             //recorre las lineas del archivo leido
             $count_competidores_i=0; //contador de competidores insertados
             $count_competidores_a=0; //contador de competidores actualizados
+            
             foreach($csv as $csvcompetidor){
+                //print_r($csvcompetidor);
                 $competidor = new Competidor();
                 //recorre los campos de la linea leida
                 foreach($csvcompetidor as $clave => $valor){
+                    //print_r($clave);
                     //recorre los campos de la entidad pasada
                     foreach($camposCompetidor as $campo => $valores){
                         if($clave==$campo){
+                            //print_r('campo: ' . $campo . " valor: " . $valor . "'\n");
                             switch (true){
                                 case $valores['tipo']=='string':
+                                    //print_r('strlen($valor)' . strlen($valor) . ' <= ' . $valores['longitud']);
                                     if(strlen($valor)<=$valores['longitud'])
                                         if($valor!="")
                                             $accessor->setValue($competidor, $campo, $valor);
-                                    else
-                                        $valor='Error de longitud';
+                                    else{
+                                        $valor = null;//'Error de longitud en campo ' . $campo . ' valor: ' . $valor . ' longitud ' . strlen($valor);
+                                        //print_r($valores);
+                                        //return $valor;
+                                    }
                                     break;
                                 case $valores['tipo']=='datetime':
                                     if($this->isDate($valor))
@@ -1133,7 +1214,7 @@ class CompetidorController extends commonPIAClass {
                             if($valores['constraint']=='unique'){
                                 $unique=$em->getRepository($camposCompetidor['entity'])->findOneBy(array($campo=>$valor));
                                 if($unique)
-                                    $valor='Error: ' . $valor . ' duplicado';
+                                    $valor = null; //''Error: ' . $valor . ' duplicado';
                                 $accessor->setValue($competidor, $campo, $valor);
                             }
                             break;
@@ -1147,8 +1228,9 @@ class CompetidorController extends commonPIAClass {
                 }
                 else{//Si competidor existe
                     //$this->actualizaEntity($em, $competidor, $competidorfind);
+                    //print_r($competidorfind->getEmailPersonal() . '\n');
                     //$em->persist($competidorfind);
-                    //$count_competidores_a++;
+                    $count_competidores_a++;
                 }
                 
             }            
@@ -1161,15 +1243,20 @@ class CompetidorController extends commonPIAClass {
             
             
             //Recorre nuevamente el archivo para insertar los competidores en el campeonato
+            $idevento=0;
             $index=1;
             $arrayids = array();
+            $idc="";
+            //print_r($csv);
             foreach($csv as $csvcompetidor){
+                //print_r($csvcompetidor);
+                //print_r($csvcompetidor['iddocumento'] . '\n');
                 $campeonatocompetidores = new CampeonatoCompetidores();
                 $competidor=$em->getRepository("FraterSoftPiaWebBundle:Competidor")->findOneBy(array(
                     'iddocumento'=>$csvcompetidor['iddocumento']
                 ));
+                
                 if($competidor){//Si competidor existe
-                    
                     //Valida que el identificador del competidor no este repetido en el archivo
                     if(array_search($csvcompetidor['iddocumento'], $arrayids))
                         return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
@@ -1197,8 +1284,11 @@ class CompetidorController extends commonPIAClass {
                             'idcampeonato'=>$idcampeonato,
                             'descripcion'=>$csvcompetidor['categoria'])
                         );
-                        if($categoria)
+                        if($categoria){
                             $campeonatocompetidores->setIdcategoria($categoria->getId());
+                            $campeonatocompetidores->setIdcompetencia($categoria->getIdCompetencia()->getId());
+                            $idevento = $categoria->getIdcompetencia()->getIdevento()->getId();
+                        }
                     }
                     if($csvcompetidor['categoria']=="" || !$categoria)
                         return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
@@ -1218,12 +1308,28 @@ class CompetidorController extends commonPIAClass {
                             'nombre'=>$csvcompetidor['equipo'])
                         );
                         if($club){
+                            //print_r($club->getId());print_r("<br>");
+                            //print_r($idcampeonato);print_r("<br>");
                             $clubcampeonato=$em->getRepository("FraterSoftPiaWebBundle:CampeonatoClubes")->findOneBy(array(
                                 'idclub'=>$club->getId(),
                                 'idcampeonato'=>$idcampeonato)
                             );
-                            if($clubcampeonato);
+                            if(is_null($clubcampeonato) == false && $clubcampeonato){
+                                // print_r($clubcampeonato->getId());print_r("<br>");
                                 $campeonatocompetidores->setIdclub($clubcampeonato->getIdclub());
+                            }
+                            else{
+                                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                                            'url' => $this->generateUrl('competidor_importar_encampeonato', array(
+                                                'idcampeonato' => $idcampeonato
+                                            )),
+                                            'texto' => "Error en la fila " . $index . 
+                                                '. El CLUB:<b>' . $csvcompetidor['equipo'] . '</b> del competidor <b>' . 
+                                                $csvcompetidor['nombre'] . " " . $csvcompetidor['apellido'] .
+                                                "</b> no existe o no esta cargado en el campeonato. Agregue la club al Campeonato" .
+                                                " o corrija el club en el archivo. Vuelva a cargar el archivo.",
+                                ));            
+                            }
                         }
                     }
                     if($csvcompetidor['equipo']=="" || !$club || !$clubcampeonato)
@@ -1236,11 +1342,12 @@ class CompetidorController extends commonPIAClass {
                                         $csvcompetidor['nombre'] . " " . $csvcompetidor['apellido'] .
                                         "</b> no existe o no esta cargado en el campeonato. Agregue la club al Campeonato" .
                                         " o corrija el club en el archivo. Vuelva a cargar el archivo.",
-                        ));            
-
+                        ));         
+                    
                     $campeonatocompetidores->setIdcompetidor($competidor->getId());
                     if(array_key_exists('numero',$csvcompetidor))
-                        $campeonatocompetidores->setNumero($csvcompetidor['numero']);
+                        if($csvcompetidor['numero']!="")
+                            $campeonatocompetidores->setNumero($csvcompetidor['numero']);
                     $campeonatocompetidoresfind=$em->getRepository("FraterSoftPiaWebBundle:CampeonatoCompetidores")->findOneBy(array(
                         'idcampeonato'=>$campeonatocompetidores->getIdcampeonato(),
                         'idcompetidor'=>$campeonatocompetidores->getIdcompetidor(),
@@ -1251,6 +1358,16 @@ class CompetidorController extends commonPIAClass {
                     }
                     else
                         $em->persist($campeonatocompetidores);
+                        
+                    //Buscar si el competidor del campeonato esta inscrito para actualizar el numero en la inscripcion
+                    $inscripcion=$em->getRepository("FraterSoftPiaWebBundle:Inscrito")->findOneBy(array(
+                        'idevento'=>$idevento,
+                        'idpia'=>$competidor->getId(),
+                    ));
+                    if($inscripcion){
+                        //print_r('id inscripcion');print_r($inscripcion->getId());
+                        $inscripcion->setNumero($csvcompetidor['numero']);
+                    }
                 }
                 $index++;
             }
@@ -1460,6 +1577,180 @@ class CompetidorController extends commonPIAClass {
         return $this->render('FraterSoftPiaWebBundle:Competidor:findgrupo.html.twig', array(
                     'evento' => $evento,
                     'form' => $form->createView(),
+        ));
+    }
+
+    public function findprivateAction(Request $request, $idevento) {
+        //Valida que la aplicacion no sea usada con Internet Explorer
+        $em = $this->getDoctrine()->getManager();
+        $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idevento);
+        if ($evento) {        
+            $browser = $this->getBrowser();
+            $navegador = $browser['name'];
+            $versionB = $browser['version'];
+            if ($navegador == "Internet Explorer") {
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_findprivate', array('idevento' => $idevento)),
+                            'texto' => 'Navegador no soportado por el Sistema',
+                            'tema' => $evento->getTema()
+                ));            
+            }
+            
+            //Verifica si el evento esta abierto
+            $hoy=new \DateTime('now');
+            if ($evento->getZonahoraria()) //Valida que el evento tenga configurado el timezone
+                $hoy->setTimezone(new \DateTimeZone($evento->getZonahoraria()));
+            $fechainicio=$evento->getFechainicio();
+            /*if ($hoy < $fechainicio){
+                return $this->render('FraterSoftPiaWebBundle:Competidor:iniciar.html.twig', array(
+                            'evento' => $evento,
+                ));
+            }*/           
+
+            //Verifica si no se ha configurado el Organizador del evento
+            if (!$evento->getIdorganizador()){
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                            'texto' => 'No se ha configurado el Organizador del Evento',
+                            'tema' => $evento->getTema()
+                ));
+            }
+            
+
+            //Verifica si el evento no esta cerrado
+            //if ($evento->getFechacierre() < new \DateTime('now')){
+            //    return $this->redirect($this->generateUrl('competidor_consultar', array('idevento' => $evento->getId())));                
+            //}
+
+            //Verifica si el esta configurado para control de cupo y valida si llego al maximo
+            if ($evento->getCupocontrol()){
+                $cantidadinscritos = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
+                ->cantidad($idevento);
+                if ($cantidadinscritos >= $evento->getCupomaximo())
+                    return $this->redirect($this->generateUrl('competidor_consultar', array('idevento' => $evento->getId())));  
+            }
+            
+        } else
+            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                        'url' => $this->generateUrl('competidor_findprivate', array('idevento' => $idevento)),
+                        'texto' => 'Evento ' . $idevento . ' no ha sido configurado',
+                        'tema' => $evento->getTema()
+            ));            
+
+        $buscar = '';
+        $atributo = '';
+        $competidor = new Competidor();
+        
+        //Si el tipo de evento es campeonato, agrega formulario para buscar por Cédula o numero
+        if ($evento->getIdCampeonato()) {
+            $form = $this->createFormBuilder(null,array('csrf_protection' => false))
+                ->add('atributo', 'choice', array(
+                    'choices' => array('iddocumento' => 'Cédula', 'numero' => 'Número'),
+                    'data'=>'iddocumento',
+                    'label' => 'Buscar Por',
+                    'expanded' => true,
+                ))
+                ->add('buscar', 'text', array(
+                    'label' => 'Cédula',
+                    'method' => 'POST',
+                    'attr' => array('placeholder' => 'Ej: 12660131'),
+                )) 
+                ->add('Buscar', 'submit', array('label' => 'Iniciar o Consultar tu Inscripción'))
+                ->getForm();
+        }
+        else{//Si el evento no es tipo campeonato busca solo por Cédula
+            $form = $this->createFormBuilder(null,array('csrf_protection' => false))
+                ->add('atributo', 'hidden', array(
+                    'label' => 'Ingresa tu Cédula',
+                ))
+                ->add('buscar', 'text', array(
+                    'label' => 'Cédula',
+                    'method' => 'POST',
+                    'attr' => array('placeholder' => 'Ej: 12660131'),
+                ))
+                ->add('Buscar', 'submit', array('label' => 'Iniciar o Consultar tu Inscripción'))
+                ->getForm();            
+        }
+        
+        //Busca la edad minima del evento configurada
+        $edadminima = $em->getRepository('FraterSoftPiaWebBundle:Evento')
+            ->edadminima($idevento);     
+                
+        if(!is_null($edadminima) && $edadminima<9){
+            $form->add('siniddocumento', 'checkbox', array(
+                'required' => false,
+            ));
+        }        
+
+        $form->handleRequest($request);
+
+        //Buscar los precios del evento
+        $preciosPorEvento =  $em->getRepository('FraterSoftPiaWebBundle:Preciosevento')
+                        ->findBy(array('idevento' => $idevento));
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            //Buscar para eventos tipo Campeonato
+            if ($evento->getIdCampeonato()) {
+                if($form->get("atributo")->getData()!='iddocumento'){
+                    $atributo='id';
+                    $campcomp = $em->getRepository('FraterSoftPiaWebBundle:CampeonatoCompetidores')
+                    ->findOneBy(array($form->get("atributo")->getData() => $form->get("buscar")->getData()));
+                    $buscar=$campcomp?$campcomp->getIdcompetidor():null;
+                 }
+                 else{
+                    $atributo = $form->get("atributo")->getData();
+                    $buscar = $form->get("buscar")->getData();
+                 }   
+            }
+            else{
+                //Buscar para eventos tipo Unico
+                $atributo = 'iddocumento';
+                $buscar = $form->get("buscar")->getData();                
+            }
+
+            if($atributo == 'iddocumento'){ //Si se esta buscando por IdDocumento
+                $competidor = $em->getRepository('FraterSoftPiaWebBundle:Competidor')
+                        ->findOneBy(array($atributo => $buscar));
+                if (!$competidor) {
+                    return $this->redirect($this->generateUrl('inscrito_new', array(
+                                        'idevento' => $idevento,
+                                        'idcompetidor' => 0,
+                                        'iddocumento' => $buscar,
+                    )));
+                } else {
+                    return $this->redirect($this->generateUrl('inscrito_new', array(
+                                        'idevento' => $idevento,
+                                        'idcompetidor' => $competidor->getId(),
+                                        'iddocumento' => $competidor->getIdDocumento(),
+                    )));
+                }                
+            }
+            else{ //Si se esta buscando por Numero
+                $competidor = $em->getRepository('FraterSoftPiaWebBundle:Competidor')
+                        ->findOneBy(array($atributo => $buscar));
+                if (!$competidor) {
+                    $url = $this->generateUrl('competidor_find', array('idevento' => $idevento));
+                    return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                                'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                                'texto' => 'Número no está asignado a ningún Competidor',
+                                'tema' => $evento->getTema()
+                    ));                    
+                } else {
+                    return $this->redirect($this->generateUrl('inscrito_new', array(
+                                        'idevento' => $idevento,
+                                        'idcompetidor' => $competidor->getId(),
+                                        'iddocumento' => $competidor->getIdDocumento(),
+                    )));
+                }                   
+            }
+        }
+
+        return $this->render('FraterSoftPiaWebBundle:Competidor:find.html.twig', array(
+                    'evento' => $evento,
+                    'form' => $form->createView(),
+                    'preciosEvento' => $preciosPorEvento,
         ));
     }
     

@@ -1,0 +1,1 @@
+[04-Apr-2025 04:51:46 America/Caracas] PHP Fatal error:  Class 'Assetic\AssetManager' not found in /home/sistem19/public_html/piaweb/vendor/kriswallsmith/assetic/src/Assetic/Factory/LazyAssetManager.php on line 27

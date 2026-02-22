@@ -1,0 +1,5 @@
+[02-Feb-2025 18:53:53 America/Caracas] PHP Fatal error:  Class 'Twig_Error' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Error/Syntax.php on line 19
+[03-Feb-2025 10:21:59 America/Caracas] PHP Fatal error:  Class 'Twig_Error' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Error/Runtime.php on line 19
+[14-Mar-2025 16:10:51 America/Caracas] PHP Fatal error:  Class 'Twig_Error' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Error/Loader.php on line 26
+[30-May-2025 15:18:32 America/Caracas] PHP Fatal error:  Class 'Twig_Error' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Error/Runtime.php on line 19
+[31-Jul-2025 23:38:16 America/Caracas] PHP Fatal error:  Class 'Twig_Error' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Error/Syntax.php on line 19

@@ -1,0 +1,1 @@
+[28-Mar-2025 06:35:29 America/Caracas] PHP Fatal error:  Class 'Symfony\Component\DependencyInjection\ContainerAware' not found in /home/sistem19/public_html/piaweb/vendor/sensio/distribution-bundle/Sensio/Bundle/DistributionBundle/Controller/ConfiguratorController.php on line 23

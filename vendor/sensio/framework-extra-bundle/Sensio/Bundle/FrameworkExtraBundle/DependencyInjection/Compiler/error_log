@@ -1,0 +1,1 @@
+[01-Jul-2025 22:17:12 America/Caracas] PHP Fatal error:  Interface 'Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface' not found in /home/sistem19/public_html/piaweb/vendor/sensio/framework-extra-bundle/Sensio/Bundle/FrameworkExtraBundle/DependencyInjection/Compiler/AddParamConverterPass.php on line 24

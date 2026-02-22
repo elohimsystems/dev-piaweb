@@ -25,6 +25,12 @@ FraterSoft\PiaWebBundle\Entity\CampeonatoCompetidores:
             unsigned: false
             comment: ''
             id: true
+        idcompetencia:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
     fields:
         numero:
             type: bigint

@@ -1,0 +1,2 @@
+[16-Nov-2024 03:51:23 America/Caracas] PHP Fatal error:  Class 'Assetic\Util\VarUtils' not found in /home/sistem19/public_html/piaweb/vendor/kriswallsmith/assetic/src/Assetic/Util/PathUtils.php on line 15
+[18-Dec-2024 16:51:02 America/Caracas] PHP Fatal error:  Class 'Assetic\Util\CssUtils' not found in /home/sistem19/public_html/piaweb/vendor/kriswallsmith/assetic/src/Assetic/Util/LessUtils.php on line 20

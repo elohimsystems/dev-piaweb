@@ -1,0 +1,3 @@
+[27-May-2025 07:06:37 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression_Unary' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Unary/Pos.php on line 13
+[31-May-2025 07:42:15 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression_Unary' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Unary/Neg.php on line 13
+[31-May-2025 08:00:49 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression_Unary' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Unary/Not.php on line 13

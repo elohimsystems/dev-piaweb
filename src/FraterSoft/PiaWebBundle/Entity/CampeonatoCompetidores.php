@@ -25,6 +25,11 @@ class CampeonatoCompetidores
     private $idcategoria;
 
     /**
+     * @var integer
+     */
+    private $idcompetencia;
+    
+    /**
      * @var string
      */
     private $nombrecategoria;
@@ -43,7 +48,6 @@ class CampeonatoCompetidores
      * @var datetime
      */
     private $afiliadoel;    
-
 
     /**
      * Set idcampeonato
@@ -205,4 +209,29 @@ class CampeonatoCompetidores
 
         return $this;
     }
+    
+	
+    /**
+     * Set idcompetencia
+     *
+     * @param integer $idcompetencia
+     * @return CampeonatoCompetidores
+     */
+    public function setIdCompetencia($idcompetencia)
+    {
+        $this->idcompetencia = $idcompetencia;
+
+        return $this;
+    }
+
+    /**
+     * Get idcompetencia
+     *
+     * @return integer 
+     */
+    public function getIdCompetencia()
+    {
+        return $this->idcompetencia;
+    }
+    
 }

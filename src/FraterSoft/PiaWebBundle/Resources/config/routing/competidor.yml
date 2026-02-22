@@ -32,6 +32,10 @@ competidor_delete:
 competidor_find:
     pattern:  /findform/{idevento}
     defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:findform" }
+
+competidor_findprivate:
+    pattern:  /findprivate/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:findprivate" }
     
 competidor_findgrupo:
     pattern:  /findgrupo/{idevento}/{idcompetencia}/{idgrupo}

@@ -1,0 +1,1 @@
+[04-May-2025 02:35:52 America/Caracas] PHP Fatal error:  Interface 'Psr\Log\LoggerInterface' not found in /home/sistem19/public_html/piaweb/vendor/monolog/monolog/src/Monolog/Logger.php on line 28

@@ -325,6 +325,13 @@
             var $newFormLi = $('<li></li>').append(newForm);
             $newLinkLi.before($newFormLi);
         }    
+        
+        {% for atributo in atributos %}
+            $("#fratersoft_piawebbundle_inscrito_idpia_{{ atributo.idatributo.nombre|lower }}").change(function () {
+                buscaCategorias();
+            });
+        {% endfor %}      
+        
         var precios=[];
         function buscaCategorias() {
         {% if form.idcategoria is defined %}
@@ -608,13 +615,25 @@
                 }
             });
 
-        $("#{{ form.idpia.sexo.vars.id }}").change(function () {
+        {# $("#{{ form.idpia.sexo.vars.id }}").change(function () {
             buscaCategorias();
-        });
+        }); #}
 
         $("#{{ form.idcompetencia.vars.id }}").change(function () {
             buscaCategorias();
         });
+        
+        $("#{{ form.idpia.idestado.vars.id }}").change(function () {
+            
+            if($('#{{ form.idpia.idestado.vars.id }}').val() != 6){
+                $('#{{ form.idpia.equipo.vars.id }}').attr('readonly',false);
+                $('#{{ form.idpia.equipo.vars.id }}').val("");
+            }
+            else{
+                $('#{{ form.idpia.equipo.vars.id }}').attr('readonly',true);
+                $('#{{ form.idpia.equipo.vars.id }}').val("INDEPENDIENTE");
+            }
+        });        
 
         {% if form.idcategoria is defined and form.pagos is defined and entity.idevento.proceso == 1%}
         $("#{{ form.idcategoria.vars.id }}").change(function () {

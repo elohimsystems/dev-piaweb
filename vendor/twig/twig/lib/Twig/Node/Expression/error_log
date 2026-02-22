@@ -1,0 +1,16 @@
+[12-Apr-2025 04:24:58 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Conditional.php on line 13
+[13-Apr-2025 17:26:52 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/ExtensionReference.php on line 18
+[16-Apr-2025 16:05:09 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/GetAttr.php on line 13
+[18-Apr-2025 07:48:39 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/MethodCall.php on line 12
+[21-Apr-2025 01:13:15 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression_Call' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Test.php on line 12
+[21-Apr-2025 01:42:05 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/TempName.php on line 12
+[22-Apr-2025 12:46:28 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Parent.php on line 19
+[22-Apr-2025 20:46:11 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/BlockReference.php on line 19
+[25-Apr-2025 03:20:29 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Array.php on line 12
+[27-Apr-2025 05:37:05 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Unary.php on line 13
+[27-Apr-2025 11:21:35 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Binary.php on line 13
+[30-Apr-2025 13:27:50 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression_Name' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/AssignName.php on line 14
+[02-May-2025 16:07:23 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression_Call' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Filter.php on line 13
+[03-May-2025 17:11:46 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression_Call' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Function.php on line 12
+[07-May-2025 01:34:38 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Call.php on line 12
+[01-Jun-2025 02:37:39 America/Caracas] PHP Fatal error:  Class 'Twig_Node_Expression' not found in /home/sistem19/public_html/piaweb/vendor/twig/twig/lib/Twig/Node/Expression/Name.php on line 13

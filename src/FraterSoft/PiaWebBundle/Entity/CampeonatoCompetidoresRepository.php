@@ -10,8 +10,8 @@ class CampeonatoCompetidoresRepository extends EntityRepository
     {
         $query = $this->getEntityManager()
             ->createQuery(
-                'SELECT co.id as id,ca.id as idcampeonato,co.id as idcompetidor,ct.id as idcategoria,'
-                    . 'cl.id as idclub,co.iddocumento,co.nombre,co.apellido,cc.numero,ct.descripcion as categoria,cl.nombre as club,cc.afiliadoel '
+                'SELECT co.id as id,ca.id as idcampeonato,co.id as idcompetidor,cc.idcompetencia as idcompetencia,ct.id as idcategoria,'
+                    . 'cl.id as idclub,co.iddocumento,co.nombre,co.apellido,co.sexo,co.fechanacimiento,cc.numero,ct.descripcion as categoria,cl.nombre as club,cc.afiliadoel,co.emailpersonal,co.email,co.telefono '
                     . 'FROM FraterSoftPiaWebBundle:CampeonatoCompetidores cc ' 
                     . 'INNER JOIN FraterSoftPiaWebBundle:Club cl WITH cl.id = cc.idclub '                  
                     . 'INNER JOIN FraterSoftPiaWebBundle:Campeonato ca WITH ca.id = cc.idcampeonato '                  
