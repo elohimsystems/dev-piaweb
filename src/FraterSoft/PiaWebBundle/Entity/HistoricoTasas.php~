@@ -1,0 +1,31 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * HistoricoTasas
+ */
+class HistoricoTasas
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Moneda
+     */
+    private $moneda;
+
+    /**
+     * @var float
+     */
+    private $monto;
+
+    /**
+     * @var \DateTime
+     */
+    private $publicadoel;
+}

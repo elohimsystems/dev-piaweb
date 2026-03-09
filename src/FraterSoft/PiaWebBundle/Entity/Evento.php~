@@ -215,11 +215,23 @@ class Evento
     private $registropago;
     
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $atributos;
+
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $publicidad;
+
+    /**
      * Constructor
      */
     public function __construct()
     {
         $this->idrecarga = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->atributos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->publicidad = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -1182,4 +1194,72 @@ class Evento
     {
         return $this->registropago;
     }
+
+
+    /**
+     * Add atributos
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\EventoAtributos $atributos
+     * @return Evento
+     */
+    public function addAtributo(\FraterSoft\PiaWebBundle\Entity\EventoAtributos $atributos)
+    {
+        $this->atributos[] = $atributos;
+    
+        return $this;
+    }
+
+    /**
+     * Remove atributos
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\EventoAtributos $atributos
+     */
+    public function removeAtributo(\FraterSoft\PiaWebBundle\Entity\EventoAtributos $atributos)
+    {
+        $this->atributos->removeElement($atributos);
+    }
+
+    /**
+     * Get atributos
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAtributos()
+    {
+        return $this->atributos;
+    }
+
+    /**
+     * Add publicidad
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Publicidad $publicidad
+     * @return Evento
+     */
+    public function addPublicidad(\FraterSoft\PiaWebBundle\Entity\Publicidad $publicidad)
+    {
+        $this->publicidad[] = $publicidad;
+        return $this;
+    }
+
+    /**
+     * Remove publicidad
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\EventoAtributos $publicidad
+     */
+    public function removePublicidad(\FraterSoft\PiaWebBundle\Entity\Publicidad $publicidad)
+    {
+        $this->publicidad->removeElement($publicidad);
+    }
+
+    /**
+     * Get publicidad
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPublicidad()
+    {
+        return $this->publicidad;
+    }
+    
+    
 }

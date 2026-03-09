@@ -874,7 +874,7 @@
         }*/
     }
     
-    function buscaPrecio(idevento, idcompetencia, idcategoria,formulario,recargas,idmoneda) {
+    function buscaPrecio(idevento, idcompetencia, idcategoria,formulario,recargas,idmoneda,credito){ 
         //Busca el precio segun configuracion
         var id_campo_precio=idform(formulario,'precio');
         var id_campo_moneda=idform(formulario,'idmoneda');
@@ -909,13 +909,22 @@
                     var indexrecarga=0;
                     var div;
                     var montorecargo;
+                    var preciofinal=0;
+                    if (credito!=null && credito!=undefined){
+                        preciofinal=value.precio-credito.monto;
+                        preciofinal=preciofinal.toFixed(2);
+                    }
+                    else{
+                        preciofinal=value.precio;
+                    }
+                    console.log(preciofinal);
                     //var precio=precios[0];
                     var total=0;
                     var textoprecio=(value.texto==null)?'':'texto=\'' + value.texto + '\'';
-                    texto=((value.texto==null)?'':value.texto + ' ')  + ((value.moneda==null)?'':value.moneda + ' ') + value.precio;
+                    texto=((value.texto==null)?'':value.texto + ' ')  + ((value.moneda==null)?'':value.moneda + ' ') + preciofinal;
                     if(value.precio!=-1){
                         if(datos['values'][0]['values'].length==1){
-                            $(id_campo_precio).append('<option selected '+textoprecio+' value='+value.precio+'>'+texto+'</option>');
+                            $(id_campo_precio).append('<option selected '+textoprecio+' value=' + preciofinal + '>'+texto+'</option>');
                             calcularTotalPagar(
                                     $(id_campo_precio),
                                     $(id_campo_monto),
@@ -923,7 +932,7 @@
                             );                            
                         }
                         else
-                            $(id_campo_precio).append('<option '+textoprecio+' value='+value.precio+'>'+texto+'</option>');
+                            $(id_campo_precio).append('<option '+textoprecio+' value=' + preciofinal + '>'+texto+'</option>');
                         setTextoPrecio($(id_campo_precio + ' option:selected'),$(id_campo_texto));
                         $(id_campo_precio).prop("disabled", false);
                         $(id_campo_banco).prop("disabled", false);
@@ -957,6 +966,25 @@
             }
         });
     }            
+
+    {# function consultaTasaDia(idmoneda) {
+        //Busca el precio segun configuracion
+        var criterios = "idmoneda=" + idmoneda;
+        $.ajax({
+            type: "GET",
+            data: criterios,
+            url: "{{ path('historicotasas_consultar_tasa_dia') }}",
+            dataType: "json",
+            success: function (datos)
+            {
+                console.log(datos);
+            },
+            error: function (jqXHR, textStatus, errorThrown)
+            {
+                alert("PIA Ajax Error: " + jqXHR.responseText);
+            }
+        });
+    }             #}
     
     function setTextoPrecio(campoprecio,campotexto){
         var texto;

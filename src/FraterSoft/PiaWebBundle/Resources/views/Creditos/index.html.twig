@@ -1,0 +1,49 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Creditos list</h1>
+
+    <table class="records_list">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Cedula</th>
+                <th>Monto</th>
+                <th>Idevento</th>
+                <th>Usadoel</th>
+                <th>Disponible</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for entity in entities %}
+            <tr>
+                <td><a href="{{ path('creditos_show', { 'id': entity.id }) }}">{{ entity.id }}</a></td>
+                <td>{{ entity.cedula }}</td>
+                <td>{{ entity.monto }}</td>
+                <td>{{ entity.idevento }}</td>
+                <td>{{ entity.usadoel }}</td>
+                <td>{{ entity.disponible }}</td>
+                <td>
+                <ul>
+                    <li>
+                        <a href="{{ path('creditos_show', { 'id': entity.id }) }}">show</a>
+                    </li>
+                    <li>
+                        <a href="{{ path('creditos_edit', { 'id': entity.id }) }}">edit</a>
+                    </li>
+                </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+        <ul>
+        <li>
+            <a href="{{ path('creditos_new') }}">
+                Create a new entry
+            </a>
+        </li>
+    </ul>
+    {% endblock %}

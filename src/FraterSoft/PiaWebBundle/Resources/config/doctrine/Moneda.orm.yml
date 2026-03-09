@@ -1,63 +1,69 @@
 FraterSoft\PiaWebBundle\Entity\Moneda:
-    type: entity
-    table: piaaccess.tmmonedas
-    repositoryClass: FraterSoft\PiaWebBundle\Entity\MonedaRepository      
-    indexes:
-        IDX_2E6BE0976FAFBFF6:
-            columns:
-                - idorganizador
+  type: entity
+  table: piaaccess.tmmonedas
+  repositoryClass: FraterSoft\PiaWebBundle\Entity\MonedaRepository
+  indexes:
+    IDX_2E6BE0976FAFBFF6:
+      columns:
+        - idorganizador
+  id:
     id:
-        id:
-            type: bigint
-            nullable: false
-            unsigned: false
-            comment: ''
-            id: true
-            generator:
-                strategy: SEQUENCE
-    fields:
-        codigolocal:
-            type: string
-            nullable: true
-            length: 5
-            fixed: true
-            comment: ''
-        codigointernacional:
-            type: string
-            nullable: true
-            length: 5
-            fixed: false
-            comment: ''
-        estatus:
-            type: integer
-            nullable: true
-            unsigned: false
-            comment: ''
-        nombre:
-            type: string
-            nullable: true
-            length: 100
-            fixed: false
-            comment: ''
-        idpais:
-            type: bigint
-            nullable: true
-            unsigned: false
-            comment: ''
-        icono:
-            type: string
-            nullable: true
-            length: 100
-            fixed: false
-            comment: ''
-    manyToOne:
+      type: bigint
+      nullable: false
+      unsigned: false
+      comment: ""
+      id: true
+      generator:
+        strategy: SEQUENCE
+  fields:
+    codigolocal:
+      type: string
+      nullable: true
+      length: 5
+      fixed: true
+      comment: ""
+    codigointernacional:
+      type: string
+      nullable: true
+      length: 5
+      fixed: false
+      comment: ""
+    estatus:
+      type: integer
+      nullable: true
+      unsigned: false
+      comment: ""
+    nombre:
+      type: string
+      nullable: true
+      length: 100
+      fixed: false
+      comment: ""
+    idpais:
+      type: bigint
+      nullable: true
+      unsigned: false
+      comment: ""
+    icono:
+      type: string
+      nullable: true
+      length: 100
+      fixed: false
+      comment: ""
+    urlconsultatasaoficial:
+      type: string
+      nullable: true
+      length: 255
+      fixed: false
+      comment: ""
+  manyToOne:
+    idorganizador:
+      targetEntity: Organizador
+      cascade: {}
+      mappedBy: null
+      inversedBy: null
+      joinColumns:
         idorganizador:
-            targetEntity: Organizador
-            cascade: {  }
-            mappedBy: null
-            inversedBy: null
-            joinColumns:
-                idorganizador:
-                    referencedColumnName: id
-            orphanRemoval: false
-    lifecycleCallbacks: {  }
+          referencedColumnName: id
+      orphanRemoval: false
+  lifecycleCallbacks: {}

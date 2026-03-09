@@ -370,28 +370,14 @@ class InscritoController extends commonPIAClass {
             if($entity->getIdevento()->getProceso()==1 && $grupo==null){
                 
                 foreach($form->get('pagos')->getData() as $pago){
-                    //$pago = new Pago();
                     $pago->setFechahora(new \DateTime('now'));
-                    //$pago->setMonto($form->get('idpago')->getData()->getMonto());
-                    //$pago->setMoneda($form->get('idpago')->getData()->getMoneda());
-                    //$pago->setTexto($form->get('idpago')->getData()->getTexto());
-                    //$pago->setReferencia($form->get('idpago')->getData()->getReferencia());
-                    //$pago->setComprobante($form->get('idpago')->getData()->getComprobante());
-                    //$pago->setTipo($form->get('idpago')->getData()->getTipo());
-                    //if($form->get('idpago')->getData()->getTipo()==0){
                     if ($form->get('pagos')[0]->getData()->getIdformapago()->getId() == 14) {
                         $pago->setConciliado(true);
                         $pago->setConciliadoel(new \DateTime('now'));
                     }
-                    //$pago->setBanco($form->get('idpago')->getData()->getBanco());
                     $pago->setIdinscrito($entity);
-//                    $em->persist($pago);
-//                    $entity->setIdpago($pago);
                 }                
             }
-            //else{
-            //        $entity->pagos(null);
-            //}
 
             $entity->setIdcompetencia($competencia);
             $entity->setIdpia($competidor);
@@ -405,12 +391,29 @@ class InscritoController extends commonPIAClass {
                 
             $entity->setFechahora(new \DateTime('now'));
 
+            $credito = $em->getRepository('FraterSoftPiaWebBundle:Creditos')
+                    ->findOneBy(array(
+                        'cedula' => $entity->getIdpia()->getIddocumento(),
+                        'idevento' => $entity->getIdevento()->getId(),
+                        'disponible' => true,
+                    ));
+            if($credito){
+                $credito->setDisponible(false);
+                $credito->setUsadoel(new \DateTime('now'));
+            }
+
             $em->getConnection()->beginTransaction();            
             try{
                 $maxsec = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->maximaSecuencia($entity->getIdevento()->getId());
                 $entity->setSecuencia($maxsec ? $maxsec + 1 : 1);
                 $em->persist($entity);
                 $em->flush();            
+
+                if($credito){
+                    $em->persist($credito);
+                    $em->flush();
+                }
+
                 $em->getConnection()->commit();
             } 
             catch (Exception $e) {
@@ -1205,6 +1208,54 @@ class InscritoController extends commonPIAClass {
         }
         else
             $this->addBotonRegresar($form,$this->generateUrl('competidor_find', array('idevento' => $idevento)));
+
+        $message_credito = '';
+        $creditoArray = null;
+        $credito = $em->getRepository('FraterSoftPiaWebBundle:Creditos')
+                ->findOneBy(array('idevento'=>$idevento,'cedula'=>$iddocumento,'disponible'=>true));
+        if($credito){
+            $moneda_credito = $em->getRepository('FraterSoftPiaWebBundle:Moneda')->find($credito->getIdMoneda());
+            if($moneda_credito==null){
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                            'texto' => "No se han configurado la moneda del credito",
+                            'tema' => $evento->getTema()
+                ));                
+            }
+            //Si la moneda del credito es diferente a la moneda del evento, se busca la tasa de cambio del dia para mostrar el mensaje del credito al competidor
+            $monto_credito = $credito->getMonto();
+            $texto_moneda_credito = $moneda_credito->getCodigolocal();
+            if($credito->getIdmoneda()!=$evento->getIdOrganizador()->getIdmoneda()->getId()){
+                $tasadia = $em->getRepository('FraterSoftPiaWebBundle:HistoricoTasas')->findOneBy(array('idmoneda'=>$credito->getIdmoneda(),'publicadoel'=>new \DateTime("now")));
+                if($tasadia==null){
+                    return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                                'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                                'texto' => "No se han configurado la tasa de cambio del credito",
+                                'tema' => $evento->getTema()
+                    ));
+                }
+                $monto_credito = $credito->getMonto() * $tasadia->getMonto();
+                $texto_moneda_credito = $evento->getIdOrganizador()->getIdmoneda()->getCodigolocal();
+            }
+            $message_credito = 'USTED POSEE UN CREDITO DE ' . $texto_moneda_credito . ' ' . number_format($monto_credito, 2, ',', '')   
+                        . ' PARA ESTE EVENTO. EL MISMO YA FUE DESCONTADO DEL PRECIO DE LA INSCRIPCION';
+            $creditoArray = [
+                'cedula' => $credito->getCedula(),
+                'monto' => $monto_credito,
+                'disponible' => $credito->getDisponible(),
+                'idevento' => $credito->getIdevento(),
+                'idmoneda' => $credito->getIdmoneda(),
+            ];
+        }
+        $form
+            ->get('pagos')[0]
+                ->add('message',null,array(
+                    'mapped' => false,
+                    'label'=>$message_credito,
+                    'attr'=> array('style'=>'display:none'),
+                ))
+        ;
+
                 
         return $this->render('FraterSoftPiaWebBundle:Inscrito:new.html.twig', array(
             'entity' => $entity,
@@ -1216,7 +1267,8 @@ class InscritoController extends commonPIAClass {
             'idcompetencia'=>$idcompetencia,
             'idgrupo'=>$idgrupo,
             'integrante'=>$cantidad_integrantes,
-            'formasdepago'=>$formaspago==null?null:$this->EntitiesToArray($formasdepago,$this->getCampos($em,'Formaspagoevento'))
+            'formasdepago'=>$formaspago==null?null:$this->EntitiesToArray($formasdepago,$this->getCampos($em,'Formaspagoevento')),
+            'creditox'=>$creditoArray
         ));
     }
 

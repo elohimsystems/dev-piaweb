@@ -1,72 +1,72 @@
 competidor:
-    pattern:  /
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:index" }
+  pattern: /
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:index" }
 
 competidor_show:
-    pattern:  /{id}/show
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:show" }
+  pattern: /{id}/show
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:show" }
 
 competidor_new:
-    pattern:  /new
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:new" }
+  pattern: /new
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:new" }
 
 competidor_create:
-    pattern:  /create
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:create" }
-    requirements: { _method: post }
+  pattern: /create
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:create" }
+  requirements: { _method: post }
 
 competidor_edit:
-    pattern:  /{iddocumento}/edit
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:edit" }
+  pattern: /{iddocumento}/edit
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:edit" }
 
 competidor_update:
-    pattern:  /{id}/update
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:update" }
-    requirements: { _method: post|put }
+  pattern: /{id}/update
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:update" }
+  requirements: { _method: post|put }
 
 competidor_delete:
-    pattern:  /{id}/delete
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:delete" }
-    requirements: { _method: post|delete }
-    
+  pattern: /{id}/delete
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:delete" }
+  requirements: { _method: post|delete }
+
 competidor_find:
-    pattern:  /findform/{idevento}
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:findform" }
+  pattern: /findform/{idevento}
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:findform" }
 
 competidor_findprivate:
-    pattern:  /findprivate/{idevento}
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:findprivate" }
-    
+  pattern: /findprivate/{idevento}
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:findprivate" }
+
 competidor_findgrupo:
-    pattern:  /findgrupo/{idevento}/{idcompetencia}/{idgrupo}
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:findgrupo" }
+  pattern: /findgrupo/{idevento}/{idcompetencia}/{idgrupo}
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:findgrupo" }
 
 competidor_buscar:
-    pattern:  /buscar/{idevento}
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:buscar" }    
-    
+  pattern: /buscar/{idevento}
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:buscar" }
+
 competidor_cargarxml:
-    pattern:  /cargarxml
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:cargarXML" }      
+  pattern: /cargarxml
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:cargarXML" }
 
 competidor_asociadosajax:
-    pattern:  /{iddocumento}/asociadosajax
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:asociadosajax" } 
-    
+  pattern: /{iddocumento}/asociadosajax
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:asociadosajax" }
+
 competidor_consultar:
-    pattern:  /consultar/{idevento}
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:consultar" }     
-    
+  pattern: /consultar/{idevento}
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:consultar" }
+
 competidor_valida_emailpersonal_ajax:
-    pattern:  /{email}/validaemailpersonalajax
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:validaemailpersonalajax" }         
-    
+  pattern: /{email}/validaemailpersonalajax
+  defaults:
+    { _controller: "FraterSoftPiaWebBundle:Competidor:validaemailpersonalajax" }
+
 competidor_importar:
-    pattern:  /importar/
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:importar" }     
-    
+  pattern: /importar/
+  defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:importar" }
+
 competidor_importar_encampeonato:
-    pattern:  /importarencampeonato/{idcampeonato}
-    defaults: { _controller: "FraterSoftPiaWebBundle:Competidor:importarencampeonato" }     
-    
-    
+  pattern: /importarencampeonato/{idcampeonato}
+  defaults:
+    { _controller: "FraterSoftPiaWebBundle:Competidor:importarencampeonato" }
