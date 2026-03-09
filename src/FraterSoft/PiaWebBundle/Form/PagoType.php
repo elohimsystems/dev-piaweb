@@ -23,6 +23,12 @@ class PagoType extends AbstractType
                 'label_attr'=>array('class'=>'group_fields'),
                 'attr'=> array('style'=>'display:none'),
             ))
+            ->add('message',null,array(
+                'mapped' => false,
+                'label'=>'USTED POSEE UN CREDITO DE X Para este evento. El precio de lainscripcion sera ',
+                // 'label_attr'=>array('class'=>'message_pago'),
+                'attr'=> array('style'=>'display:none'),
+            ))            
             ->add('idmoneda')
             ->add('precio')
             ->add('monto','text', array(

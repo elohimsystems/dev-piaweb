@@ -120,6 +120,16 @@ class Pago
     private $idmoneda;
 
     /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Inscrito
+     */
+    private $idinscrito;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Organizadorcuentas
+     */
+    private $idcuenta;
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -611,10 +621,6 @@ class Pago
     {
         return $this->idmoneda;
     }
-    /**
-     * @var \FraterSoft\PiaWebBundle\Entity\Inscrito
-     */
-    private $idinscrito;
 
 
     /**
@@ -639,4 +645,28 @@ class Pago
     {
         return $this->idinscrito;
     }
+
+    /**
+     * Set idcuenta
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Organizadorcuentas $idcuenta
+     * @return Pago
+     */
+    public function setIdcuenta(\FraterSoft\PiaWebBundle\Entity\Organizadorcuentas $idcuenta = null)
+    {
+        $this->idcuenta = $idcuenta;
+    
+        return $this;
+    }
+
+    /**
+     * Get idcuenta
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Organizadorcuentas 
+     */
+    public function getIdcuenta()
+    {
+        return $this->idcuenta;
+    }
+
 }

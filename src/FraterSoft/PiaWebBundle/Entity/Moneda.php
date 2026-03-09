@@ -230,4 +230,32 @@ class Moneda
         return $this->nombre;
     }        
     
+    /**
+     * @var string
+     */
+    private $urlconsultatasaoficial;
+
+
+    /**
+     * Set urlconsultatasaoficial
+     *
+     * @param string $urlconsultatasaoficial
+     * @return Moneda
+     */
+    public function setUrlConsultaTasaOficial($urlconsultatasaoficial)
+    {
+        $this->urlconsultatasaoficial = $urlconsultatasaoficial;
+    
+        return $this;
+    }
+
+    /**
+     * Get urlconsultatasaoficial
+     *
+     * @return string 
+     */
+    public function getUrlConsultaTasaOficial()
+    {
+        return $this->urlconsultatasaoficial;
+    }
 }

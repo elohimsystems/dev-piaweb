@@ -69,6 +69,10 @@ class Organizador
      */
     private $emailcontacto;
 
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Moneda
+     */
+    private $idmoneda;
 
     /**
      * Get id
@@ -341,4 +345,27 @@ class Organizador
     public function __toString() {
         return $this->nombre;
     }     
+
+    /**
+     * Set idmoneda
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Moneda $idmoneda
+     * @return Organizador
+     */
+    public function setIdmoneda(\FraterSoft\PiaWebBundle\Entity\Moneda $idmoneda = null)
+    {
+        $this->idmoneda = $idmoneda;
+    
+        return $this;
+    }
+
+    /**
+     * Get idmoneda
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Moneda 
+     */
+    public function getIdmoneda()
+    {
+        return $this->idmoneda;
+    }
 }

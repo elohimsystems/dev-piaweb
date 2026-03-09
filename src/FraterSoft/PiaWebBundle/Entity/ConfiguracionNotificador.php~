@@ -1,0 +1,111 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * ConfiguracionNotificador
+ */
+class ConfiguracionNotificador
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var string
+     */
+    private $plantilla;
+
+    /**
+     * @var integer
+     */
+    private $iddisparador;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Notificador
+     */
+    private $idnotificador;
+
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set plantilla
+     *
+     * @param string $plantilla
+     * @return ConfiguracionNotificador
+     */
+    public function setPlantilla($plantilla)
+    {
+        $this->plantilla = $plantilla;
+    
+        return $this;
+    }
+
+    /**
+     * Get plantilla
+     *
+     * @return string 
+     */
+    public function getPlantilla()
+    {
+        return $this->plantilla;
+    }
+
+    /**
+     * Set iddisparador
+     *
+     * @param integer $iddisparador
+     * @return ConfiguracionNotificador
+     */
+    public function setIddisparador($iddisparador)
+    {
+        $this->iddisparador = $iddisparador;
+    
+        return $this;
+    }
+
+    /**
+     * Get iddisparador
+     *
+     * @return integer 
+     */
+    public function getIddisparador()
+    {
+        return $this->iddisparador;
+    }
+
+    /**
+     * Set idnotificador
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Notificador $idnotificador
+     * @return ConfiguracionNotificador
+     */
+    public function setIdnotificador(\FraterSoft\PiaWebBundle\Entity\Notificador $idnotificador = null)
+    {
+        $this->idnotificador = $idnotificador;
+    
+        return $this;
+    }
+
+    /**
+     * Get idnotificador
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Notificador 
+     */
+    public function getIdnotificador()
+    {
+        return $this->idnotificador;
+    }
+}

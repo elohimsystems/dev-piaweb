@@ -64,12 +64,18 @@ class InscritoRepository extends EntityRepository
     {
         return $this->getEntityManager()
             ->createQuery(
-                'SELECT i,p FROM FraterSoftPiaWebBundle:Inscrito i '
-                    . 'JOIN '
-                        . 'i.idpago p '
+                'SELECT i,p,c,ca,co,es,b,fp '
+                . 'FROM FraterSoftPiaWebBundle:Inscrito i '
+                    . 'LEFT JOIN i.pagos p '
+                    . 'JOIN i.idcompetencia c '
+                    . 'JOIN i.idcategoria ca '
+                    . 'JOIN i.idpia co '                    
+                    . 'LEFT JOIN co.idestado es '                    
+                    . 'LEFT JOIN p.idbanco b '
+                    . 'LEFT JOIN p.idformapago fp '
                     . 'WHERE '
-                        . 'i.idpago=p '
-                    . 'and p.conciliado=true '
+                        . 'i.status=1 '
+                        . 'and p.conciliado=true '
                         . 'and i.idevento=' . $idevento
                     . 'ORDER BY '
                         . 'i.secuencia ASC'                    

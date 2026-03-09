@@ -84,16 +84,6 @@ class DefaultController extends commonPIAClass
     }     
     
     public function parametrosAction(){
-
-//        $definition = $container->getDefinition('app.user_config_manager');
-//        $constructorArguments = $definition->getArguments();
-//        print_r($constructorArguments);
-//        $definition = new Definition(DoctrineConfigManager::class, array(
-//            new Reference('app.mail_controller'), // a reference to another service
-//            //'%app.database_name%',  // will be resolved to the value of a container parameter
-//        ));
-//        $mailer = $this->get('app.mail_controller');
-//        $transport = $mailer->getTransport();
         
         $transport = \Swift_SmtpTransport::newInstance('mail.retos.info', 465, 'ssl')
           ->setUsername('retosinf')
@@ -120,5 +110,39 @@ class DefaultController extends commonPIAClass
                     'texto' => 'No existe una Categorias aplicable a este participante',
         ));                 
     }      
+
+    public function consultaTasaOficialAction($idmoneda){
+        switch ($idmoneda) {
+            case 1: 
+                $url = "https://ve.dolarapi.com/v1/dolares/oficial";
+                break;
+            case 2:
+                $url = "https://ve.dolarapi.com/v1/dolares/paralelo";
+                break;
+            case 3:
+                $url = "https://ve.dolarapi.com/v1/dolares/bitcoin";
+                break;
+            default:
+                return new Response("Moneda no válida");
+        }
+        $ch = curl_init($url);
+
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // importante
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // opcional si hay problemas SSL
+
+        $result = curl_exec($ch);
+
+        if ($result === false) {
+            $error = curl_error($ch);
+            curl_close($ch);
+            return new Response("Error en cURL: " . $error);
+        }
+
+        curl_close($ch);
+
+        $data = json_decode($result, true);
+
+        return new Response('<pre>' . print_r($data, true) . '</pre>');
+    }    
     
 }

@@ -17,8 +17,12 @@ class Estado
     /**
      * @var string
      */
-    private $nombre;
+    public $nombre;
 
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Pais
+     */
+    private $idpais;    
 
     /**
      * Get id
@@ -61,4 +65,50 @@ class Estado
     public function __toString() {
         return $this->nombre;
     }      
+
+    /**
+     * Set nombre
+     *
+     * @param string $nombre
+     * @return Estado
+     */
+    public function setNombre($nombre)
+    {
+        $this->nombre = $nombre;
+
+        return $this;
+    }
+
+    /**
+     * Get nombre
+     *
+     * @return string 
+     */
+    public function getNombre()
+    {
+        return $this->nombre;
+    }
+
+    /**
+     * Set idpais
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Pais $idpais
+     * @return Estado
+     */
+    public function setIdpais(\FraterSoft\PiaWebBundle\Entity\Pais $idpais = null)
+    {
+        $this->idpais = $idpais;
+
+        return $this;
+    }
+
+    /**
+     * Get idpais
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Pais 
+     */
+    public function getIdpais()
+    {
+        return $this->idpais;
+    }
 }

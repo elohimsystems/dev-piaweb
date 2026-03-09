@@ -35,6 +35,11 @@ class Formaspagoevento
     private $incremento;
     
     /**
+     * @var boolean
+     */
+    private $publico;    
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -144,4 +149,27 @@ class Formaspagoevento
     public function __toString() {
         return $this->getIdformapago()->getNombre();//$this->idformapago;
     }      
+
+    /**
+     * Set publico
+     *
+     * @param boolean $publico
+     * @return Formaspagoevento
+     */
+    public function setPublico($publico)
+    {
+        $this->publico = $publico;
+    
+        return $this;
+    }
+
+    /**
+     * Get publico
+     *
+     * @return boolean 
+     */
+    public function getPublico()
+    {
+        return $this->publico;
+    }
 }

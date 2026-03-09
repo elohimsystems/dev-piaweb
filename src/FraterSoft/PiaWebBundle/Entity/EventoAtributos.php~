@@ -44,6 +44,20 @@ class EventoAtributos
      */
     private $idatributo;
 
+    /**
+     * @var boolean
+     */
+    private $requerido;
+    
+    /**
+     * @var string
+     */
+    private $mascara;    
+    
+    /**
+     * @var boolean
+     */
+    private $estadistica;
 
     /**
      * Get id
@@ -192,4 +206,74 @@ class EventoAtributos
     {
         return $this->idatributo;
     }
+    
+    /**
+     * Set requerido
+     *
+     * @param boolean $requerido
+     * @return EventoAtributos
+     */
+    public function setRequerido($requerido)
+    {
+        $this->requerido = $requerido;
+
+        return $this;
+    }
+
+    /**
+     * Get requerido
+     *
+     * @return boolean 
+     */
+    public function getRequerido()
+    {
+        return $this->requerido;
+    }    
+    
+    /**
+     * Set mascara
+     *
+     * @param string $mascara
+     * @return String
+     */
+    public function setMascara($mascara)
+    {
+        $this->mascara = $mascara;
+
+        return $this;
+    }
+
+    /**
+     * Get mascara
+     *
+     * @return String 
+     */
+    public function getMascara()
+    {
+        return $this->mascara;
+    }      
+    
+    /**
+     * Set estadistica
+     *
+     * @param string $estadistica
+     * @return String
+     */
+    public function setEstadistica($estadistica)
+    {
+        $this->estadistica = $estadistica;
+
+        return $this;
+    }
+
+    /**
+     * Get estadistica
+     *
+     * @return String 
+     */
+    public function getEstadistica()
+    {
+        return $this->estadistica;
+    }      
+    
 }

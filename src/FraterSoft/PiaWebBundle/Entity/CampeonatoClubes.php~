@@ -15,11 +15,6 @@ class CampeonatoClubes
     private $id;
 
     /**
-     * @var integer
-     */
-    private $idcampeonato;
-
-    /**
      * @var string
      */
     private $club;
@@ -34,6 +29,11 @@ class CampeonatoClubes
      */
     private $idclub;
 
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Campeonato
+     */
+    private $idcampeonato;
+
 
     /**
      * Get id
@@ -43,29 +43,6 @@ class CampeonatoClubes
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set idcampeonato
-     *
-     * @param integer $idcampeonato
-     * @return CampeonatoClubes
-     */
-    public function setIdcampeonato($idcampeonato)
-    {
-        $this->idcampeonato = $idcampeonato;
-
-        return $this;
-    }
-
-    /**
-     * Get idcampeonato
-     *
-     * @return integer 
-     */
-    public function getIdcampeonato()
-    {
-        return $this->idcampeonato;
     }
 
     /**
@@ -135,5 +112,28 @@ class CampeonatoClubes
     public function getIdclub()
     {
         return $this->idclub;
+    }
+
+    /**
+     * Set idcampeonato
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Campeonato $idcampeonato
+     * @return CampeonatoClubes
+     */
+    public function setIdcampeonato(\FraterSoft\PiaWebBundle\Entity\Campeonato $idcampeonato = null)
+    {
+        $this->idcampeonato = $idcampeonato;
+
+        return $this;
+    }
+
+    /**
+     * Get idcampeonato
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Campeonato 
+     */
+    public function getIdcampeonato()
+    {
+        return $this->idcampeonato;
     }
 }

@@ -1,0 +1,29 @@
+FraterSoft\PiaWebBundle\Entity\HistoricoTasas:
+  type: entity
+  table: piaaccess.historicotasas
+  id:
+    id:
+      type: bigint
+      nullable: false
+      unsigned: false
+      comment: ""
+      id: true
+      generator:
+        strategy: SEQUENCE
+  fields:
+    publicadoel:
+      type: date
+      nullable: true
+      comment: ""
+    idmoneda:
+      type: bigint
+      nullable: true
+      unsigned: false
+      comment: ""
+    monto:
+      type: decimal
+      nullable: true
+      precision: 10
+      scale: 0
+      comment: ""
+  lifecycleCallbacks: {}

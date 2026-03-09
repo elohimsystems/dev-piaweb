@@ -1,0 +1,40 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>Creditos</h1>
+
+    <table class="record_properties">
+        <theader>
+            <tr>
+                <th>Cedula</th>
+                <th>Moneda</th>
+                <th>Monto</th>
+                <th>Usadoel</th>    
+                <th>Disponible</th>
+            </tr>
+        </theader>
+        <tbody>
+        {% for credito in creditos %}
+            <tr>
+                <td>{{ credito.cedula }}</td>
+                <td>{{ credito.idmoneda }}</td>
+                <td>{{ credito.monto }}</td>
+                <td>{{ credito.usadoel ? credito.usadoel|date('d-m-Y H:i:s') : '' }}</td>
+                <td>{{ credito.disponible ? 'Si' : 'Usado' }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <ul class="record_actions">
+        <li>
+            <a href="{{ path('creditos_delete_all', {'eventoId': eventoId}) }}">
+                Borrar todos los créditos
+            </a>
+        </li>
+        <li>
+            <a href="{{ path('creditos_generar_por_evento', {'eventoId': eventoId, 'monedaId': monedaId, 'valorCredito': valorCredito}) }}">
+                Generar créditos para este evento
+            </a>
+        </li>
+    </ul>
+{% endblock %}

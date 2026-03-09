@@ -234,4 +234,18 @@ class CampeonatoCompetidores
         return $this->idcompetencia;
     }
     
+
+    // /**
+    //  * Set idcompetencia
+    //  *
+    //  * @param integer $idcompetencia
+    //  * @return CampeonatoCompetidores
+    //  */
+    // public function setIdcompetencia($idcompetencia)
+    // {
+    //     $this->idcompetencia = $idcompetencia;
+    
+    //     return $this;
+    // }
+
 }

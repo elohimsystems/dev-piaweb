@@ -1,0 +1,44 @@
+FraterSoft\PiaWebBundle\Entity\Creditos:
+  type: entity
+  table: piaaccess.creditos
+  id:
+    id:
+      type: bigint
+      nullable: false
+      unsigned: false
+      comment: ""
+      id: true
+      generator:
+        strategy: SEQUENCE
+  fields:
+    cedula:
+      type: string
+      nullable: true
+      length: 20
+      fixed: false
+      comment: ""
+    monto:
+      type: decimal
+      nullable: true
+      precision: 10
+      scale: 0
+      comment: ""
+    idevento:
+      type: bigint
+      nullable: true
+      unsigned: false
+      comment: ""
+    usadoel:
+      type: datetime
+      nullable: true
+      comment: ""
+    disponible:
+      type: boolean
+      nullable: true
+      comment: ""
+    idmoneda:
+      type: bigint
+      nullable: true
+      unsigned: false
+      comment: ""
+  lifecycleCallbacks: {}

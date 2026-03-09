@@ -1,0 +1,61 @@
+creditos_index:
+  path: /
+  defaults: { _controller: FraterSoftPiaWebBundle:Creditos:index }
+
+creditos_new:
+  path: /new
+  defaults: { _controller: FraterSoftPiaWebBundle:Creditos:new }
+
+creditos_create:
+  path: /create
+  defaults: { _controller: FraterSoftPiaWebBundle:Creditos:create }
+
+creditos_show:
+  path: /{id}
+  defaults: { _controller: FraterSoftPiaWebBundle:Creditos:show }
+  requirements:
+    id: \d+
+
+creditos_edit:
+  path: /{id}/edit
+  defaults: { _controller: FraterSoftPiaWebBundle:Creditos:edit }
+  requirements:
+    id: \d+
+
+creditos_update:
+  path: /{id}/update
+  defaults: { _controller: FraterSoftPiaWebBundle:Creditos:update }
+  requirements:
+    id: \d+
+
+creditos_delete:
+  path: /{id}/delete
+  defaults: { _controller: FraterSoftPiaWebBundle:Creditos:delete }
+  requirements:
+    id: \d+
+
+creditos_delete_all:
+  path: /{eventoId}/deleteall
+  defaults: { _controller: FraterSoftPiaWebBundle:Creditos:deleteAll }
+  requirements:
+    eventoId: \d+
+
+creditos_generar_por_evento:
+  path: /{eventoId}/{monedaId}/{valorCredito}/generar
+  defaults:
+    { _controller: FraterSoftPiaWebBundle:Creditos:generarCreditosPorEvento }
+  requirements:
+    eventoId: \d+
+    monedaId: \d+
+    valorCredito: \d+
+
+creditos_consultar:
+  path: /{eventoId}/{idDocumento}/consultar
+  defaults: { _controller: "FraterSoftPiaWebBundle:Creditos:consultar" }
+  requirements:
+    eventoId: \d+
+    idDocumento: \d+
+
+creditos_consultar_ajax:
+  path: /consultarajax
+  defaults: { _controller: "FraterSoftPiaWebBundle:Creditos:consultarAjax" }

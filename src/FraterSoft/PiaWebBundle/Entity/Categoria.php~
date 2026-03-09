@@ -17,12 +17,7 @@ class Categoria
     /**
      * @var integer
      */
-    private $idevento;
-
-    /**
-     * @var integer
-     */
-    private $idcompetencia;
+    private $idcampeonato;
 
     /**
      * @var string
@@ -30,15 +25,19 @@ class Categoria
     private $descripcion;
 
     /**
-     * @var string
+     * @var \FraterSoft\PiaWebBundle\Entity\Competencia
      */
-    private $sexo;
+    private $idcompetencia;
+
 
     /**
-     * @var float
+     * to string
+     *
+     * @return string 
      */
-    //private $precioinscripcion;
-
+    public function __toString() {
+        return $this->descripcion;
+    }        
 
     /**
      * Get id
@@ -51,49 +50,26 @@ class Categoria
     }
 
     /**
-     * Set idevento
+     * Set idcampeonato
      *
-     * @param integer $idevento
+     * @param integer $idcampeonato
      * @return Categoria
      */
-    public function setIdevento($idevento)
+    public function setIdcampeonato($idcampeonato)
     {
-        $this->idevento = $idevento;
+        $this->idcampeonato = $idcampeonato;
 
         return $this;
     }
 
     /**
-     * Get idevento
+     * Get idcampeonato
      *
      * @return integer 
      */
-    public function getIdevento()
+    public function getIdcampeonato()
     {
-        return $this->idevento;
-    }
-
-    /**
-     * Set idcompetencia
-     *
-     * @param integer $idcompetencia
-     * @return Categoria
-     */
-    public function setIdcompetencia($idcompetencia)
-    {
-        $this->idcompetencia = $idcompetencia;
-
-        return $this;
-    }
-
-    /**
-     * Get idcompetencia
-     *
-     * @return integer 
-     */
-    public function getIdcompetencia()
-    {
-        return $this->idcompetencia;
+        return $this->idcampeonato;
     }
 
     /**
@@ -120,58 +96,25 @@ class Categoria
     }
 
     /**
-     * Set sexo
+     * Set idcompetencia
      *
-     * @param string $sexo
+     * @param \FraterSoft\PiaWebBundle\Entity\Competencia $idcompetencia
      * @return Categoria
      */
-    public function setSexo($sexo)
+    public function setIdcompetencia(\FraterSoft\PiaWebBundle\Entity\Competencia $idcompetencia = null)
     {
-        $this->sexo = $sexo;
+        $this->idcompetencia = $idcompetencia;
 
         return $this;
     }
 
     /**
-     * Get sexo
+     * Get idcompetencia
      *
-     * @return string 
+     * @return \FraterSoft\PiaWebBundle\Entity\Competencia 
      */
-    public function getSexo()
+    public function getIdcompetencia()
     {
-        return $this->sexo;
+        return $this->idcompetencia;
     }
-
-    /**
-     * Set precioinscripcion
-     *
-     * @param float $precioinscripcion
-     * @return Categoria
-     */
-    /*public function setPrecioinscripcion($precioinscripcion)
-    {
-        $this->precioinscripcion = $precioinscripcion;
-
-        return $this;
-    }*/
-
-    /**
-     * Get precioinscripcion
-     *
-     * @return float 
-     */
-    /*
-    public function getPrecioinscripcion()
-    {
-        return $this->precioinscripcion;
-    }*/
-    
-    /**
-     * to string
-     *
-     * @return string 
-     */
-    public function __toString() {
-        return $this->descripcion;
-    }       
 }

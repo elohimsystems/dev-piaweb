@@ -1,0 +1,110 @@
+<?php
+
+namespace FraterSoft\PiaWebBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Grupo
+ */
+class Grupo
+{
+    /**
+     * @var integer
+     */
+    private $id;
+
+    /**
+     * @var integer
+     */
+    private $integrantes;
+
+    /**
+     * @var integer
+     */
+    private $secuencia;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Competencia
+     */
+    private $idcompetencia;
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set integrantes
+     *
+     * @param integer $integrantes
+     * @return Grupo
+     */
+    public function setIntegrantes($integrantes)
+    {
+        $this->integrantes = $integrantes;
+    
+        return $this;
+    }
+
+    /**
+     * Get integrantes
+     *
+     * @return integer 
+     */
+    public function getIntegrantes()
+    {
+        return $this->integrantes;
+    }
+
+    /**
+     * Set secuencia
+     *
+     * @param integer $secuencia
+     * @return Grupo
+     */
+    public function setSecuencia($secuencia)
+    {
+        $this->secuencia = $secuencia;
+    
+        return $this;
+    }
+
+    /**
+     * Get secuencia
+     *
+     * @return integer 
+     */
+    public function getSecuencia()
+    {
+        return $this->secuencia;
+    }
+
+    /**
+     * Set idcompetencia
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Competencia $idcompetencia
+     * @return Grupo
+     */
+    public function setIdcompetencia(\FraterSoft\PiaWebBundle\Entity\Competencia $idcompetencia = null)
+    {
+        $this->idcompetencia = $idcompetencia;
+    
+        return $this;
+    }
+
+    /**
+     * Get idcompetencia
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Competencia 
+     */
+    public function getIdcompetencia()
+    {
+        return $this->idcompetencia;
+    }
+}

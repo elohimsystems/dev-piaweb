@@ -1,0 +1,17 @@
+# historicotasas_consultar_api:
+#   pattern: /{idmoneda}/consultaApiTasaOficial
+#   defaults:
+#     {
+#       _controller: "FraterSoftPiaWebBundle:HistoricoTasas:consultaApiTasaOficial",
+#     }
+#   requirements:
+#     idmoneda: \d+
+
+# historicotasas_consultar_tasa_dia:
+#   pattern: /{idmoneda}/consultaTasaOficialDia
+#   defaults:
+#     {
+#       _controller: "FraterSoftPiaWebBundle:HistoricoTasas:consultaTasaOficialDiaAjax",
+#     }
+#   requirements:
+#     idmoneda: \d+
