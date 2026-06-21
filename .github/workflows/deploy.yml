@@ -35,3 +35,4 @@ jobs:
             UPGRADE*
             error_log
             phpinfo.php
+            vendor/**
