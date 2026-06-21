@@ -834,7 +834,9 @@ class InscritoController extends commonPIAClass {
                         $competidor->setEdad($evento->getFecha()->format("Y") - $competidor->getFechanacimiento()->format("Y"));
                     else
                         $competidor->setEdad($evento->getFecha()->format("Y") - $competidor->getFechanacimiento()->format("Y") - 1);                
-            }                
+            }
+
+            $menor_edad = $competidor->getEdad() < 18;
 
             //Busca el numero del competidor si el evento es tipo campeonato
             //Si el evento no es de tipo campeonato, no devuelve competidor
@@ -980,6 +982,7 @@ class InscritoController extends commonPIAClass {
         }
         //Si el competidor no existe
         else {
+            $menor_edad = false;
             if($evento->getProceso()==1){
                 $pagos = new Pago();
                 $entity->addPago($pagos);
@@ -1268,7 +1271,8 @@ class InscritoController extends commonPIAClass {
             'idgrupo'=>$idgrupo,
             'integrante'=>$cantidad_integrantes,
             'formasdepago'=>$formaspago==null?null:$this->EntitiesToArray($formasdepago,$this->getCampos($em,'Formaspagoevento')),
-            'creditox'=>$creditoArray
+            'creditox'=>$creditoArray,
+            'menor_edad' => $menor_edad
         ));
     }
 

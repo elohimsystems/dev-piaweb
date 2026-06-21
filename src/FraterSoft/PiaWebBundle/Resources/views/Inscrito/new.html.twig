@@ -303,18 +303,29 @@
         </div>   
         {# {{dump(credito)}} #}
         {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
-        {{ form_end(form) }} 
+        {{ form_end(form) }}
+        <div id="dialog-menor-edad" title="Aviso Importante" style="display:none;">
+            <p>
+                <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 50px 0;"></span>
+                El participante es <b>MENOR DE EDAD</b>. Debe llevar la <b>Planilla de Liberaci&oacute;n de Responsabilidades</b> 
+                firmada por su representante el d&iacute;a de la entrega de material.
+            </p>
+        </div>
         <div id="uploadimage">    
             <div id="fine-uploader"></div>  
             {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
-        </div>   
+        </div>  
         {{twiglib.mensajetdc()}}
     </div>    
 {% endblock %}
 {% block javascripts %}
     {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':entity.idevento.id}) }}            
     <script>
-    
+
+        {% if menor_edad %}
+        var menor_edad_confirmado = false;
+        {% endif %}
+
         function addPagoForm(collectionHolder, $newLinkLi) {
             // Obtiene los datos del prototipo explicado anteriormente
             var prototype = collectionHolder.data('prototype');
@@ -447,6 +458,23 @@
                     alert("Debe ingresar el Email Personal o el Secundario, ambos no pueden estar vacios");
                     return false;
                 }            
+
+                {% if menor_edad %}
+                if (!menor_edad_confirmado) {
+                    event.preventDefault();
+                    $("#dialog-menor-edad").dialog({
+                        modal: true,
+                        buttons: {
+                            "Aceptar": function () {
+                                $(this).dialog("close");
+                                menor_edad_confirmado = true;
+                                $("form#formulario").submit();
+                            }
+                        }
+                    });
+                    return false;
+                }
+                {% endif %}
             });
             
             var competenciasgrupo={{competenciasgrupo|json_encode|raw}};
@@ -739,6 +767,8 @@
                 }
             ]
         });
+
+
 
         {% if form.precio is defined %}
         $("#{{form.precio.vars.id}}").change(function () {
