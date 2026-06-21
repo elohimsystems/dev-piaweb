@@ -19,8 +19,12 @@ jobs:
         run: |
           zip -r vendor.zip vendor/
 
-      - name: Subir vendor.zip por FTP
-        run: curl -T vendor.zip ftp://${{ secrets.FTP_HOST }}/vendor.zip --user ${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}
+      - name: Subir vendor.zip como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vendor
+          path: vendor.zip
+          retention-days: 7
 
       - name: Deploy to Development (sin vendor)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
