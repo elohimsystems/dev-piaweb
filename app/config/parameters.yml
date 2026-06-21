@@ -1,18 +1,17 @@
 # This file is auto-generated during the composer install
 parameters:
-  database_driver: pdo_pgsql
+  database_driver: xxxx
   database_host: localhost
   database_port: null
-  database_name: sistem19_bdpiav105
-  database_user: sistem19
-  database_password: ZC_v?ZOr_pc-
+  database_name: xxxx
+  database_user: xxxx
+  database_password: xxxxx
 
-  mailer_transport: smtp
-  mailer_host: mail.sistemapia.com.ve
-  mailer_port: 465
-  mailer_encryption: ssl
-  mailer_user: notificacion@sistemapia.com.ve
-  mailer_password: 7c)I8WE6QH7?dRm[
-
+  mailer_transport: xxx
+  mailer_host: xxxx
+  mailer_port: xxx
+  mailer_encryption: sxxxxsl
+  mailer_user: xxxxx
+  mailer_password: xxxx
   locale: en
   secret: ThisTokenIsNotSoSecretChangeIt
