@@ -141,6 +141,10 @@ class EventoType extends AbstractType
                 'label'=>'Ciudad',
                 'required' => true,
             ))
+            ->add('controlparental', null, array(
+                'label'=>'Control Parental',
+                'required' => false,
+            ))
         ;
     }
     

@@ -152,3 +152,7 @@ FraterSoftPiaWebBundle_creditos:
 FraterSoftPiaWebBundle_historicotasas:
   resource: "@FraterSoftPiaWebBundle/Resources/config/routing/historicotasas.yml"
   prefix: /historicotasas
+
+FraterSoftPiaWebBundle_controlparental:
+  resource: "@FraterSoftPiaWebBundle/Resources/config/routing/controlparental.yml"
+  prefix: /controlparental

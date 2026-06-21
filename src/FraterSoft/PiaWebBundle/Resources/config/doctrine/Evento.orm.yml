@@ -203,6 +203,11 @@ FraterSoft\PiaWebBundle\Entity\Evento:
             nullable: true
             unsigned: false
             comment: "Indica si el pago lo registra el participante o el organizaodor\nValores posibles: 1 el pago lo registra el participante, 2 el pago lo registra el organizador"
+        controlparental:
+            type: boolean
+            nullable: true
+            comment: 'Activa el control parental parametrizable'
+            default: false
     manyToOne:
         idorganizador:
             targetEntity: Organizador
@@ -262,5 +267,8 @@ FraterSoft\PiaWebBundle\Entity\Evento:
             orderBy: { 'orden': 'ASC' }
         publicidad:
             targetEntity: Publicidad
+            mappedBy: idevento
+        controlesparental:
+            targetEntity: ControlParental
             mappedBy: idevento
             lifecycleCallbacks: {  }

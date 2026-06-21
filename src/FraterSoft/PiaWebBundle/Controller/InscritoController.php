@@ -250,6 +250,29 @@ class InscritoController extends commonPIAClass {
         ));
     }    
 
+    private function getControlParentalEmailData($evento, $em) {
+        $data = null;
+        $adjuntos = array();
+        if ($evento->getControlparental()) {
+            $controlParental = $em->getRepository('FraterSoftPiaWebBundle:ControlParental')
+                ->findOneBy(array('idevento' => $evento->getId()));
+            if ($controlParental) {
+                $data = array(
+                    'mensaje' => $controlParental->getMensaje(),
+                    'titulo_documento' => $controlParental->getTituloDocumento(),
+                    'documento_pdf' => $controlParental->getDocumentoPdf(),
+                );
+                if ($controlParental->getDocumentoPdf()) {
+                    $pdfPath = __DIR__ . '/../../../../web/' . $controlParental->getDocumentoPdf();
+                    if (file_exists($pdfPath)) {
+                        $adjuntos[] = $pdfPath;
+                    }
+                }
+            }
+        }
+        return array($data, $adjuntos);
+    }
+
     /**
      * Creates a new Inscrito entity.
      *
@@ -428,17 +451,13 @@ class InscritoController extends commonPIAClass {
                         //if ($form->get('pagos')->getData()->getTipo() <> 0) { //INSCRIPCIONES GRATIS
                             //Se envia el correo de confirmacion de preinscripcion
                             $mailer = $this->get('app.mail_controller');
-                            /* $mailer->enviarPreinscripcion(
-                                    $emailfrom,
-                                    "Pre-Inscripcion " . $entity->getIdevento()->getNombre(), 
-                                    $emails,
-                                    $this->renderView('FraterSoftPiaWebBundle:Inscrito:email.html.twig', array('entity' => $entity))
-                            ); */
+                            list($cpData, $cpAdjuntos) = $this->getControlParentalEmailData($entity->getIdevento(), $em);
                             $mailer->enviar(
                                     $emailfrom,
                                     "Pre-Inscripcion " . $entity->getIdevento()->getNombre(), 
                                     $emails,
-                                    $this->renderView('FraterSoftPiaWebBundle:Inscrito:email.html.twig', array('entity' => $entity))
+                                    $this->renderView('FraterSoftPiaWebBundle:Inscrito:email.html.twig', array('entity' => $entity, 'controlParental' => $cpData)),
+                                    $cpAdjuntos
                             );
                             return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                                         'url' => $this->generateUrl('inscrito_confirmacion', array('id' => $entity->getId())),
@@ -464,11 +483,13 @@ class InscritoController extends commonPIAClass {
                         //SI LA INSCRIPCION ES GRATUITA SE ENVIA LA CONFIRMACION
                         if ($form->get('pagos')[0]->getData()->getIdformapago()->getId() == 14) { //FORMA DE PAGO EXONERADA o gratis, DEBE EXISTIR EN LA BD
                             $mailer = $this->get('app.mail_controller');
+                            list($cpData, $cpAdjuntos) = $this->getControlParentalEmailData($entity->getIdevento(), $em);
                             $mailer->enviarConfirmacion(
                                     $emailfrom,
                                     "Confirmacion de Inscripcion " . $entity->getIdevento()->getNombre(), 
                                     $emails,
-                                    $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailok.html.twig', array('inscrito' => $entity))
+                                    $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailok.html.twig', array('inscrito' => $entity, 'controlParental' => $cpData)),
+                                    $cpAdjuntos
                             );         
                             return $this->render('FraterSoftPiaWebBundle:Inscrito:conciliado.html.twig', array(
                                         'inscrito' => $entity,
@@ -498,15 +519,7 @@ class InscritoController extends commonPIAClass {
                                 null
                             );
                     $mailer = $this->get('app.mail_controller');
-                    /* $mailer->enviarPreinscripcion(
-                        $emailfrom,
-                        "Pre-Inscripcion " . $entity->getIdevento()->getNombre(), 
-                        $emails, 
-                        $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailproceso2.html.twig', array(
-                            'entity' => $entity,
-                            'precios'=>$precio,
-                        ))
-                    ); */
+                    list($cpData, $cpAdjuntos) = $this->getControlParentalEmailData($entity->getIdevento(), $em);
                     $mailer->enviar(
                         $emailfrom,
                         "Pre-Inscripcion " . $entity->getIdevento()->getNombre(), 
@@ -514,7 +527,9 @@ class InscritoController extends commonPIAClass {
                         $this->renderView('FraterSoftPiaWebBundle:Inscrito:emailproceso2.html.twig', array(
                             'entity' => $entity,
                             'precios'=>$precio,
-                        ))
+                            'controlParental' => $cpData,
+                        )),
+                        $cpAdjuntos
                     );
                     return $this->redirect($this->generateUrl('inscrito_confirmacion', array('id' => $entity->getId())));
                 }
@@ -616,6 +631,7 @@ class InscritoController extends commonPIAClass {
         $evento = new Evento();
         $precioevento = new Preciosevento();
         $em = $this->getDoctrine()->getManager();
+        $controlParentalData = null;
 
         //Busca el evento 
         $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')
@@ -628,6 +644,21 @@ class InscritoController extends commonPIAClass {
             ));
         }
         
+        //Carga configuracion de Control Parental si el evento la tiene activa
+        $controlParentalConfig = null;
+        if ($evento->getControlparental()) {
+            $controlParental = $em->getRepository('FraterSoftPiaWebBundle:ControlParental')
+                ->findOneBy(array('idevento' => $idevento));
+            if ($controlParental) {
+                $controlParentalConfig = array(
+                    'edad_control' => $controlParental->getEdadControl(),
+                    'mensaje' => $controlParental->getMensaje(),
+                    'titulo_documento' => $controlParental->getTituloDocumento(),
+                    'documento_pdf' => $controlParental->getDocumentoPdf(),
+                );
+            }
+        }
+
         //Busca la cantidad de competencias por eventos, si hay mas de 1 muestra el combo        
         $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')
                 ->findBy(array(
@@ -836,7 +867,15 @@ class InscritoController extends commonPIAClass {
                         $competidor->setEdad($evento->getFecha()->format("Y") - $competidor->getFechanacimiento()->format("Y") - 1);                
             }
 
-            $menor_edad = $competidor->getEdad() < 18;
+            $controlParentalData = null;
+            if ($controlParentalConfig) {
+                $menor_edad = $competidor->getEdad() < $controlParentalConfig['edad_control'];
+                if ($menor_edad) {
+                    $controlParentalData = $controlParentalConfig;
+                }
+            } else {
+                $menor_edad = false;
+            }
 
             //Busca el numero del competidor si el evento es tipo campeonato
             //Si el evento no es de tipo campeonato, no devuelve competidor
@@ -1272,7 +1311,9 @@ class InscritoController extends commonPIAClass {
             'integrante'=>$cantidad_integrantes,
             'formasdepago'=>$formaspago==null?null:$this->EntitiesToArray($formasdepago,$this->getCampos($em,'Formaspagoevento')),
             'creditox'=>$creditoArray,
-            'menor_edad' => $menor_edad
+            'menor_edad' => $menor_edad,
+            'controlParentalData' => $controlParentalData,
+            'controlParentalConfig' => $controlParentalConfig
         ));
     }
 

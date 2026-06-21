@@ -304,13 +304,16 @@
         {# {{dump(credito)}} #}
         {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
         {{ form_end(form) }}
+        {% if controlParentalConfig %}
         <div id="dialog-menor-edad" title="Aviso Importante" style="display:none;">
+            <p>{{ controlParentalConfig.mensaje }}</p>
+            {% if controlParentalConfig.documento_pdf %}
             <p>
-                <span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 50px 0;"></span>
-                El participante es <b>MENOR DE EDAD</b>. Debe llevar la <b>Planilla de Liberaci&oacute;n de Responsabilidades</b> 
-                firmada por su representante el d&iacute;a de la entrega de material.
+                Descargue el {{ controlParentalConfig.titulo_documento }} <a href="{{ asset(controlParentalConfig.documento_pdf) }}" target="_blank">AQUI</a>
             </p>
+            {% endif %}
         </div>
+        {% endif %}
         <div id="uploadimage">    
             <div id="fine-uploader"></div>  
             {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
@@ -321,10 +324,9 @@
 {% block javascripts %}
     {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':entity.idevento.id}) }}            
     <script>
-
-        {% if menor_edad %}
+        var controlParentalConfig = {{ controlParentalConfig|json_encode|raw }};
+        var menor_edad_requiere_confirmacion = {{ menor_edad ? 'true' : 'false' }};
         var menor_edad_confirmado = false;
-        {% endif %}
 
         function addPagoForm(collectionHolder, $newLinkLi) {
             // Obtiene los datos del prototipo explicado anteriormente
@@ -459,10 +461,10 @@
                     return false;
                 }            
 
-                {% if menor_edad %}
-                if (!menor_edad_confirmado) {
+                if (menor_edad_requiere_confirmacion && !menor_edad_confirmado) {
                     event.preventDefault();
                     $("#dialog-menor-edad").dialog({
+                        width: '50%',
                         modal: true,
                         buttons: {
                             "Aceptar": function () {
@@ -474,7 +476,6 @@
                     });
                     return false;
                 }
-                {% endif %}
             });
             
             var competenciasgrupo={{competenciasgrupo|json_encode|raw}};
@@ -656,6 +657,12 @@
                                 $("#{{ form.idpia.edad.vars.id }}").val(afe.getFullYear() - afn.getFullYear()-1);
                     {% endif %}
                     buscaCategorias();
+                    if (controlParentalConfig) {
+                        var edadCalc = parseInt($("#{{ form.idpia.edad.vars.id }}").val());
+                        if (edadCalc < controlParentalConfig.edad_control) {
+                            menor_edad_requiere_confirmacion = true;
+                        }
+                    }
                     
                 }
             });

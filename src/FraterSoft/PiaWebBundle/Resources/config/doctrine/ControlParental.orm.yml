@@ -1,0 +1,51 @@
+FraterSoft\PiaWebBundle\Entity\ControlParental:
+    type: entity
+    table: piaaccess.tmcontrolparental
+    indexes:
+        IDX_CONTROLPARENTAL_IDEVENTO:
+            columns:
+                - idevento
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        edad_control:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: 'Edad minima para control parental'
+        titulo_documento:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: 'Titulo del documento PDF'
+        documento_pdf:
+            type: string
+            nullable: true
+            length: 255
+            fixed: false
+            comment: 'Ruta del archivo PDF'
+        mensaje:
+            type: string
+            nullable: true
+            length: 500
+            fixed: false
+            comment: 'Mensaje a mostrar en el popup'
+    manyToOne:
+        idevento:
+            targetEntity: Evento
+            cascade: { }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idevento:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: { }

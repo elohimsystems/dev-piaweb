@@ -1,0 +1,75 @@
+{% extends '::base.html.twig' %}
+{% block style %} 
+{{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':0}) }}    
+<style type="text/css">
+    #tabs{ 
+        display: none;
+    }
+    #formulario > div:nth-child(1){
+        display: none;
+    }
+</style>
+{% endblock %}  
+{% block body -%}
+    <div id="tabs">    
+        {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
+        <div id="tabs-2">     
+            {{ include("FraterSoftPiaWebBundle:Evento:menu_conf_inscripciones.html.twig") }}
+            <div id="titulotabla"><h3>Control Parental Configurado</h3></div>
+            <table id="controlparental" class="display row-border hover">
+            </table>    
+        </div> 
+        <button class="ui-button ui-widget ui-corner-all" onclick="$(location).attr('href', '{{app.session.get('urllistaeventos')}}');">Regresar</button>
+        <div id="dialogformGuardar" title="Crear Control Parental">
+            {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
+            {{ form_end(form) }} 
+        </div>          
+        <div id="dialogelimiar" title="Advertencia!!!">
+            Esta seguro que desea elimar la fila <strong id="eliminar"></strong>?
+        </div> 
+        <div id="dialog-message" title="Mensaje">
+        </div>        
+    </div> 
+{% endblock %}
+{% block javascripts -%}
+{{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':idevento}) }}
+<script>
+    $(document).ready(function () { 
+        $("#tabs").css("display","block");            
+        $( "#botonera" ).controlgroup();                
+                
+        tablaDatos(
+                $('#formulario'),
+                {{campos|json_encode|raw}},
+                'Control Parental',
+                "{{ path('controlparental_create')}}",
+                "{{ path('controlparental_update',{'id':'_id_'})}}",
+                "{{ path('controlparental_listaajax',{'idevento': idevento }) }}",
+                [{posicion:2, config:{title:"Edad Control",data:"edad_control"}}]
+        );
+        dialogGuardar($('#formulario'),{{campos|json_encode|raw}});
+        dialogEliminar('{{ path('controlparental_delete',{'id':'_id_'})}}');
+        dialogMensaje();
+                
+        menuConfInscripcionesControl('controlparental');
+        
+        {% if estado is defined %}
+            {% if estado == 1 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>El Control Parental fue ELIMINADO satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+            {% if estado == 2 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>El Control Parental fue CREADO satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+            {% if estado == 3 %}
+                $("#dialog-message").html("<p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 50px 0;'>" +
+                        "</span>El Control Parental fue ACTUALIZADO satisfacoriamente.</p>").dialog();
+                $("#dialog-message").dialog("open");
+            {% endif %}    
+        {% endif %}        
+    });    
+</script>    
+{% endblock %}

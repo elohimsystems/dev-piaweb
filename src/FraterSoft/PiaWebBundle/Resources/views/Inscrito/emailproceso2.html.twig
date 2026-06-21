@@ -108,5 +108,14 @@
             </tr>              
         </tbody>
     </table>
+    {% if controlParental is defined and controlParental %}
+    <table align="center" border="0" style="margin-top:20px; border:1px solid #ccc; padding:15px; width:650px;">
+        <tr><td style="font-weight:bold; font-size:14px;">Aviso Importante</td></tr>
+        <tr><td style="padding-top:8px;">{{ controlParental.mensaje }}</td></tr>
+        {% if controlParental.documento_pdf and controlParental.titulo_documento %}
+        <tr><td style="padding-top:8px;"><b>Documento adjunto:</b> {{ controlParental.titulo_documento }}</td></tr>
+        {% endif %}
+    </table>
+    {% endif %}
 </ul>
 {% endblock %}

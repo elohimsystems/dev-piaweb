@@ -1,0 +1,33 @@
+controlparental:
+    pattern:  /
+    defaults: { _controller: "FraterSoftPiaWebBundle:ControlParental:index" }
+
+controlparental_listaajax:
+    pattern:  /{idevento}/listaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:ControlParental:listaajax" }
+
+controlparental_new:
+    pattern:  /new/{idevento}/{estado}
+    defaults: { _controller: FraterSoftPiaWebBundle:ControlParental:new,estado:null }
+
+controlparental_create:
+    pattern:  /create
+    defaults: { _controller: "FraterSoftPiaWebBundle:ControlParental:create" }
+    requirements: { _method: post }
+
+controlparental_edit:
+    pattern:  /{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:ControlParental:edit" }
+
+controlparental_update:
+    pattern:  /{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:ControlParental:update" }
+    requirements: { _method: post|put }
+
+controlparental_delete:
+    pattern:  /{id}/delete
+    defaults: { _controller: "FraterSoftPiaWebBundle:ControlParental:delete" }
+
+controlparental_configurar:
+    pattern:  /configurar/{idevento}
+    defaults: { _controller: "FraterSoftPiaWebBundle:ControlParental:configurar" }

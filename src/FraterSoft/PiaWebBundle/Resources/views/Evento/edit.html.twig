@@ -206,6 +206,7 @@
                 <b>Copie el siguiente codigo y peguelo en su pagina web</b>
                 <textarea id="textcodigoweb" rows="4" cols="67" readonly></textarea>
             </div>  
+            <div id="dialog_controlparental" title="Control Parental"></div>
             
         </div>
     </div>
@@ -564,6 +565,72 @@
             ]
         });            
 
+        //Control Parental button y dialog
+        $("#{{edit_form.controlparental.vars.id}}").parent().append(
+            "<button type='button' id='btn_controlparental'>Configurar</button>"
+        );
+        $('#btn_controlparental').button();
+        function actualizarBtnControlParental() {
+            var activo = $("#{{edit_form.controlparental.vars.id}}").prop('checked')
+                && !$("#{{edit_form.externo.vars.id}}").prop('checked');
+            $("#btn_controlparental").button("option", "disabled", !activo);
+        }
+        actualizarBtnControlParental();
+        $("#{{edit_form.controlparental.vars.id}}").change(actualizarBtnControlParental);
+        $("#btn_controlparental").on('click', function() {
+            var url = "{{ path('controlparental_configurar', {'idevento': entity.id}) }}";
+            $("#dialog_controlparental").html("<p>Cargando...</p>").dialog("open");
+            $.get(url, function(data) {
+                $("#dialog_controlparental").html(data);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                $("#dialog_controlparental").html("<p>Error: " + textStatus + " - " + errorThrown + "<br>" + jqXHR.responseText + "</p>");
+            });
+        });
+        $("#dialog_controlparental").dialog({
+            autoOpen: false,
+            width: 550,
+            height: 520,
+            modal: true,
+            buttons: [
+                {
+                    text: "Guardar",
+                    click: function () {
+                        var $form = $("#form_controlparental");
+                        var formData = new FormData($form[0]);
+                        $.ajax({
+                            url: $form.attr('action'),
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            dataType: 'json',
+                            success: function(response) {
+                                if(response.success) {
+                                    $("#dialog_controlparental").dialog("close");
+                                    alert("Control Parental guardado exitosamente");
+                                } else {
+                                    alert("Error al guardar. Verifique los datos.");
+                                }
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.log('=== Error AJAX Control Parental ===');
+                                console.log('textStatus:', textStatus);
+                                console.log('errorThrown:', errorThrown);
+                                console.log('responseText:', jqXHR.responseText);
+                                console.log('status:', jqXHR.status);
+                            }
+                        });
+                    }
+                },
+                {
+                    text: "Cerrar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });            
+
         //Oculta los campos que no se usaran si el eventos es externo
         condicionaCampos();
         $("#{{ edit_form.externo.vars.id }}").change(function () {
@@ -594,6 +661,8 @@
             setVisual($("#{{edit_form.zonahoraria.vars.id}}"),valor);
             $("#{{edit_form.idorganizador.vars.id}}").prop('disabled',valor);                                    
             setVisual($("#{{edit_form.idorganizador.vars.id}}"),valor);
+            $("#{{edit_form.controlparental.vars.id}}").prop('disabled',valor);
+            setVisual($("#{{edit_form.controlparental.vars.id}}"),valor);
             $("#btn_setmapa").button({disabled: valor});
             $("#boton_rutamapa").button({disabled: valor});
             $("#boton_rutaperfil").button({disabled: valor});
@@ -616,7 +685,9 @@
             else{
                 setCampos(false);
                 $( "#tabs" ).tabs("enable");
-            }                
+            }
+            if(typeof actualizarBtnControlParental === 'function')
+                actualizarBtnControlParental();
         }
         $('#tabs a[href="#tabs-2"]').on("click", function () {
             $(location).attr('href', '{{ path('eventoatributos_new',{'idevento':entity.id}) }}')

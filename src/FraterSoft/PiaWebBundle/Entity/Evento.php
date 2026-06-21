@@ -215,6 +215,11 @@ class Evento
     private $registropago;
     
     /**
+     * @var boolean
+     */
+    private $controlparental;
+    
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $atributos;
@@ -225,6 +230,11 @@ class Evento
     private $publicidad;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $controlesparental;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -232,6 +242,7 @@ class Evento
         $this->idrecarga = new \Doctrine\Common\Collections\ArrayCollection();
         $this->atributos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->publicidad = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->controlesparental = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -1260,6 +1271,61 @@ class Evento
     {
         return $this->publicidad;
     }
-    
+
+    /**
+     * Set controlparental
+     *
+     * @param boolean $controlparental
+     * @return Evento
+     */
+    public function setControlparental($controlparental)
+    {
+        $this->controlparental = $controlparental;
+
+        return $this;
+    }
+
+    /**
+     * Get controlparental
+     *
+     * @return boolean 
+     */
+    public function getControlparental()
+    {
+        return $this->controlparental;
+    }
+
+    /**
+     * Add controlesparental
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\ControlParental $controlesparental
+     * @return Evento
+     */
+    public function addControlesparental(\FraterSoft\PiaWebBundle\Entity\ControlParental $controlesparental)
+    {
+        $this->controlesparental[] = $controlesparental;
+
+        return $this;
+    }
+
+    /**
+     * Remove controlesparental
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\ControlParental $controlesparental
+     */
+    public function removeControlesparental(\FraterSoft\PiaWebBundle\Entity\ControlParental $controlesparental)
+    {
+        $this->controlesparental->removeElement($controlesparental);
+    }
+
+    /**
+     * Get controlesparental
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getControlesparental()
+    {
+        return $this->controlesparental;
+    }
     
 }
