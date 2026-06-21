@@ -1,0 +1,37 @@
+name: Deploy via FTP
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+
+jobs:
+  deploy-dev:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: development
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Development
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          server-dir: /
+          exclude: |
+            .git/**
+            .gitignore
+            .github/**
+            .travis.yml
+            composer.json
+            composer.lock
+            README.md
+            LICENSE
+            UPGRADE*
+            error_log
+            phpinfo.php
