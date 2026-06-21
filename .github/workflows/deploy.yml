@@ -26,6 +26,9 @@ jobs:
           path: vendor.zip
           retention-days: 7
 
+      - name: Eliminar vendor.zip del workspace
+        run: rm vendor.zip
+
       - name: Deploy to Development (sin vendor)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -46,5 +49,4 @@ jobs:
             UPGRADE*
             error_log
             phpinfo.php
-            vendor.zip
             vendor/**
