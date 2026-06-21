@@ -16,30 +16,16 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Crear vendor.zip
-        run: |
-          mkdir -p deploy-vendor
-          zip -r deploy-vendor/vendor.zip vendor/
-
-      - name: Subir vendor.zip por FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: deploy-vendor/
-          server-dir: /
+        run: zip -r vendor.zip vendor/
 
       - name: Subir vendor.zip como artifact
         uses: actions/upload-artifact@v4
         with:
           name: vendor
-          path: deploy-vendor/vendor.zip
+          path: vendor.zip
           retention-days: 7
 
-      - name: Limpiar
-        run: rm -rf deploy-vendor
-
-      - name: Deploy to Development (sin vendor)
+      - name: Deploy (vendor.zip incluido, vendor/ excluido)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.FTP_HOST }}
@@ -60,3 +46,6 @@ jobs:
             error_log
             phpinfo.php
             vendor/**
+
+      - name: Limpiar
+        run: rm -f vendor.zip
