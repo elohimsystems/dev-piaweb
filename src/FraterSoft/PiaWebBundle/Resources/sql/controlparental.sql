@@ -4,11 +4,6 @@
 ALTER TABLE piaaccess.tmeventos ADD COLUMN controlparental boolean DEFAULT false;
 
 -- =====================================================
--- 2. Agregar columna titulo_documento a tmcontrolparental
--- =====================================================
-ALTER TABLE piaaccess.tmcontrolparental ADD COLUMN titulo_documento character varying(255);
-
--- =====================================================
 -- 3. Crear tabla tmcontrolparental (si no existe)
 -- =====================================================
 CREATE SEQUENCE IF NOT EXISTS piaaccess.tmcontrolparental_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
