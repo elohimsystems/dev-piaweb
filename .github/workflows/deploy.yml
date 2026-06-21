@@ -20,9 +20,7 @@ jobs:
           zip -r vendor.zip vendor/
 
       - name: Subir vendor.zip por FTP
-        run: |
-          curl -T vendor.zip ftp://${{ secrets.FTP_HOST }}/vendor.zip \
-            --user ${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}
+        run: curl -T vendor.zip ftp://${{ secrets.FTP_HOST }}/vendor.zip --user ${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}
 
       - name: Deploy to Development (sin vendor)
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
