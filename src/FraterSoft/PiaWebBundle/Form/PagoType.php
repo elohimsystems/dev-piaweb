@@ -30,7 +30,9 @@ class PagoType extends AbstractType
                 'attr'=> array('style'=>'display:none'),
             ))            
             ->add('idmoneda')
-            ->add('precio')
+            ->add('precio','text', array(
+                'read_only' => true,
+            ))
             ->add('monto','text', array(
                 'label'=>'Total a Pagar',
                 'label_attr'=>array('style'=>'display:none'),

@@ -887,13 +887,15 @@
                 + "&idcompetencia=" + idcompetencia
                 + "&idcategoria=" + idcategoria
                 + "&idmoneda=" + idmoneda;
-        $(id_campo_precio).find('option').remove();
+        if (recargas) {
+            $(id_campo_precio).find('option').remove();
+            $.each(recargas, function (key, value) {
+                $("#recarga"+key).remove();
+            });
+        }
         //Oculta el total a pagar
         $(id_campo_monto).hide();
         $(id_campo_monto).parent().children(0).hide();
-        $.each(recargas, function (key, value) {
-            $("#recarga"+key).remove();
-        });
         $.ajax({
             type: "GET",
             data: criterios,
@@ -901,14 +903,8 @@
             dataType: "json",
             success: function (datos)
             {
-                if(datos['values'][0]['values'].length>1)
-                    $(id_campo_precio).append("<option selected value=''>Seleccione un Precio</option>");
                 var texto="";
                 $.each(datos['values'][0]['values'], function (key, value) {
-                    var recarga=[];
-                    var indexrecarga=0;
-                    var div;
-                    var montorecargo;
                     var preciofinal=0;
                     if (credito!=null && credito!=undefined){
                         preciofinal=value.precio-credito.monto;
@@ -918,33 +914,22 @@
                         preciofinal=value.precio;
                     }
                     console.log(preciofinal);
-                    //var precio=precios[0];
-                    var total=0;
-                    var textoprecio=(value.texto==null)?'':'texto=\'' + value.texto + '\'';
                     texto=((value.texto==null)?'':value.texto + ' ')  + ((value.moneda==null)?'':value.moneda + ' ') + preciofinal;
                     if(value.precio!=-1){
-                        if(datos['values'][0]['values'].length==1){
-                            $(id_campo_precio).append('<option selected '+textoprecio+' value=' + preciofinal + '>'+texto+'</option>');
-                            calcularTotalPagar(
-                                    $(id_campo_precio),
-                                    $(id_campo_monto),
-                                    recargas
-                            );                            
-                        }
-                        else
-                            $(id_campo_precio).append('<option '+textoprecio+' value=' + preciofinal + '>'+texto+'</option>');
-                        setTextoPrecio($(id_campo_precio + ' option:selected'),$(id_campo_texto));
+                        $(id_campo_precio).val(preciofinal);
+                        $(id_campo_texto).val(value.texto);
+                        calcularTotalPagar(
+                            $(id_campo_precio),
+                            $(id_campo_monto),
+                            recargas
+                        );
                         $(id_campo_precio).prop("disabled", false);
                         $(id_campo_banco).prop("disabled", false);
                         $(id_campo_referencia).prop("disabled", false);
-                        //$(id_campo_idformapago).prop("readonly", false); 
                         $(id_campo_idformapago).removeAttr("style");
                     }
                     else{
-                        $(id_campo_precio).append($('<option>', {
-                            value: 0,
-                            text: "0"
-                        }));
+                        $(id_campo_precio).val(0);
                         $(id_campo_monto).val(0);
                         $(id_campo_texto).val(value.texto);
                         $(id_campo_precio).prop("disabled", true);

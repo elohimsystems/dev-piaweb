@@ -340,7 +340,7 @@
                                                 $('#{{ edit_form.idcompetencia.vars.id }}').val(),
                                                 datos[0].id,
                                                 $('#formulario'),
-                                                {{null|json_encode|raw}},
+                                                [],
                                                 $("#formulario input[type='radio']:checked").val()
                                         );    
                                         {% endif %}
@@ -408,17 +408,6 @@
                 {% endfor %}
                 {# $("#{{edit_form.info.vars.id}}").parent().hide();  #}
                 $("#titulogrupos").show();
-            }
-            else{
-                {% if edit_form.idcategoria is defined and edit_form.pagos is defined and entity.idevento.proceso == 1%}
-                buscaPrecio($('#{{ edit_form.idevento.vars.id }}').val(),
-                            $('#{{ edit_form.idcompetencia.vars.id }}').val()?$('#{{ edit_form.idcompetencia.vars.id }}').val():'',
-                            $('#{{ edit_form.idcategoria.vars.id }}').val()?$('#{{ edit_form.idcategoria.vars.id }}').val():'',
-                            $('#formulario'),
-                            {{null|json_encode|raw}},
-                            $("#formulario input[type='radio']:checked").val()
-                );
-                {% endif %}                
             }
             //Recalcula la categoria si es cambiado la competencia
             $("#{{ edit_form.idcompetencia.vars.id }}").change(function () {
@@ -607,7 +596,7 @@
                     $('#{{ edit_form.idcompetencia.vars.id }}').val(),
                     $('#{{ edit_form.idcategoria.vars.id }}').val(),
                     $('#formulario'),
-                    {{null|json_encode|raw}},
+                    [],
                     $("#formulario input[type='radio']:checked").val()
             );
         });   
@@ -621,6 +610,25 @@
         );
         
         ocultaCamposPagoForm($('#formulario'));
+        {% set storedFpId = entity.pagos[0].idformapago.id|default(null) %}
+        {% if storedFpId is not null %}
+        var fpInterval = setInterval(function() {
+            if ($("select[id*=idformapago] option").length > 1) {
+                clearInterval(fpInterval);
+                $("select[id*=idformapago]").val('{{ storedFpId }}');
+                var jparametros = [];
+                if (window.sessionStorage.getItem('idfp' + '{{ storedFpId }}')) {
+                    jparametros = jQuery.parseJSON(window.sessionStorage.getItem('idfp' + '{{ storedFpId }}'));
+                }
+                $.each(jparametros, function(i, item) {
+                    $(idform($('#formulario'), item.campo)).parent().children(0).show();
+                    $(idform($('#formulario'), item.campo)).prop("required", true);
+                    $(idform($('#formulario'), item.campo)).parent().children(0)[0].innerHTML = item.etiqueta;
+                });
+            }
+        }, 100);
+        setTimeout(function() { clearInterval(fpInterval); }, 10000);
+        {% endif %}
         parametros={{null|json_encode|raw}};
         $("select[id*=idformapago]").change(function () {
             if(window.sessionStorage.getItem('idfp'+$("select[id*=idformapago]").val())==null)
@@ -712,11 +720,24 @@
                 $('#{{ edit_form.idcompetencia.vars.id }}').val(),
                 $('#{{ edit_form.idcategoria.vars.id }}').val(),
                 $('#formulario'),
-                {{null|json_encode|raw}},
+                [],
                 $("#formulario input[type='radio']:checked").val()
             );
         });
         
-    });    
+    });
+    
+    {% for message in app.session.flashbag.get('success') %}
+    $("<div id='dialog-message' title='Inscripcion'>\
+        <p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 20px 0;'></span>\
+        {{ message }}</p>\
+    </div>").dialog({
+        buttons: {
+            'Aceptar': function() {
+                $(this).dialog('close');
+            }
+        }
+    });
+    {% endfor %}
     </script>   
 {% endblock %}

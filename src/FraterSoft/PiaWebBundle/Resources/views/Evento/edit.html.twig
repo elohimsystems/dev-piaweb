@@ -6,8 +6,7 @@
 {% block jsQuery %}    
     <script src="{{asset('bundles/fratersoftpiaweb/fine-uploader/fine-uploader.min.js')}}" type="text/javascript"></script>
     <script src="{{asset('bundles/fratersoftpiaweb/js/jquery.datetimepicker.full.js')}}" type="text/javascript"></script>    
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBj_os2wWkK8ZeE7oBLr1eB5ZP0niAwTCg&libraries=places,drawing" async defer></script>
-    {#&callback=initMap#}
+    {# Google Maps deshabilitado por seguridad #}
 {% endblock %}  
 {% block style %}    
     {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}
@@ -85,19 +84,6 @@
           margin: 0;
           padding: 0;
         }             
-        #btn_setmapa{
-            height: 21px;
-            width: 31px;
-        }     
-        #btn_setmapa > span{
-            padding-bottom: 0;
-            padding-top: 0;
-            padding-left: 0;
-            padding-right: 0;
-        }
-        #icon-setmapa{
-            vertical-align: middle;
-        }
         #btn_checkemail{
             height: 21px;
             width: 31px;
@@ -183,10 +169,6 @@
                 {{ form_end(edit_form) }} 
                 </div>
             </div> 
-            <div id="mapa">        
-                <input id="pac-input" class="controls" type="text" placeholder="Buscar lugar">
-                <div id='map'></div>
-            </div>
             <div id="dialog_checkemail">    
                 Ingrese el codigo de confirmacion enviado al correo<br>
                 <input id="codigo" type="text" placeholder="Ingrese codigo">
@@ -220,118 +202,7 @@
         window.onhashchange=function(){window.location.hash="no-back-button";}
     }     
     
-    var contmark=0;
-    var marker;      
-    var map;
-    var infowindow;
-    var uluru={lat: 10.480200, lng: -66.904101};
-    var zoom=6;
-    var lugar="";
-    function addMarker(location, map) {
-        marker = new google.maps.Marker({
-            position: location,                
-            map: map
-        });
-        marker.addListener('click', function() {
-            infowindow.open(map, marker);
-        });             
-    }
-    
-    function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), { 
-            center: uluru,
-            zoom: zoom,
-            disableDefaultUI: true,
-            zoomControl: true,
-        });
-        
-        addMarker(uluru, map);
-        contmark++;
-        
-        var contentString = '<div id="content">'+
-            '<div id="siteNotice">'+
-            '</div>'+
-            '<h1 id="firstHeading" class="firstHeading">Ubicacion Evento</h1>'+
-            '<div id="bodyContent">'+
-            '<p><b>' + $("#{{edit_form.nombre.vars.id}}").val() + '</b></p>' +
-            '</div>'+
-            '</div>';            
-        infowindow = new google.maps.InfoWindow({
-            content: contentString
-        });  
-        
-        /* EVENTO CLICK DEL MAPA */
-        google.maps.event.addListener(map, 'click', function(event) {
-            if(contmark==0){
-                addMarker(event.latLng, map);
-                contmark++;
-                var geocoder = new google.maps.Geocoder;      
-                geocoder.geocode({'location': event.latLng}, function(results, status) {
-                    if (status === 'OK') {
-                        if (results[1]) {
-                            map.setZoom(14);
-                            infowindow.setContent(results[1].address_components[0].short_name);
-                            lugar = results[1].address_components[0].short_name;
-                            infowindow.open(map, marker);
-                        } else {
-                          window.alert('No results found');
-                        }
-                      } else {
-                        window.alert('Geocoder failed due to: ' + status);
-                      }
-                });                    
-            }
-            else{
-                contmark=0;
-                marker.setMap(null);
-            }
-        });  
-    
-        // Create the search box and link it to the UI element.
-        var input = document.getElementById('pac-input');
-        var searchBox = new google.maps.places.SearchBox(input);
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-        
-        // Bias the SearchBox results towards current map's viewport.
-        map.addListener('bounds_changed', function() {
-          searchBox.setBounds(map.getBounds());
-        });
-        
-        searchBox.addListener('places_changed', function() {
-            var places = searchBox.getPlaces();
-
-             if (places.length == 0) {
-              return;
-            }
-            
-            if (places.length > 1) {
-                 alert("Existe mas de un lugar para esa busqueda, por favor sea mas especifico");
-              return;
-            }
-
-            marker.setMap(null);
-            
-            // For each place, get the icon, name and location.
-            var bounds = new google.maps.LatLngBounds();
-            places.forEach(function(place) {
-                if (!place.geometry) {
-                  console.log("Returned place contains no geometry");
-                  return;
-                }
-
-                addMarker(place.geometry.location, map);
-                lugar = place.name;
-
-                if (place.geometry.viewport) {
-                  // Only geocodes have viewport.
-                  bounds.union(place.geometry.viewport);
-                } else {
-                  bounds.extend(place.geometry.location);
-                }
-            });
-            map.fitBounds(bounds);
-        });
-    }
+    {# Google Maps deshabilitado #}
     
     $(function() {              
         //Carga los tabs en lo que se haya cargado todo el html
@@ -367,24 +238,6 @@
                 $("#{{edit_form.cupomaximo.vars.id}}").prop("disabled", true);
         });                  
 
-        if($("#{{edit_form.mapalugar.vars.id}}").val()!=undefined && $("#{{edit_form.mapalugar.vars.id}}").val()!=""){
-            var json = JSON.parse($("#{{edit_form.mapalugar.vars.id}}").val());
-            uluru = {lat:json.lat,lng:json.lng};
-            zoom = json.zoom;
-        }
-        
-        //Agrega los botonos al lado del input text
-        $("#{{edit_form.lugar.vars.id}}").parent().append(
-            "<button type='button' id='btn_setmapa'></button>"
-        );      
-        $('#btn_setmapa').append("<img id='icon-setmapa' src='{{asset('bundles/fratersoftpiaweb/images/marcador-posicion.png')}}'/>").button();
-
-        $("#btn_setmapa").on('click', function() {
-            if(map==undefined)
-                initMap();
-            $("#mapa").dialog("open");
-        });
-        ////////////////////////////////////////////////////////
         
         $("#{{edit_form.emailcontacto.vars.id}}").parent().append(
             "<button type='button' id='btn_checkemail'></button>"
@@ -435,32 +288,7 @@
         {% endif %}
         
     
-        $("#mapa").dialog({
-            autoOpen: false,
-            width: 800,
-            height: 600,
-            modal: true,
-            buttons: [
-                {
-                    text: "Aceptar",
-                    click: function () {
-                        $("#{{edit_form.mapalugar.vars.id}}").val(
-                                '{"lat":' + marker.position.lat().toString() + 
-                                ',"lng":' + marker.position.lng().toString() + 
-                                ',"zoom":' + map.getZoom().toString() + '}'
-                        );
-                        $("#{{edit_form.lugar.vars.id}}").val(lugar);
-                        $(this).dialog("close");
-                    }
-                },
-                {
-                    text: "Cerrar",
-                    click: function () {
-                        $(this).dialog("close");
-                    }
-                }
-            ]
-        });
+
         $("#dialog_checkemail").dialog({
             autoOpen: false,
             width: 400,
@@ -663,7 +491,6 @@
             setVisual($("#{{edit_form.idorganizador.vars.id}}"),valor);
             $("#{{edit_form.controlparental.vars.id}}").prop('disabled',valor);
             setVisual($("#{{edit_form.controlparental.vars.id}}"),valor);
-            $("#btn_setmapa").button({disabled: valor});
             $("#boton_rutamapa").button({disabled: valor});
             $("#boton_rutaperfil").button({disabled: valor});
             $("#boton_rutavideo").button({disabled: valor});

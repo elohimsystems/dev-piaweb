@@ -1189,9 +1189,10 @@ class InscritoController extends commonPIAClass {
                             'expanded' => true,
                             'data'=>$default_moneda,
                         ))                     
-                        ->add('precio','choice',array(
+                        ->add('precio','text',array(
                             'label'=>'Precio',
                             'required' => true,
+                            'read_only' => true,
                         ))                        
                         ->add('idformapago', 'choice', array(
                             'label' => 'Forma  de Pago',
@@ -1605,6 +1606,11 @@ class InscritoController extends commonPIAClass {
                             'label'=>'Precio',
                             'read_only' => true,
                         ))  
+                        ->add('message',null,array(
+                            'mapped' => false,
+                            'label'=>'',
+                            'attr'=> array('style'=>'display:none'),
+                        ))
                         //->add('idbanco','text',array(
                         //    'required' => false,
                         //))                                               
@@ -1676,6 +1682,7 @@ class InscritoController extends commonPIAClass {
                 
             $em->flush();
 
+            $this->get('session')->getFlashBag()->add('success', 'Guardado satisfactoriamente');
             return $this->redirect($this->generateUrl('inscrito_edit', array('id' => $id)));
         }
 
