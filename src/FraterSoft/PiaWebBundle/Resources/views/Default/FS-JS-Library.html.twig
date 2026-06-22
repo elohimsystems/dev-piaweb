@@ -1102,6 +1102,7 @@
     }
     
     function buscarFormasPago(formulario,idevento,idmoneda) {
+        if (!idmoneda) return;
         //Busca el precio segun configuracion
         var id_campo_idformapago=idform(formulario,'idformapago');
         var criterios = "idevento=" + idevento
