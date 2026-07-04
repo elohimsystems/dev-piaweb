@@ -100,10 +100,18 @@
                         }
                     },
                     /* INFORMACION DEL PAGO */
-                    { title: "FechaPago", data: "fechapago",
+                    { title: "FechaPago", data: "pagos.0.fechapago",
                         render: function(data){
-                            var formatted = (data)?$.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000)):'';
-                            return formatted;
+                            if(data && data.timestamp){
+                                var fecha = new Date(data.timestamp * 1000);
+                                if(!isNaN(fecha.getTime())){
+                                    var dd = ("0"+fecha.getDate()).slice(-2);
+                                    var mm = ("0"+(fecha.getMonth()+1)).slice(-2);
+                                    var yy = fecha.getFullYear();
+                                    return dd+"/"+mm+"/"+yy;
+                                }
+                            }
+                            return null;
                         }
                     },
                     { title: "Texto", data: "pagos[0].texto" },        
@@ -115,15 +123,27 @@
                     { title: "Banco", data: "pagos[0].idbanco.nombre" },        
                     { title: "Conciliado?", data: "pagos[0].conciliado",
                         render: function(data){
-                            return(data=='true'?"SI":"NO");
+                            return(data?"SI":"NO");
                         }
                     },        
-                    { title: "ConciliadoEl", data: "conciliadoel",
+                    { title: "ConciliadoEl", data: "pagos.0.conciliadoel",
                         render: function(data){
-                            if(data)
-                                return $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
-                            else
-                                return null;
+                            if(data){
+                                var fecha;
+                                if(data.timestamp)
+                                    fecha = new Date(data.timestamp * 1000);
+                                else
+                                    fecha = new Date(data);
+                                if(!isNaN(fecha.getTime())){
+                                    var dd = ("0"+fecha.getDate()).slice(-2);
+                                    var mm = ("0"+(fecha.getMonth()+1)).slice(-2);
+                                    var yy = fecha.getFullYear();
+                                    var hh = ("0"+fecha.getHours()).slice(-2);
+                                    var mi = ("0"+fecha.getMinutes()).slice(-2);
+                                    return dd+"/"+mm+"/"+yy+" "+hh+":"+mi;
+                                }
+                            }
+                            return null;
                         }            
                     },
                     { title: "Liquidado", data: "pagos[0].idliquidacion" },
