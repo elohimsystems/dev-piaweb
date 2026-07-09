@@ -866,7 +866,8 @@ class ClassMetadataInfo implements ClassMetadata
     public function newInstance()
     {
         if ($this->_prototype === null) {
-            $this->_prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($this->name), $this->name));
+            $refl = new \ReflectionClass($this->name);
+            $this->_prototype = $refl->newInstanceWithoutConstructor();
         }
 
         return clone $this->_prototype;

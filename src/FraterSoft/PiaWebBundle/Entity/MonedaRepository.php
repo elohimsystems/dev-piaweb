@@ -43,7 +43,7 @@ class MonedaRepository extends EntityRepository {
     {
         $query = $this->getEntityManager()
             ->createQuery(
-                'SELECT DISTINCT m.id, m.nombre,m.idpais '
+                'SELECT DISTINCT m.id, m.nombre, m.codigolocal, m.idpais '
                     . 'FROM FraterSoftPiaWebBundle:Formaspagoevento fpe ' 
                     . 'JOIN fpe.idformapago fp '                  
                     . 'JOIN fp.idmoneda m '

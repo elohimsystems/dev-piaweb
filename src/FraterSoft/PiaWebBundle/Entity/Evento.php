@@ -200,9 +200,14 @@ class Evento
     private $clasificacion;
     
     /**
-     * @var \FraterSoft\PiaWebBundle\Entity\Ciudad
+     * @var string
      */
-    private $idciudad;
+    private $localidad;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Estado
+     */
+    private $idestado;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -1108,25 +1113,48 @@ class Evento
     }           
     
     /**
-     * Set idciudad
+     * Set localidad
      *
-     * @param \FraterSoft\PiaWebBundle\Entity\Ciudad $idciudad
+     * @param string $localidad
      * @return Evento
      */
-    public function setIdciudad(\FraterSoft\PiaWebBundle\Entity\Ciudad $idciudad = null)
+    public function setLocalidad($localidad)
     {
-        $this->idciudad = $idciudad;
+        $this->localidad = $localidad;
         return $this;
     }
 
     /**
-     * Get idciudad
+     * Get localidad
      *
-     * @return \FraterSoft\PiaWebBundle\Entity\Ciudad 
+     * @return string 
      */
-    public function getIdciudad()
+    public function getLocalidad()
     {
-        return $this->idciudad;
+        return $this->localidad;
+    }
+
+    /**
+     * Set idestado
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Estado $idestado
+     * @return Evento
+     */
+    public function setIdestado(\FraterSoft\PiaWebBundle\Entity\Estado $idestado = null)
+    {
+        $this->idestado = $idestado;
+
+        return $this;
+    }
+
+    /**
+     * Get idestado
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Estado 
+     */
+    public function getIdestado()
+    {
+        return $this->idestado;
     }
     
     /**

@@ -264,21 +264,17 @@ $(function () {
     $("#tabs").tabs();
         //Redireccion a la pagina de los inscritos al hacer click en el tab
         $('#tabs a[href="#tabs-2"]').on("click", function () {
-            $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
+            $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento}) }}')
         });
         //Redireccion a la pagina de los anulados al hacer click en el tab
         $('#tabs a[href="#tabs-3"]').on("click", function () {
-            $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
+            $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento}) }}')
         });
-        //Redireccion a la pagina de los operaciones TCD al hacer click en el tab
-        $('#tabs a[href="#tabs-4"]').on("click", function () {
-            $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
-        });                        
         $('#tabs a[href="#tabs-5"]').on("click", function () {
-            $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
+            $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento}) }}')
         });                         
         $('#tabs a[href="#tabs-6"]').on("click", function () {
-            $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento,'email':email}) }}')
+            $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento}) }}')
         });         
 
         //Muestra la ventana de dialogo
@@ -349,6 +345,8 @@ $(function () {
 </style>
 {% endblock %}     
     {% block body -%}
+    <div style="max-width:1200px; margin:auto">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="seccionCargando">
         <img src="{{ asset('bundles/fratersoftpiaweb/images/loading.gif') }}">
     </div>        
@@ -359,13 +357,11 @@ $(function () {
                 <li><a href="#tabs-1">Pre-Inscritos</a></li>
                 <li><a href="#tabs-2">Inscritos</a></li>
                 <li><a href="#tabs-3">Anulados</a></li>
-                {% if nivel_seguridad == 1 %}<li><a href="#tabs-4">Operaciones TDC</a></li>{% endif %}
                 <li><a href="#tabs-5">Estadisticas</a></li>            
                 {% if nivel_seguridad == 1 %}<li><a href="#tabs-6">Auditoria</a></li>{% endif %}
             </ul>
             <div id="tabs-2"></div>
             <div id="tabs-3"></div>  
-            {% if nivel_seguridad == 1 %}<div id="tabs-4"></div>{% endif %}
             <div id="tabs-5"></div>    
             <div id="tabs-1">
                 <table id="tablaPreInscritos" class="display row-border hover">
@@ -383,5 +379,6 @@ $(function () {
                 <p id="msgconc">Desea reenviar las notificaciones de Confirmacion de Pre-Inscripcion de las siguintes secuencias: <div id="ids"></div></p>
             </div>
         </div>
+    </div>
     </div>
     {% endblock %}

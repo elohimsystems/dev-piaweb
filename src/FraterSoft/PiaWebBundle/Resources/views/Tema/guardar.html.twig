@@ -17,6 +17,8 @@
 </style>
 {% endblock %}  
 {% block body -%}    
+    <div style="max-width:1200px; margin:auto">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="tabs">        
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
         <div id="tabs-4">
@@ -28,6 +30,7 @@
             </div> 
         </div>
     </div>            
+    </div>
 {% endblock %}
 {% block javascripts %}
     {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}    

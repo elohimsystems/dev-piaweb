@@ -3,9 +3,6 @@ FraterSoft\PiaWebBundle\Entity\Evento:
     table: piaaccess.tmeventos
     repositoryClass: FraterSoft\PiaWebBundle\Entity\EventoRepository       
     indexes:
-        IDX_1B29C54DEA3BA832:
-            columns:
-                - idciudad
         IDX_1B29C54D6FAFBFF6:
             columns:
                 - idorganizador
@@ -208,6 +205,12 @@ FraterSoft\PiaWebBundle\Entity\Evento:
             nullable: true
             comment: 'Activa el control parental parametrizable'
             default: false
+        localidad:
+            type: string
+            nullable: true
+            length: 100
+            fixed: false
+            comment: ''
     manyToOne:
         idorganizador:
             targetEntity: Organizador
@@ -227,15 +230,15 @@ FraterSoft\PiaWebBundle\Entity\Evento:
                 idcampeonato:
                     referencedColumnName: id
             orphanRemoval: false            
-        idciudad:
-            targetEntity: Ciudad
+        idestado:
+            targetEntity: Estado
             cascade: {  }
             mappedBy: null
             inversedBy: null
             joinColumns:
-                idciudad:
+                idestado:
                     referencedColumnName: id
-            orphanRemoval: false            
+            orphanRemoval: false
     oneToOne:
       tema:
         targetEntity: Tema

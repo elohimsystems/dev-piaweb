@@ -1,0 +1,45 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+<div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+    {{ include('FraterSoftPiaWebBundle:Default:_header.html.twig') }}
+
+    {% if eventos is empty %}
+    <div style="text-align: center; padding: 60px 20px; color: #888; font-size: 18px;">
+        No hay eventos proximos disponibles
+    </div>
+    {% endif %}
+
+    <div style="display: flex; flex-wrap: wrap; gap: 30px; justify-content: center;">
+        {% for evento in eventos %}
+        <div style="width: 340px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.08); background: #fff; transition: box-shadow 0.2s;" onmouseover="this.style.boxShadow='0 4px 16px rgba(0,0,0,0.15)'" onmouseout="this.style.boxShadow='0 2px 8px rgba(0,0,0,0.08)'">
+            <div style="height: 200px; overflow: hidden; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+                {% if evento.logo is not null %}
+                    <img src="{{ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ evento.logo }}" alt="{{ evento.nombre }}" style="max-width: 100%; max-height: 100%; object-fit: cover;">
+                {% else %}
+                    <img src="{{ asset('bundles/fratersoftpiaweb/images/sinimagen.png') }}" alt="Sin imagen" style="max-width: 100%; max-height: 100%;">
+                {% endif %}
+            </div>
+            <div style="padding: 20px;">
+                <h2 style="margin: 0 0 10px; font-size: 20px; color: #337ab7;">{{ evento.nombre }}</h2>
+                <div style="margin-bottom: 8px; color: #555;">
+                    &#128197; {{ evento.fecha|date('d/m/Y') }}
+                </div>
+                {% if evento.idestado is not null %}
+                <div style="margin-bottom: 8px; color: #555;">
+                    &#128204; {{ evento.idestado.idpais.nombre }} / {{ evento.idestado.nombre }}{% if evento.localidad %} / {{ evento.localidad }}{% endif %}
+                </div>
+                {% endif %}
+                <div style="margin-top: 15px;">
+                    {% if evento.url is not null and evento.url is not empty %}
+                    <a href="{{ evento.url }}" target="_blank" style="display: inline-block; padding: 8px 20px; background: #337ab7; color: #fff; text-decoration: none; border-radius: 4px; font-size: 14px;">Mas informacion</a>
+                    {% else %}
+                    <a href="{{ path('frater_soft_pia_web_evento_detalle', {'id': evento.id}) }}" style="display: inline-block; padding: 8px 20px; background: #337ab7; color: #fff; text-decoration: none; border-radius: 4px; font-size: 14px;">Mas informacion</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock body %}

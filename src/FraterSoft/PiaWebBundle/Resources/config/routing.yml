@@ -1,3 +1,27 @@
+frater_soft_pia_web_landing:
+  pattern: /
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:landing }
+
+frater_soft_pia_web_eventos:
+  pattern: /eventos
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:eventos }
+
+frater_soft_pia_web_perfil:
+  pattern: /perfil
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:perfil }
+
+frater_soft_pia_web_perfil_delete_formapago:
+  pattern: /perfil/formapago/{id}/eliminar
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:eliminarFormapagoOrganizador }
+
+frater_soft_pia_web_contacto:
+  pattern: /contacto
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:contacto }
+
+frater_soft_pia_web_evento_detalle:
+  pattern: /evento/{id}/detalle
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:detalleEvento }
+
 frater_soft_pia_web_homepage:
   pattern: /hello/{name}
   defaults: { _controller: FraterSoftPiaWebBundle:Default:index }

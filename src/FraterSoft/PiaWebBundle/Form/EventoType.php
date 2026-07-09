@@ -125,25 +125,23 @@ class EventoType extends AbstractType
                 'label'=>'Info Representante',
                 'attr' => array ('title' => 'Activa la solicitud del Representante en el Formulario de Inscripcion'),
             ))
+            ->add('controlparental', null, array(
+                'label'=>'Control Parental',
+                'required' => false,
+            ))
             ->add('pais','entity', array(
                 'class' => 'FraterSoftPiaWebBundle:Pais',
                 'mapped'=>false,
                 'empty_value' => 'Seleccione el Pais'
             ))
-            ->add('estado', 'choice', array(
-                'mapped'=>false,
-                'choices' => array(
-                    1 => 'Bolivar'
-                 ),
+            ->add('idestado','entity', array(
+                'class' => 'FraterSoftPiaWebBundle:Estado',
+                'label' => 'Estado',
                 'empty_value' => 'Seleccione el Estado'
             ))
-            ->add('idciudad', null, array(
-                'label'=>'Ciudad',
+            ->add('localidad', null, array(
+                'label'=>'Localidad',
                 'required' => true,
-            ))
-            ->add('controlparental', null, array(
-                'label'=>'Control Parental',
-                'required' => false,
             ))
         ;
     }

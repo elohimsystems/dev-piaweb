@@ -69,6 +69,12 @@ doctrine:
             datetime_functions:
                 DATE_FORMAT: FraterSoft\PiaWebBundle\DQL\DateFormatFunction        
 
+# FOSUserBundle Configuration
+fos_user:
+    db_driver: orm
+    firewall_name: main
+    user_class: FraterSoft\PiaWebBundle\Entity\User
+
 # Swiftmailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"

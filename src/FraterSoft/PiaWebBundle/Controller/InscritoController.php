@@ -89,9 +89,10 @@ class InscritoController extends commonPIAClass {
         return($nivel_seguridad);
     }
 
-    public function listapreinscritosAction($idevento, $email) {
+    public function listapreinscritosAction($idevento) {
         $em = $this->getDoctrine()->getManager();
-        
+        $email = $this->getUser()->getEmail();
+
         $nivel_seguridad = $this->getNivelSeguridad($em,$email,$idevento);
 
         //Busca los atributos criterios del evento y los envia al formulario
@@ -172,8 +173,9 @@ class InscritoController extends commonPIAClass {
     }      
     
 
-    public function listainscritosAction($idevento,$email) {
+    public function listainscritosAction($idevento) {
         $em = $this->getDoctrine()->getManager();
+        $email = $this->getUser()->getEmail();
         
         $nivel_seguridad = $this->getNivelSeguridad($em,$email,$idevento);
 
@@ -230,8 +232,9 @@ class InscritoController extends commonPIAClass {
         ));
     }   
     
-    public function listaanuladosAction($idevento,$email) {
+    public function listaanuladosAction($idevento) {
         $em = $this->getDoctrine()->getManager();
+        $email = $this->getUser()->getEmail();
 
         $nivel_seguridad = $this->getNivelSeguridad($em,$email,$idevento);
 
@@ -1947,8 +1950,9 @@ class InscritoController extends commonPIAClass {
      * Finds and displays a Inscrito entity.
      *
      */
-    public function estadisticasAction($idevento, $email) {
+    public function estadisticasAction($idevento) {
         $em = $this->getDoctrine()->getManager();
+        $email = $this->getUser()->getEmail();
         
         $nivel_seguridad = $this->getNivelSeguridad($em,$email,$idevento);
         
@@ -2451,8 +2455,9 @@ class InscritoController extends commonPIAClass {
         ));
     }  
     
-    public function listaauditoriaAction($idevento,$email) {
+    public function listaauditoriaAction($idevento) {
         $em = $this->getDoctrine()->getManager();
+        $email = $this->getUser()->getEmail();
         
         //Busca los atributos del evento y los envia al formulario
         $atributos = $em->getRepository('FraterSoftPiaWebBundle:EventoAtributos')

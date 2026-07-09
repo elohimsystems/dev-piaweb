@@ -20,6 +20,8 @@
 {% endblock %}  
 {% set entidad='listasevento' %}
 {% block body -%}    
+    <div style="max-width:1200px; margin:auto">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="tabs">    
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
         <div id="tabs-2">     
@@ -54,6 +56,7 @@
         <div id="dialog-message" title="Mensaje">
         </div>        
     </div>         
+    </div>
 {% endblock %}
 {% block javascripts -%}
 {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}

@@ -3,7 +3,7 @@ inscrito:
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:index" }
 
 inscrito_lista_preinscritos:
-    pattern:  /{idevento}/{email}/lista_preinscritos
+    pattern:  /{idevento}/lista_preinscritos
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listapreinscritos" }
     
 inscrito_lista_preinscritosajax:
@@ -19,7 +19,7 @@ inscrito_lista_registrosajax:
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listaregistrosajax" }
     
 inscrito_lista_inscritos:
-    pattern:  /{idevento}/{email}/lista_inscritos
+    pattern:  /{idevento}/lista_inscritos
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listainscritos" }
     
 inscrito_lista_inscritosajax:
@@ -27,7 +27,7 @@ inscrito_lista_inscritosajax:
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listainscritosajax" }    
 
 inscrito_lista_anulados:
-    pattern:  /{idevento}/{email}/lista_anulados
+    pattern:  /{idevento}/lista_anulados
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listaanulados" }
 
 inscrito_lista_operacionestdc:
@@ -35,7 +35,7 @@ inscrito_lista_operacionestdc:
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listaoperacionestdc" }
     
 inscrito_lista_auditoria:
-    pattern:  /{idevento}/{email}/lista_auditoria
+    pattern:  /{idevento}/lista_auditoria
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:listaauditoria" }
     
 inscrito_lista_auditoriaajax:
@@ -113,7 +113,7 @@ inscrito_precio:
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:buscarprecioajax" }    
     
 inscrito_estadisticas:
-    pattern:  /{idevento}/{email}/estadisticas
+    pattern:  /{idevento}/estadisticas
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:estadisticas" }    
     
 inscrito_estadisticasajax:

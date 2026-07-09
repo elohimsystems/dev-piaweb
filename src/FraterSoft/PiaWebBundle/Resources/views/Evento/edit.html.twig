@@ -123,6 +123,8 @@
 {% endblock %}
 
 {% block body -%}
+    <div style="max-width:1200px; margin:auto">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="tabs">        
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
         <div id="tabs-1">
@@ -191,6 +193,7 @@
             <div id="dialog_controlparental" title="Control Parental"></div>
             
         </div>
+    </div>
     </div>
 {% endblock %}
 {% block javascripts %}

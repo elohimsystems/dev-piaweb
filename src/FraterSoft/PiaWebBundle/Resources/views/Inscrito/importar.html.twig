@@ -338,6 +338,8 @@
 {% endblock %}
 
 {% block body -%}
+    <div style="max-width:1200px; margin:auto">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div>        
         <div>     
             <h1>Importar Inscripciones de Plantilla</h1>
@@ -355,4 +357,5 @@
             {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':null}) }}    
         </div> 
     </div>         
+    </div>
 {% endblock %}

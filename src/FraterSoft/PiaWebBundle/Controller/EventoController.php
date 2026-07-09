@@ -174,8 +174,24 @@ class EventoController extends commonPIAClass
             throw $this->createNotFoundException('Unable to find Evento entity.');
         }
 
+        $user = $this->getUser();
+        if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            $organizadorUsuario = $user->getIdorganizador();
+            $organizadorEvento = $entity->getIdorganizador();
+            if (!$organizadorUsuario || !$organizadorEvento || $organizadorUsuario->getId() !== $organizadorEvento->getId()) {
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => $this->generateUrl('frater_soft_pia_web_eventos'),
+                    'texto' => 'Acceso no autorizado. Este evento no pertenece a tu organizador.'
+                ));
+            }
+        }
+
         $editForm = $this->createEditForm($entity);
         $this->addBotonRegresar($editForm,$this->get('session')->get('urllistaeventos'));
+
+        if ($entity->getIdestado()) {
+            $editForm->get('pais')->setData($entity->getIdestado()->getIdpais());
+        }
 
         return $this->render('FraterSoftPiaWebBundle:Evento:edit.html.twig', array(
             'entity'      => $entity,
@@ -214,6 +230,18 @@ class EventoController extends commonPIAClass
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Evento entity.');
+        }
+
+        $user = $this->getUser();
+        if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            $organizadorUsuario = $user->getIdorganizador();
+            $organizadorEvento = $entity->getIdorganizador();
+            if (!$organizadorUsuario || !$organizadorEvento || $organizadorUsuario->getId() !== $organizadorEvento->getId()) {
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => $this->generateUrl('frater_soft_pia_web_eventos'),
+                    'texto' => 'Acceso no autorizado. Este evento no pertenece a tu organizador.'
+                ));
+            }
         }
 
         $editForm = $this->createEditForm($entity);

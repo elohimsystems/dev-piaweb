@@ -67,7 +67,7 @@
                     Estimad@ Atleta,<br>
                     Un gusto saludarle<br>
                     </p>
-                    <p>Para formalizar la inscripci&oacute;n en el evento: {{ entity.idevento.nombre }}, a realizarse el {{ entity.idevento.fecha|date("d/m/Y") }} en {{ entity.idevento.lugar }}, {{ entity.idevento.idciudad.nombre }}, Estado {{ entity.idevento.idciudad.idestado.nombre }}. Hora de Salida: {{ entity.idevento.fecha|date("H:i") }}</p>
+                    <p>Para formalizar la inscripci&oacute;n en el evento: {{ entity.idevento.nombre }}, a realizarse el {{ entity.idevento.fecha|date("d/m/Y") }} en {{ entity.idevento.lugar }}{% if entity.idevento.localidad %}, {{ entity.idevento.localidad }}{% endif %}. Hora de Salida: {{ entity.idevento.fecha|date("H:i") }}</p>
                     <p><span style="background-color:yellow"><b>Debe responder dicho correo adjuntando el soporte de pago.</b></span></p>
                     <p> 
                         Costo:<br>

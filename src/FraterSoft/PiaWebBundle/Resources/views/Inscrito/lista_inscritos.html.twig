@@ -310,20 +310,16 @@
             $("#tabs").tabs();
             $('#tabs a[href="#tabs-2"]').click();
             $('#tabs a[href="#tabs-1"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento}) }}')
             });
             $('#tabs a[href="#tabs-3"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento}) }}')
             });
-            //Redireccion a la pagina de los operaciones TCD al hacer click en el tab
-            $('#tabs a[href="#tabs-4"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
-            });       
             $('#tabs a[href="#tabs-5"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento}) }}')
             });             
             $('#tabs a[href="#tabs-6"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento}) }}')
             });         
             
             $("#seccionCargando").hide();        
@@ -368,6 +364,8 @@
 </style>
 {% endblock %}  
 {% block body -%}
+    <div style="max-width:1200px; margin:auto">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="seccionCargando">
         <img src="{{ asset('bundles/fratersoftpiaweb/images/loading.gif') }}">
     </div>        
@@ -378,13 +376,11 @@
                 <li><a href="#tabs-1">Pre-Inscritos</a></li>
                 <li><a href="#tabs-2">Inscritos</a></li>
                 <li><a href="#tabs-3">Anulados</a></li>
-                {% if nivel_seguridad == 1 %}<li><a href="#tabs-4">Operaciones TDC</a></li>{% endif %}
                 <li><a href="#tabs-5">Estadisticas</a></li>
                 {% if nivel_seguridad == 1 %}<li><a href="#tabs-6">Auditoria</a></li>{% endif %}
             </ul>
             <div id="tabs-1"></div>
             <div id="tabs-3"></div>  
-            {% if nivel_seguridad == 1 %}<div id="tabs-4"></div>{% endif %}       
             <div id="tabs-5"></div>  
             <div id="tabs-2">
                 <table id="tablaInscritos" class="display row-border hover">
@@ -407,5 +403,6 @@
                 <p>Esta seguro que desea anular inscripcion con la secuencia <b id="sec"></b> ?</p>
             </div>        
         </div>
+    </div>
     </div>
 {% endblock %}

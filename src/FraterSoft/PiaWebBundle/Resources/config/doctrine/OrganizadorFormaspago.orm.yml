@@ -1,0 +1,33 @@
+FraterSoft\PiaWebBundle\Entity\OrganizadorFormaspago:
+    type: entity
+    table: piaaccess.trformaspagosorganizadores
+    id:
+        id:
+            type: bigint
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        observacion:
+            type: text
+            nullable: true
+    manyToOne:
+        idorganizador:
+            targetEntity: Organizador
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idorganizador:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idformapago:
+            targetEntity: Formaspago
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idformapago:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }
