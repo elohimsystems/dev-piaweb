@@ -100,6 +100,7 @@
             <li><a href="#tabs-1">Usuario</a></li>
             <li><a href="#tabs-2">Organizador</a></li>
             <li><a href="#tabs-3">Formas de Pago</a></li>
+            <li><a href="#tabs-4">Cambiar Contraseña</a></li>
         </ul>
         <div id="tabs-1">
             {{ form_start(user_form, {'attr': {'class': 'user-form'}}) }}
@@ -234,6 +235,29 @@
                     <button type="submit" name="formaspago_add" class="btn btn-primary" style="padding:10px 40px; background:#337ab7; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:14px;">Agregar</button>
                 </div>
             </form>
+        </div>
+        <div id="tabs-4">
+            {{ form_start(change_password_form, {'attr': {'class': 'user-form'}}) }}
+                <div class="form-row">
+                    <label>{{ form_label(change_password_form.current_password, 'Contraseña Actual') }}</label>
+                    {{ form_widget(change_password_form.current_password) }}
+                    {{ form_errors(change_password_form.current_password) }}
+                </div>
+                <div class="form-row">
+                    <label>{{ form_label(change_password_form.new.first, 'Nueva Contraseña') }}</label>
+                    {{ form_widget(change_password_form.new.first) }}
+                    {{ form_errors(change_password_form.new.first) }}
+                </div>
+                <div class="form-row">
+                    <label>{{ form_label(change_password_form.new.second, 'Confirmar Nueva Contraseña') }}</label>
+                    {{ form_widget(change_password_form.new.second) }}
+                    {{ form_errors(change_password_form.new.second) }}
+                </div>
+                {{ form_rest(change_password_form) }}
+                <div class="submit-btn">
+                    <input type="submit" value="Cambiar Contraseña">
+                </div>
+            {{ form_end(change_password_form) }}
         </div>
     </div>
 </div>

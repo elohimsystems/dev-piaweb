@@ -4,6 +4,12 @@
 <div style="width: 360px; margin: 80px auto; padding: 30px; border: 1px solid #ccc; border-radius: 6px; box-shadow: 2px 2px 8px rgba(0,0,0,0.1);">
     <h2 style="margin-top: 0;">Iniciar Sesion</h2>
 
+    {% for flash in app.session.flashbag.get('fos_user_success') %}
+    <div style="color: #3c763d; background: #dff0d8; border: 1px solid #d6e9c6; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+        {{ flash|trans({}, 'FOSUserBundle') }}
+    </div>
+    {% endfor %}
+
     {% if error %}
     <div style="color: #a94442; background: #f2dede; border: 1px solid #ebccd1; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
         {{ error|trans({}, 'FOSUserBundle') }}
@@ -29,5 +35,9 @@
         <input type="submit" id="_submit" name="_submit" value="Ingresar"
                style="width:100%; padding:10px; background:#337ab7; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:14px;" />
     </form>
+
+    <div style="text-align:center; margin-top:15px;">
+        <a href="{{ path('fos_user_resetting_request') }}" style="font-size:13px; color:#337ab7;">¿Olvidó su contraseña?</a>
+    </div>
 </div>
 {% endblock fos_user_content %}

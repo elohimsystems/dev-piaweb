@@ -5,7 +5,7 @@ imports:
     
 framework:
     #esi:             ~
-    #translator:      { fallback: "%locale%" }
+    translator:      { fallback: es }
     secret:          "%secret%"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
@@ -74,6 +74,9 @@ fos_user:
     db_driver: orm
     firewall_name: main
     user_class: FraterSoft\PiaWebBundle\Entity\User
+    from_email:
+        address: "%mailer_user%"
+        sender_name: SistemaPIA
 
 # Swiftmailer Configuration
 swiftmailer:
@@ -81,6 +84,10 @@ swiftmailer:
     host:      "%mailer_host%"
     username:  "%mailer_user%"
     password:  "%mailer_password%"
-    #port:      "%mailer_port%"
+    port:      "%mailer_port%"
     encryption: "%mailer_encryption%"
     spool:     { type: memory }
+
+# Registra los fallos de envio del spool en memoria (ver EmailSenderListener)
+parameters:
+    swiftmailer.email_sender.listener.class: FraterSoft\PiaWebBundle\EventListener\EmailSenderListener

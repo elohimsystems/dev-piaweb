@@ -68,6 +68,12 @@ frater_soft_pia_web_sessions:
   pattern: /sessions
   defaults: { _controller: "FraterSoftPiaWebBundle:Default:sessions" }
 
+fos_user_resetting_reset:
+  pattern: /resetting/reset/{token}
+  defaults: { _controller: FraterSoftPiaWebBundle:Resetting:reset }
+  requirements:
+    _method: GET|POST
+
 FraterSoftPiaWebBundle_inscrito:
   resource: "@FraterSoftPiaWebBundle/Resources/config/routing/inscrito.yml"
   prefix: /inscrito

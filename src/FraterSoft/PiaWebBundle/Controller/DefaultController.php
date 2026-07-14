@@ -87,6 +87,8 @@ class DefaultController extends commonPIAClass
         $userForm = $this->get('fos_user.profile.form');
         $userForm->setData($user);
 
+        $changePasswordForm = $this->get('fos_user.change_password.form');
+
         $organizadorForm = $this->createForm(new OrganizadorType(), $organizador, array(
             'method' => 'POST',
         ));
@@ -124,6 +126,13 @@ class DefaultController extends commonPIAClass
                     $this->get('session')->getFlashBag()->add('success', 'Datos del organizador actualizados.');
                     $submitted = true;
                     $tab = 'tabs-2';
+                }
+            } elseif ($request->request->has($changePasswordForm->getName())) {
+                $handler = $this->get('fos_user.change_password.form.handler');
+                if ($handler->process($user)) {
+                    $this->get('session')->getFlashBag()->add('success', 'Contraseña actualizada correctamente.');
+                    $submitted = true;
+                    $tab = 'tabs-4';
                 }
             } elseif ($request->request->has('formaspago_add')) {
                 $idformapago = $request->request->get('idformapago');
@@ -170,6 +179,7 @@ class DefaultController extends commonPIAClass
 
         return $this->render('FraterSoftPiaWebBundle:Default:perfil.html.twig', array(
             'user_form' => $userForm->createView(),
+            'change_password_form' => $changePasswordForm->createView(),
             'organizador_form' => $organizadorForm->createView(),
             'user' => $user,
             'organizador' => $organizador,
