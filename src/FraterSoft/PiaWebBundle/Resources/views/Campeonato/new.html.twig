@@ -5,7 +5,10 @@
 </style>
 {% endblock %}  
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <h1>Crear Campeonato</h1>
     {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
-    {{ form_end(form) }} 
+    {{ form_end(form) }}
+    </div>
 {% endblock %}

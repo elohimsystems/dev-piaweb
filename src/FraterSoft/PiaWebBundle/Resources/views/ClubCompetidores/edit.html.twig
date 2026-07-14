@@ -1,6 +1,8 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <h1>ClubCompetidores edit</h1>
 
     {{ form(edit_form) }}
@@ -13,4 +15,5 @@
     </li>
     <li>{{ form(delete_form) }}</li>
 </ul>
+    </div>
 {% endblock %}

@@ -275,9 +275,46 @@ class DefaultController extends commonPIAClass
         ));                 
     }      
 
-    public function contactoAction()
+    public function contactoAction(Request $request)
     {
-        return $this->render('FraterSoftPiaWebBundle:Default:contacto.html.twig');
+        $enviado = false;
+        $error = null;
+        $nombre = '';
+        $mensaje = '';
+
+        if ($request->isMethod('POST')) {
+            $nombre = trim($request->request->get('nombre'));
+            $mensaje = trim($request->request->get('mensaje'));
+            $metodo = $request->request->get('metodo');
+
+            if ($nombre === '' || $mensaje === '') {
+                $error = 'Debe completar su nombre y el mensaje.';
+            } elseif (mb_strlen($mensaje) > 500) {
+                $error = 'El mensaje no puede superar los 500 caracteres.';
+            } elseif ($metodo === 'whatsapp') {
+                $numero = preg_replace('/[^0-9]/', '', $this->container->getParameter('contacto_whatsapp'));
+                $texto = "Nombre: {$nombre}\nMensaje: {$mensaje}";
+
+                return $this->redirect('https://wa.me/' . $numero . '?text=' . rawurlencode($texto));
+            } else {
+                $message = \Swift_Message::newInstance()
+                    ->setSubject('Nuevo mensaje de contacto - ' . $nombre)
+                    ->setFrom($this->container->getParameter('mailer_user'))
+                    ->setTo($this->container->getParameter('contacto_email'))
+                    ->setBody($mensaje . "\n\nDe: " . $nombre);
+                $this->get('mailer')->send($message);
+                $enviado = true;
+                $nombre = '';
+                $mensaje = '';
+            }
+        }
+
+        return $this->render('FraterSoftPiaWebBundle:Default:contacto.html.twig', array(
+            'enviado' => $enviado,
+            'error' => $error,
+            'nombre' => $nombre,
+            'mensaje' => $mensaje,
+        ));
     }
 
     public function detalleEventoAction($id)

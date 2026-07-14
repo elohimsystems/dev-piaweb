@@ -16,8 +16,10 @@
     }
 </style>
 {% endblock %}  
-{% block body -%}   
-    <div id="tabs">     
+{% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+    <div id="tabs">
         {{ include("FraterSoftPiaWebBundle:Organizador:tabs.html.twig") }}
         <div id="tabs-2">        
             <div class="contenido">    
@@ -37,8 +39,9 @@
                 <div id="dialog-message" title="Mensaje">
                 </div>        
             </div>   
-        </div>               
-    </div>                
+        </div>
+    </div>
+    </div>
 {% endblock %}
 {% block javascripts -%}
 {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}

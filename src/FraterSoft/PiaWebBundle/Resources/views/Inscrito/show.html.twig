@@ -61,6 +61,8 @@
 </style>
 {% endblock %} 
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div class="container"><p>
     <table id="tablaReporte" class="display compact">
         <tbody>          
@@ -147,6 +149,7 @@
             Regresar
         </button> 
     </a></p>
-    </div>    
+    </div>
+    </div>
     </div>
 {% endblock %}

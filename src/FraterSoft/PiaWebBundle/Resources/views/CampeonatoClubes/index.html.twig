@@ -1,6 +1,8 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="titulo">CAMPEONATO: {% if entities[0] is defined %} {{entities[0].idcampeonato}} {% else %}  {% endif %}</div>
     <div id="tabs">    
         {{ include("FraterSoftPiaWebBundle:Campeonato:tabs.html.twig") }}
@@ -41,5 +43,6 @@
                 </a>
             </li>
         </ul>
-    </div> 
+    </div>
+    </div>
     {% endblock %}

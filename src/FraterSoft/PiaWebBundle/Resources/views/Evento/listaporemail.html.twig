@@ -81,7 +81,7 @@
 </style>
 {% endblock %} 
 {% block body -%}
-    <div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;">
+    <div class="pia-wrapper">
     {{ include('FraterSoftPiaWebBundle:Default:_header.html.twig') }}
     <h1>Eventos de {{ organizador_nombre }}</h1>
     <div id="tabs">
@@ -148,7 +148,7 @@
                         <td>
                         <ul id="icons" class="ui-widget ui-helper-clearfix">                 
                             <li class="ui-state-default ui-corner-all" title="Ver">
-                                <a href="{{ path('evento_show', { 'id': entity.id, 'email': email }) }}"><span class="ui-icon ui-icon-search"></span></a>
+                                <a href="{{ path('evento_show', { 'id': entity.id }) }}"><span class="ui-icon ui-icon-search"></span></a>
                             </li>
                             <li class="ui-state-default ui-corner-all {% if nivel_seguridad != 1 %} ui-state-disabled {% endif %}" title="{{ nivel_seguridad }}" >
                                 {% if nivel_seguridad == 1%}
@@ -212,7 +212,7 @@
                         <td>
                         <ul id="icons" class="ui-widget ui-helper-clearfix">                 
                             <li class="ui-state-default ui-corner-all" title="Ver">
-                                <a href="{{ path('evento_show', { 'id': entity.id, 'email': email }) }}"><span class="ui-icon ui-icon-search"></span></a>
+                                <a href="{{ path('evento_show', { 'id': entity.id }) }}"><span class="ui-icon ui-icon-search"></span></a>
                             </li>
                             <li class="ui-state-default ui-corner-all" title="Editar">
                                 <a href="{{ path('evento_edit', { 'id': entity.id }) }}"><span class="ui-icon ui-icon-pencil"></span></a>

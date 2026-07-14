@@ -56,6 +56,8 @@
     </style>
 {% endblock %} 
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <p id="espere">
         <img width="50px" src="{{ asset('bundles/fratersoftpiaweb/images/') ~ 'loading.gif' }}"><br>
         Espera mientras se procesa la operacion...
@@ -63,5 +65,6 @@
     <div id="titulo" align="center"></div>
     <table id="datos" class="display compact" width="50%"></table>
     <div id="botonera">
-    </div>    
+    </div>
+    </div>
 {% endblock %}

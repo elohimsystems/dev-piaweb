@@ -191,7 +191,9 @@
 {% endblock %}
 
 {% block body -%}
-    <div id="tabs">        
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+    <div id="tabs">
         {{ include("FraterSoftPiaWebBundle:Campeonato:tabs.html.twig") }}
         <div id="tabs-3">     
             <h1>Importar Competidores</h1>
@@ -206,6 +208,7 @@
                 {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
             </div>    
             {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':null}) }}    
-        </div> 
-    </div>         
+        </div>
+    </div>
+    </div>
 {% endblock %}

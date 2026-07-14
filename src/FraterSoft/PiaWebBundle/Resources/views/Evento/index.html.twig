@@ -62,6 +62,8 @@
 </style>
 {% endblock %} 
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <h1>Lista de Eventos</h1>
     <table id="tablaListaEventos" class="display row-border hover compact">
         <thead>
@@ -78,7 +80,7 @@
         {% for entity in entities %}
             <tr>
                 <td>
-                    <a href="{{ path('evento_show', { 'id': entity.id,'email':entity.email }) }}">
+                    <a href="{{ path('evento_show', { 'id': entity.id }) }}">
                         <img width="32" src="{{ asset('bundles/fratersoftpiaweb/images/') ~ entity.logo }}">
                     </a>
                 </td>
@@ -120,4 +122,5 @@
             </a>
         </li>
     </ul>
+    </div>
     {% endblock %}

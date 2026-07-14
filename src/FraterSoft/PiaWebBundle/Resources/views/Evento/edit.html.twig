@@ -46,44 +46,6 @@
         .qq-upload-list li.qq-upload-success {
             background-color: #FFFFFF;
         }        
-        /* Always set the map height explicitly to define the size of the div
-         * element that contains the map. */
-        #map {
-          height: 100%;
-        }
-        
-        .controls {
-          margin-top: 10px;
-          border: 1px solid transparent;
-          border-radius: 2px 0 0 2px;
-          box-sizing: border-box;
-          -moz-box-sizing: border-box;
-          height: 32px;
-          outline: none;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }        
-        
-        #pac-input {
-          background-color: #fff;
-          font-family: Roboto;
-          font-size: 15px;
-          font-weight: 300;
-          margin-left: 12px;
-          padding: 0 11px 0 13px;
-          text-overflow: ellipsis;
-          width: 300px;
-        }
-
-        #pac-input:focus {
-          border-color: #4d90fe;
-        }        
-
-        /* Optional: Makes the sample page fill the window. */
-        html, body {
-          height: 100%;
-          margin: 0;
-          padding: 0;
-        }             
         #btn_checkemail{
             height: 21px;
             width: 31px;
@@ -123,7 +85,7 @@
 {% endblock %}
 
 {% block body -%}
-    <div style="max-width:1200px; margin:auto">
+    <div class="pia-wrapper">
         {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="tabs">        
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}

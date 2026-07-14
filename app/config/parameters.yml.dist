@@ -16,3 +16,6 @@ parameters:
 
   locale: es
   secret: ThisTokenIsNotSoSecretChangeIt
+
+  contacto_email: ~
+  contacto_whatsapp: ~

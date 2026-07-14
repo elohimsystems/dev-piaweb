@@ -250,8 +250,10 @@
 </div>
 {% endblock %}
 {% set index_pago = edit_form.pagos|length %}
-{% block body -%}   
-    <div class="contenido">    
+{% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+    <div class="contenido">
         <div id="titulogrupos">    
             <div>Inscripciones Grupales</div>
             <div>Agregre Integrante <b>N° {# {integrante} #}</b> {#% if integrante > 1 %#}o Edite el Grupo{#% endif %#}</div>
@@ -263,7 +265,8 @@
             {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
         </div>   
         {{twiglib.mensajetdc()}}
-    </div>    
+    </div>
+    </div>
 {% endblock %}
 {% block javascripts %}
     {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':entity.idevento.id}) }}            

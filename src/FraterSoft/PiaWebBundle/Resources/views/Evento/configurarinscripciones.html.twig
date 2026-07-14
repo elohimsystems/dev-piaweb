@@ -12,9 +12,11 @@
     </style>
 {% endblock %}  
 {% block body -%}
-    <div id="tabs">    
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+    <div id="tabs">
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
-        <div id="tabs-2">      
+        <div id="tabs-2">
             <fieldset>    
                 <div id="botones_configurarinscripciones">
                     <button id="boton_atributos">Atributos</button>
@@ -30,7 +32,8 @@
                 <div id="contentAtributos">
                     {{ render(controller('FraterSoftPiaWebBundle:EventoAtributos:new',{'idevento':idevento})) }}
                 </div>
-        <a href="{{ urllistaeventos }}"><button id="button">Regresar</button></a>                       
+        <a href="{{ urllistaeventos }}"><button id="button">Regresar</button></a>
+    </div>
     </div>
 {% endblock %}
 {% block javascripts -%}

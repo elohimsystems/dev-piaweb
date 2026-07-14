@@ -33,7 +33,7 @@
 </style>
 {% endblock %}    
     {% block body -%}
-    <div style="max-width:1200px; margin:auto">
+    <div class="pia-wrapper">
         {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="evento">{{nombreevento}}</div>
     <div id="tabs">
@@ -82,7 +82,7 @@
             </div>
         </div>     
         <p align="center">
-            <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+            <a href="{{ path('frater_soft_pia_web_eventos') }}"><button id="button">Regresar</button></a>
         </p>
     </div>       
     </div>

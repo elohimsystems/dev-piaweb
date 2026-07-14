@@ -1,13 +1,55 @@
 {% extends '::base.html.twig' %}
 
 {% block body %}
-<div style="max-width: 800px; margin: 0 auto; padding: 40px 20px;">
+<div class="pia-wrapper">
     {{ include('FraterSoftPiaWebBundle:Default:_header.html.twig') }}
 
-    <h1 style="color: #333;">Contactenos</h1>
+    <div style="max-width: 500px; margin: 40px auto; padding: 30px; border: 1px solid #ccc; border-radius: 6px; box-shadow: 2px 2px 8px rgba(0,0,0,0.1);">
+        <h2 style="margin-top: 0;">Contáctenos</h2>
 
-    <div style="margin-top: 30px; line-height: 1.8; color: #555;">
-        <p><strong>Correo:</strong> <a href="mailto:contacto@sistemapia.com" style="color: #337ab7;">contacto@sistemapia.com</a></p>
+        {% if enviado %}
+        <div style="color: #3c763d; background: #dff0d8; border: 1px solid #d6e9c6; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+            Su mensaje fue enviado correctamente.
+        </div>
+        {% endif %}
+
+        {% if error %}
+        <div style="color: #a94442; background: #f2dede; border: 1px solid #ebccd1; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="post" action="{{ path('frater_soft_pia_web_contacto') }}">
+            <label for="nombre" style="display:block; margin-bottom:4px; font-weight:bold; font-size:13px;">Nombre</label>
+            <input type="text" id="nombre" name="nombre" required maxlength="150" value="{{ nombre }}"
+                   style="width:100%; padding:8px; margin-bottom:15px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;" />
+
+            <label for="mensaje" style="display:block; margin-bottom:4px; font-weight:bold; font-size:13px;">Mensaje</label>
+            <textarea id="mensaje" name="mensaje" required maxlength="500" rows="5"
+                      style="width:100%; padding:8px; margin-bottom:4px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;">{{ mensaje }}</textarea>
+            <div style="text-align:right; font-size:11px; color:#888; margin-bottom:15px;"><span id="contador">500</span> caracteres restantes</div>
+
+            <label style="display:block; margin-bottom:8px; font-weight:bold; font-size:13px;">Enviar por</label>
+            <div style="margin-bottom:15px;">
+                <label style="margin-right:20px; font-weight:normal;"><input type="radio" name="metodo" value="correo" checked> Correo Electrónico</label>
+                <label style="font-weight:normal;"><input type="radio" name="metodo" value="whatsapp"> WhatsApp</label>
+            </div>
+
+            <input type="submit" value="Enviar"
+                   style="width:100%; padding:10px; background:#337ab7; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:14px;" />
+        </form>
     </div>
+
+    <script>
+        (function() {
+            var textarea = document.getElementById('mensaje');
+            var contador = document.getElementById('contador');
+            function actualizar() {
+                contador.textContent = 500 - textarea.value.length;
+            }
+            textarea.addEventListener('input', actualizar);
+            actualizar();
+        })();
+    </script>
 </div>
 {% endblock body %}

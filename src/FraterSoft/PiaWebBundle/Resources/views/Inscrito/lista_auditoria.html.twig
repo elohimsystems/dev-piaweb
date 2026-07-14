@@ -327,7 +327,7 @@
 </style>
 {% endblock %}  
 {% block body -%}
-    <div style="max-width:1200px; margin:auto">
+    <div class="pia-wrapper">
         {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="seccionCargando">
         <img src="{{ asset('bundles/fratersoftpiaweb/images/loading.gif') }}">
@@ -349,7 +349,7 @@
             <div id="tabs-6">
                 <table id="tablaAuditoria" class="display row-border hover">
                 </table>     
-                <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+                <a href="{{ path('frater_soft_pia_web_eventos') }}"><button id="button">Regresar</button></a>
             </div>
             <div id="notificacion" title="Advertencia!!!">
                 <p id="msgconc">Desea reenviar las notificaciones de Confirmacion de Inscripcion de las siguintes secuencias: <div id="ids"></div></p>

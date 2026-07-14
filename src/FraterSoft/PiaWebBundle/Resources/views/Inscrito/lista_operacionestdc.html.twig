@@ -146,6 +146,8 @@
 </style>
 {% endblock %}  
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="evento">{{nombreevento}}</div>
     <div id="tabs">
         <ul>
@@ -259,5 +261,6 @@
     </div>            
     <div id="anular" title="Advertencia!!!">
         <p>Se anularan las operaciones sin pago que ya han sido notificadas, desea continuar?</p>
-    </div>                       
+    </div>
+    </div>
 {% endblock %}

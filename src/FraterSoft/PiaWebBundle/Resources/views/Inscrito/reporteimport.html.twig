@@ -27,6 +27,8 @@
     </style>
 {% endblock %} 
 {% block body %}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div class="contenido">
         <div id="mensaje">{{ mensaje | raw }}</div>
         <div id="variables">
@@ -63,4 +65,5 @@
             {% endif %}
         </div>
     </div>
-{% endblock %}    
+    </div>
+{% endblock %}

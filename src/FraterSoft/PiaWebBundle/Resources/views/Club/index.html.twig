@@ -15,7 +15,9 @@
 </style>
 {% endblock %}  
 {% block body -%}
-    <div id="tabs">    
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+    <div id="tabs">
         {{ include("FraterSoftPiaWebBundle:Club:tabs.html.twig") }}
         <div id="tabs-1">     
             <table id="tablaDatos" class="compact">
@@ -39,8 +41,9 @@
         </div>
         <div id="dialogelimiar" title="Advertencia!!!">
             ¿Esta seguro que desea elimar el campeonato <strong id="eliminar"></strong>?
-        </div> 
-    </div> 
+        </div>
+    </div>
+    </div>
     {% endblock %}
 {% block javascripts -%}
 {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}

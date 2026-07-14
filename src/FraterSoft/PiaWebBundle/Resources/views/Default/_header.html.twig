@@ -1,15 +1,15 @@
-<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid #ddd;">
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; padding: 15px 25px; background: #2c3e50; border-radius: 6px;">
     <div>
-        <a href="{{ path('frater_soft_pia_web_landing') }}"><img src="{{ asset('bundles/fratersoftpiaweb/images/logopiaft.png') }}" alt="PIA" style="max-height: 50px;"></a>
+        <a href="{{ path('frater_soft_pia_web_landing') }}"><img src="{{ asset('bundles/fratersoftpiaweb/images/logosistemapia-ft-300x200.png') }}" alt="PIA" style="max-height: 100px;"></a>
     </div>
     <div>
         {% if app.user %}
-            <a href="{{ path('frater_soft_pia_web_eventos') }}" style="text-decoration: none; color: #337ab7; font-weight: bold; margin-right: 20px;">Eventos</a>
+            <a href="{{ path('frater_soft_pia_web_eventos') }}" style="text-decoration: none; color: #fff; font-weight: bold; margin-right: 20px;">Eventos</a>
             <div style="display: inline-block; position: relative; margin-right: 20px;">
                 {% if app.user.getIdorganizador() and app.user.getIdorganizador().getLogo() %}
                     <img src="{{ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ app.user.getIdorganizador().getLogo() }}" style="max-height: 32px; vertical-align: middle; border-radius: 4px; margin-right: 6px;">
                 {% endif %}
-                <span style="cursor: pointer; color: #337ab7; font-weight: bold;">{{ app.user.getUsername() }} &#9662;</span>
+                <span style="cursor: pointer; color: #fff; font-weight: bold;">{{ app.user.getUsername() }} &#9662;</span>
                 <div class="submenu" style="display: none; position: absolute; top: 100%; right: 0; background: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-width: 160px; z-index: 100;">
                     {% if app.user.getIdorganizador() %}
                     <a href="{{ path('frater_soft_pia_web_perfil') }}" style="display: block; padding: 8px 16px; text-decoration: none; color: #333;">Editar Perfil</a>
@@ -19,13 +19,13 @@
             </div>
         {% else %}
             <div style="display: inline-block; position: relative; margin-right: 20px;">
-                <span style="cursor: pointer; color: #337ab7; font-weight: bold;">Usuario &#9662;</span>
+                <span style="cursor: pointer; color: #fff; font-weight: bold;">Usuario &#9662;</span>
                 <div class="submenu" style="display: none; position: absolute; top: 100%; left: 0; background: #fff; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); min-width: 140px; z-index: 100;">
                     <a href="{{ path('fos_user_security_login') }}" style="display: block; padding: 8px 16px; text-decoration: none; color: #333;">Login</a>
                     <a href="{{ path('fos_user_registration_register') }}" style="display: block; padding: 8px 16px; text-decoration: none; color: #333;">Crear</a>
                 </div>
             </div>
-            <a href="{{ path('frater_soft_pia_web_contacto') }}" style="text-decoration: none; color: #337ab7; font-weight: bold;">Contactenos</a>
+            <a href="{{ path('frater_soft_pia_web_contacto') }}" style="text-decoration: none; color: #fff; font-weight: bold;">Contactenos</a>
         {% endif %}
     </div>
     <script>

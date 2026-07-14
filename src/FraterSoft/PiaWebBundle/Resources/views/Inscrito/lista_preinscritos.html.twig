@@ -345,7 +345,7 @@ $(function () {
 </style>
 {% endblock %}     
     {% block body -%}
-    <div style="max-width:1200px; margin:auto">
+    <div class="pia-wrapper">
         {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="seccionCargando">
         <img src="{{ asset('bundles/fratersoftpiaweb/images/loading.gif') }}">
@@ -366,7 +366,7 @@ $(function () {
             <div id="tabs-1">
                 <table id="tablaPreInscritos" class="display row-border hover">
                 </table>        
-                <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+                <a href="{{ path('frater_soft_pia_web_eventos') }}"><button id="button">Regresar</button></a>
             </div>
             <div id="dialog" title="Advertencia!!!">
                 <p>Esta seguro que desea anular inscripcion con la secuencia <b id="sec"></b> ?</p>

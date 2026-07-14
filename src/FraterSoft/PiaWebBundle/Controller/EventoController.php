@@ -38,9 +38,10 @@ class EventoController extends commonPIAClass
         $em = $this->getDoctrine()->getManager();
 
         if($email=='admin'){
-            $entities = $em->getRepository('FraterSoftPiaWebBundle:Evento')->enproceso('admin');             
+            $entities = $em->getRepository('FraterSoftPiaWebBundle:Evento')->enproceso('admin');
             $ejecutados = $em->getRepository('FraterSoftPiaWebBundle:Evento')->ejecutados('admin');
             $nivelseguridad = 1;
+            $organizadorNombre = 'Admin';
         }
         else{
             $eventospatrocinantes = $em->getRepository('FraterSoftPiaWebBundle:Organizador')->eventosPubilidadPatrocinantePorEmail($email);
@@ -54,17 +55,20 @@ class EventoController extends commonPIAClass
                 $ejecutados = null;
                 $nivelseguridad = 2;
             }
+            $organizador = $em->getRepository('FraterSoftPiaWebBundle:Organizador')->findOneBy(array('email' => $email));
+            $organizadorNombre = $organizador ? $organizador->getNombre() : $email;
         }
-        
+
         $request = $this->container->get('request');
         $routeURL = $request->getRequestUri();
-        $this->get('session')->set('urllistaeventos',$routeURL);        
+        $this->get('session')->set('urllistaeventos',$routeURL);
 
         return $this->render('FraterSoftPiaWebBundle:Evento:listaporemail.html.twig', array(
             'entities' => $entities,
             'ejecutados' => $ejecutados,
             'email' => $email,
             'nivel_seguridad' => $nivelseguridad,
+            'organizador_nombre' => $organizadorNombre,
         ));
     }
     /**
@@ -144,7 +148,7 @@ class EventoController extends commonPIAClass
      * Finds and displays a Evento entity.
      *
      */
-    public function showAction($id,$email)
+    public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -156,7 +160,6 @@ class EventoController extends commonPIAClass
 
         return $this->render('FraterSoftPiaWebBundle:Evento:show.html.twig', array(
             'entity'      => $entity,
-            'email' => $email
          ));
     }
 
