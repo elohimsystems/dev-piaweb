@@ -57,6 +57,32 @@
         </div>
     </div>
 
+    {% if organizador and (organizador.contacto or organizador.emailcontacto or organizador.telefonocontacto) %}
+    <div style="margin-top: 40px;">
+        <h2 style="color: #337ab7; border-bottom: 2px solid #337ab7; padding-bottom: 5px;">Persona de Contacto</h2>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
+            {% if organizador.contacto %}
+            <div style="flex: 1 1 30%; max-width: calc(33.333% - 14px); border: 1px solid #ddd; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.06); box-sizing: border-box;">
+                <div style="font-weight: bold; color: #337ab7; font-size: 14px; margin-bottom: 10px; border-bottom: 2px solid #337ab7; padding-bottom: 8px; text-transform: uppercase;">Nombre</div>
+                <div style="color: #333;">{{ organizador.contacto }}</div>
+            </div>
+            {% endif %}
+            {% if organizador.emailcontacto %}
+            <div style="flex: 1 1 30%; max-width: calc(33.333% - 14px); border: 1px solid #ddd; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.06); box-sizing: border-box;">
+                <div style="font-weight: bold; color: #337ab7; font-size: 14px; margin-bottom: 10px; border-bottom: 2px solid #337ab7; padding-bottom: 8px; text-transform: uppercase;">Correo</div>
+                <div style="color: #333;">{{ organizador.emailcontacto }}</div>
+            </div>
+            {% endif %}
+            {% if organizador.telefonocontacto %}
+            <div style="flex: 1 1 30%; max-width: calc(33.333% - 14px); border: 1px solid #ddd; border-radius: 8px; padding: 20px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.06); box-sizing: border-box;">
+                <div style="font-weight: bold; color: #337ab7; font-size: 14px; margin-bottom: 10px; border-bottom: 2px solid #337ab7; padding-bottom: 8px; text-transform: uppercase;">Teléfono</div>
+                <div style="color: #333;">{{ organizador.telefonocontacto }}</div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
     {% if competencias is not empty %}
     <div style="margin-top: 40px;">
         <h2 style="color: #337ab7; border-bottom: 2px solid #337ab7; padding-bottom: 5px;">Competencias</h2>

@@ -446,6 +446,7 @@ class DefaultController extends commonPIAClass
 
         return $this->render('FraterSoftPiaWebBundle:Default:detalle_evento.html.twig', array(
             'evento' => $evento,
+            'organizador' => $organizador,
             'competencias' => $competencias,
             'categoriasPorCompetencia' => $categoriasPorCompetencia,
             'cards' => $cards,
