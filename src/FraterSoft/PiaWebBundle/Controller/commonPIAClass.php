@@ -835,7 +835,7 @@ class commonPIAClass extends Controller
             if(!is_null($evento->getIdorganizador()->getIdmoneda())){
                 if($moneda['id']==$evento->getIdorganizador()->getIdmoneda()->getId())
                     $default_moneda=$moneda['id'];
-                $arraymonedas[$moneda['id']]=$moneda['nombre'];
+                $arraymonedas[$moneda['id']]=$moneda['codigolocal'];
             }
             else{
                 print_r('No se han configurado la moneda por defecto del Organizador<br>');
