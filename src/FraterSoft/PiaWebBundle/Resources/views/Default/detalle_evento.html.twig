@@ -123,6 +123,12 @@
                             <div style="font-size: 12px; color: #888; font-style: italic;">{{ fp.observacion }}</div>
                             {% endif %}
                         </div>
+                        {% if fp.qr %}
+                        <div style="margin-left: auto; text-align: center;">
+                            <img src="{{ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ fp.qr }}" alt="QR {{ fp.nombre }}" title="Código QR" onclick="mostrarQR(this.src)" style="height: 60px; border-radius: 4px; cursor: pointer; display: block;">
+                            <div style="font-size: 11px; color: #888;">Código QR</div>
+                        </div>
+                        {% endif %}
                     </div>
                     {% endfor %}
                 </div>
@@ -159,5 +165,15 @@
             <button style="padding: 10px 30px; background: #337ab7; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Regresar</button>
         </a>
     </div>
+
+    <div id="dialog-qr" title="Código QR" style="display:none; text-align:center;">
+        <img id="dialog-qr-img" src="" alt="Código QR" style="max-width:300px; max-height:300px;">
+    </div>
 </div>
+<script>
+    function mostrarQR(src) {
+        $('#dialog-qr-img').attr('src', src);
+        $('#dialog-qr').dialog({modal: true, width: 'auto'});
+    }
+</script>
 {% endblock body %}

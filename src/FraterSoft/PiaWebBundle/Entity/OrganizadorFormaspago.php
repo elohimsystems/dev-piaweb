@@ -14,6 +14,8 @@ class OrganizadorFormaspago
 
     private $observacion;
 
+    private $qr;
+
     public function getId()
     {
         return $this->id;
@@ -53,5 +55,17 @@ class OrganizadorFormaspago
     public function getObservacion()
     {
         return $this->observacion;
+    }
+
+    public function setQr($qr)
+    {
+        $this->qr = $qr;
+
+        return $this;
+    }
+
+    public function getQr()
+    {
+        return $this->qr;
     }
 }

@@ -11,6 +11,10 @@ FraterSoft\PiaWebBundle\Entity\OrganizadorFormaspago:
         observacion:
             type: text
             nullable: true
+        qr:
+            type: string
+            nullable: true
+            length: 255
     manyToOne:
         idorganizador:
             targetEntity: Organizador

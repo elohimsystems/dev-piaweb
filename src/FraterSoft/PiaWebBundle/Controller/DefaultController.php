@@ -137,9 +137,17 @@ class DefaultController extends commonPIAClass
             } elseif ($request->request->has('formaspago_add')) {
                 $idformapago = $request->request->get('idformapago');
                 $observacion = $request->request->get('observacion');
+                $qrFile = $request->files->get('qr');
                 if ($organizador && $organizador->getId() && $idformapago) {
                     $formapago = $em->getRepository('FraterSoftPiaWebBundle:Formaspago')->find($idformapago);
                     if ($formapago) {
+                        $qrFilename = null;
+                        if ($qrFile) {
+                            $dir = $this->get('kernel')->getRootDir() . '/../web/bundles/fratersoftpiaweb/fine-uploader/files';
+                            $qrFilename = uniqid() . '.' . $qrFile->guessExtension();
+                            $qrFile->move($dir, $qrFilename);
+                        }
+
                         $existe = $em->getRepository('FraterSoftPiaWebBundle:OrganizadorFormaspago')
                             ->findOneBy(array('idorganizador' => $organizador, 'idformapago' => $formapago));
                         if (!$existe) {
@@ -147,11 +155,17 @@ class DefaultController extends commonPIAClass
                             $of->setIdorganizador($organizador);
                             $of->setIdformapago($formapago);
                             $of->setObservacion($observacion);
+                            if ($qrFilename) {
+                                $of->setQr($qrFilename);
+                            }
                             $em->persist($of);
                             $em->flush();
                             $this->get('session')->getFlashBag()->add('success', 'Forma de pago asignada al organizador.');
                         } else {
                             $existe->setObservacion($observacion);
+                            if ($qrFilename) {
+                                $existe->setQr($qrFilename);
+                            }
                             $em->flush();
                             $this->get('session')->getFlashBag()->add('success', 'Observacion actualizada.');
                         }
@@ -422,6 +436,7 @@ class DefaultController extends commonPIAClass
                         'nombre' => $fp->getNombre(),
                         'icono' => $fp->getIcono(),
                         'observacion' => $ofp ? $ofp->getObservacion() : null,
+                        'qr' => $ofp ? $ofp->getQr() : null,
                     );
                 }
             } catch (\Exception $e) {
