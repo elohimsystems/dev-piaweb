@@ -16,7 +16,7 @@ security:
             security: false
 
         public:
-            pattern:  ^/(competidor/(findform|consultar|asociadosajax|buscar|.+/validaemailpersonalajax)|inscrito/(new|create|categorias|buscarprecioajax|\d+/confirmacion|.+confirmaciongrupo)|pago/(new|newtdc|newgrupo|.+/formaspagoajax)|evento/\d+/detalle|contacto|$)
+            pattern:  ^/(competidor/(findform|consultar|asociadosajax|buscar|.+/validaemailpersonalajax)|inscrito/(new|create|categorias|buscarprecioajax|\d+/confirmacion|.+confirmaciongrupo)|pago/(new|newtdc|newgrupo|.+/formaspagoajax))
             security: false
 
         main:
@@ -35,5 +35,7 @@ security:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/contacto$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/evento/\d+/detalle, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, role: ROLE_USER }
