@@ -22,6 +22,10 @@ frater_soft_pia_web_evento_detalle:
   pattern: /evento/{id}/detalle
   defaults: { _controller: FraterSoftPiaWebBundle:Default:detalleEvento }
 
+frater_soft_pia_web_sitemap:
+  pattern: /sitemap.xml
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:sitemap }
+
 frater_soft_pia_web_homepage:
   pattern: /hello/{name}
   defaults: { _controller: FraterSoftPiaWebBundle:Default:index }

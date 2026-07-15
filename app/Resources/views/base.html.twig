@@ -10,6 +10,7 @@
         <meta http-equiv="Pragma" content="no-cache" />
         <meta http-equiv="Expires" content="0" />        
         <title>{% block title %}PIA{% endblock %}</title>
+        <link rel="canonical" href="https://sistemapia.com.ve{{ app.request.getRequestUri() }}" />
         {% block stylesheets %}{% endblock %}
         <link rel="shortcut icon" href="{{ asset('images/logopiaft.png') }}" />
 	<link type="text/css" href="{{ asset('bundles/fratersoftpiaweb/js/jquery-ui-1.12.1.custom/jquery-ui.css') }}" rel="stylesheet">             

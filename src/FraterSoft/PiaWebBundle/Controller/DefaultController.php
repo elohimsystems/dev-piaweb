@@ -36,6 +36,19 @@ class DefaultController extends commonPIAClass
         return $this->render('FraterSoftPiaWebBundle:Default:landing.html.twig', array('eventos' => $eventos));
     }
 
+    public function sitemapAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $eventos = $em->getRepository('FraterSoftPiaWebBundle:Evento')->findBy(array('activo' => true), array('fecha' => 'DESC'));
+
+        $response = $this->render('FraterSoftPiaWebBundle:Default:sitemap.xml.twig', array(
+            'eventos' => $eventos,
+        ));
+        $response->headers->set('Content-Type', 'application/xml');
+
+        return $response;
+    }
+
     public function eventosAction()
     {
         $em = $this->getDoctrine()->getManager();
