@@ -49,3 +49,46 @@ jobs:
 
       - name: Limpiar
         run: rm -f vendor.zip
+
+  deploy-prod:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Crear vendor.zip
+        run: zip -r vendor.zip vendor/
+
+      - name: Subir vendor.zip como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vendor
+          path: vendor.zip
+          retention-days: 7
+
+      - name: Deploy (vendor.zip incluido, vendor/ excluido)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_HOST_PRD }}
+          username: ${{ secrets.FTP_USERNAME_PRD }}
+          password: ${{ secrets.FTP_PASSWORD_PRD }}
+          local-dir: ./
+          server-dir: /
+          exclude: |
+            .git/**
+            .gitignore
+            .github/**
+            .travis.yml
+            composer.json
+            composer.lock
+            README.md
+            LICENSE
+            UPGRADE*
+            error_log
+            phpinfo.php
+            vendor/**
+
+      - name: Limpiar
+        run: rm -f vendor.zip

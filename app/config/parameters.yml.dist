@@ -19,3 +19,9 @@ parameters:
 
   contacto_email: ~
   contacto_whatsapp: ~
+
+  # URL publica real de este ambiente (usada en sitemap.xml). Debe
+  # apuntar a donde realmente responde el sitio (incluyendo subcarpeta
+  # si el DocumentRoot no apunta directo a web/), ej:
+  # https://sistemapia.com.ve/piaweb/web
+  site_base_url: ~

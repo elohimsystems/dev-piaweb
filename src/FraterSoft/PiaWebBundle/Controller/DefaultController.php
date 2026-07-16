@@ -43,6 +43,7 @@ class DefaultController extends commonPIAClass
 
         $response = $this->render('FraterSoftPiaWebBundle:Default:sitemap.xml.twig', array(
             'eventos' => $eventos,
+            'site_base_url' => $this->container->getParameter('site_base_url'),
         ));
         $response->headers->set('Content-Type', 'application/xml');
 
