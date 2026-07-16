@@ -34,7 +34,7 @@ evento_delete:
     requirements: { _method: post|delete }
 
 evento_show:
-    pattern:  /{id}/{email}/show
+    pattern:  /{id}/show
     defaults: { _controller: "FraterSoftPiaWebBundle:Evento:show" }
 
 evento_configurarinscripciones:

@@ -200,18 +200,7 @@
         src="{{asset('bundles/fratersoftpiaweb/images/org_' ~ evento.idorganizador.id ~ '_eve_' ~ evento.id ~ '_banner-verifica.jpg')}}"/>
     </strong>    
 </div>
-<div id="poweredby" style="text-align: center;margin: 10px 20px 30px;border: 1px">
-    <a href="http://www.sistemapia.com" target="_blank" style="text-decoration:none">
-        <b style="font-size: 9px">
-            V-{{ asset('')|slice(7,asset('')|length-5-7) }}
-        </b><br>
-        <strong>
-        powered by
-        <img width="40" align="center" 
-             src="{{asset('bundles/fratersoftpiaweb/images/logopiaft.png')}}"/>
-        </strong>
-    </a>
-</div>
+{{ include('FraterSoftPiaWebBundle:Default:_poweredby.html.twig') }}
 {% endblock %}
 {% block body -%}  
     

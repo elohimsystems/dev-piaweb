@@ -1,6 +1,8 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <h1>Pago list</h1>
 
     <table class="records_list">
@@ -46,4 +48,5 @@
             </a>
         </li>
     </ul>
+    </div>
     {% endblock %}

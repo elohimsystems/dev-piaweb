@@ -1,0 +1,40 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% block fos_user_content %}
+<style>
+    .user-form ul { color: #a94442; font-size: 12px; margin: 4px 0 0; padding-left: 18px; }
+</style>
+<div style="width: 360px; margin: 80px auto; padding: 30px; border: 1px solid #ccc; border-radius: 6px; box-shadow: 2px 2px 8px rgba(0,0,0,0.1);">
+    <h2 style="margin-top: 0;">Crear Cuenta</h2>
+
+    {{ form_start(form, {'action': path('fos_user_registration_register'), 'attr': {'class': 'user-form'}}) }}
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:4px; font-weight:bold; font-size:13px;">{{ form_label(form.username, 'Usuario') }}</label>
+            {{ form_widget(form.username, {'attr': {'style': 'width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;'}}) }}
+            {{ form_errors(form.username) }}
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:4px; font-weight:bold; font-size:13px;">{{ form_label(form.email, 'Correo Electrónico') }}</label>
+            {{ form_widget(form.email, {'attr': {'style': 'width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;'}}) }}
+            {{ form_errors(form.email) }}
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:4px; font-weight:bold; font-size:13px;">{{ form_label(form.plainPassword.first, 'Contraseña') }}</label>
+            {{ form_widget(form.plainPassword.first, {'attr': {'style': 'width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;'}}) }}
+            {{ form_errors(form.plainPassword.first) }}
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:4px; font-weight:bold; font-size:13px;">{{ form_label(form.plainPassword.second, 'Confirmar Contraseña') }}</label>
+            {{ form_widget(form.plainPassword.second, {'attr': {'style': 'width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;'}}) }}
+            {{ form_errors(form.plainPassword.second) }}
+        </div>
+        {{ form_rest(form) }}
+        <input type="submit" value="Registrarse"
+               style="width:100%; padding:10px; background:#337ab7; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:14px;" />
+    {{ form_end(form) }}
+
+    <div style="text-align:center; margin-top:15px;">
+        <a href="{{ path('fos_user_security_login') }}" style="font-size:13px; color:#337ab7;">Volver a Iniciar Sesión</a>
+    </div>
+</div>
+{% endblock fos_user_content %}

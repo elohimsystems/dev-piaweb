@@ -3,9 +3,6 @@ FraterSoft\PiaWebBundle\Entity\Grupo:
     type: entity
     table: piaaccess.tmgrupos
     indexes:
-        IDX_64D40FFB233BA6A9:
-            columns:
-                - idevento
         IDX_64D40FFB42ED3925:
             columns:
                 - idcompetencia

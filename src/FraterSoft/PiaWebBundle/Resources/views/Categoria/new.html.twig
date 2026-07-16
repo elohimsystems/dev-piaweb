@@ -53,6 +53,8 @@
 {% endblock %}  
 {% set entidad='categoria' %}
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="tabs">    
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
         <div id="tabs-2">     
@@ -84,6 +86,7 @@
             </div>        
         </div> 
     </div>         
+    </div>
 {% endblock %}
 {% block javascripts -%}
 {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}

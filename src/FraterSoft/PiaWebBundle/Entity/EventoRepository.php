@@ -45,6 +45,18 @@ where ev.id=' . $idevento . ')'
             ->getResult()[0][1];
     }    
     
+    public function findProximosActivos()
+    {
+        return $this->getEntityManager()
+            ->createQuery(
+                'SELECT e FROM FraterSoftPiaWebBundle:Evento e '
+                . 'WHERE e.activo = true AND e.fecha >= :now '
+                . 'ORDER BY e.fecha ASC'
+            )
+            ->setParameter('now', new \DateTime())
+            ->getResult();
+    }
+
     public function enproceso($email)
     {
         $currentdate = new \Datetime("now");   
@@ -71,6 +83,35 @@ where ev.id=' . $idevento . ')'
         return $this->getEntityManager()->createQuery($sql)->getResult();
     } 
     
+    public function enprocesoPorOrganizador($idorganizador)
+    {
+        $currentdate = new \Datetime("now");
+        $q = $this->getEntityManager()->createQueryBuilder()
+            ->select("e.logo,e.id,e.nombre,e.fecha,e.fechacierre,e.cupomaximo,e.activo")
+            ->addSelect("(select count(i.id) from FraterSoftPiaWebBundle:Inscrito i left join FraterSoftPiaWebBundle:Pago p with p.idinscrito=i.id where i.idevento=e.id and i.status=1 and (p.id is null or p.conciliado is null)) as preinscritos")
+            ->addSelect("(select count(j.id) from FraterSoftPiaWebBundle:Inscrito j left join FraterSoftPiaWebBundle:Pago q with q.idinscrito=j.id where j.idevento=e.id and q.conciliado = true and j.status=1) as inscritos")
+            ->addSelect("(select count(k.id) from FraterSoftPiaWebBundle:Inscrito k left join FraterSoftPiaWebBundle:Pago r with r.idinscrito=k.id where k.idevento=e.id and r.conciliado is null and k.status=1 and r.tipo='3') as tdcsinpago")
+            ->from('FraterSoftPiaWebBundle:Evento', 'e')
+            ->where('e.fecha >= :now')
+            ->andWhere('e.idorganizador = :org')
+            ->setParameter(':now', $currentdate->format('Y-m-d H:i:s'))
+            ->setParameter(':org', $idorganizador);
+        return $q->getQuery()->getResult();
+    }
+
+    public function ejecutadosPorOrganizador($idorganizador)
+    {
+        $currentdate = new \Datetime("now");
+        $q = $this->getEntityManager()->createQueryBuilder()
+            ->select('e')
+            ->from('FraterSoftPiaWebBundle:Evento', 'e')
+            ->where('e.fecha < :now')
+            ->andWhere('e.idorganizador = :org')
+            ->setParameter(':now', $currentdate->format('Y-m-d H:i:s'))
+            ->setParameter(':org', $idorganizador);
+        return $q->getQuery()->getResult();
+    }
+
     public function enprocesoPatrocinantes($email)
     {
         $currentdate = new \Datetime("now");   

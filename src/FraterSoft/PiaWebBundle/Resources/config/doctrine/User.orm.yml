@@ -1,0 +1,14 @@
+FraterSoft\PiaWebBundle\Entity\User:
+    type: entity
+    table: piaaccess.usuarios
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    manyToOne:
+        idorganizador:
+            targetEntity: Organizador
+            joinColumns:
+                idorganizador:
+                    referencedColumnName: id

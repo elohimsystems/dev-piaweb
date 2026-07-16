@@ -1,114 +1,155 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
-    <h1>Evento</h1>
+<style>
+    .evento-show {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 30px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    }
+    .evento-show h2 {
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+    .evento-show .logo-section {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .evento-show .logo-section img {
+        max-width: 200px;
+        max-height: 200px;
+        border-radius: 10%;
+        border: 2px solid #ddd;
+    }
+    .evento-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 25px;
+    }
+    .evento-grid .full-width {
+        grid-column: 1 / -1;
+    }
+    .evento-grid label {
+        display: block;
+        font-weight: bold;
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 2px;
+    }
+    .evento-grid .valor {
+        font-size: 14px;
+    }
+    .submit-btn {
+        text-align: center;
+        margin-top: 25px;
+    }
+    .submit-btn a button {
+        padding: 10px 40px;
+        background: #337ab7;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+</style>
 
-    <table class="record_properties">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ entity.id }}</td>
-            </tr>
-            <tr>
-                <th>Nombre</th>
-                <td>{{ entity.nombre }}</td>
-            </tr>
-            <tr>
-                <th>Logo</th>
-                <td>{{ entity.logo }}</td>
-            </tr>
-            <tr>
-                <th>Fecha</th>
-                <td>{{ entity.fecha|date('Y-m-d H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Hora</th>
-                <td>{{ entity.hora|date('Y-m-d H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Lugar</th>
-                <td>{{ entity.lugar }}</td>
-            </tr>
-            <tr>
-                <th>Ruta</th>
-                <td>{{ entity.ruta }}</td>
-            </tr>
-            <tr>
-                <th>Organizador</th>
-                <td>{{ entity.organizador }}</td>
-            </tr>
-            <tr>
-                <th>Nombrecontacto</th>
-                <td>{{ entity.nombrecontacto }}</td>
-            </tr>
-            <tr>
-                <th>Telefonocontacto</th>
-                <td>{{ entity.telefonocontacto }}</td>
-            </tr>
-            <tr>
-                <th>Puntoinscripcion</th>
-                <td>{{ entity.puntoinscripcion }}</td>
-            </tr>
-            <tr>
-                <th>Fechacierre</th>
-                <td>{{ entity.fechacierre|date('Y-m-d H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Fechacierreefectivo</th>
-                <td>{{ entity.fechacierreefectivo|date('Y-m-d H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Horacierre</th>
-                <td>{{ entity.horacierre|date('Y-m-d H:i:s') }}</td>
-            </tr>
-            <tr>
-                <th>Equipo</th>
-                <td>{{ entity.equipo }}</td>
-            </tr>
-            <tr>
-                <th>Rifa</th>
-                <td>{{ entity.rifa }}</td>
-            </tr>
-            <tr>
-                <th>Tipo</th>
-                <td>{{ entity.tipo }}</td>
-            </tr>
-            <tr>
-                <th>Cupocontrol</th>
-                <td>{{ entity.cupocontrol }}</td>
-            </tr>
-            <tr>
-                <th>Cupomaximo</th>
-                <td>{{ entity.cupomaximo }}</td>
-            </tr>
-            <tr>
-                <th>Activo</th>
-                <td>{{ entity.activo }}</td>
-            </tr>
-            <tr>
-                <th>Idcampeonato</th>
-                <td>{{ entity.idcampeonato }}</td>
-            </tr>
-            <tr>
-                <th>Criteriocalculoedad</th>
-                <td>{{ entity.criteriocalculoedad }}</td>
-            </tr>
-            <tr>
-                <th>Controlamenores16</th>
-                <td>{{ entity.controlamenores16 }}</td>
-            </tr>
-            <tr>
-                <th>Emailcontacto</th>
-                <td>{{ entity.emailcontacto }}</td>
-            </tr>
-        </tbody>
-    </table>
+<div class="pia-wrapper">
+{{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+<div class="evento-show">
+    <h2>{{ entity.nombre }}</h2>
 
-    <ul class="record_actions">
-        <li>
-            <a href="{{ path('evento_listemail',{'email':email}) }}">
-                Back to the list
-            </a>
-        </li>
-    </ul>
+    {% if entity.logo %}
+    <div class="logo-section">
+        <img src="{{ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ entity.logo }}" alt="Logo">
+    </div>
+    {% endif %}
+
+    <div class="evento-grid">
+        <div>
+            <label>Fecha</label>
+            <div class="valor">{% if entity.fecha %}{{ entity.fecha|date('d/m/Y') }}{% endif %}</div>
+        </div>
+        <div>
+            <label>Hora</label>
+            <div class="valor">{% if entity.hora %}{{ entity.hora|date('H:i') }}{% endif %}</div>
+        </div>
+        <div>
+            <label>Lugar</label>
+            <div class="valor">{{ entity.lugar }}</div>
+        </div>
+        <div>
+            <label>Organizador</label>
+            <div class="valor">{{ entity.organizador }}</div>
+        </div>
+        <div>
+            <label>Nombre de Contacto</label>
+            <div class="valor">{{ entity.nombrecontacto }}</div>
+        </div>
+        <div>
+            <label>Teléfono de Contacto</label>
+            <div class="valor">{{ entity.telefonocontacto }}</div>
+        </div>
+        <div>
+            <label>Email de Contacto</label>
+            <div class="valor">{{ entity.emailcontacto }}</div>
+        </div>
+        <div>
+            <label>Punto de Inscripción</label>
+            <div class="valor">{{ entity.puntoinscripcion }}</div>
+        </div>
+        <div>
+            <label>Fecha de Cierre</label>
+            <div class="valor">{% if entity.fechacierre %}{{ entity.fechacierre|date('d/m/Y H:i') }}{% endif %}</div>
+        </div>
+        <div>
+            <label>Fecha de Cierre Efectivo</label>
+            <div class="valor">{% if entity.fechacierreefectivo %}{{ entity.fechacierreefectivo|date('d/m/Y H:i') }}{% endif %}</div>
+        </div>
+        <div>
+            <label>Hora de Cierre</label>
+            <div class="valor">{% if entity.horacierre %}{{ entity.horacierre|date('H:i') }}{% endif %}</div>
+        </div>
+        <div>
+            <label>Equipo</label>
+            <div class="valor">{{ entity.equipo }}</div>
+        </div>
+        <div>
+            <label>Rifa</label>
+            <div class="valor">{{ entity.rifa ? 'Sí' : 'No' }}</div>
+        </div>
+        <div>
+            <label>Tipo</label>
+            <div class="valor">{{ entity.tipo }}</div>
+        </div>
+        <div>
+            <label>Control de Cupo</label>
+            <div class="valor">{{ entity.cupocontrol ? 'Sí' : 'No' }}</div>
+        </div>
+        <div>
+            <label>Cupo Máximo</label>
+            <div class="valor">{{ entity.cupomaximo }}</div>
+        </div>
+        <div>
+            <label>Activo</label>
+            <div class="valor">{{ entity.activo ? 'Sí' : 'No' }}</div>
+        </div>
+        <div>
+            <label>Criterio de Cálculo de Edad</label>
+            <div class="valor">{{ entity.criteriocalculoedad }}</div>
+        </div>
+        <div>
+            <label>Control de Menores de 16</label>
+            <div class="valor">{{ entity.controlamenores16 ? 'Sí' : 'No' }}</div>
+        </div>
+    </div>
+
+    <div class="submit-btn">
+        <a href="{{ path('frater_soft_pia_web_eventos') }}"><button>Volver</button></a>
+    </div>
+</div>
+</div>
 {% endblock %}

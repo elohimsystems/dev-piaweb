@@ -50,10 +50,12 @@
 {% endblock %}  
 {% set entidad='categoria' %}
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="titulo_padre">{{campeonato.nombre}} {{campeonato.anio}}</div>
-    <div id="tabs">    
+    <div id="tabs">
         {{ include("FraterSoftPiaWebBundle:Campeonato:tabs.html.twig") }}
-`        <div id="tabs-2">     
+`        <div id="tabs-2">
             <div id="titulotabla"><h3>{{entidad|title}}s Configuradas</h3></div>
             <table id="{{entidad}}" class="display row-border hover">
             </table>    
@@ -74,8 +76,9 @@
             ¿Esta seguro que desea ELIMIAR todas las reglas de seleccion de categorias de esta categoria?<strong id="eliminar"></strong>
         </div> 
         <div id="dialog-message" title="Mensaje">
-        </div>        
-    </div>         
+        </div>
+    </div>
+    </div>
 {% endblock %}
 {% block javascripts -%}
 {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}

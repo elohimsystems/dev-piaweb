@@ -5,7 +5,9 @@
     } );
 </script>
 {% block body -%}
-{{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}    
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+{{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
 <div id="accordion">
   <h3>Section 1</h3>
   <div>
@@ -53,4 +55,6 @@
     inceptos himenaeos.
     </p>
   </div>
-</div>{% endblock %}
+</div>
+    </div>
+{% endblock %}

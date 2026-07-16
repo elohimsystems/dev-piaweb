@@ -161,7 +161,7 @@ class PagoController extends commonPIAClass {
                     'label_attr'=>array('class'=>'group_fields'),
                     'attr'=> array('style'=>'display:none'),
                 ))                      
-                ->add('precio','choice',array(
+                ->add('precio','text',array(
                     'mapped' => false,
                 ))
                 ->add('monto')
@@ -255,11 +255,9 @@ class PagoController extends commonPIAClass {
                 'expanded' => true,
                 'data'=>$default_moneda,
             ))
-            ->add('precio','choice',array(
+            ->add('precio','text',array(
                 'label'=>'Precio',
-                'choices' => $preciosarray,
                 'required' => true,
-                'empty_value' => $emptyvalue_precio,                    
             ))
             ->add('idcuenta', 'choice', array(
                 'choices' => $arraycuentas,
@@ -891,12 +889,10 @@ class PagoController extends commonPIAClass {
                     'empty_value' => $emptyvalue_categoria,
                     'required' => true,                
                 ))
-                ->add('precio','choice',array(
+                ->add('precio','text',array(
                     'mapped' => false,
                     'label'=>'Precio',
-                    'choices' => $preciosarray,
                     'required' => true,
-                    'empty_value' => $emptyvalue_precio,                    
                 ))
                 ->add('monto','text', array(
                     'label'=>'Total a Pagar',

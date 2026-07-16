@@ -33,19 +33,19 @@
 </style>
 {% endblock %}    
     {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="evento">{{nombreevento}}</div>
     <div id="tabs">
         <ul>
             <li><a href="#tabs-1">Pre-Inscritos</a></li>
             <li><a href="#tabs-2">Inscritos</a></li>
             <li><a href="#tabs-3">Anulados</a></li>
-            {% if nivel_seguridad == 1 %}<li><a href="#tabs-4">Operaciones TDC</a></li>{% endif %}
             <li><a href="#tabs-5">Estadisticas</a></li>            
             {% if nivel_seguridad == 1 %}<li><a href="#tabs-6">Auditoria</a></li>{% endif %}
         </ul>
         <div id="tabs-2"></div>
         <div id="tabs-3"></div>  
-        {% if nivel_seguridad == 1 %}<div id="tabs-4"></div>{% endif %}
         <div id="tabs-1"></div>    
         <div id="tabs-5">
             <div id="atributos">
@@ -82,9 +82,10 @@
             </div>
         </div>     
         <p align="center">
-            <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+            <a href="{{ path('frater_soft_pia_web_eventos') }}"><button id="button">Regresar</button></a>
         </p>
     </div>       
+    </div>
     {% endblock %}
 {% block javascripts %}    
     <script>
@@ -222,21 +223,17 @@
             $('#tabs a[href="#tabs-5"]').click();            
             //Redireccion a la pagina de los inscritos al hacer click en el tab
             $('#tabs a[href="#tabs-1"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento}) }}')
             });            //Redireccion a la pagina de los inscritos al hacer click en el tab
             $('#tabs a[href="#tabs-2"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento}) }}')
             });
             //Redireccion a la pagina de los anulados al hacer click en el tab
             $('#tabs a[href="#tabs-3"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento}) }}')
             });
-            //Redireccion a la pagina de los operaciones TCD al hacer click en el tab
-            $('#tabs a[href="#tabs-4"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
-            });   
             $('#tabs a[href="#tabs-6"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento}) }}')
             });         
 
             ConsultarDataAjax();

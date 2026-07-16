@@ -1,15 +1,7 @@
 {% extends '::base.html.twig' %}
 {% import "FraterSoftPiaWebBundle:Default:FS-TWIG-Library.html.twig" as twiglib %}
 {% block poweredby %}
-<div style="text-align: center">
-    <a href="http://www.sistemapia.com" target="_blank">
-        <p style="font-family:verdana;font-size:11px">
-        powered by
-        <img width="40" align="center" 
-             src="http://www.sistemapia.com/images/logopiaft.png"/>
-        </p>
-    </a>
-</div>
+{{ include('FraterSoftPiaWebBundle:Default:_poweredby.html.twig') }}
 {% endblock %}
 {% block style %}
 <style type="text/css">
@@ -67,7 +59,7 @@
                     Estimad@ Atleta,<br>
                     Un gusto saludarle<br>
                     </p>
-                    <p>Para formalizar la inscripci&oacute;n en el evento: {{ entity.idevento.nombre }}, a realizarse el {{ entity.idevento.fecha|date("d/m/Y") }} en {{ entity.idevento.lugar }}, {{ entity.idevento.idciudad.nombre }}, Estado {{ entity.idevento.idciudad.idestado.nombre }}. Hora de Salida: {{ entity.idevento.fecha|date("H:i") }}</p>
+                    <p>Para formalizar la inscripci&oacute;n en el evento: {{ entity.idevento.nombre }}, a realizarse el {{ entity.idevento.fecha|date("d/m/Y") }} en {{ entity.idevento.lugar }}{% if entity.idevento.localidad %}, {{ entity.idevento.localidad }}{% endif %}. Hora de Salida: {{ entity.idevento.fecha|date("H:i") }}</p>
                     <p><span style="background-color:yellow"><b>Debe responder dicho correo adjuntando el soporte de pago.</b></span></p>
                     <p> 
                         Costo:<br>
@@ -108,5 +100,14 @@
             </tr>              
         </tbody>
     </table>
+    {% if controlParental is defined and controlParental %}
+    <table align="center" border="0" style="margin-top:20px; border:1px solid #ccc; padding:15px; width:650px;">
+        <tr><td style="font-weight:bold; font-size:14px;">Aviso Importante</td></tr>
+        <tr><td style="padding-top:8px;">{{ controlParental.mensaje }}</td></tr>
+        {% if controlParental.documento_pdf and controlParental.titulo_documento %}
+        <tr><td style="padding-top:8px;"><b>Documento adjunto:</b> {{ controlParental.titulo_documento }}</td></tr>
+        {% endif %}
+    </table>
+    {% endif %}
 </ul>
 {% endblock %}

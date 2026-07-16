@@ -81,7 +81,9 @@
 </style>
 {% endblock %} 
 {% block body -%}
-    <h1>Lista de Eventos</h1>
+    <div class="pia-wrapper">
+    {{ include('FraterSoftPiaWebBundle:Default:_header.html.twig') }}
+    <h1>Eventos de {{ organizador_nombre }}</h1>
     <div id="tabs">
       <ul>
         <li><a href="#tabs-1">En Proceso</a></li>
@@ -146,7 +148,7 @@
                         <td>
                         <ul id="icons" class="ui-widget ui-helper-clearfix">                 
                             <li class="ui-state-default ui-corner-all" title="Ver">
-                                <a href="{{ path('evento_show', { 'id': entity.id, 'email': email }) }}"><span class="ui-icon ui-icon-search"></span></a>
+                                <a href="{{ path('evento_show', { 'id': entity.id }) }}"><span class="ui-icon ui-icon-search"></span></a>
                             </li>
                             <li class="ui-state-default ui-corner-all {% if nivel_seguridad != 1 %} ui-state-disabled {% endif %}" title="{{ nivel_seguridad }}" >
                                 {% if nivel_seguridad == 1%}
@@ -156,7 +158,7 @@
                                 {% endif %}
                             </li>
                             <li class="ui-state-default ui-corner-all" title="Panel">
-                                <a href="{{ path('inscrito_lista_preinscritos', { 'idevento': entity.id,'email':email }) }}"><span class="ui-icon ui-icon-gear"></span></a>
+                                <a href="{{ path('inscrito_lista_preinscritos', { 'idevento': entity.id }) }}"><span class="ui-icon ui-icon-gear"></span></a>
                             </li>
                         </ul>
                         </td>
@@ -210,14 +212,10 @@
                         <td>
                         <ul id="icons" class="ui-widget ui-helper-clearfix">                 
                             <li class="ui-state-default ui-corner-all" title="Ver">
-                                <a href="{{ path('evento_show', { 'id': entity.id, 'email': email }) }}"><span class="ui-icon ui-icon-search"></span></a>
+                                <a href="{{ path('evento_show', { 'id': entity.id }) }}"><span class="ui-icon ui-icon-search"></span></a>
                             </li>
-                            <li class="ui-state-default ui-corner-all {% if email!='admin'%} ui-state-disabled {% endif %}" title="Editar" >
-                                {% if email == 'admin'%}
+                            <li class="ui-state-default ui-corner-all" title="Editar">
                                 <a href="{{ path('evento_edit', { 'id': entity.id }) }}"><span class="ui-icon ui-icon-pencil"></span></a>
-                                {% else %}
-                                <span class="ui-icon ui-icon-pencil "></span>
-                                {% endif %}
                             </li>
                             <li class="ui-state-default ui-corner-all" title="Panel">
                                 <a href="{{ path('inscrito_lista_preinscritos', { 'idevento': entity.id,'email':email}) }}"><span class="ui-icon ui-icon-gear"></span></a>
@@ -230,6 +228,7 @@
             </table>
         </div>                
     </div>    
+    </div>
 
     {% endblock %}
 

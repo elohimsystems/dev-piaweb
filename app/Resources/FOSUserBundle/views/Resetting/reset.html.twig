@@ -1,0 +1,23 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% block fos_user_content %}
+<div style="width: 360px; margin: 80px auto; padding: 30px; border: 1px solid #ccc; border-radius: 6px; box-shadow: 2px 2px 8px rgba(0,0,0,0.1);">
+    <h2 style="margin-top: 0;">Nueva Contraseña</h2>
+
+    {{ form_start(form, {'action': path('fos_user_resetting_reset', {'token': token}), 'attr': {'class': 'user-form'}}) }}
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:4px; font-weight:bold; font-size:13px;">{{ form_label(form.new.first, 'Nueva Contraseña') }}</label>
+            {{ form_widget(form.new.first, {'attr': {'style': 'width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;'}}) }}
+            {{ form_errors(form.new.first) }}
+        </div>
+        <div style="margin-bottom:15px;">
+            <label style="display:block; margin-bottom:4px; font-weight:bold; font-size:13px;">{{ form_label(form.new.second, 'Confirmar Nueva Contraseña') }}</label>
+            {{ form_widget(form.new.second, {'attr': {'style': 'width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;'}}) }}
+            {{ form_errors(form.new.second) }}
+        </div>
+        {{ form_rest(form) }}
+        <input type="submit" value="Cambiar Contraseña"
+               style="width:100%; padding:10px; background:#337ab7; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:14px;" />
+    {{ form_end(form) }}
+</div>
+{% endblock fos_user_content %}

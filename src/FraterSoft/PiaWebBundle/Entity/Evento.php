@@ -200,9 +200,14 @@ class Evento
     private $clasificacion;
     
     /**
-     * @var \FraterSoft\PiaWebBundle\Entity\Ciudad
+     * @var string
      */
-    private $idciudad;
+    private $localidad;
+
+    /**
+     * @var \FraterSoft\PiaWebBundle\Entity\Estado
+     */
+    private $idestado;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -215,6 +220,11 @@ class Evento
     private $registropago;
     
     /**
+     * @var boolean
+     */
+    private $controlparental;
+    
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $atributos;
@@ -225,6 +235,11 @@ class Evento
     private $publicidad;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $controlesparental;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -232,6 +247,7 @@ class Evento
         $this->idrecarga = new \Doctrine\Common\Collections\ArrayCollection();
         $this->atributos = new \Doctrine\Common\Collections\ArrayCollection();
         $this->publicidad = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->controlesparental = new \Doctrine\Common\Collections\ArrayCollection();
     }
     
     /**
@@ -1097,25 +1113,48 @@ class Evento
     }           
     
     /**
-     * Set idciudad
+     * Set localidad
      *
-     * @param \FraterSoft\PiaWebBundle\Entity\Ciudad $idciudad
+     * @param string $localidad
      * @return Evento
      */
-    public function setIdciudad(\FraterSoft\PiaWebBundle\Entity\Ciudad $idciudad = null)
+    public function setLocalidad($localidad)
     {
-        $this->idciudad = $idciudad;
+        $this->localidad = $localidad;
         return $this;
     }
 
     /**
-     * Get idciudad
+     * Get localidad
      *
-     * @return \FraterSoft\PiaWebBundle\Entity\Ciudad 
+     * @return string 
      */
-    public function getIdciudad()
+    public function getLocalidad()
     {
-        return $this->idciudad;
+        return $this->localidad;
+    }
+
+    /**
+     * Set idestado
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\Estado $idestado
+     * @return Evento
+     */
+    public function setIdestado(\FraterSoft\PiaWebBundle\Entity\Estado $idestado = null)
+    {
+        $this->idestado = $idestado;
+
+        return $this;
+    }
+
+    /**
+     * Get idestado
+     *
+     * @return \FraterSoft\PiaWebBundle\Entity\Estado 
+     */
+    public function getIdestado()
+    {
+        return $this->idestado;
     }
     
     /**
@@ -1260,6 +1299,61 @@ class Evento
     {
         return $this->publicidad;
     }
-    
+
+    /**
+     * Set controlparental
+     *
+     * @param boolean $controlparental
+     * @return Evento
+     */
+    public function setControlparental($controlparental)
+    {
+        $this->controlparental = $controlparental;
+
+        return $this;
+    }
+
+    /**
+     * Get controlparental
+     *
+     * @return boolean 
+     */
+    public function getControlparental()
+    {
+        return $this->controlparental;
+    }
+
+    /**
+     * Add controlesparental
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\ControlParental $controlesparental
+     * @return Evento
+     */
+    public function addControlesparental(\FraterSoft\PiaWebBundle\Entity\ControlParental $controlesparental)
+    {
+        $this->controlesparental[] = $controlesparental;
+
+        return $this;
+    }
+
+    /**
+     * Remove controlesparental
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\ControlParental $controlesparental
+     */
+    public function removeControlesparental(\FraterSoft\PiaWebBundle\Entity\ControlParental $controlesparental)
+    {
+        $this->controlesparental->removeElement($controlesparental);
+    }
+
+    /**
+     * Get controlesparental
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getControlesparental()
+    {
+        return $this->controlesparental;
+    }
     
 }

@@ -6,8 +6,7 @@
 {% block jsQuery %}    
     <script src="{{asset('bundles/fratersoftpiaweb/fine-uploader/fine-uploader.min.js')}}" type="text/javascript"></script>
     <script src="{{asset('bundles/fratersoftpiaweb/js/jquery.datetimepicker.full.js')}}" type="text/javascript"></script>    
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBj_os2wWkK8ZeE7oBLr1eB5ZP0niAwTCg&libraries=places,drawing" async defer></script>
-    {#&callback=initMap#}
+    {# Google Maps deshabilitado por seguridad #}
 {% endblock %}  
 {% block style %}    
     {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}
@@ -47,57 +46,6 @@
         .qq-upload-list li.qq-upload-success {
             background-color: #FFFFFF;
         }        
-        /* Always set the map height explicitly to define the size of the div
-         * element that contains the map. */
-        #map {
-          height: 100%;
-        }
-        
-        .controls {
-          margin-top: 10px;
-          border: 1px solid transparent;
-          border-radius: 2px 0 0 2px;
-          box-sizing: border-box;
-          -moz-box-sizing: border-box;
-          height: 32px;
-          outline: none;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-        }        
-        
-        #pac-input {
-          background-color: #fff;
-          font-family: Roboto;
-          font-size: 15px;
-          font-weight: 300;
-          margin-left: 12px;
-          padding: 0 11px 0 13px;
-          text-overflow: ellipsis;
-          width: 300px;
-        }
-
-        #pac-input:focus {
-          border-color: #4d90fe;
-        }        
-
-        /* Optional: Makes the sample page fill the window. */
-        html, body {
-          height: 100%;
-          margin: 0;
-          padding: 0;
-        }             
-        #btn_setmapa{
-            height: 21px;
-            width: 31px;
-        }     
-        #btn_setmapa > span{
-            padding-bottom: 0;
-            padding-top: 0;
-            padding-left: 0;
-            padding-right: 0;
-        }
-        #icon-setmapa{
-            vertical-align: middle;
-        }
         #btn_checkemail{
             height: 21px;
             width: 31px;
@@ -137,6 +85,8 @@
 {% endblock %}
 
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="tabs">        
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
         <div id="tabs-1">
@@ -183,10 +133,6 @@
                 {{ form_end(edit_form) }} 
                 </div>
             </div> 
-            <div id="mapa">        
-                <input id="pac-input" class="controls" type="text" placeholder="Buscar lugar">
-                <div id='map'></div>
-            </div>
             <div id="dialog_checkemail">    
                 Ingrese el codigo de confirmacion enviado al correo<br>
                 <input id="codigo" type="text" placeholder="Ingrese codigo">
@@ -206,8 +152,10 @@
                 <b>Copie el siguiente codigo y peguelo en su pagina web</b>
                 <textarea id="textcodigoweb" rows="4" cols="67" readonly></textarea>
             </div>  
+            <div id="dialog_controlparental" title="Control Parental"></div>
             
         </div>
+    </div>
     </div>
 {% endblock %}
 {% block javascripts %}
@@ -219,118 +167,7 @@
         window.onhashchange=function(){window.location.hash="no-back-button";}
     }     
     
-    var contmark=0;
-    var marker;      
-    var map;
-    var infowindow;
-    var uluru={lat: 10.480200, lng: -66.904101};
-    var zoom=6;
-    var lugar="";
-    function addMarker(location, map) {
-        marker = new google.maps.Marker({
-            position: location,                
-            map: map
-        });
-        marker.addListener('click', function() {
-            infowindow.open(map, marker);
-        });             
-    }
-    
-    function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), { 
-            center: uluru,
-            zoom: zoom,
-            disableDefaultUI: true,
-            zoomControl: true,
-        });
-        
-        addMarker(uluru, map);
-        contmark++;
-        
-        var contentString = '<div id="content">'+
-            '<div id="siteNotice">'+
-            '</div>'+
-            '<h1 id="firstHeading" class="firstHeading">Ubicacion Evento</h1>'+
-            '<div id="bodyContent">'+
-            '<p><b>' + $("#{{edit_form.nombre.vars.id}}").val() + '</b></p>' +
-            '</div>'+
-            '</div>';            
-        infowindow = new google.maps.InfoWindow({
-            content: contentString
-        });  
-        
-        /* EVENTO CLICK DEL MAPA */
-        google.maps.event.addListener(map, 'click', function(event) {
-            if(contmark==0){
-                addMarker(event.latLng, map);
-                contmark++;
-                var geocoder = new google.maps.Geocoder;      
-                geocoder.geocode({'location': event.latLng}, function(results, status) {
-                    if (status === 'OK') {
-                        if (results[1]) {
-                            map.setZoom(14);
-                            infowindow.setContent(results[1].address_components[0].short_name);
-                            lugar = results[1].address_components[0].short_name;
-                            infowindow.open(map, marker);
-                        } else {
-                          window.alert('No results found');
-                        }
-                      } else {
-                        window.alert('Geocoder failed due to: ' + status);
-                      }
-                });                    
-            }
-            else{
-                contmark=0;
-                marker.setMap(null);
-            }
-        });  
-    
-        // Create the search box and link it to the UI element.
-        var input = document.getElementById('pac-input');
-        var searchBox = new google.maps.places.SearchBox(input);
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-        
-        // Bias the SearchBox results towards current map's viewport.
-        map.addListener('bounds_changed', function() {
-          searchBox.setBounds(map.getBounds());
-        });
-        
-        searchBox.addListener('places_changed', function() {
-            var places = searchBox.getPlaces();
-
-             if (places.length == 0) {
-              return;
-            }
-            
-            if (places.length > 1) {
-                 alert("Existe mas de un lugar para esa busqueda, por favor sea mas especifico");
-              return;
-            }
-
-            marker.setMap(null);
-            
-            // For each place, get the icon, name and location.
-            var bounds = new google.maps.LatLngBounds();
-            places.forEach(function(place) {
-                if (!place.geometry) {
-                  console.log("Returned place contains no geometry");
-                  return;
-                }
-
-                addMarker(place.geometry.location, map);
-                lugar = place.name;
-
-                if (place.geometry.viewport) {
-                  // Only geocodes have viewport.
-                  bounds.union(place.geometry.viewport);
-                } else {
-                  bounds.extend(place.geometry.location);
-                }
-            });
-            map.fitBounds(bounds);
-        });
-    }
+    {# Google Maps deshabilitado #}
     
     $(function() {              
         //Carga los tabs en lo que se haya cargado todo el html
@@ -366,24 +203,6 @@
                 $("#{{edit_form.cupomaximo.vars.id}}").prop("disabled", true);
         });                  
 
-        if($("#{{edit_form.mapalugar.vars.id}}").val()!=undefined && $("#{{edit_form.mapalugar.vars.id}}").val()!=""){
-            var json = JSON.parse($("#{{edit_form.mapalugar.vars.id}}").val());
-            uluru = {lat:json.lat,lng:json.lng};
-            zoom = json.zoom;
-        }
-        
-        //Agrega los botonos al lado del input text
-        $("#{{edit_form.lugar.vars.id}}").parent().append(
-            "<button type='button' id='btn_setmapa'></button>"
-        );      
-        $('#btn_setmapa').append("<img id='icon-setmapa' src='{{asset('bundles/fratersoftpiaweb/images/marcador-posicion.png')}}'/>").button();
-
-        $("#btn_setmapa").on('click', function() {
-            if(map==undefined)
-                initMap();
-            $("#mapa").dialog("open");
-        });
-        ////////////////////////////////////////////////////////
         
         $("#{{edit_form.emailcontacto.vars.id}}").parent().append(
             "<button type='button' id='btn_checkemail'></button>"
@@ -434,32 +253,7 @@
         {% endif %}
         
     
-        $("#mapa").dialog({
-            autoOpen: false,
-            width: 800,
-            height: 600,
-            modal: true,
-            buttons: [
-                {
-                    text: "Aceptar",
-                    click: function () {
-                        $("#{{edit_form.mapalugar.vars.id}}").val(
-                                '{"lat":' + marker.position.lat().toString() + 
-                                ',"lng":' + marker.position.lng().toString() + 
-                                ',"zoom":' + map.getZoom().toString() + '}'
-                        );
-                        $("#{{edit_form.lugar.vars.id}}").val(lugar);
-                        $(this).dialog("close");
-                    }
-                },
-                {
-                    text: "Cerrar",
-                    click: function () {
-                        $(this).dialog("close");
-                    }
-                }
-            ]
-        });
+
         $("#dialog_checkemail").dialog({
             autoOpen: false,
             width: 400,
@@ -564,6 +358,72 @@
             ]
         });            
 
+        //Control Parental button y dialog
+        $("#{{edit_form.controlparental.vars.id}}").parent().append(
+            "<button type='button' id='btn_controlparental'>Configurar</button>"
+        );
+        $('#btn_controlparental').button();
+        function actualizarBtnControlParental() {
+            var activo = $("#{{edit_form.controlparental.vars.id}}").prop('checked')
+                && !$("#{{edit_form.externo.vars.id}}").prop('checked');
+            $("#btn_controlparental").button("option", "disabled", !activo);
+        }
+        actualizarBtnControlParental();
+        $("#{{edit_form.controlparental.vars.id}}").change(actualizarBtnControlParental);
+        $("#btn_controlparental").on('click', function() {
+            var url = "{{ path('controlparental_configurar', {'idevento': entity.id}) }}";
+            $("#dialog_controlparental").html("<p>Cargando...</p>").dialog("open");
+            $.get(url, function(data) {
+                $("#dialog_controlparental").html(data);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                $("#dialog_controlparental").html("<p>Error: " + textStatus + " - " + errorThrown + "<br>" + jqXHR.responseText + "</p>");
+            });
+        });
+        $("#dialog_controlparental").dialog({
+            autoOpen: false,
+            width: 550,
+            height: 520,
+            modal: true,
+            buttons: [
+                {
+                    text: "Guardar",
+                    click: function () {
+                        var $form = $("#form_controlparental");
+                        var formData = new FormData($form[0]);
+                        $.ajax({
+                            url: $form.attr('action'),
+                            type: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            dataType: 'json',
+                            success: function(response) {
+                                if(response.success) {
+                                    $("#dialog_controlparental").dialog("close");
+                                    alert("Control Parental guardado exitosamente");
+                                } else {
+                                    alert("Error al guardar. Verifique los datos.");
+                                }
+                            },
+                            error: function(jqXHR, textStatus, errorThrown) {
+                                console.log('=== Error AJAX Control Parental ===');
+                                console.log('textStatus:', textStatus);
+                                console.log('errorThrown:', errorThrown);
+                                console.log('responseText:', jqXHR.responseText);
+                                console.log('status:', jqXHR.status);
+                            }
+                        });
+                    }
+                },
+                {
+                    text: "Cerrar",
+                    click: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            ]
+        });            
+
         //Oculta los campos que no se usaran si el eventos es externo
         condicionaCampos();
         $("#{{ edit_form.externo.vars.id }}").change(function () {
@@ -594,7 +454,8 @@
             setVisual($("#{{edit_form.zonahoraria.vars.id}}"),valor);
             $("#{{edit_form.idorganizador.vars.id}}").prop('disabled',valor);                                    
             setVisual($("#{{edit_form.idorganizador.vars.id}}"),valor);
-            $("#btn_setmapa").button({disabled: valor});
+            $("#{{edit_form.controlparental.vars.id}}").prop('disabled',valor);
+            setVisual($("#{{edit_form.controlparental.vars.id}}"),valor);
             $("#boton_rutamapa").button({disabled: valor});
             $("#boton_rutaperfil").button({disabled: valor});
             $("#boton_rutavideo").button({disabled: valor});
@@ -616,7 +477,9 @@
             else{
                 setCampos(false);
                 $( "#tabs" ).tabs("enable");
-            }                
+            }
+            if(typeof actualizarBtnControlParental === 'function')
+                actualizarBtnControlParental();
         }
         $('#tabs a[href="#tabs-2"]').on("click", function () {
             $(location).attr('href', '{{ path('eventoatributos_new',{'idevento':entity.id}) }}')

@@ -3,7 +3,10 @@
 {{ include("FraterSoftPiaWebBundle:Default:FS-CSS-Library.html.twig",{'numero_botones':2}) }}    
 {% endblock %}  
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <h1>Editar Club</h1>
     {{ form_start(edit_form,{'attr': {'id': 'formulario'}}) }}
-    {{ form_end(edit_form) }} 
+    {{ form_end(edit_form) }}
+    </div>
 {% endblock %}

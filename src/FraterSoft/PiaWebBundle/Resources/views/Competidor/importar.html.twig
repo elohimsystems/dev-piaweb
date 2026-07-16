@@ -109,6 +109,8 @@
 {% endblock %}
 
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <h1>Importar Competidores</h1>
     {{ form_start(form) }}
     {{ form_end(form) }}
@@ -130,5 +132,6 @@
         <div id="fine-uploader"></div>  
         {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
     </div>    
-    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':null}) }}    
+    {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':null}) }}
+    </div>
 {% endblock %}

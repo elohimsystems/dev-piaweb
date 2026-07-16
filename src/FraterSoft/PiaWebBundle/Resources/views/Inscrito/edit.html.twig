@@ -236,22 +236,13 @@
         </div>
     {% endif %}
 {% endfor %}
-<div id="poweredby" style="text-align: center;margin: 10px 20px 30px;border: 1px">
-    <a href="http://www.sistemapia.com" target="_blank" style="text-decoration:none">
-        <b style="font-size: 9px">
-            V-{{ asset('')|slice(7,asset('')|length-5-7) }}
-        </b><br>
-        <strong>
-        powered by
-        <img width="40" align="center" 
-             src="{{asset('bundles/fratersoftpiaweb/images/logopiaft.png')}}"/>
-        </strong>
-    </a>
-</div>
+{{ include('FraterSoftPiaWebBundle:Default:_poweredby.html.twig') }}
 {% endblock %}
 {% set index_pago = edit_form.pagos|length %}
-{% block body -%}   
-    <div class="contenido">    
+{% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+    <div class="contenido">
         <div id="titulogrupos">    
             <div>Inscripciones Grupales</div>
             <div>Agregre Integrante <b>N° {# {integrante} #}</b> {#% if integrante > 1 %#}o Edite el Grupo{#% endif %#}</div>
@@ -263,7 +254,8 @@
             {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
         </div>   
         {{twiglib.mensajetdc()}}
-    </div>    
+    </div>
+    </div>
 {% endblock %}
 {% block javascripts %}
     {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':entity.idevento.id}) }}            
@@ -340,7 +332,7 @@
                                                 $('#{{ edit_form.idcompetencia.vars.id }}').val(),
                                                 datos[0].id,
                                                 $('#formulario'),
-                                                {{null|json_encode|raw}},
+                                                [],
                                                 $("#formulario input[type='radio']:checked").val()
                                         );    
                                         {% endif %}
@@ -408,17 +400,6 @@
                 {% endfor %}
                 {# $("#{{edit_form.info.vars.id}}").parent().hide();  #}
                 $("#titulogrupos").show();
-            }
-            else{
-                {% if edit_form.idcategoria is defined and edit_form.pagos is defined and entity.idevento.proceso == 1%}
-                buscaPrecio($('#{{ edit_form.idevento.vars.id }}').val(),
-                            $('#{{ edit_form.idcompetencia.vars.id }}').val()?$('#{{ edit_form.idcompetencia.vars.id }}').val():'',
-                            $('#{{ edit_form.idcategoria.vars.id }}').val()?$('#{{ edit_form.idcategoria.vars.id }}').val():'',
-                            $('#formulario'),
-                            {{null|json_encode|raw}},
-                            $("#formulario input[type='radio']:checked").val()
-                );
-                {% endif %}                
             }
             //Recalcula la categoria si es cambiado la competencia
             $("#{{ edit_form.idcompetencia.vars.id }}").change(function () {
@@ -607,7 +588,7 @@
                     $('#{{ edit_form.idcompetencia.vars.id }}').val(),
                     $('#{{ edit_form.idcategoria.vars.id }}').val(),
                     $('#formulario'),
-                    {{null|json_encode|raw}},
+                    [],
                     $("#formulario input[type='radio']:checked").val()
             );
         });   
@@ -621,6 +602,25 @@
         );
         
         ocultaCamposPagoForm($('#formulario'));
+        {% set storedFpId = entity.pagos[0].idformapago.id|default(null) %}
+        {% if storedFpId is not null %}
+        var fpInterval = setInterval(function() {
+            if ($("select[id*=idformapago] option").length > 1) {
+                clearInterval(fpInterval);
+                $("select[id*=idformapago]").val('{{ storedFpId }}');
+                var jparametros = [];
+                if (window.sessionStorage.getItem('idfp' + '{{ storedFpId }}')) {
+                    jparametros = jQuery.parseJSON(window.sessionStorage.getItem('idfp' + '{{ storedFpId }}'));
+                }
+                $.each(jparametros, function(i, item) {
+                    $(idform($('#formulario'), item.campo)).parent().children(0).show();
+                    $(idform($('#formulario'), item.campo)).prop("required", true);
+                    $(idform($('#formulario'), item.campo)).parent().children(0)[0].innerHTML = item.etiqueta;
+                });
+            }
+        }, 100);
+        setTimeout(function() { clearInterval(fpInterval); }, 10000);
+        {% endif %}
         parametros={{null|json_encode|raw}};
         $("select[id*=idformapago]").change(function () {
             if(window.sessionStorage.getItem('idfp'+$("select[id*=idformapago]").val())==null)
@@ -712,11 +712,24 @@
                 $('#{{ edit_form.idcompetencia.vars.id }}').val(),
                 $('#{{ edit_form.idcategoria.vars.id }}').val(),
                 $('#formulario'),
-                {{null|json_encode|raw}},
+                [],
                 $("#formulario input[type='radio']:checked").val()
             );
         });
         
-    });    
+    });
+    
+    {% for message in app.session.flashbag.get('success') %}
+    $("<div id='dialog-message' title='Inscripcion'>\
+        <p><span class='ui-icon ui-icon-circle-check' style='float:left; margin:0 7px 20px 0;'></span>\
+        {{ message }}</p>\
+    </div>").dialog({
+        buttons: {
+            'Aceptar': function() {
+                $(this).dialog('close');
+            }
+        }
+    });
+    {% endfor %}
     </script>   
 {% endblock %}

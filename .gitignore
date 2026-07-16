@@ -8,3 +8,5 @@ app/logs/.gitkeep
 app/logs/
 app/cache/
 web/bundles/fratersoftpiaweb/fine-uploader/files
+# Credenciales
+app/config/parameters.yml

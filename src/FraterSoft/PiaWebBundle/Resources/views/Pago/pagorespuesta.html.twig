@@ -9,6 +9,8 @@
     </script>   
 {% endblock %} 
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div align="center">
         <h1>Pago se realizado satisfactoriamente</h1>
 
@@ -18,5 +20,6 @@
         <input type="button" name="backButton" value="Cerrar" 
                style="background-color:#245f91; color:#fff;font-weight:bold;" 
                onclick="CloseWindow();">
+    </div>
     </div>
     {% endblock %}

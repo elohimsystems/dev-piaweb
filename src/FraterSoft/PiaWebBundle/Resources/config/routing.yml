@@ -1,3 +1,31 @@
+frater_soft_pia_web_landing:
+  pattern: /
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:landing }
+
+frater_soft_pia_web_eventos:
+  pattern: /eventos
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:eventos }
+
+frater_soft_pia_web_perfil:
+  pattern: /perfil
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:perfil }
+
+frater_soft_pia_web_perfil_delete_formapago:
+  pattern: /perfil/formapago/{id}/eliminar
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:eliminarFormapagoOrganizador }
+
+frater_soft_pia_web_contacto:
+  pattern: /contacto
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:contacto }
+
+frater_soft_pia_web_evento_detalle:
+  pattern: /evento/{id}/detalle
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:detalleEvento }
+
+frater_soft_pia_web_sitemap:
+  pattern: /sitemap.xml
+  defaults: { _controller: FraterSoftPiaWebBundle:Default:sitemap }
+
 frater_soft_pia_web_homepage:
   pattern: /hello/{name}
   defaults: { _controller: FraterSoftPiaWebBundle:Default:index }
@@ -43,6 +71,12 @@ frater_soft_pia_web_jqueryui_dialog:
 frater_soft_pia_web_sessions:
   pattern: /sessions
   defaults: { _controller: "FraterSoftPiaWebBundle:Default:sessions" }
+
+fos_user_resetting_reset:
+  pattern: /resetting/reset/{token}
+  defaults: { _controller: FraterSoftPiaWebBundle:Resetting:reset }
+  requirements:
+    _method: GET|POST
 
 FraterSoftPiaWebBundle_inscrito:
   resource: "@FraterSoftPiaWebBundle/Resources/config/routing/inscrito.yml"
@@ -152,3 +186,7 @@ FraterSoftPiaWebBundle_creditos:
 FraterSoftPiaWebBundle_historicotasas:
   resource: "@FraterSoftPiaWebBundle/Resources/config/routing/historicotasas.yml"
   prefix: /historicotasas
+
+FraterSoftPiaWebBundle_controlparental:
+  resource: "@FraterSoftPiaWebBundle/Resources/config/routing/controlparental.yml"
+  prefix: /controlparental

@@ -55,6 +55,8 @@
 </style>
 {% endblock %} 
 {% block body %}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div class="container">
     {% if numerados | length > 0 %}
         <table id="tablaReporte" class="display"></table>
@@ -71,5 +73,5 @@
             </a>         
         </div>
     </div>
-   
+    </div>
 {% endblock %}

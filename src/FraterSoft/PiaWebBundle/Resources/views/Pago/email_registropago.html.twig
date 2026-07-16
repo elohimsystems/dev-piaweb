@@ -1,15 +1,7 @@
 {% extends '::base.html.twig' %}
 
 {% block poweredby %}
-<div style="text-align: center">
-    <a href="{{app.request.getSchemeAndHttpHost() }}" target="_blank">
-        <p style="font-family:verdana;font-size:11px">
-        powered by
-        <img width="40" align="center" 
-             src="{{app.request.getSchemeAndHttpHost() ~ asset('bundles/fratersoftpiaweb/images/') }}logopiaft.png"/>
-        </p>
-    </a>
-</div>
+{{ include('FraterSoftPiaWebBundle:Default:_poweredby.html.twig') }}
 {% endblock %}
 {% block body -%}
     <table class="record_properties" align="center" border="0">

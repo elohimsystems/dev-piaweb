@@ -11,7 +11,9 @@
 </style>
 {% endblock %}  
 {% block body -%}
-    <div id="tabs">    
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+    <div id="tabs">
         {{ include("FraterSoftPiaWebBundle:Club:tabs.html.twig") }}
         <div id="tabs-1">     
             <div id="titulotabla"><h3>Afiliar Clubes</h3></div>
@@ -27,8 +29,9 @@
             ¿Esta seguro que desea desafiliar el club <strong id="eliminar"></strong>?
         </div> 
         <div id="dialog-message" title="Mensaje">
-        </div>                
-    </div> 
+        </div>
+    </div>
+    </div>
 {% endblock %}
 {% block javascripts -%}
 {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}

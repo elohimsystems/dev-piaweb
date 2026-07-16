@@ -281,18 +281,7 @@
         </div>
     {% endif %}
 {% endfor %}
-<div id="poweredby" style="text-align: center;margin: 10px 20px 30px;border: 1px">
-    <a href="http://www.sistemapia.com" target="_blank" style="text-decoration:none">
-        <b style="font-size: 9px">
-            V-{{ asset('')|slice(7,asset('')|length-5-7) }}
-        </b><br>
-        <strong>
-        powered by
-        <img width="40" align="center" 
-             src="{{asset('bundles/fratersoftpiaweb/images/logopiaft.png')}}"/>
-        </strong>
-    </a>
-</div>
+{{ include('FraterSoftPiaWebBundle:Default:_poweredby.html.twig') }}
 {% endblock %}
 {% set index_pago = form.pagos|length %}
 {% block body -%}   
@@ -303,18 +292,31 @@
         </div>   
         {# {{dump(credito)}} #}
         {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
-        {{ form_end(form) }} 
+        {{ form_end(form) }}
+        {% if controlParentalConfig %}
+        <div id="dialog-menor-edad" title="Aviso Importante" style="display:none;">
+            <p>{{ controlParentalConfig.mensaje }}</p>
+            {% if controlParentalConfig.documento_pdf %}
+            <p>
+                Descargue el {{ controlParentalConfig.titulo_documento }} <a href="{{ asset(controlParentalConfig.documento_pdf) }}" target="_blank">AQUI</a>
+            </p>
+            {% endif %}
+        </div>
+        {% endif %}
         <div id="uploadimage">    
             <div id="fine-uploader"></div>  
             {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
-        </div>   
+        </div>  
         {{twiglib.mensajetdc()}}
     </div>    
 {% endblock %}
 {% block javascripts %}
     {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig",{'idevento':entity.idevento.id}) }}            
     <script>
-    
+        var controlParentalConfig = {{ controlParentalConfig|json_encode|raw }};
+        var menor_edad_requiere_confirmacion = {{ menor_edad ? 'true' : 'false' }};
+        var menor_edad_confirmado = false;
+
         function addPagoForm(collectionHolder, $newLinkLi) {
             // Obtiene los datos del prototipo explicado anteriormente
             var prototype = collectionHolder.data('prototype');
@@ -447,6 +449,22 @@
                     alert("Debe ingresar el Email Personal o el Secundario, ambos no pueden estar vacios");
                     return false;
                 }            
+
+                if (menor_edad_requiere_confirmacion && !menor_edad_confirmado) {
+                    event.preventDefault();
+                    $("#dialog-menor-edad").dialog({
+                        width: '50%',
+                        modal: true,
+                        buttons: {
+                            "Aceptar": function () {
+                                $(this).dialog("close");
+                                menor_edad_confirmado = true;
+                                $("form#formulario").submit();
+                            }
+                        }
+                    });
+                    return false;
+                }
             });
             
             var competenciasgrupo={{competenciasgrupo|json_encode|raw}};
@@ -628,6 +646,12 @@
                                 $("#{{ form.idpia.edad.vars.id }}").val(afe.getFullYear() - afn.getFullYear()-1);
                     {% endif %}
                     buscaCategorias();
+                    if (controlParentalConfig) {
+                        var edadCalc = parseInt($("#{{ form.idpia.edad.vars.id }}").val());
+                        if (edadCalc < controlParentalConfig.edad_control) {
+                            menor_edad_requiere_confirmacion = true;
+                        }
+                    }
                     
                 }
             });
@@ -739,6 +763,8 @@
                 }
             ]
         });
+
+
 
         {% if form.precio is defined %}
         $("#{{form.precio.vars.id}}").change(function () {

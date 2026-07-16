@@ -1,0 +1,148 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% block fos_user_content %}
+<style>
+    .org-container {
+        width: 600px;
+        margin: 40px auto;
+        padding: 30px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    }
+    .org-container h2 {
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+    .org-container .subtitle {
+        color: #555;
+        margin-bottom: 25px;
+    }
+    .org-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    .org-grid .full-width {
+        grid-column: 1 / -1;
+    }
+    .org-grid label {
+        display: block;
+        margin-bottom: 4px;
+        font-weight: bold;
+        font-size: 13px;
+    }
+    .org-grid input, .org-grid select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    .logo-section {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .logo-section img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border-radius: 10%;
+        border: 2px solid #ddd;
+        display: block;
+        margin: 0 auto 10px auto;
+    }
+    .submit-btn {
+        text-align: center;
+        margin-top: 25px;
+    }
+    .submit-btn input {
+        padding: 10px 40px;
+        background: #337ab7;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+    .error { color: #a94442; font-size: 12px; }
+</style>
+
+<div class="org-container">
+    <h2>Datos del Organizador</h2>
+    <p class="subtitle">Completa los datos del organizador para asociarlo a tu cuenta.</p>
+
+    {{ form_start(form, {'attr': {'id': 'formulario'}}) }}
+
+    <div class="logo-section full-width">
+        <img id="logo-preview" src="{{ asset('bundles/fratersoftpiaweb/images/sinimagen.png') }}" alt="Logo">
+        <label for="{{ form.logo.vars.id }}" class="btn-select-logo">Seleccionar Logo</label>
+        {{ form_widget(form.logo, {'attr': {'style': 'display:none', 'accept': 'image/*'}}) }}
+        {{ form_errors(form.logo) }}
+    </div>
+
+    <div class="org-grid">
+        <div>
+            <label>{{ form_label(form.nombre) }}</label>
+            {{ form_widget(form.nombre) }}
+            {{ form_errors(form.nombre) }}
+        </div>
+        <div>
+            <label>{{ form_label(form.abreviado) }}</label>
+            {{ form_widget(form.abreviado) }}
+            {{ form_errors(form.abreviado) }}
+        </div>
+        <div>
+            <label>{{ form_label(form.email) }}</label>
+            {{ form_widget(form.email) }}
+            {{ form_errors(form.email) }}
+        </div>
+        <div>
+            <label>{{ form_label(form.rif) }}</label>
+            {{ form_widget(form.rif) }}
+            {{ form_errors(form.rif) }}
+        </div>
+        <div>
+            <label>{{ form_label(form.contacto) }}</label>
+            {{ form_widget(form.contacto) }}
+            {{ form_errors(form.contacto) }}
+        </div>
+        <div>
+            <label>{{ form_label(form.telefonocontacto) }}</label>
+            {{ form_widget(form.telefonocontacto) }}
+            {{ form_errors(form.telefonocontacto) }}
+        </div>
+        <div>
+            <label>{{ form_label(form.emailcontacto) }}</label>
+            {{ form_widget(form.emailcontacto) }}
+            {{ form_errors(form.emailcontacto) }}
+        </div>
+        <div class="full-width">
+            <label>{{ form_label(form.idmoneda) }}</label>
+            {{ form_widget(form.idmoneda) }}
+            {{ form_errors(form.idmoneda) }}
+        </div>
+    </div>
+
+    {{ form_rest(form) }}
+
+    <div class="submit-btn">
+        {{ form_widget(form.submit) }}
+    </div>
+
+    {{ form_end(form) }}
+</div>
+
+<script>
+    document.getElementById('{{ form.logo.vars.id }}').addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (file) {
+            var reader = new FileReader();
+            reader.onload = function(ev) {
+                document.getElementById('logo-preview').src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock fos_user_content %}

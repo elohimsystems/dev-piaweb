@@ -1,6 +1,8 @@
 {% extends '::base.html.twig' %}
 
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     {% for entity in entities %}
         {% if(loop.index == 1) %}
             <table class="records_list">
@@ -47,4 +49,5 @@
             </table>
         {% endif %}
     {% endfor %}
+    </div>
 {% endblock %}

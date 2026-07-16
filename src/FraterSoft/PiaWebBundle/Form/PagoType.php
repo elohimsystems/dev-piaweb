@@ -29,8 +29,13 @@ class PagoType extends AbstractType
                 // 'label_attr'=>array('class'=>'message_pago'),
                 'attr'=> array('style'=>'display:none'),
             ))            
-            ->add('idmoneda')
-            ->add('precio')
+            ->add('idmoneda', 'entity', array(
+                'class' => 'FraterSoftPiaWebBundle:Moneda',
+                'property' => 'codigolocal',
+            ))
+            ->add('precio','text', array(
+                'read_only' => true,
+            ))
             ->add('monto','text', array(
                 'label'=>'Total a Pagar',
                 'label_attr'=>array('style'=>'display:none'),

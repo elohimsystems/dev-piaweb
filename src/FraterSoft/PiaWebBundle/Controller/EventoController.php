@@ -38,9 +38,10 @@ class EventoController extends commonPIAClass
         $em = $this->getDoctrine()->getManager();
 
         if($email=='admin'){
-            $entities = $em->getRepository('FraterSoftPiaWebBundle:Evento')->enproceso('admin');             
+            $entities = $em->getRepository('FraterSoftPiaWebBundle:Evento')->enproceso('admin');
             $ejecutados = $em->getRepository('FraterSoftPiaWebBundle:Evento')->ejecutados('admin');
             $nivelseguridad = 1;
+            $organizadorNombre = 'Admin';
         }
         else{
             $eventospatrocinantes = $em->getRepository('FraterSoftPiaWebBundle:Organizador')->eventosPubilidadPatrocinantePorEmail($email);
@@ -54,17 +55,20 @@ class EventoController extends commonPIAClass
                 $ejecutados = null;
                 $nivelseguridad = 2;
             }
+            $organizador = $em->getRepository('FraterSoftPiaWebBundle:Organizador')->findOneBy(array('email' => $email));
+            $organizadorNombre = $organizador ? $organizador->getNombre() : $email;
         }
-        
+
         $request = $this->container->get('request');
         $routeURL = $request->getRequestUri();
-        $this->get('session')->set('urllistaeventos',$routeURL);        
+        $this->get('session')->set('urllistaeventos',$routeURL);
 
         return $this->render('FraterSoftPiaWebBundle:Evento:listaporemail.html.twig', array(
             'entities' => $entities,
             'ejecutados' => $ejecutados,
             'email' => $email,
             'nivel_seguridad' => $nivelseguridad,
+            'organizador_nombre' => $organizadorNombre,
         ));
     }
     /**
@@ -144,7 +148,7 @@ class EventoController extends commonPIAClass
      * Finds and displays a Evento entity.
      *
      */
-    public function showAction($id,$email)
+    public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -156,7 +160,6 @@ class EventoController extends commonPIAClass
 
         return $this->render('FraterSoftPiaWebBundle:Evento:show.html.twig', array(
             'entity'      => $entity,
-            'email' => $email
          ));
     }
 
@@ -174,8 +177,24 @@ class EventoController extends commonPIAClass
             throw $this->createNotFoundException('Unable to find Evento entity.');
         }
 
+        $user = $this->getUser();
+        if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            $organizadorUsuario = $user->getIdorganizador();
+            $organizadorEvento = $entity->getIdorganizador();
+            if (!$organizadorUsuario || !$organizadorEvento || $organizadorUsuario->getId() !== $organizadorEvento->getId()) {
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => $this->generateUrl('frater_soft_pia_web_eventos'),
+                    'texto' => 'Acceso no autorizado. Este evento no pertenece a tu organizador.'
+                ));
+            }
+        }
+
         $editForm = $this->createEditForm($entity);
         $this->addBotonRegresar($editForm,$this->get('session')->get('urllistaeventos'));
+
+        if ($entity->getIdestado()) {
+            $editForm->get('pais')->setData($entity->getIdestado()->getIdpais());
+        }
 
         return $this->render('FraterSoftPiaWebBundle:Evento:edit.html.twig', array(
             'entity'      => $entity,
@@ -214,6 +233,18 @@ class EventoController extends commonPIAClass
 
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Evento entity.');
+        }
+
+        $user = $this->getUser();
+        if (!$this->get('security.context')->isGranted('ROLE_ADMIN')) {
+            $organizadorUsuario = $user->getIdorganizador();
+            $organizadorEvento = $entity->getIdorganizador();
+            if (!$organizadorUsuario || !$organizadorEvento || $organizadorUsuario->getId() !== $organizadorEvento->getId()) {
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => $this->generateUrl('frater_soft_pia_web_eventos'),
+                    'texto' => 'Acceso no autorizado. Este evento no pertenece a tu organizador.'
+                ));
+            }
         }
 
         $editForm = $this->createEditForm($entity);

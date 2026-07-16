@@ -137,9 +137,12 @@
 </style>
 {% endblock %}  
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="tabs">
         <table id="tablaInscritos" class="display row-border hover">
-        </table>     
+        </table>
         <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>
+    </div>
     </div>
 {% endblock %}

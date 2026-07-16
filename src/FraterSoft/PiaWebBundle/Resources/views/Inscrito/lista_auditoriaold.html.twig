@@ -253,19 +253,16 @@
             $("#tabs").tabs();
             $('#tabs a[href="#tabs-6"]').click();
             $('#tabs a[href="#tabs-1"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento}) }}')
             });
             $('#tabs a[href="#tabs-2"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento}) }}')
             });
             $('#tabs a[href="#tabs-3"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento}) }}')
             });
-            $('#tabs a[href="#tabs-4"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
-            });       
             $('#tabs a[href="#tabs-5"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento}) }}')
             });             
             $("#seccionCargando").hide();        
             $("#contenido").show();        
@@ -318,14 +315,12 @@
                 <li><a href="#tabs-1">Pre-Inscritos</a></li>
                 <li><a href="#tabs-2">Inscritos</a></li>
                 <li><a href="#tabs-3">Anulados</a></li>
-                <li><a href="#tabs-4">Operaciones TDC</a></li>
                 <li><a href="#tabs-5">Estadisticas</a></li>    
                 <li><a href="#tabs-6">Audutoria</a></li>    
             </ul>
             <div id="tabs-1"></div>
             <div id="tabs-2"></div>  
             <div id="tabs-3"></div>  
-            <div id="tabs-4"></div>        
             <div id="tabs-5"></div>  
             <div id="tabs-6">
                 <table id="tablaAuditoria" class="display row-border hover">

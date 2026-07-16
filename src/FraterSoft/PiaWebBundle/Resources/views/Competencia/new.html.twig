@@ -39,6 +39,8 @@
 {% endblock %}  
 {% set entidad='competencia' %}
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="tabs">    
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
         <div id="tabs-2">     
@@ -58,6 +60,7 @@
         <div id="dialog-message" title="Mensaje">
         </div>        
     </div> 
+    </div>
 {% endblock %}
 {% block javascripts -%}
 {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}

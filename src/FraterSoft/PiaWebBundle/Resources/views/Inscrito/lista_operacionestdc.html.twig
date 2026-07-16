@@ -95,19 +95,19 @@
             $("#tabs").tabs();
             $('#tabs a[href="#tabs-4"]').click();
             $('#tabs a[href="#tabs-1"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento}) }}')
             });
             $('#tabs a[href="#tabs-2"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento}) }}')
             });
             $('#tabs a[href="#tabs-3"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento}) }}')
             });     
             $('#tabs a[href="#tabs-5"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento}) }}')
             });  
             $('#tabs a[href="#tabs-6"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento}) }}')
             });         
         });
     </script>           
@@ -146,6 +146,8 @@
 </style>
 {% endblock %}  
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="evento">{{nombreevento}}</div>
     <div id="tabs">
         <ul>
@@ -259,5 +261,6 @@
     </div>            
     <div id="anular" title="Advertencia!!!">
         <p>Se anularan las operaciones sin pago que ya han sido notificadas, desea continuar?</p>
-    </div>                       
+    </div>
+    </div>
 {% endblock %}

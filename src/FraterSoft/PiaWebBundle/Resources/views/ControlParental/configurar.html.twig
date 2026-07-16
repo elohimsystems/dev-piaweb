@@ -1,0 +1,44 @@
+<style>
+    #form_controlparental .campo {
+        margin-bottom: 15px;
+    }
+    #form_controlparental label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 4px;
+    }
+    #form_controlparental input[type="text"],
+    #form_controlparental input[type="number"],
+    #form_controlparental textarea {
+        width: 100%;
+        padding: 6px 8px;
+        box-sizing: border-box;
+    }
+    #form_controlparental .pdf-actual {
+        margin-top: 5px;
+        font-size: 0.9em;
+    }
+</style>
+{{ form_start(form, {'attr': {'id': 'form_controlparental', 'enctype': 'multipart/form-data'}}) }}
+    <div class="campo">
+        {{ form_label(form.titulo_documento) }}
+        {{ form_widget(form.titulo_documento) }}
+    </div>
+    <div class="campo">
+        {{ form_label(form.edad_control) }}
+        {{ form_widget(form.edad_control) }}
+    </div>
+    <div class="campo">
+        {{ form_label(form.file) }}
+        {{ form_widget(form.file) }}
+        {% if entity.documentoPdf %}
+            <div class="pdf-actual">
+                PDF actual: <a href="{{ asset(entity.documentoPdf) }}" target="_blank">Ver documento</a>
+            </div>
+        {% endif %}
+    </div>
+    <div class="campo">
+        {{ form_label(form.mensaje) }}
+        {{ form_widget(form.mensaje) }}
+    </div>
+{{ form_end(form) }}

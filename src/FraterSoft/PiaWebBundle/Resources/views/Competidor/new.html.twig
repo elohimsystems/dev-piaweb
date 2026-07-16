@@ -20,6 +20,8 @@
 </script>   
 {% endblock %}
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <h1>Competidor creation</h1>
 
     {{ form(form) }}
@@ -31,4 +33,5 @@
         </a>
     </li>
 </ul>
+    </div>
 {% endblock %}

@@ -40,20 +40,16 @@
             $("#tabs").tabs();
             $('#tabs a[href="#tabs-3"]').click();
             $('#tabs a[href="#tabs-1"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento}) }}')
             });
             $('#tabs a[href="#tabs-2"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento}) }}')
             });
-            //Redireccion a la pagina de los operaciones TCD al hacer click en el tab
-            $('#tabs a[href="#tabs-4"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_operacionestdc',{'idevento':idevento,'email':email}) }}')
-            });                 
             $('#tabs a[href="#tabs-5"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento}) }}')
             });             
             $('#tabs a[href="#tabs-6"]').on("click", function () {
-                $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento,'email':email}) }}')
+                $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento}) }}')
             });         
             $("#seccionCargando").hide();        
             $("#contenido").show();        
@@ -98,6 +94,8 @@
 </style>
 {% endblock %}  
 {% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
     <div id="seccionCargando">
         <img src="{{ asset('bundles/fratersoftpiaweb/images/loading.gif') }}">
     </div>        
@@ -108,13 +106,11 @@
                 <li><a href="#tabs-1">Pre-Inscritos</a></li>
                 <li><a href="#tabs-2">Inscritos</a></li>
                 <li><a href="#tabs-3">Anulados</a></li>
-                {% if nivel_seguridad == 1 %}<li><a href="#tabs-4">Operaciones TDC</a></li>{% endif %}
                 <li><a href="#tabs-5">Estadisticas</a></li>    
                 {% if nivel_seguridad == 1 %}<li><a href="#tabs-6">Auditoria</a></li>{% endif %}
             </ul>
             <div id="tabs-1"></div>
             <div id="tabs-2"></div>  
-            {% if nivel_seguridad == 1 %}<div id="tabs-4"></div>{% endif %}
             <div id="tabs-5"></div>  
             <div id="tabs-3">
                 <table id="tablaAnulados" class="display row-border hover">
@@ -157,7 +153,8 @@
                         {% endfor %}
                     </tbody>
                 </table>      
-                <a href="{{ path('evento_listemail',{'email':email}) }}"><button id="button">Regresar</button></a>        </div>
+                <a href="{{ path('frater_soft_pia_web_eventos') }}"><button id="button">Regresar</button></a>        </div>
         </div>
+    </div>
     </div>
 {% endblock %}

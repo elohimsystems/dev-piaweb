@@ -12,9 +12,11 @@
 {% endblock %}  
 {% set entidad='formaspago' %}
 {% block body -%}
-    <div id="tabs">    
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+    <div id="tabs">
         {{ include("FraterSoftPiaWebBundle:Evento:tabs.html.twig") }}
-        <div id="tabs-2">     
+        <div id="tabs-2">
             <div id="botonera">    
                 <button id="boton_atributo">Atributos</button>
                 <button id="boton_{{entidad}}">Competencias</button>
@@ -35,8 +37,9 @@
             ¿Esta seguro que desea elimar la fila <strong id="eliminar"></strong>?
         </div> 
         <div id="dialog-message" title="Mensaje">
-        </div>        
-    </div> 
+        </div>
+    </div>
+    </div>
 {% endblock %}
 {% block javascripts -%}
 {{ include("FraterSoftPiaWebBundle:Default:FS-JS-Library.html.twig") }}
