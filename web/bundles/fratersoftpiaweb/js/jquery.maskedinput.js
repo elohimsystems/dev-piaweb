@@ -321,6 +321,18 @@ $.fn.extend({
 				})
 				.bind("keydown.mask", keydownEvent)
 				.bind("keypress.mask", keypressEvent)
+				//Los teclados virtuales de Android insertan texto via eventos de
+				//composicion del IME y no siempre disparan keypress, por lo que
+				//el buffer de la mascara queda desincronizado. El evento nativo
+				//"input" si es confiable en Android, asi que se usa para
+				//resincronizar la mascara con el valor real del campo.
+				.bind("input.mask", function() {
+					var pos = checkVal(true);
+					input.caret(pos);
+					if (settings.completed && pos == input.val().length) {
+						settings.completed.call(input);
+					}
+				})
 				.bind(pasteEventName, function() {
 					setTimeout(function() {
 						var pos=checkVal(true);
