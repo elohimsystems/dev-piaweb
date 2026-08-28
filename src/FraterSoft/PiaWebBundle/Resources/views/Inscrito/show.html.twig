@@ -74,8 +74,10 @@
             <tr><th>{{atributo.etiqueta}}</th><td>{{ twiglib.imprimirAtributo(atributo,attribute(entity.idpia,'get'~atributo.idatributo.nombre)) }}</td></tr>
             {% endif %}
             {% endfor %}
+            {% if entity.idcompetencia is not null %}
             <tr><th>Distancia</th><td>{{ entity.idcompetencia.descripcion }}</td></tr>
-            <tr><th>Fecha y Hora</th><td>{{ entity.fechahora.timestamp|date('d-m-Y H:i:s') }}</td></tr>                        
+            {% endif %}
+            <tr><th>Fecha y Hora</th><td>{{ entity.fechahora.timestamp|date('d-m-Y H:i:s') }}</td></tr>
             
             {#% for atributo in entity.idevento.atributos %}
             {% for key, dato in entity.idpia %}
@@ -118,7 +120,15 @@
             {%endif%}
             {%endfor%}                
             {%endfor%#}
-            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr> 
+            {% if entity.idcategoria is not null %}
+            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>
+            {% endif %}
+            {% if entity.competencias is not empty and entity.competencias|length > 1 %}
+            <tr><th>{{ entity.idevento.titulocompetencias|default('Modalidades') }}</th><th>Categoria</th></tr>
+            {% for ic in entity.competencias %}
+            <tr><td>{{ ic.idcompetencia.descripcion }}</td><td>{{ ic.idcategoria.descripcion }}</td></tr>
+            {% endfor %}
+            {% endif %}
         </tbody>
     </table></p>
     {% if entity.pagos[0] is defined %}

@@ -141,10 +141,20 @@
         <tr>
             <td colspan="2">{{ form_errors(edit_form) }}</td>
         </tr>              
+        {% if inscrito.idcompetencia is not null %}
         <tr>
             <th>Competencia</th>
             <td>{{inscrito.idcompetencia.descripcion}}</td>
-        </tr>         
+        </tr>
+        {% endif %}
+        {% if inscrito.competencias is not empty and inscrito.competencias|length > 1 %}
+        {% for ic in inscrito.competencias %}
+        <tr>
+            <th>{{ ic.idcompetencia.descripcion }}</th>
+            <td>{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
         <tr>
             <th>Cedula</th>
             <td>{{inscrito.idpia.iddocumento}}</td>
@@ -161,10 +171,12 @@
             <th>Club</th>
             <td>{{inscrito.idpia.equipo}}</td>
         </tr>          <tr>
+        {% if inscrito.idcategoria is not null %}
         <tr>
             <th>Categor&iacute;a</th>
             <td>{{inscrito.idcategoria.descripcion}}</td>
-        </tr>          
+        </tr>
+        {% endif %}
         <tr>
             <th>Precio</td>
             <td><spam id='montorecarga'>{{inscrito.precio|number_format(2, ',', '.')}}</spam></td>

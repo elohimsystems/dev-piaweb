@@ -16,7 +16,7 @@
                         "{{ inscrito.idpia.sexo }}",
                         "{{ inscrito.idpia.equipo }}",
                         "{{ inscrito.idpia.idestado.estado }}",
-                        "{{ inscrito.idcategoria.descripcion }}"],
+                        "{% if inscrito.idcategoria %}{{ inscrito.idcategoria.descripcion }}{% else %}{% for ic in inscrito.competencias %}{{ ic.idcompetencia.descripcion }}{% if ic.idcategoria %} ({{ ic.idcategoria.descripcion }}){% endif %}{% if not loop.last %} / {% endif %}{% endfor %}{% endif %}"],
                 {% endfor %}                
             ];
             $('#datos').DataTable( {

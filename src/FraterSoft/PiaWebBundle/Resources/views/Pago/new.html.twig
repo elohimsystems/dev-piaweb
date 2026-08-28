@@ -89,10 +89,19 @@
     <div class="container">
         <table id="tablaReporte" class="display compact">
             <tbody>          
+                {% if inscripcion.idcompetencia is not null %}
                 <tr><th>Competencia</th><td>{{ inscripcion.idcompetencia.descripcion }}</td></tr>
+                {% endif %}
                 <tr><th>Nombre</th><td>{{ inscripcion.idpia.nombre|upper }}</td></tr>
                 <tr><th>Apellido</th><td>{{ inscripcion.idpia.apellido|upper }}</td></tr>
-                <tr><th>Categoria</th><td>{{ inscripcion.idcategoria.descripcion }}</td></tr> 
+                {% if inscripcion.idcategoria is not null %}
+                <tr><th>Categoria</th><td>{{ inscripcion.idcategoria.descripcion }}</td></tr>
+                {% endif %}
+                {% if inscripcion.competencias is not empty and inscripcion.competencias|length > 1 %}
+                {% for ic in inscripcion.competencias %}
+                <tr><th>{{ ic.idcompetencia.descripcion }}</th><td>{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %}</td></tr>
+                {% endfor %}
+                {% endif %}
             </tbody>
         </table>
         {{ form_start(form,{'attr': {'id': 'formulario'}}) }}

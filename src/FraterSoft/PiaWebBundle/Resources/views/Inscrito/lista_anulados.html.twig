@@ -133,14 +133,14 @@
                         {% for anulada in anuladas %}
                             <tr>
                                 <td>{{ anulada.secuencia }}</a></td>
-                                <td>{{ anulada.idcompetencia.descripcion }}</td>
+                                <td>{% if anulada.idcompetencia is not null %}{{ anulada.idcompetencia.descripcion }}{% else %}{% for ic in anulada.competencias %}{{ ic.idcompetencia.descripcion }}{% if not loop.last %} / {% endif %}{% endfor %}{% endif %}</td>
                                 <td>{{ anulada.idpia.iddocumento }}</td>
                                 <td>{{ anulada.idpia.apellido|upper }}</td>
                                 <td>{{ anulada.idpia.nombre|upper }}</td>
                                 <td>{{ anulada.idpia.sexo }}</td>
                                 <td>{{ anulada.idpia.equipo|upper }}</td>
                                 <td>{{ anulada.idpia.idestado.estado }}</td>
-                                <td>{{ anulada.idcategoria.descripcion }}</td>
+                                <td>{% if anulada.idcategoria is not null %}{{ anulada.idcategoria.descripcion }}{% else %}{% for ic in anulada.competencias %}{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %}{% if not loop.last %} / {% endif %}{% endfor %}{% endif %}</td>
                                 <td>{{ anulada.punto }}</td>
                                 <td>
                                     <ul id="icons" class="ui-widget ui-helper-clearfix">      
