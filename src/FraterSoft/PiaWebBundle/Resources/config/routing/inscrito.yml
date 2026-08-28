@@ -110,7 +110,15 @@ inscrito_boton123pago:
     
 inscrito_precio:
     pattern:  /buscarprecioajax
-    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:buscarprecioajax" }    
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:buscarprecioajax" }
+
+inscrito_precio_evento:
+    pattern:  /precioeventoajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:precioeventoajax" }
+
+inscrito_precio_competencia:
+    pattern:  /preciocompetenciaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:preciocompetenciaajax" }
     
 inscrito_estadisticas:
     pattern:  /{idevento}/estadisticas

@@ -16,7 +16,7 @@ security:
             security: false
 
         public:
-            pattern:  ^/(competidor/(findform|consultar|asociadosajax|buscar|.+/validaemailpersonalajax)|inscrito/(new|create|categorias|buscarprecioajax|\d+/confirmacion|.+confirmaciongrupo)|pago/(new|newtdc|newgrupo|.+/formaspagoajax))
+            pattern:  ^/(competidor/(findform|consultar|asociadosajax|buscar|.+/validaemailpersonalajax)|inscrito/(new|create|categorias|buscarprecioajax|precioeventoajax|preciocompetenciaajax|\d+/confirmacion|.+confirmaciongrupo)|pago/(new|newtdc|newgrupo|.+/formaspagoajax))
             security: false
 
         main:

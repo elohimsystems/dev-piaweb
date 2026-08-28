@@ -129,6 +129,16 @@ class EventoType extends AbstractType
                 'label'=>'Control Parental',
                 'required' => false,
             ))
+            ->add('multicompetencia', null, array(
+                'label'=>'Multi Competencia',
+                'required' => false,
+                'attr' => array('title' => 'Permite que el competidor se inscriba en varias Modalidades/Competencias en un solo registro'),
+            ))
+            ->add('titulocompetencias', null, array(
+                'label'=>'Titulo de Competencias',
+                'required' => false,
+                'attr' => array('title' => 'Texto que se mostrara como titulo del campo de seleccion de competencias en el formulario de inscripcion. Si se deja vacio se usa "Modalidades"'),
+            ))
             ->add('pais','entity', array(
                 'class' => 'FraterSoftPiaWebBundle:Pais',
                 'mapped'=>false,

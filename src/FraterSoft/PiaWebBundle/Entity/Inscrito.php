@@ -92,6 +92,11 @@ class Inscrito
     private $pagos;
 
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     */
+    private $competencias;
+
+    /**
      * Get id
      *
      * @return integer 
@@ -460,6 +465,7 @@ class Inscrito
     public function __construct()
     {
         $this->pagos = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->competencias = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -471,7 +477,7 @@ class Inscrito
     public function addPago(\FraterSoft\PiaWebBundle\Entity\Pago $pagos)
     {
         $this->pagos[] = $pagos;
-    
+
         return $this;
     }
 
@@ -488,10 +494,43 @@ class Inscrito
     /**
      * Get pagos
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getPagos()
     {
         return $this->pagos;
+    }
+
+    /**
+     * Add competencia
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\InscritoCompetencia $competencia
+     * @return Inscrito
+     */
+    public function addCompetencia(\FraterSoft\PiaWebBundle\Entity\InscritoCompetencia $competencia)
+    {
+        $this->competencias[] = $competencia;
+
+        return $this;
+    }
+
+    /**
+     * Remove competencia
+     *
+     * @param \FraterSoft\PiaWebBundle\Entity\InscritoCompetencia $competencia
+     */
+    public function removeCompetencia(\FraterSoft\PiaWebBundle\Entity\InscritoCompetencia $competencia)
+    {
+        $this->competencias->removeElement($competencia);
+    }
+
+    /**
+     * Get competencias
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getCompetencias()
+    {
+        return $this->competencias;
     }
 }

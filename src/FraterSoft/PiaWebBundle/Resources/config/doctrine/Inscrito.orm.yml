@@ -95,6 +95,7 @@ FraterSoft\PiaWebBundle\Entity\Inscrito:
             joinColumns:
                 idcompetencia:
                     referencedColumnName: id
+                    nullable: true
             orphanRemoval: false
         idevento:
             targetEntity: Evento
@@ -117,6 +118,10 @@ FraterSoft\PiaWebBundle\Entity\Inscrito:
     oneToMany:
         pagos:
             targetEntity: Pago
-            mappedBy: idinscrito           
-            cascade: [persist]            
+            mappedBy: idinscrito
+            cascade: [persist]
+        competencias:
+            targetEntity: InscritoCompetencia
+            mappedBy: idinscrito
+            cascade: [persist, remove]
     lifecycleCallbacks: {  }
