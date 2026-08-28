@@ -12,13 +12,16 @@ class InscritoRepository extends EntityRepository
     {
         return $this->getEntityManager()
             ->createQuery(
-                'SELECT i,c,co,e,ca,ev,p FROM FraterSoftPiaWebBundle:Inscrito i '
+                'SELECT i,c,co,e,ca,ev,p,ic,icc,icca FROM FraterSoftPiaWebBundle:Inscrito i '
                     . 'LEFT JOIN i.pagos p '
                     . 'LEFT JOIN i.idcompetencia c '
                     . 'JOIN i.idpia co '
                     . 'JOIN co.idestado e '
                     . 'LEFT JOIN i.idcategoria ca '
                     . 'JOIN i.idevento ev '
+                    . 'LEFT JOIN i.competencias ic '
+                    . 'LEFT JOIN ic.idcompetencia icc '
+                    . 'LEFT JOIN ic.idcategoria icca '
                     . 'WHERE '
 //                        . 'i.idcompetencia=c '
 //                        . 'and i.idpia=co '
