@@ -2,62 +2,44 @@
 -- Cambios de BD para la funcionalidad de inscripcion MULTICOMPETENCIA
 -- (varias modalidades/competencias en un solo registro de inscrito).
 --
--- Motor: PostgreSQL 9.5  |  Esquema: piaaccess
--- Script idempotente: se puede ejecutar varias veces sin error.
+-- Motor: PostgreSQL 9.5+  |  Esquema: piaaccess
 -- Ejecutar ANTES de desplegar el codigo.
 --
--- Uso:  psql -h <host> -U <usuario> -d <basededatos> -f multicompetencia.sql
+-- El panel SQL de algunos hosting no acepta BEGIN/COMMIT ni bloques DO $$,
+-- por eso este script son sentencias simples. Ejecutar UNA sola vez.
+-- Si el panel ejecuta una sentencia por vez, correr cada bloque por separado.
+-- Si alguna linea falla con "already exists" / "column ... already exists",
+-- esa parte ya estaba hecha: saltarla y seguir con el resto.
 -- =============================================================================
 
-BEGIN;
 
 -- -----------------------------------------------------------------------------
 -- 1. tmeventos: flag para activar multicompetencia + titulo personalizable del
 --    campo de modalidades en el formulario de inscripcion.
 -- -----------------------------------------------------------------------------
-DO $$
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_schema = 'piaaccess' AND table_name = 'tmeventos'
-          AND column_name = 'multicompetencia'
-    ) THEN
-        ALTER TABLE piaaccess.tmeventos
-            ADD COLUMN multicompetencia boolean DEFAULT false;
-        COMMENT ON COLUMN piaaccess.tmeventos.multicompetencia IS
-            'Permite inscribirse en varias competencias/modalidades a la vez';
-    END IF;
+ALTER TABLE piaaccess.tmeventos ADD COLUMN multicompetencia boolean DEFAULT false;
 
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns
-        WHERE table_schema = 'piaaccess' AND table_name = 'tmeventos'
-          AND column_name = 'titulocompetencias'
-    ) THEN
-        ALTER TABLE piaaccess.tmeventos
-            ADD COLUMN titulocompetencias character varying(50);
-        COMMENT ON COLUMN piaaccess.tmeventos.titulocompetencias IS
-            'Titulo del campo de seleccion de competencias en el formulario (por defecto "Modalidades")';
-    END IF;
-END
-$$;
+ALTER TABLE piaaccess.tmeventos ADD COLUMN titulocompetencias character varying(50);
+
 
 -- -----------------------------------------------------------------------------
 -- 2. tminscritos: en una inscripcion multicompetencia no hay una unica
 --    competencia/categoria que representen el registro (el detalle real vive en
 --    trinscritoscompetencias), asi que ambas columnas deben admitir NULL.
---    ALTER ... DROP NOT NULL no falla si la columna ya admite NULL.
+--    DROP NOT NULL no falla si la columna ya admite NULL.
 -- -----------------------------------------------------------------------------
 ALTER TABLE piaaccess.tminscritos ALTER COLUMN idcompetencia DROP NOT NULL;
-ALTER TABLE piaaccess.tminscritos ALTER COLUMN idcategoria   DROP NOT NULL;
+
+ALTER TABLE piaaccess.tminscritos ALTER COLUMN idcategoria DROP NOT NULL;
+
 
 -- -----------------------------------------------------------------------------
 -- 3. trinscritoscompetencias: detalle de la inscripcion multicompetencia.
 --    Una fila por cada modalidad en la que esta inscrito el competidor.
 -- -----------------------------------------------------------------------------
-CREATE SEQUENCE IF NOT EXISTS piaaccess.trinscritoscompetencias_id_seq
-    INCREMENT BY 1 MINVALUE 1 START 1;
+CREATE SEQUENCE piaaccess.trinscritoscompetencias_id_seq INCREMENT BY 1 MINVALUE 1 START 1;
 
-CREATE TABLE IF NOT EXISTS piaaccess.trinscritoscompetencias (
+CREATE TABLE piaaccess.trinscritoscompetencias (
     id            bigint NOT NULL DEFAULT nextval('piaaccess.trinscritoscompetencias_id_seq'::regclass),
     idinscrito    bigint NOT NULL,
     idcompetencia bigint NOT NULL,
@@ -66,41 +48,32 @@ CREATE TABLE IF NOT EXISTS piaaccess.trinscritoscompetencias (
     CONSTRAINT trinscritoscompetencias_pkey PRIMARY KEY (id)
 );
 
--- Indices
-CREATE INDEX IF NOT EXISTS idx_trinscritoscompetencias_idinscrito
-    ON piaaccess.trinscritoscompetencias USING btree (idinscrito);
-CREATE INDEX IF NOT EXISTS idx_trinscritoscompetencias_idcompetencia
-    ON piaaccess.trinscritoscompetencias USING btree (idcompetencia);
-CREATE INDEX IF NOT EXISTS idx_trinscritoscompetencias_idcategoria
-    ON piaaccess.trinscritoscompetencias USING btree (idcategoria);
 
--- Claves foraneas (PostgreSQL 9.5 no soporta ADD CONSTRAINT IF NOT EXISTS)
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_inscritoscompetencias_inscrito') THEN
-        ALTER TABLE piaaccess.trinscritoscompetencias
-            ADD CONSTRAINT fk_inscritoscompetencias_inscrito
-            FOREIGN KEY (idinscrito) REFERENCES piaaccess.tminscritos(id)
-            ON DELETE CASCADE;
-    END IF;
+-- -----------------------------------------------------------------------------
+-- 4. Indices
+-- -----------------------------------------------------------------------------
+CREATE INDEX idx_trinscritoscompetencias_idinscrito    ON piaaccess.trinscritoscompetencias (idinscrito);
 
-    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_inscritoscompetencias_competencia') THEN
-        ALTER TABLE piaaccess.trinscritoscompetencias
-            ADD CONSTRAINT fk_inscritoscompetencias_competencia
-            FOREIGN KEY (idcompetencia) REFERENCES piaaccess.tmcompetencias(id)
-            ON DELETE RESTRICT;
-    END IF;
+CREATE INDEX idx_trinscritoscompetencias_idcompetencia ON piaaccess.trinscritoscompetencias (idcompetencia);
 
-    IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'fk_inscritoscompetencias_categoria') THEN
-        ALTER TABLE piaaccess.trinscritoscompetencias
-            ADD CONSTRAINT fk_inscritoscompetencias_categoria
-            FOREIGN KEY (idcategoria) REFERENCES piaaccess.tmcategorias(id)
-            ON DELETE RESTRICT;
-    END IF;
-END
-$$;
+CREATE INDEX idx_trinscritoscompetencias_idcategoria   ON piaaccess.trinscritoscompetencias (idcategoria);
 
-COMMIT;
+
+-- -----------------------------------------------------------------------------
+-- 5. Claves foraneas
+-- -----------------------------------------------------------------------------
+ALTER TABLE piaaccess.trinscritoscompetencias
+    ADD CONSTRAINT fk_inscritoscompetencias_inscrito
+    FOREIGN KEY (idinscrito) REFERENCES piaaccess.tminscritos(id) ON DELETE CASCADE;
+
+ALTER TABLE piaaccess.trinscritoscompetencias
+    ADD CONSTRAINT fk_inscritoscompetencias_competencia
+    FOREIGN KEY (idcompetencia) REFERENCES piaaccess.tmcompetencias(id) ON DELETE RESTRICT;
+
+ALTER TABLE piaaccess.trinscritoscompetencias
+    ADD CONSTRAINT fk_inscritoscompetencias_categoria
+    FOREIGN KEY (idcategoria) REFERENCES piaaccess.tmcategorias(id) ON DELETE RESTRICT;
+
 
 -- =============================================================================
 -- NOTA: el selector de moneda en los formularios de "precio por competencia" y
