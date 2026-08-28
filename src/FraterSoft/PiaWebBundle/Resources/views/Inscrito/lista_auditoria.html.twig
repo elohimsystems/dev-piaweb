@@ -49,7 +49,7 @@
                 'scrollX': true,
                 columns: [
                     { title: "Sec.", data: "secuencia" },
-                    { title: "Competencia", data: "idcompetencia.descripcion" },
+                    { title: "Competencia", data: "idcompetencia", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
                     { title: "Numero", data: "numero" },
                     {% for atributo in atributos %}
                     { 
@@ -81,7 +81,7 @@
                         }                        
                         {% endif %}},            
                     {% endfor %}
-                    { title: "Categoria", data: "idcategoria.descripcion" },
+                    { title: "Categoria", data: "idcategoria", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
                     { title: "Punto", data: "punto" },
                     { title: "Precio", data: "precio" },   
                     { title: "Estatus", data: "status",
