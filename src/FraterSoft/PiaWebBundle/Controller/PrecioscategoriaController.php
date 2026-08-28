@@ -102,17 +102,31 @@ class PrecioscategoriaController extends commonPIAClass
                 },
             ));
         
-        $em = $this->getDoctrine()->getManager();                   
-                
-        $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')->findBy(array('idevento'=>$idevento));                
-        
+        $em = $this->getDoctrine()->getManager();
+
+        $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')->findBy(array('idevento'=>$idevento));
+
+        //Mapa idcategoria => idcompetencia, para filtrar en el dialogo las categorias segun
+        //la competencia seleccionada.
+        $categoriasEvento = $em->getRepository('FraterSoftPiaWebBundle:Categoria')
+                ->createQueryBuilder('ca')
+                ->join('ca.idcompetencia', 'co')
+                ->where('co.idevento = :idevento')
+                ->setParameter('idevento', $idevento)
+                ->getQuery()->getResult();
+        $categoriasCompetencia = array();
+        foreach ($categoriasEvento as $categoria) {
+            $categoriasCompetencia[$categoria->getId()] = $categoria->getIdcompetencia()->getId();
+        }
+
         return $this->render('FraterSoftPiaWebBundle:Precioscategoria:new.html.twig', array(
             'entity' => $entity,
             'form'   => $form->createView(),
             'idevento' => $idevento,
-            'campos' => $this->getCampos($em,'Precioscategoria'),            
-            'estado' => $estado, 
+            'campos' => $this->getCampos($em,'Precioscategoria'),
+            'estado' => $estado,
             'competencias' => $competencias,
+            'categoriasCompetencia' => $categoriasCompetencia,
         ));
     }
     
