@@ -225,7 +225,7 @@
                     { title: "Numero", data: "numero" },
                     {% for atributo in atributos %}
                     {% if atributo.idatributo.nombre=='emailpersonal'%}
-                        {title:"Email",data:"idpia.emailpersonal",render: function(data, type, row){
+                        {title:"Email",data:"idpia.emailpersonal",visible:false,render: function(data, type, row){
                                 if(row.idpia.emailpersonal==row.idpia.email)
                                     return row.idpia.emailpersonal
                                 else if(row.idpia.emailpersonal==null)
@@ -266,7 +266,10 @@
                         {% if atributo.idatributo.tipo=="U" %}
                             visible:true,
                         {% endif %}
-                    },            
+                        {% if atributo.idatributo.nombre|lower in ['fechanacimiento','telefono'] %}
+                            visible:false,
+                        {% endif %}
+                    },
                     {% endif %}
                     {% endif %}
                     {% endfor %}
