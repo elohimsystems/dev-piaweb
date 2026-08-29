@@ -35,9 +35,18 @@
                             var NS_REL = 'http://schemas.openxmlformats.org/package/2006/relationships';
 
                             var exp = table.buttons.exportData({ modifier: { search: 'applied', order: 'applied' } });
-                            var header = exp.header;
-                            var body = exp.body;
                             var rowsData = table.rows(null, { search: 'applied', order: 'applied' }).data().toArray();
+
+                            // Columnas que NO se exportan
+                            var excluir = ['Precio', 'Recarga', 'Total'];
+                            var keep = [];
+                            for (var h = 0; h < exp.header.length; h++) {
+                                if (excluir.indexOf(exp.header[h]) === -1) keep.push(h);
+                            }
+                            var header = keep.map(function (idx) { return exp.header[idx]; });
+                            var body = exp.body.map(function (row) {
+                                return keep.map(function (idx) { return row[idx]; });
+                            });
 
                             var colDist = header.indexOf('Distancia');
                             var colCat = header.indexOf('Categoria');
@@ -264,7 +273,7 @@
                     { title: "Distancia", data: "idcompetencia", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
                     { title: "Categoria", data: "idcategoria", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
                     { title: "Punto", data: "punto", visible:false },
-                    { title: "Precio", data: "pagos[0].precio" },   
+                    { title: "Precio", data: "pagos[0].precio", visible:false },
                     { title: "Recarga", data: "pagos[0].regarga", visible:false },
                     { title: "Total", data: "pagos[0].monto", visible:false },   
                     { title: "Conciliado el", data: "pagos",
