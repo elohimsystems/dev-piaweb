@@ -49,7 +49,7 @@
                 'scrollX': true,
                 columns: [
                     { title: "Sec.", data: "secuencia" },
-                    { title: "Competencia", data: "idcompetencia", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
+                    { title: {{ (titulocompetencias|default('Competencia'))|json_encode|raw }}, data: "idcompetencia", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
                     { title: "Numero", data: "numero" },
                     {% for atributo in atributos %}
                     { 

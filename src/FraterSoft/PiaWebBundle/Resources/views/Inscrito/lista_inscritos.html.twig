@@ -48,7 +48,7 @@
                                 return keep.map(function (idx) { return row[idx]; });
                             });
 
-                            var colDist = header.indexOf('Distancia');
+                            var colDist = header.indexOf({{ (titulocompetencias|default('Distancia'))|json_encode|raw }});
                             var colCat = header.indexOf('Categoria');
 
                             // Agrupa las filas por disciplina
@@ -270,7 +270,7 @@
                     {% endif %}
                     {% endif %}
                     {% endfor %}
-                    { title: "Distancia", data: "idcompetencia", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
+                    { title: {{ (titulocompetencias|default('Distancia'))|json_encode|raw }}, data: "idcompetencia", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
                     { title: "Categoria", data: "idcategoria", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
                     { title: "Punto", data: "punto", visible:false },
                     { title: "Precio", data: "pagos[0].precio", visible:false },

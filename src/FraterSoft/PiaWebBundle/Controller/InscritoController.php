@@ -112,6 +112,7 @@ class InscritoController extends commonPIAClass {
                     'atributos' => $atributos,
                     'email' => $email,
                     'nombreevento'=>$atributos[0]->getIdEvento()->getNombre(),
+                    'titulocompetencias'=>$atributos[0]->getIdEvento()->getTitulocompetencias(),
                     'nivel_seguridad' => $nivel_seguridad
         ));
     }    
@@ -196,6 +197,7 @@ class InscritoController extends commonPIAClass {
                     'idevento' => $idevento,
                     'email' => $email,
                     'nombreevento'=>$atributos[0]->getIdEvento()->getNombre(),
+                    'titulocompetencias'=>$atributos[0]->getIdEvento()->getTitulocompetencias(),
                     'nivel_seguridad' => $nivel_seguridad
         ));
     }    
@@ -250,6 +252,7 @@ class InscritoController extends commonPIAClass {
                     'idevento' => $idevento,
                     'email' => $email,
                     'nombreevento'=>$evento->getNombre(),
+                    'titulocompetencias'=>$evento->getTitulocompetencias(),
                     'nivel_seguridad' => $nivel_seguridad
         ));
     }    
@@ -2805,7 +2808,8 @@ class InscritoController extends commonPIAClass {
                     'atributos' => $atributos,
                     'idevento' => $idevento,
                     'email' => $email,
-                    'nombreevento'=>$atributos[0]->getIdEvento()->getNombre()
+                    'nombreevento'=>$atributos[0]->getIdEvento()->getNombre(),
+                    'titulocompetencias'=>$atributos[0]->getIdEvento()->getTitulocompetencias()
         ));
     }    
     

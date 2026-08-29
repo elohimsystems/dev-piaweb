@@ -24,7 +24,7 @@
                 ajax: url,    
                 columns: [
                     { title: "Sec.", data: "secuencia",visible:true },
-                    { title: "Competencia", data: "idcompetencia", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
+                    { title: {{ (titulocompetencias|default('Competencia'))|json_encode|raw }}, data: "idcompetencia", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
                     { title: "Forma Pago", data: "pagos[0].idformapago.nombre"},
                     { title: "Precio", data: "pagos[0].precio" },
                     { title: "Banco", data: "pagos[0].idbanco.nombre",render: function(data){return data==null?"":data;}},
