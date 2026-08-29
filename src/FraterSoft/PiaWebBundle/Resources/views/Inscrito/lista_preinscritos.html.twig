@@ -113,34 +113,7 @@
                 buttons: [
                     {extend: 'excelHtml5',
                         text: 'Exportar',
-                        title: 'Listado PreInscritos {{nombreevento}}',
-                        // En el datatable el inscrito multicompetencia se ve en una sola fila,
-                        // pero al exportar a Excel se duplica una fila por cada competencia en
-                        // la que esta inscrito (esos listados se envian por competencia).
-                        customizeData: function (data) {
-                            var indices = table.rows(null, {search: 'applied', order: 'applied'}).indexes();
-                            var colComp = data.header.indexOf('Competencia');
-                            var colPrecio = data.header.indexOf('Precio');
-                            var nuevoBody = [];
-                            for (var i = 0; i < data.body.length; i++) {
-                                var fila = data.body[i];
-                                var rd = (indices[i] !== undefined) ? table.row(indices[i]).data() : null;
-                                var comps = (rd && rd.competencias) ? rd.competencias : [];
-                                if (comps.length > 0 && colComp !== -1) {
-                                    for (var k = 0; k < comps.length; k++) {
-                                        var clon = fila.slice();
-                                        clon[colComp] = comps[k].idcompetencia ? comps[k].idcompetencia.descripcion : '';
-                                        if (colPrecio !== -1 && comps[k].precio != null) {
-                                            clon[colPrecio] = String(comps[k].precio);
-                                        }
-                                        nuevoBody.push(clon);
-                                    }
-                                } else {
-                                    nuevoBody.push(fila);
-                                }
-                            }
-                            data.body = nuevoBody;
-                        }
+                        title: 'Listado PreInscritos {{nombreevento}}'
                     },
                     {extend: 'print',
                         text: 'Imprimir'},
