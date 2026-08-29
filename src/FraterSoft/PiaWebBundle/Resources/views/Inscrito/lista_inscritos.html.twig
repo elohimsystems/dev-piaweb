@@ -23,33 +23,118 @@
 		buttons: [  
                     {extend: 'excelHtml5',
                         text: 'Exportar',
-                        title: 'Listado Inscritos {{nombreevento}}',
-                        // En el datatable el inscrito multicompetencia se ve en una sola fila,
-                        // pero al exportar a Excel se duplica una fila por cada competencia en
-                        // la que esta inscrito (esos listados se envian por competencia).
-                        customizeData: function (data) {
-                            var indices = table.rows(null, {search: 'applied', order: 'applied'}).indexes();
-                            var colDist = data.header.indexOf('Distancia');
-                            var colCat = data.header.indexOf('Categoria');
-                            var colPrecio = data.header.indexOf('Precio');
-                            var nuevoBody = [];
-                            for (var i = 0; i < data.body.length; i++) {
-                                var fila = data.body[i];
-                                var rd = (indices[i] !== undefined) ? table.row(indices[i]).data() : null;
-                                var comps = (rd && rd.competencias) ? rd.competencias : [];
-                                if (comps.length > 0) {
+                        title: '',
+                        filename: 'Inscritos {{nombreevento}}',
+                        // Genera UN solo Excel con una hoja por disciplina; cada hoja lleva los
+                        // inscritos de esa disciplina ordenados por fecha de conciliacion (asc).
+                        // Un inscrito multicompetencia aparece en la hoja de cada modalidad.
+                        customize: function (xlsx) {
+                            var NS_MAIN = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+                            var NS_R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+                            var NS_CT = 'http://schemas.openxmlformats.org/package/2006/content-types';
+                            var NS_REL = 'http://schemas.openxmlformats.org/package/2006/relationships';
+
+                            var exp = table.buttons.exportData({ modifier: { search: 'applied', order: 'applied' } });
+                            var header = exp.header;
+                            var body = exp.body;
+                            var rowsData = table.rows(null, { search: 'applied', order: 'applied' }).data().toArray();
+
+                            var colDist = header.indexOf('Distancia');
+                            var colCat = header.indexOf('Categoria');
+
+                            // Agrupa las filas por disciplina
+                            var grupos = {}, orden = [];
+                            function push(nombre, celdas, ts) {
+                                nombre = (nombre && String(nombre).trim()) ? String(nombre).trim() : 'SIN DISCIPLINA';
+                                if (!grupos[nombre]) { grupos[nombre] = []; orden.push(nombre); }
+                                grupos[nombre].push({ celdas: celdas, ts: ts });
+                            }
+                            for (var r = 0; r < body.length; r++) {
+                                var rd = rowsData[r] || {};
+                                var base = body[r];
+                                var ts = 0;
+                                if (rd.pagos && rd.pagos[0] && rd.pagos[0].conciliadoel && rd.pagos[0].conciliadoel.timestamp) {
+                                    ts = parseInt(rd.pagos[0].conciliadoel.timestamp, 10) || 0;
+                                }
+                                var comps = (rd.competencias && rd.competencias.length) ? rd.competencias : null;
+                                if (comps) {
                                     for (var k = 0; k < comps.length; k++) {
-                                        var clon = fila.slice();
-                                        if (colDist !== -1) clon[colDist] = comps[k].idcompetencia ? comps[k].idcompetencia.descripcion : '';
-                                        if (colCat !== -1) clon[colCat] = comps[k].idcategoria ? comps[k].idcategoria.descripcion : '';
-                                        if (colPrecio !== -1 && comps[k].precio != null) clon[colPrecio] = String(comps[k].precio);
-                                        nuevoBody.push(clon);
+                                        var c = base.slice();
+                                        if (colDist !== -1) c[colDist] = comps[k].idcompetencia ? comps[k].idcompetencia.descripcion : '';
+                                        if (colCat !== -1) c[colCat] = comps[k].idcategoria ? comps[k].idcategoria.descripcion : '';
+                                        push(c[colDist], c, ts);
                                     }
                                 } else {
-                                    nuevoBody.push(fila);
+                                    push(colDist !== -1 ? base[colDist] : '', base, ts);
                                 }
                             }
-                            data.body = nuevoBody;
+                            if (orden.length === 0) { orden.push('Sin datos'); grupos['Sin datos'] = []; }
+                            orden.sort();
+                            orden.forEach(function (n) { grupos[n].sort(function (a, b) { return a.ts - b.ts; }); });
+
+                            // Helpers para armar el XML de cada hoja
+                            function colLetra(idx) {
+                                var s = '', n = idx + 1;
+                                while (n > 0) { var m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); }
+                                return s;
+                            }
+                            function esc(v) {
+                                return String(v == null ? '' : v)
+                                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                                    .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+                            }
+                            function celdaXml(ref, val) {
+                                var s = String(val == null ? '' : val);
+                                if (s !== '' && /^-?\d+(\.\d+)?$/.test(s) && !/^0\d+/.test(s)) {
+                                    return '<c r="' + ref + '" t="n"><v>' + s + '</v></c>';
+                                }
+                                return '<c r="' + ref + '" t="inlineStr"><is><t xml:space="preserve">' + esc(s) + '</t></is></c>';
+                            }
+                            function hojaXml(filas) {
+                                var xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                                    '<worksheet xmlns="' + NS_MAIN + '" xmlns:r="' + NS_R + '"><sheetData>';
+                                xml += '<row r="1">';
+                                for (var c = 0; c < header.length; c++) xml += celdaXml(colLetra(c) + '1', header[c]);
+                                xml += '</row>';
+                                for (var f = 0; f < filas.length; f++) {
+                                    var rn = f + 2;
+                                    xml += '<row r="' + rn + '">';
+                                    for (var cc = 0; cc < header.length; cc++) xml += celdaXml(colLetra(cc) + rn, filas[f].celdas[cc]);
+                                    xml += '</row>';
+                                }
+                                return xml + '</sheetData></worksheet>';
+                            }
+                            var usados = {};
+                            function nombreHoja(n) {
+                                var base = String(n).replace(/[\\\/\?\*\[\]:]/g, ' ').substring(0, 31).replace(/^\s+|\s+$/g, '') || 'Hoja';
+                                var nm = base, i = 2;
+                                while (usados[nm.toLowerCase()]) { nm = base.substring(0, 27) + ' ' + i; i++; }
+                                usados[nm.toLowerCase()] = true;
+                                return nm;
+                            }
+
+                            // Reconstruye el paquete xlsx con una hoja por disciplina
+                            var sheetsXml = '', relsXml = '', ctSheetsXml = '';
+                            xlsx.xl.worksheets = {};
+                            orden.forEach(function (nombre, idx) {
+                                var n = idx + 1;
+                                var file = 'sheet' + n + '.xml';
+                                xlsx.xl.worksheets[file] = $.parseXML(hojaXml(grupos[nombre]));
+                                sheetsXml += '<sheet name="' + esc(nombreHoja(nombre)) + '" sheetId="' + n + '" r:id="rId' + n + '"/>';
+                                relsXml += '<Relationship Id="rId' + n + '" Type="' + NS_R + '/worksheet" Target="worksheets/' + file + '"/>';
+                                ctSheetsXml += '<Override PartName="/xl/worksheets/' + file + '" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>';
+                            });
+                            delete xlsx.xl['styles.xml'];
+                            xlsx.xl['workbook.xml'] = $.parseXML('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                                '<workbook xmlns="' + NS_MAIN + '" xmlns:r="' + NS_R + '"><sheets>' + sheetsXml + '</sheets></workbook>');
+                            xlsx.xl._rels['workbook.xml.rels'] = $.parseXML('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                                '<Relationships xmlns="' + NS_REL + '">' + relsXml + '</Relationships>');
+                            xlsx['[Content_Types].xml'] = $.parseXML('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                                '<Types xmlns="' + NS_CT + '">' +
+                                '<Default Extension="xml" ContentType="application/xml"/>' +
+                                '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+                                '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
+                                ctSheetsXml + '</Types>');
                         }
                     },
                     { extend: 'print', text: 'Imprimir' },
