@@ -90,7 +90,7 @@ class InscritoRepository extends EntityRepository
     {
         return $this->getEntityManager()
             ->createQuery(
-                'SELECT i,p,c,ca,co,es,b,fp '
+                'SELECT i,p,c,ca,co,es,b,fp,ic,icc,icca '
                 . 'FROM FraterSoftPiaWebBundle:Inscrito i '
                     . 'LEFT JOIN i.pagos p '
                     . 'LEFT JOIN i.idcompetencia c '
@@ -99,6 +99,9 @@ class InscritoRepository extends EntityRepository
                     . 'LEFT JOIN co.idestado es '
                     . 'LEFT JOIN p.idbanco b '
                     . 'LEFT JOIN p.idformapago fp '
+                    . 'LEFT JOIN i.competencias ic '
+                    . 'LEFT JOIN ic.idcompetencia icc '
+                    . 'LEFT JOIN ic.idcategoria icca '
                     . 'WHERE '
                         . 'i.status=1 '
                         . 'and p.conciliado=true '
