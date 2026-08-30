@@ -1021,6 +1021,11 @@ class InscritoController extends commonPIAClass {
         //el campo de competencia se muestra como checkboxes (seleccion multiple)
         $multicompetenciaActivo = $evento->getMulticompetencia() && count($competencias) > 1;
 
+        //Titulo del campo de competencia (configurable en el evento) y, si tras el filtro de
+        //cupos queda una sola competencia, la referencia a ella para acotar las categorias.
+        $labelCompetencia = $evento->getTitulocompetencias() ?: 'Modalidad';
+        $competenciaUnica = (count($competencias) === 1) ? $competencias[0] : null;
+
         $cantidad_integrantes=($idgrupo)?$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->cantidadIntegrantesGrupo($idgrupo)+1:1;
                 
         //Verifica si el competidor ya esta inscrito
@@ -1330,6 +1335,13 @@ class InscritoController extends commonPIAClass {
                 //seleccional la categoria que le aplica al competidor
                 $categorias = $this->seleccionaCategorias($idevento, $competidor);
 
+                //Si queda una sola competencia, las categorias se acotan a las de esa competencia
+                if ($competenciaUnica) {
+                    $categorias = $categorias->filter(function ($cat) use ($competenciaUnica) {
+                        return $cat->getIdcompetencia() && $cat->getIdcompetencia()->getId() == $competenciaUnica->getId();
+                    });
+                }
+
                 if ($categorias->count()==0) {
                     return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                                 'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
@@ -1341,7 +1353,7 @@ class InscritoController extends commonPIAClass {
                     $emptyvalue = 'Seleccione una Categoría';
                 else
                     $emptyvalue = null;
-                
+
                 //Si la cantidad de competencias es mayor a 1, no se muestran las categorias
                 //Si multicompetencia esta activo, la categoria se selecciona por cada competencia marcada (ver twig/JS), no aqui
                 if ($multicompetenciaActivo) {
@@ -1403,17 +1415,22 @@ class InscritoController extends commonPIAClass {
                 }
             } else {
                 //Si multicompetencia esta activo, la categoria se selecciona por cada competencia marcada (ver twig/JS), no aqui
+                $idcompetenciaUnica = $competenciaUnica ? $competenciaUnica->getId() : null;
                 $form
                         ->add('idcategoria', 'entity', array(
                             'class' => 'FraterSoftPiaWebBundle:Categoria',
                             'label' => 'Categoria',
-                            'query_builder' => function (EntityRepository $er) use ( $idevento ) {
-                                return $er->createQueryBuilder('c')
+                            'query_builder' => function (EntityRepository $er) use ( $idevento, $idcompetenciaUnica ) {
+                                $qb = $er->createQueryBuilder('c')
                                         ->innerJoin('c.idcompetencia', 'co')
                                         ->innerJoin('co.idevento','ev')
                                         //->addOrderBy('c.id', 'ASC')
                                         ->where('c.idcompetencia=co and co.idevento=:idevento')
                                         ->setParameter('idevento', $idevento);
+                                if ($idcompetenciaUnica) {
+                                    $qb->andWhere('co.id = :idcompunica')->setParameter('idcompunica', $idcompetenciaUnica);
+                                }
+                                return $qb;
                             },
                             'empty_value' => 'Seleccione Categoria',
                             'required' => true,
@@ -1463,7 +1480,7 @@ class InscritoController extends commonPIAClass {
                 $form
                     ->add('idcompetencias', 'entity', array(
                         'class' => 'FraterSoftPiaWebBundle:Competencia',
-                        'label' => 'Modalidades',
+                        'label' => $evento->getTitulocompetencias() ?: 'Modalidades',
                         'label_attr' => array('class' => 'multicompetencia-titulo'),
                         'choices' => $competencias,
                         'multiple' => true,
@@ -1476,17 +1493,17 @@ class InscritoController extends commonPIAClass {
                 $form
                     ->add('idcompetencia', 'entity', array(
                         'class' => 'FraterSoftPiaWebBundle:Competencia',
-                        'label' => 'Modalidad',
+                        'label' => $labelCompetencia,
                         'choices' => $competencias,
                         'required' => true,
-                        'empty_value' => 'Seleccione una Modalidad',
+                        'empty_value' => 'Seleccione una ' . $labelCompetencia,
                     ))
                 ;
             } else {
                 $form
                     ->add('idcompetencia', 'entity', array(
                         'class' => 'FraterSoftPiaWebBundle:Competencia',
-                        'label' => 'Modalidad',
+                        'label' => $labelCompetencia,
                         'choices' => $competencias,
                     ))
                 ;
@@ -1910,6 +1927,22 @@ class InscritoController extends commonPIAClass {
         //selecciona por cada competencia marcada (ver twig/JS), igual que en el alta.
         $multicompetenciaActivo = $entity->getIdevento()->getMulticompetencia() && count($competencias) > 1;
 
+        $labelCompetencia = $entity->getIdevento()->getTitulocompetencias() ?: 'Modalidad';
+        $competenciaUnica = (count($competencias) === 1) ? $competencias[0] : null;
+        //Si hay una sola competencia, las categorias se acotan a las de esa competencia
+        if ($competenciaUnica) {
+            $categorias = $categorias->filter(function ($cat) use ($competenciaUnica) {
+                return $cat->getIdcompetencia() && $cat->getIdcompetencia()->getId() == $competenciaUnica->getId();
+            });
+            if ($categorias->count() == 0) {
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_find', array('idevento' => $entity->getIdevento()->getId())),
+                            'texto' => 'No existe una Categoria aplicable a este participante',
+                            'tema' => $entity->getIdevento()->getTema()
+                ));
+            }
+        }
+
         //Mapa idcompetencia => idcategoria de la seleccion guardada (para precargar el twig)
         $categoriasActuales = array();
         foreach ($entity->getCompetencias() as $inscritoCompetencia) {
@@ -1934,7 +1967,7 @@ class InscritoController extends commonPIAClass {
             }
             $editForm->add('idcompetencias', 'entity', array(
                 'class' => 'FraterSoftPiaWebBundle:Competencia',
-                'label' => 'Modalidades',
+                'label' => $entity->getIdevento()->getTitulocompetencias() ?: 'Modalidades',
                 'choices' => $competencias,
                 'multiple' => true,
                 'expanded' => true,
@@ -1960,17 +1993,17 @@ class InscritoController extends commonPIAClass {
                     $editForm
                             ->add('idcompetencia', 'entity', array(
                                 'class' => 'FraterSoftPiaWebBundle:Competencia',
-                                'label' => 'Modalidad',
+                                'label' => $labelCompetencia,
                                 'choices' => $competencias,
                                 'required' => true,
-                                'empty_value' => 'Seleccione una Modalidad',
+                                'empty_value' => 'Seleccione una ' . $labelCompetencia,
                             ))
                     ;
                 } else {
                     $editForm
                             ->add('idcompetencia', 'entity', array(
                                 'class' => 'FraterSoftPiaWebBundle:Competencia',
-                                'label' => 'Modalidad',
+                                'label' => $labelCompetencia,
                                 'choices' => $competencias,
                             ))
                     ;
