@@ -34,12 +34,12 @@
                             return data.toUpperCase();
                         }                        
                     },
-                    { title: "Fecha Pago", data: "pagos[0].fechahora",
+                    { title: "Fecha Pago", data: "pagos[0].fechahora", defaultContent: "",
                         render: function(data){
-                            var formatted="";
-                            if(data!=null)  
-                                formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
-                            return formatted;
+                            if(!data || !data.timestamp) return "";
+                            var fecha = new Date(data.timestamp * 1000);
+                            if(isNaN(fecha.getTime())) return "";
+                            return $.datepicker.formatDate("dd/mm/yy", fecha);
                         },visible:false
                     },
                     { title: "Monto", data: "pagos[0].monto" },
@@ -50,13 +50,13 @@
                         data: "idpia.{{atributo.idatributo.nombre|lower}}",
                         {% if atributo.idatributo.tipodato=='S' %} 
                         render: function(data){return data==null?"":data.toUpperCase();} 
-                        {% elseif  atributo.idatributo.tipodato=='D' %} 
+                        {% elseif  atributo.idatributo.tipodato=='D' %}
                         render: function(data){
-                            var formatted="";
-                            if(data!=null)
-                                formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
-                            return formatted;
-                        }         
+                            if(!data || !data.timestamp) return "";
+                            var fecha = new Date(data.timestamp * 1000);
+                            if(isNaN(fecha.getTime())) return "";
+                            return $.datepicker.formatDate("dd/mm/yy", fecha);
+                        }
                         {% elseif  atributo.idatributo.tipodato=='N' %} 
                         render: function(data){
                             return data;
