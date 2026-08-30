@@ -375,6 +375,19 @@ class InscritoController extends commonPIAClass {
             $competencia = $form->get('idcompetencia')->getData();
         }
 
+        //Valida cupos: rechaza si alguna competencia elegida ya llego a su cupo maximo
+        $competenciasAValidar = ($idcompetenciasSeleccionadas !== null)
+            ? $idcompetenciasSeleccionadas->toArray()
+            : ($competencia ? array($competencia) : array());
+        $llenas = $this->competenciasSinCupo($competenciasAValidar, $form->get('idevento')->getData()->getId(), $em);
+        if (!empty($llenas)) {
+            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                        'url' => $this->generateUrl('competidor_find', array('idevento' => $form->get('idevento')->getData()->getId())),
+                        'texto' => 'Ya no hay cupos disponibles en: ' . implode(', ', $llenas),
+                        'tema' => $entity->getIdevento()->getTema()
+            ));
+        }
+
         if ($form->isSubmitted()) {
             
             $emails = array();
@@ -757,6 +770,68 @@ class InscritoController extends commonPIAClass {
         $entity->setPrecio($precioTotal);
 
         return $precioTotal;
+    }
+
+    /**
+     * De una lista de Competencia, devuelve las descripciones de las que ya alcanzaron su
+     * cupo maximo (si lo tienen configurado). Array vacio si todas tienen cupo.
+     *
+     * @param array $competencias  Competencia[]
+     * @return string[]
+     */
+    private function competenciasSinCupo(array $competencias, $idevento, $em)
+    {
+        if (empty($competencias)) {
+            return array();
+        }
+        $cupos = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->cantidadPorCompetencia($idevento);
+        $llenas = array();
+        foreach ($competencias as $comp) {
+            if ($comp === null) {
+                continue;
+            }
+            $max = $comp->getCupomaximo();
+            if (!$max) {
+                continue;
+            }
+            $actual = isset($cupos[$comp->getId()]) ? $cupos[$comp->getId()] : 0;
+            if ($actual >= $max) {
+                $llenas[] = $comp->getDescripcion();
+            }
+        }
+        return $llenas;
+    }
+
+    /**
+     * AJAX: dado el evento y una lista de ids de competencia (csv), devuelve cuales ya no
+     * tienen cupo disponible.  {"llenas":[{"id":..,"descripcion":".."}]}
+     */
+    public function cupocompetenciasAjaxAction()
+    {
+        $query = $this->get('request')->query;
+        $idevento = $query->get('idevento');
+        $ids = array_filter(array_map('trim', explode(',', $query->get('idcompetencias', ''))));
+
+        $em = $this->getDoctrine()->getManager();
+        $llenas = array();
+        if ($idevento && $ids) {
+            $cupos = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->cantidadPorCompetencia($idevento);
+            foreach ($ids as $id) {
+                $comp = $em->getRepository('FraterSoftPiaWebBundle:Competencia')->find($id);
+                if (!$comp) {
+                    continue;
+                }
+                $max = $comp->getCupomaximo();
+                if (!$max) {
+                    continue;
+                }
+                $actual = isset($cupos[$comp->getId()]) ? $cupos[$comp->getId()] : 0;
+                if ($actual >= $max) {
+                    $llenas[] = array('id' => $comp->getId(), 'descripcion' => $comp->getDescripcion());
+                }
+            }
+        }
+        return new Response(json_encode(array('llenas' => $llenas)));
     }
 
     /**

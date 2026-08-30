@@ -119,6 +119,10 @@ inscrito_precio_evento:
 inscrito_precio_competencia:
     pattern:  /preciocompetenciaajax
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:preciocompetenciaajax" }
+
+inscrito_cupo_competencias:
+    pattern:  /cupocompetenciasajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:cupocompetenciasajax" }
     
 inscrito_estadisticas:
     pattern:  /{idevento}/estadisticas

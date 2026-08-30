@@ -616,6 +616,43 @@
 
         $().ready(function () {
 
+            //Antes de inscribir, valida por AJAX que las competencias elegidas aun tengan
+            //cupo disponible (el formulario pudo abrirse antes de que se llenaran).
+            var cupoValidado = false;
+            $("form#formulario").submit(function (event) {
+                if (cupoValidado) { return; }
+                var ids = [];
+                {% if multicompetenciaActivo %}
+                $('#{{ form.idcompetencias.vars.id }} input[type=checkbox]:checked').each(function () { ids.push($(this).val()); });
+                {% elseif form.idcompetencia is defined %}
+                var vComp = $('#{{ form.idcompetencia.vars.id }}').val();
+                if (vComp) { ids.push(vComp); }
+                {% endif %}
+                if (ids.length === 0) { return; }
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                $.ajax({
+                    type: "GET",
+                    url: "{{ path('inscrito_cupo_competencias') }}",
+                    data: { idevento: $('#{{ form.idevento.vars.id }}').val(), idcompetencias: ids.join(',') },
+                    dataType: "json",
+                    success: function (d) {
+                        if (d && d.llenas && d.llenas.length > 0) {
+                            var nombres = [];
+                            for (var i = 0; i < d.llenas.length; i++) { nombres.push(d.llenas[i].descripcion); }
+                            alert("Ya no hay cupos disponibles en: " + nombres.join(', ') + ".\nPor favor recargue el formulario.");
+                        } else {
+                            cupoValidado = true;
+                            $("form#formulario").submit();
+                        }
+                    },
+                    error: function () {
+                        cupoValidado = true;
+                        $("form#formulario").submit();
+                    }
+                });
+            });
+
             //Oculta el mensaje del credito si no existe el credito para el competidor
             {% if creditox is null %}
                 $("#{{ form.pagos[0].message.vars.id }}").parent().hide()            
