@@ -54,7 +54,7 @@
             <tr><th>Competencia</th><td>{{ entity.idcompetencia.descripcion }}</td></tr>
             {% endif %}
             {% if entity.competencias is not empty and entity.competencias|length > 1 %}
-            <tr><th colspan="2">{{ entity.idevento.titulocompetencias|default('Modalidades') }} Inscritas</th></tr>
+            <tr><th colspan="2">{{ entity.idevento.titulocompetencias|default('Competencias') }} Inscritas</th></tr>
             {% for ic in entity.competencias %}
             <tr><td>{{ ic.idcompetencia.descripcion }}</td><td>{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %} - {{ ic.precio|number_format(2,',','.') }}</td></tr>
             {% endfor %}

@@ -310,7 +310,7 @@
             <table class="multicompetencia-tabla">
                 <thead>
                     <tr>
-                        <th>{{ entity.idevento.titulocompetencias|default('Modalidades') }}</th>
+                        <th>{{ entity.idevento.titulocompetencias|default('Competencias') }}</th>
                         <th>Categoria</th>
                     </tr>
                 </thead>
@@ -870,7 +870,7 @@
         //Valida que se haya marcado al menos una modalidad antes de guardar
         $("form#formulario").submit(function (event) {
             if ($('#{{ edit_form.idcompetencias.vars.id }} input[type=checkbox]:checked').length === 0) {
-                alert("Debe seleccionar al menos una {{ entity.idevento.titulocompetencias|default('Modalidad') }}");
+                alert("Debe seleccionar al menos una {{ entity.idevento.titulocompetencias|default('Competencia') }}");
                 event.preventDefault();
                 return false;
             }

@@ -137,7 +137,7 @@ class EventoType extends AbstractType
             ->add('titulocompetencias', null, array(
                 'label'=>'Titulo de Competencias',
                 'required' => false,
-                'attr' => array('title' => 'Texto que se mostrara como titulo del campo de seleccion de competencias en el formulario de inscripcion. Si se deja vacio se usa "Modalidades"'),
+                'attr' => array('title' => 'Texto que se mostrara como titulo del campo de seleccion de competencias en el formulario de inscripcion. Si se deja vacio se usa "Competencia"'),
             ))
             ->add('pais','entity', array(
                 'class' => 'FraterSoftPiaWebBundle:Pais',

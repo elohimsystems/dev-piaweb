@@ -26,7 +26,7 @@
             <tr><th>Categoria</th><td>{{ inscrito.idcategoria.descripcion }}</td></tr>
             {% endif %}
             {% if inscrito.competencias is not empty and inscrito.competencias|length > 1 %}
-            <tr><th>{{ inscrito.idevento.titulocompetencias|default('Modalidades') }}</th><th>Categoria</th></tr>
+            <tr><th>{{ inscrito.idevento.titulocompetencias|default('Competencias') }}</th><th>Categoria</th></tr>
             {% for ic in inscrito.competencias %}
             <tr><td>{{ ic.idcompetencia.descripcion }}</td><td>{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %}</td></tr>
             {% endfor %}
