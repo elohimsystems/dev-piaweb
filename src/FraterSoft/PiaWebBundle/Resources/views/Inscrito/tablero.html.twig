@@ -1,0 +1,262 @@
+{% extends '::base.html.twig' %}
+{% block javascripts %}
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+            $('#tabs a[href="#tabs-0"]').click();
+            $('#tabs a[href="#tabs-1"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento}) }}')
+            });
+            $('#tabs a[href="#tabs-2"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento}) }}')
+            });
+            $('#tabs a[href="#tabs-3"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_anulados',{'idevento':idevento}) }}')
+            });
+            $('#tabs a[href="#tabs-5"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_estadisticas',{'idevento':idevento}) }}')
+            });
+            $('#tabs a[href="#tabs-6"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_lista_auditoria',{'idevento':idevento}) }}')
+            });
+
+            $("#dialogLimpiar").dialog({
+                autoOpen: false,
+                modal: true,
+                width: 460,
+                buttons: {
+                    "Limpiar inscritos": function () {
+                        var nombre = $("#confirmacion_nombre").val().trim();
+                        if (nombre !== {{ nombreevento|json_encode|raw }}) {
+                            $("#confirmacion_error").show();
+                            return;
+                        }
+                        $("#formLimpiar").submit();
+                    },
+                    "Cancelar": function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+            $("#btnLimpiarInscritos").on("click", function () {
+                $("#confirmacion_error").hide();
+                $("#confirmacion_nombre").val("");
+                $("#dialogLimpiar").dialog("open");
+            });
+
+            $("#seccionCargando").hide();
+            $("#contenido").show();
+        });
+    </script>
+{% endblock %}
+{% block style %}
+<style type="text/css">
+    #contenido{
+        display: none;
+    }
+    #seccionCargando > img{
+        width: 50px;
+    }
+    #seccionCargando{
+        text-align: center;
+    }
+    #evento{
+        border: 1px solid #d8dcdf;
+        padding: 5px;
+        margin-bottom: 3px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+    .tablero-tarjetas{
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 15px 0;
+    }
+    .tablero-tarjeta{
+        flex: 1 1 160px;
+        border: 1px solid #d8dcdf;
+        border-radius: 6px;
+        padding: 14px 16px;
+        text-align: center;
+        background: #f7f9fa;
+    }
+    .tablero-tarjeta .valor{
+        font-size: 26px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+    .tablero-tarjeta .etiqueta{
+        font-size: 12px;
+        color: #7f8c8d;
+        text-transform: uppercase;
+        margin-top: 4px;
+    }
+    .tablero-cupos{
+        border-collapse: collapse;
+        width: 100%;
+        max-width: 520px;
+        margin-top: 8px;
+    }
+    .tablero-cupos th, .tablero-cupos td{
+        border: 1px solid #d8dcdf;
+        padding: 5px 8px;
+        font-size: 12px;
+        text-align: left;
+    }
+    .tablero-cupos td.num{
+        text-align: center;
+    }
+    .tablero-cupos tr.lleno td{
+        background: #fdecea;
+        color: #c0392b;
+        font-weight: bold;
+    }
+    h3.tablero-titulo{
+        margin: 22px 0 6px;
+        font-size: 14px;
+    }
+    .tablero-flash{
+        padding: 8px 12px;
+        border-radius: 4px;
+        margin: 10px 0;
+        font-size: 13px;
+    }
+    .tablero-flash.success{ background: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; }
+    .tablero-flash.error{ background: #fdecea; border: 1px solid #f5c6cb; color: #c0392b; }
+    .tablero-zona-peligro{
+        border: 1px solid #f5c6cb;
+        border-radius: 6px;
+        padding: 14px 16px;
+        margin-top: 26px;
+        background: #fff6f6;
+    }
+    .tablero-zona-peligro h3{
+        margin: 0 0 6px;
+        font-size: 14px;
+        color: #c0392b;
+    }
+    .tablero-zona-peligro p{
+        font-size: 12px;
+        color: #7f8c8d;
+        margin: 0 0 10px;
+    }
+    #btnLimpiarInscritos{
+        background: #c0392b;
+        color: #fff;
+        border: none;
+        padding: 8px 14px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+    #confirmacion_error{
+        display: none;
+        color: #c0392b;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+</style>
+{% endblock %}
+{% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+    <div id="seccionCargando">
+        <img src="{{ asset('bundles/fratersoftpiaweb/images/loading.gif') }}">
+    </div>
+    <div id="contenido">
+        <div id="evento">{{ nombreevento }}</div>
+        <div id="tabs">
+            <ul>
+                <li><a href="#tabs-0">Tablero</a></li>
+                <li><a href="#tabs-1">Pre-Inscritos</a></li>
+                <li><a href="#tabs-2">Inscritos</a></li>
+                <li><a href="#tabs-3">Anulados</a></li>
+                <li><a href="#tabs-5">Estadisticas</a></li>
+                {% if nivel_seguridad == 1 %}<li><a href="#tabs-6">Auditoria</a></li>{% endif %}
+            </ul>
+            <div id="tabs-1"></div>
+            <div id="tabs-2"></div>
+            <div id="tabs-3"></div>
+            <div id="tabs-5"></div>
+            <div id="tabs-6"></div>
+            <div id="tabs-0">
+                {% for tipo, mensajes in app.session.flashbag.all %}
+                    {% for mensaje in mensajes %}
+                        <div class="tablero-flash {{ tipo }}">{{ mensaje }}</div>
+                    {% endfor %}
+                {% endfor %}
+
+                <div class="tablero-tarjetas">
+                    <div class="tablero-tarjeta">
+                        <div class="valor">{{ resumen.preinscritos }}</div>
+                        <div class="etiqueta">Pre-Inscritos</div>
+                    </div>
+                    <div class="tablero-tarjeta">
+                        <div class="valor">{{ resumen.inscritos }}</div>
+                        <div class="etiqueta">Inscritos</div>
+                    </div>
+                    <div class="tablero-tarjeta">
+                        <div class="valor">{{ resumen.anulados }}</div>
+                        <div class="etiqueta">Anulados</div>
+                    </div>
+                    <div class="tablero-tarjeta">
+                        <div class="valor">{{ resumen.recaudado|number_format(2, ',', '.') }}</div>
+                        <div class="etiqueta">Recaudado</div>
+                    </div>
+                </div>
+
+                {% if cupos|length > 0 %}
+                    <h3 class="tablero-titulo">Cupos por {{ titulocompetencias|default('Competencia') }}</h3>
+                    <table class="tablero-cupos">
+                        <thead>
+                            <tr>
+                                <th>{{ titulocompetencias|default('Competencia') }}</th>
+                                <th>Inscritos</th>
+                                <th>Cupo maximo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for cupo in cupos %}
+                                <tr{% if cupo.cupomaximo and cupo.inscritos >= cupo.cupomaximo %} class="lleno"{% endif %}>
+                                    <td>{{ cupo.descripcion }}</td>
+                                    <td class="num">{{ cupo.inscritos }}</td>
+                                    <td class="num">{{ cupo.cupomaximo ? cupo.cupomaximo : 'Sin limite' }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% endif %}
+
+                {% if nivel_seguridad == 1 %}
+                    <div class="tablero-zona-peligro">
+                        <h3>Limpiar inscritos</h3>
+                        <p>
+                            Elimina <strong>todas</strong> las inscripciones del evento junto con sus
+                            {{ (titulocompetencias|default('competencias'))|lower }} y sus pagos, para
+                            arrancar el evento desde cero. El evento, sus
+                            {{ (titulocompetencias|default('competencias'))|lower }}, categorias y precios
+                            se conservan. <strong>Esta accion no se puede deshacer.</strong>
+                        </p>
+                        <button id="btnLimpiarInscritos" type="button">Limpiar inscritos</button>
+                    </div>
+
+                    <div id="dialogLimpiar" title="Limpiar inscritos">
+                        <p>
+                            Se eliminaran <strong>{{ resumen.preinscritos + resumen.inscritos + resumen.anulados }}</strong>
+                            inscripciones (con sus {{ (titulocompetencias|default('competencias'))|lower }} y pagos).
+                            Esta accion es irreversible.
+                        </p>
+                        <p>Para confirmar, escriba el nombre del evento:<br><em>{{ nombreevento }}</em></p>
+                        <form id="formLimpiar" method="post" action="{{ path('inscrito_limpiar_inscritos', {'idevento': idevento}) }}">
+                            <input type="text" id="confirmacion_nombre" name="confirmacion" style="width: 100%;" autocomplete="off">
+                            <div id="confirmacion_error">El nombre no coincide.</div>
+                        </form>
+                    </div>
+                {% endif %}
+
+                <a href="{{ path('frater_soft_pia_web_eventos') }}"><button id="button">Regresar</button></a>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}

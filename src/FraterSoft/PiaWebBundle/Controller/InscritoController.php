@@ -2505,6 +2505,101 @@ class InscritoController extends commonPIAClass {
         ));
     }
 
+    /**
+     * Tablero (dashboard) del evento: resumen de preinscritos / inscritos / anulados,
+     * recaudado y cupos por competencia. Es la pantalla inicial al abrir un evento.
+     */
+    public function tableroAction($idevento) {
+        $em = $this->getDoctrine()->getManager();
+        $email = $this->getUser()->getEmail();
+
+        $nivel_seguridad = $this->getNivelSeguridad($em, $email, $idevento);
+
+        $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idevento);
+        if (!$evento) {
+            throw $this->createNotFoundException('Evento no encontrado');
+        }
+
+        $resumen = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
+                ->resumenTablero($idevento);
+
+        $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')
+                ->findBy(array('idevento' => $idevento), array('descripcion' => 'ASC'));
+        $cuposcompetencia = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
+                ->cantidadPorCompetencia($idevento);
+
+        $cupos = array();
+        foreach ($competencias as $comp) {
+            $cupos[] = array(
+                'descripcion' => $comp->getDescripcion(),
+                'inscritos' => isset($cuposcompetencia[$comp->getId()]) ? $cuposcompetencia[$comp->getId()] : 0,
+                'cupomaximo' => $comp->getCupomaximo(),
+            );
+        }
+
+        $request = $this->container->get('request');
+        $this->get('session')->set('urlreturn', $request->getRequestUri());
+
+        return $this->render('FraterSoftPiaWebBundle:Inscrito:tablero.html.twig', array(
+                    'idevento' => $idevento,
+                    'email' => $email,
+                    'nombreevento' => $evento->getNombre(),
+                    'titulocompetencias' => $evento->getTitulocompetencias(),
+                    'nivel_seguridad' => $nivel_seguridad,
+                    'resumen' => $resumen,
+                    'cupos' => $cupos,
+        ));
+    }
+
+    /**
+     * Elimina fisicamente TODAS las inscripciones del evento junto con sus competencias
+     * (InscritoCompetencia) y sus pagos. Sirve para "arrancar el evento desde cero".
+     * Irreversible. Solo nivel_seguridad 1 (admin del evento). Requiere confirmar
+     * escribiendo el nombre exacto del evento.
+     */
+    public function limpiarInscritosAction($idevento) {
+        $em = $this->getDoctrine()->getManager();
+        $email = $this->getUser()->getEmail();
+
+        $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idevento);
+        if (!$evento) {
+            throw $this->createNotFoundException('Evento no encontrado');
+        }
+
+        $nivel_seguridad = $this->getNivelSeguridad($em, $email, $idevento);
+        if ($nivel_seguridad != 1) {
+            $this->get('session')->getFlashBag()->add('error', 'No tiene permisos para limpiar los inscritos de este evento.');
+            return $this->redirect($this->generateUrl('inscrito_tablero', array('idevento' => $idevento)));
+        }
+
+        $confirmacion = trim($this->getRequest()->request->get('confirmacion', ''));
+        if ($confirmacion !== $evento->getNombre()) {
+            $this->get('session')->getFlashBag()->add('error', 'La confirmacion no coincide con el nombre del evento. No se elimino nada.');
+            return $this->redirect($this->generateUrl('inscrito_tablero', array('idevento' => $idevento)));
+        }
+
+        $conn = $em->getConnection();
+        // El id de evento supera el rango de un entero de 32 bits: se sanea a solo
+        // digitos y se usa como string para no truncarlo en PHP de 32 bits.
+        $idevento = preg_replace('/[^0-9]/', '', $idevento);
+        $sub = '(SELECT id FROM piaaccess.tminscritos WHERE idevento = ' . $idevento . ')';
+
+        $conn->beginTransaction();
+        try {
+            $conn->executeUpdate('DELETE FROM piaaccess.tmpagos WHERE idinscrito IN ' . $sub);
+            $conn->executeUpdate('DELETE FROM piaaccess.trinscritoscompetencias WHERE idinscrito IN ' . $sub);
+            $inscritosBorrados = $conn->executeUpdate('DELETE FROM piaaccess.tminscritos WHERE idevento = ' . $idevento);
+            $conn->commit();
+        } catch (\Exception $e) {
+            $conn->rollback();
+            $this->get('session')->getFlashBag()->add('error', 'Error al limpiar los inscritos: ' . $e->getMessage());
+            return $this->redirect($this->generateUrl('inscrito_tablero', array('idevento' => $idevento)));
+        }
+
+        $this->get('session')->getFlashBag()->add('success', 'Se eliminaron ' . $inscritosBorrados . ' inscripciones del evento, con sus competencias y pagos. El evento quedo listo para arrancar desde cero.');
+        return $this->redirect($this->generateUrl('inscrito_tablero', array('idevento' => $idevento)));
+    }
+
     public function buscarPrecioAjaxAction() {
         $encoders = array(new XmlEncoder(), new JsonEncoder());
         $normalizers = array(new GetSetMethodNormalizer());

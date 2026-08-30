@@ -264,7 +264,9 @@ class InscritoRepository extends EntityRepository
     public function cantidadPorCompetencia($idevento)
     {
         $em = $this->getEntityManager();
-        $idevento = (int) $idevento;
+        // Los ids de evento superan el rango de un entero de 32 bits: se sanea a
+        // solo digitos y se usa como string para no truncarlo en PHP de 32 bits.
+        $idevento = preg_replace('/[^0-9]/', '', $idevento);
         $mapa = array();
 
         $simples = $em->createQuery(
@@ -292,6 +294,51 @@ class InscritoRepository extends EntityRepository
         return $mapa;
     }
 
+
+    /**
+     * Resumen para el Tablero del evento.
+     *  - inscritos:    inscripciones activas (status 1) con al menos un pago conciliado
+     *  - preinscritos: inscripciones activas (status 1) sin pago conciliado
+     *  - anulados:     inscripciones anuladas (status 0)
+     *  - recaudado:    suma de montos de los pagos conciliados de inscripciones activas
+     *
+     * @return array  claves: inscritos, preinscritos, anulados, recaudado
+     */
+    public function resumenTablero($idevento)
+    {
+        $em = $this->getEntityManager();
+        // Ver nota en cantidadPorCompetencia(): id de evento fuera del rango de 32 bits.
+        $idevento = preg_replace('/[^0-9]/', '', $idevento);
+
+        $activos = (int) $em->createQuery(
+                'SELECT count(i.id) FROM FraterSoftPiaWebBundle:Inscrito i '
+                . 'WHERE i.status = 1 AND i.idevento = ' . $idevento
+            )->getSingleScalarResult();
+
+        $inscritos = (int) $em->createQuery(
+                'SELECT count(DISTINCT i.id) FROM FraterSoftPiaWebBundle:Inscrito i '
+                . 'JOIN i.pagos p '
+                . 'WHERE i.status = 1 AND p.conciliado = true AND i.idevento = ' . $idevento
+            )->getSingleScalarResult();
+
+        $anulados = (int) $em->createQuery(
+                'SELECT count(i.id) FROM FraterSoftPiaWebBundle:Inscrito i '
+                . 'WHERE i.status = 0 AND i.idevento = ' . $idevento
+            )->getSingleScalarResult();
+
+        $recaudado = $em->createQuery(
+                'SELECT COALESCE(SUM(p.monto), 0) FROM FraterSoftPiaWebBundle:Pago p '
+                . 'JOIN p.idinscrito i '
+                . 'WHERE i.status = 1 AND p.conciliado = true AND i.idevento = ' . $idevento
+            )->getSingleScalarResult();
+
+        return array(
+            'inscritos'    => $inscritos,
+            'preinscritos' => max($activos - $inscritos, 0),
+            'anulados'     => $anulados,
+            'recaudado'    => (float) $recaudado,
+        );
+    }
 
     public function inscritosPorCompetencia($idevento)
     {
