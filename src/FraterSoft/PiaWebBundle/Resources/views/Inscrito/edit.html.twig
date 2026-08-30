@@ -575,6 +575,53 @@
 
         $().ready(function () {
 
+            //Antes de guardar, si se AGREGA una competencia (que el inscrito no tenia),
+            //valida por AJAX que aun tenga cupo disponible.
+            var competenciasIniciales = [];
+            {% if multicompetenciaActivo %}
+            $('#{{ edit_form.idcompetencias.vars.id }} input[type=checkbox]:checked').each(function () { competenciasIniciales.push($(this).val()); });
+            {% elseif edit_form.idcompetencia is defined %}
+            competenciasIniciales.push($('#{{ edit_form.idcompetencia.vars.id }}').val());
+            {% endif %}
+            var cupoValidado = false;
+            $("form#formulario").submit(function (event) {
+                if (cupoValidado) { return; }
+                var seleccion = [];
+                {% if multicompetenciaActivo %}
+                $('#{{ edit_form.idcompetencias.vars.id }} input[type=checkbox]:checked').each(function () { seleccion.push($(this).val()); });
+                {% elseif edit_form.idcompetencia is defined %}
+                var vComp = $('#{{ edit_form.idcompetencia.vars.id }}').val();
+                if (vComp) { seleccion.push(vComp); }
+                {% endif %}
+                var nuevas = [];
+                for (var i = 0; i < seleccion.length; i++) {
+                    if (competenciasIniciales.indexOf(seleccion[i]) === -1) { nuevas.push(seleccion[i]); }
+                }
+                if (nuevas.length === 0) { return; }
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                $.ajax({
+                    type: "GET",
+                    url: "{{ path('inscrito_cupo_competencias') }}",
+                    data: { idevento: $('#{{ edit_form.idevento.vars.id }}').val(), idcompetencias: nuevas.join(',') },
+                    dataType: "json",
+                    success: function (d) {
+                        if (d && d.llenas && d.llenas.length > 0) {
+                            var nombres = [];
+                            for (var j = 0; j < d.llenas.length; j++) { nombres.push(d.llenas[j].descripcion); }
+                            alert("Ya no hay cupos disponibles en: " + nombres.join(', ') + ".");
+                        } else {
+                            cupoValidado = true;
+                            $("form#formulario").submit();
+                        }
+                    },
+                    error: function () {
+                        cupoValidado = true;
+                        $("form#formulario").submit();
+                    }
+                });
+            });
+
             $("#{{ edit_form.pagos[0].info.vars.id }}").removeAttr("required");
             $("#{{ edit_form.pagos[0].idbanco.vars.id }}").removeAttr("required");
             {# {% if idgrupo is not null %} #}

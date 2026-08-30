@@ -2109,6 +2109,16 @@ class InscritoController extends commonPIAClass {
             throw $this->createNotFoundException('Unable to find Inscrito entity.');
         }
 
+        //Competencias que el inscrito ya tiene ANTES de editar (no cuentan como nuevas para
+        //la validacion de cupo, ya que su registro actual ya ocupa lugar).
+        $competenciasPreviasIds = array();
+        if ($entity->getIdcompetencia()) {
+            $competenciasPreviasIds[] = $entity->getIdcompetencia()->getId();
+        }
+        foreach ($entity->getCompetencias() as $icPrevia) {
+            $competenciasPreviasIds[] = $icPrevia->getIdcompetencia()->getId();
+        }
+
         $editForm = $this->createEditForm($entity);
 
         //Si el evento tiene multicompetencia activo (y >1 competencia), los campos mapeados
@@ -2144,6 +2154,27 @@ class InscritoController extends commonPIAClass {
                     'Debe seleccionar al menos una ' . ($entity->getIdevento()->getTitulocompetencias() ?: 'Modalidad'));
                 return $this->redirect($this->generateUrl('inscrito_edit', array('id' => $id)));
             }
+        }
+
+        //Valida cupos: solo se rechaza si se AGREGA una competencia (que antes no tenia) y
+        //esa competencia ya llego a su cupo maximo.
+        if ($multicompetenciaActivo) {
+            $seleccionCupo = $editForm->get('idcompetencias')->getData();
+            $seleccionCupo = ($seleccionCupo !== null) ? $seleccionCupo->toArray() : array();
+        } else {
+            $seleccionCupo = $entity->getIdcompetencia() ? array($entity->getIdcompetencia()) : array();
+        }
+        $nuevasCompetencias = array();
+        foreach ($seleccionCupo as $comp) {
+            if ($comp && !in_array($comp->getId(), $competenciasPreviasIds)) {
+                $nuevasCompetencias[] = $comp;
+            }
+        }
+        $llenasEdit = $this->competenciasSinCupo($nuevasCompetencias, $entity->getIdevento()->getId(), $em);
+        if (!empty($llenasEdit)) {
+            $this->get('session')->getFlashBag()->add('error',
+                'Ya no hay cupos disponibles en: ' . implode(', ', $llenasEdit));
+            return $this->redirect($this->generateUrl('inscrito_edit', array('id' => $id)));
         }
 
         if ($editForm->isValid()) {
