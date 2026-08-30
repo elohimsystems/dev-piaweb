@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <style type="text/css">
+        body { font-family: Arial, Helvetica, sans-serif; font-size: 14px; color: #333; }
+        th { text-align: left; padding: 4px 8px; }
+        td { padding: 4px 8px; }
+        table { margin: 12px auto; border-collapse: collapse; width: 420px; }
+        #titulo { text-align: center; font-size: 22px; margin-bottom: 4px; }
+        #evento { text-align: center; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <table>
+        <tbody>
+            <tr>
+                <td colspan="2" align="center"><p id="titulo"><strong>CUPO M&Aacute;XIMO ALCANZADO</strong></p></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><p id="evento"><strong>{{ evento.nombre }}</strong></p></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <p>La {{ evento.titulocompetencias|default('competencia') }}
+                    <strong>{{ competencia.descripcion }}</strong> ha alcanzado su cupo m&aacute;ximo de
+                    inscripciones.</p>
+                </td>
+            </tr>
+            <tr><th>{{ evento.titulocompetencias|default('Competencia') }}</th><td>{{ competencia.descripcion }}</td></tr>
+            <tr><th>Cupo m&aacute;ximo</th><td>{{ cupomaximo }}</td></tr>
+            <tr><th>Inscritos</th><td>{{ inscritos }}</td></tr>
+            <tr><th>Fecha</th><td>{{ "now"|date('d-m-Y H:i:s') }}</td></tr>
+        </tbody>
+    </table>
+</body>
+</html>

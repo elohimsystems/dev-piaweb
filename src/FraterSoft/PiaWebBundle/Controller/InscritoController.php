@@ -517,9 +517,16 @@ class InscritoController extends commonPIAClass {
             catch (Exception $e) {
                 $em->getConnection()->rollback();
                 throw $e;
-            }            
+            }
 
-            
+            //Notifica al organizador si alguna de las competencias de esta inscripcion
+            //llego a su cupo maximo
+            $competenciasInscritas = ($idcompetenciasSeleccionadas !== null)
+                ? $idcompetenciasSeleccionadas->toArray()
+                : ($competencia ? array($competencia) : array());
+            $this->notificarCupoMaximoCompetencias($entity, $competenciasInscritas, $em);
+
+
             if($entity->getIdevento()->getProceso()==1 && $grupo==null){
                 if(count($form->get('pagos')->getData())==1){
                     if ($form->get('pagos')[0]->getData()->getIdformapago()->getVerificable() == true) { //PAGOS CON TDC
@@ -750,6 +757,76 @@ class InscritoController extends commonPIAClass {
         $entity->setPrecio($precioTotal);
 
         return $precioTotal;
+    }
+
+    /**
+     * Tras guardar una inscripcion, revisa las competencias involucradas: si alguna tiene
+     * cupo maximo configurado y ya se alcanzo (o superó), envia un correo al organizador
+     * (email y email de contacto) avisando que esa competencia llego a su cupo.
+     *
+     * @param Inscrito $entity
+     * @param array    $competencias  competencias (Competencia) de esta inscripcion
+     */
+    private function notificarCupoMaximoCompetencias(Inscrito $entity, array $competencias, $em)
+    {
+        if (empty($competencias)) {
+            return;
+        }
+
+        $evento = $entity->getIdevento();
+        $organizador = $evento->getIdorganizador();
+        if ($organizador === null) {
+            return;
+        }
+
+        $destinatarios = array();
+        foreach (array($organizador->getEmail(), $organizador->getEmailcontacto()) as $mail) {
+            if (!is_null($mail) && filter_var($mail, FILTER_VALIDATE_EMAIL) && !in_array($mail, $destinatarios)) {
+                $destinatarios[] = $mail;
+            }
+        }
+        if (empty($destinatarios)) {
+            return;
+        }
+
+        $emailfrom = filter_var($organizador->getEmail(), FILTER_VALIDATE_EMAIL)
+            ? $organizador->getEmail()
+            : 'inscripciones@sistemapia.com';
+
+        $cupos = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
+                ->cantidadPorCompetencia($evento->getId());
+
+        $mailer = $this->get('app.mail_controller');
+        $notificadas = array();
+        foreach ($competencias as $comp) {
+            if ($comp === null || in_array($comp->getId(), $notificadas)) {
+                continue;
+            }
+            $max = $comp->getCupomaximo();
+            if (!$max) {
+                continue;
+            }
+            $actual = isset($cupos[$comp->getId()]) ? $cupos[$comp->getId()] : 0;
+            if ($actual < $max) {
+                continue;
+            }
+            $notificadas[] = $comp->getId();
+            try {
+                $mailer->enviar(
+                    $emailfrom,
+                    'Cupo maximo alcanzado - ' . $comp->getDescripcion() . ' - ' . $evento->getNombre(),
+                    $destinatarios,
+                    $this->renderView('FraterSoftPiaWebBundle:Inscrito:email_cupomaximo.html.twig', array(
+                        'evento' => $evento,
+                        'competencia' => $comp,
+                        'cupomaximo' => $max,
+                        'inscritos' => $actual,
+                    ))
+                );
+            } catch (\Exception $e) {
+                // No interrumpe el flujo de la inscripcion si falla el correo al organizador
+            }
+        }
     }
 
     /**
@@ -2014,6 +2091,15 @@ class InscritoController extends commonPIAClass {
             }
 
             $em->flush();
+
+            //Notifica al organizador si alguna competencia llego a su cupo maximo
+            if ($multicompetenciaActivo) {
+                $competenciasInscritas = $editForm->get('idcompetencias')->getData();
+                $competenciasInscritas = ($competenciasInscritas !== null) ? $competenciasInscritas->toArray() : array();
+            } else {
+                $competenciasInscritas = $entity->getIdcompetencia() ? array($entity->getIdcompetencia()) : array();
+            }
+            $this->notificarCupoMaximoCompetencias($entity, $competenciasInscritas, $em);
 
             $this->get('session')->getFlashBag()->add('success', 'Guardado satisfactoriamente');
             return $this->redirect($this->generateUrl('inscrito_edit', array('id' => $id)));
