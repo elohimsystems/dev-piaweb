@@ -2478,6 +2478,33 @@ class InscritoController extends commonPIAClass {
         ));
     }
 
+    /**
+     * Restaura una inscripcion anulada: cambia el status de 0 a 1.
+     */
+    public function restaurarAction($id) {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Inscrito entity.');
+        }
+
+        if ($entity->getStatus() == 0) {
+            $entity->setStatus(1);
+            $em->flush();
+            $texto = 'Inscripcion Nro ' . $entity->getSecuencia() . ' restaurada';
+        } else {
+            $texto = 'La inscripcion Nro ' . $entity->getSecuencia() . ' no estaba anulada';
+        }
+
+        $referer = $this->getRequest()->headers->get('referer');
+        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => $referer ?: $this->generateUrl('inscrito_lista_anulados', array('idevento' => $entity->getIdevento()->getId())),
+                    'texto' => $texto,
+                    'tema' => $entity->getIdevento()->getTema(),
+        ));
+    }
+
     public function buscarPrecioAjaxAction() {
         $encoders = array(new XmlEncoder(), new JsonEncoder());
         $normalizers = array(new GetSetMethodNormalizer());

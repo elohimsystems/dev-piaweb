@@ -143,11 +143,16 @@
                                 <td>{% if anulada.idcategoria is not null %}{{ anulada.idcategoria.descripcion }}{% else %}{% for ic in anulada.competencias %}{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %}{% if not loop.last %} / {% endif %}{% endfor %}{% endif %}</td>
                                 <td>{{ anulada.punto }}</td>
                                 <td>
-                                    <ul id="icons" class="ui-widget ui-helper-clearfix">      
+                                    <ul id="icons" class="ui-widget ui-helper-clearfix">
                                         <a href="{{ path('inscrito_show', { 'id': anulada.id }) }}">
                                             <li class="ui-state-default ui-corner-all" title="Ver"><span class="ui-icon ui-icon-search"></span></li>
                                         </a>
-                                    </ul>                                
+                                        {% if nivel_seguridad == 1 %}
+                                        <a href="{{ path('inscrito_restaurar', { 'id': anulada.id }) }}" onclick="return confirm('¿Restaurar la inscripción N° {{ anulada.secuencia }}? Volvera a quedar activa.');">
+                                            <li class="ui-state-default ui-corner-all" title="Restaurar"><span class="ui-icon ui-icon-arrowrefresh-1-w"></span></li>
+                                        </a>
+                                        {% endif %}
+                                    </ul>
                                 </td>
                             </tr>
                         {% endfor %}

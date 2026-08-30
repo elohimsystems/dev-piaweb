@@ -102,8 +102,12 @@ inscrito_categorias:
     
 inscrito_anular:
     pattern:  /anular/{id}
-    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:anular" }    
-    
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:anular" }
+
+inscrito_restaurar:
+    pattern:  /restaurar/{id}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:restaurar" }
+
 inscrito_boton123pago:
     pattern:  /{id}/{incremento}/boton123pago
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:boton123pago" }
