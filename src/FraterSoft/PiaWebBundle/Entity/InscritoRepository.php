@@ -254,9 +254,10 @@ class InscritoRepository extends EntityRepository
     }
 
     /**
-     * Cantidad de inscritos activos (status = 1) por competencia del evento.
-     * Contempla tanto los inscritos de una sola competencia (Inscrito.idcompetencia)
-     * como los multicompetencia (InscritoCompetencia).
+     * Cantidad de inscritos por competencia del evento, para el control de cupos.
+     * NO cuenta las inscripciones anuladas (status = 0). Contempla tanto los inscritos
+     * de una sola competencia (Inscrito.idcompetencia) como los multicompetencia
+     * (InscritoCompetencia).
      *
      * @return array  mapa  idcompetencia => cantidad
      */
@@ -269,7 +270,7 @@ class InscritoRepository extends EntityRepository
         $simples = $em->createQuery(
                 'SELECT c.id as idcompetencia, count(i.id) as cantidad '
                 . 'FROM FraterSoftPiaWebBundle:Inscrito i JOIN i.idcompetencia c '
-                . 'WHERE i.status = 1 AND i.idevento = ' . $idevento . ' '
+                . 'WHERE i.status <> 0 AND i.idevento = ' . $idevento . ' '
                 . 'GROUP BY c.id'
             )->getResult();
         foreach ($simples as $fila) {
@@ -280,7 +281,7 @@ class InscritoRepository extends EntityRepository
                 'SELECT icc.id as idcompetencia, count(ic.id) as cantidad '
                 . 'FROM FraterSoftPiaWebBundle:InscritoCompetencia ic '
                 . 'JOIN ic.idinscrito i JOIN ic.idcompetencia icc '
-                . 'WHERE i.status = 1 AND i.idevento = ' . $idevento . ' '
+                . 'WHERE i.status <> 0 AND i.idevento = ' . $idevento . ' '
                 . 'GROUP BY icc.id'
             )->getResult();
         foreach ($multi as $fila) {
