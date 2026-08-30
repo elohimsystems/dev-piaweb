@@ -241,13 +241,18 @@ class InscritoRepository extends EntityRepository
             ->getResult();
     }  
     
+    /**
+     * Cupo asignado del evento para el control de cupos: preinscritos + inscritos.
+     * NO cuenta las inscripciones anuladas (status = 0). Es lo que se compara contra
+     * Evento.cupomaximo, con el mismo criterio que cantidadPorCompetencia().
+     */
     public function cantidad($idevento)
     {
         return $this->getEntityManager()
             ->createQuery(
                 'SELECT count(i) FROM FraterSoftPiaWebBundle:Inscrito i '
                     . 'WHERE '
-                        . 'i.status = 1 '
+                        . 'i.status <> 0 '
                         . 'and i.idevento=' . $idevento
             )
             ->getResult()[0][1];

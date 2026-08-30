@@ -3066,8 +3066,8 @@ class InscritoController extends commonPIAClass {
 
                 if(!$inscrito){ //si no esta inscrito
                     //Validar si hay cupos
-                    $cantidad=$em->getRepository("FraterSoftPiaWebBundle:Inscrito")->cantidad($idevento);                    
-                    if($evento->getCupocontrol() && $evento->getCupomaximo()<$cantidad){
+                    $cantidad=$em->getRepository("FraterSoftPiaWebBundle:Inscrito")->cantidad($idevento);
+                    if($evento->getCupocontrol() && $cantidad >= $evento->getCupomaximo()){
                         return $this->render('FraterSoftPiaWebBundle:Inscrito:reporteimport.html.twig', array(
                             'cantidad_registros'=>count($csv),
                             'competidores_i'=>$count_competidores_i,
