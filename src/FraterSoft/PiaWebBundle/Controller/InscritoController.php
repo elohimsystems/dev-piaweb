@@ -842,6 +842,29 @@ class InscritoController extends commonPIAClass {
             'idevento' => $idevento,
         ));
 
+        //No se muestran las competencias que ya alcanzaron su cupo maximo (no aplica a
+        //campeonatos, donde la competencia se asigna segun el competidor).
+        if (!$evento->getIdCampeonato()) {
+            $cuposcompetencia = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
+                    ->cantidadPorCompetencia($idevento);
+            $competencias = array_values(array_filter($competencias, function ($comp) use ($cuposcompetencia) {
+                $max = $comp->getCupomaximo();
+                if (!$max) {
+                    return true;
+                }
+                $actual = isset($cuposcompetencia[$comp->getId()]) ? $cuposcompetencia[$comp->getId()] : 0;
+                return $actual < $max;
+            }));
+
+            if (count($competencias) === 0) {
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                            'texto' => 'No hay cupos disponibles en las ' . ($evento->getTitulocompetencias() ?: 'competencias') . ' de este evento',
+                            'tema' => $evento->getTema()
+                ));
+            }
+        }
+
         //Si el evento tiene activo multicompetencia y hay mas de 1 competencia configurada,
         //el campo de competencia se muestra como checkboxes (seleccion multiple)
         $multicompetenciaActivo = $evento->getMulticompetencia() && count($competencias) > 1;
