@@ -42,7 +42,9 @@
     <div class="container">
     <table id="tablaReporte" class="display compact">
         <tbody>          
+            {% if entity.idcompetencia is not null %}
             <tr><th>Competencia</th><td>{{ entity.idcompetencia.descripcion }}</td></tr>
+            {% endif %}
             {%if entity.numero is not null%}<tr><th>Numero</th><td>{{ entity.numero }}</td></tr>{%endif%}
             {% for atributo in atributos %}
             {% for key, dato in entity.idpia %}
@@ -57,8 +59,16 @@
             {%endif%}
             {%endfor%}                
             {%endfor%}
-            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr> 
-            <tr><th>Fecha y Hora</th><td>{{ entity.fechahora.timestamp|date('d-m-Y H:i:s') }}</td></tr>                        
+            {% if entity.idcategoria is not null %}
+            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>
+            {% endif %}
+            {% if entity.competencias is defined and entity.competencias is not empty and entity.competencias|length > 1 %}
+            <tr><th>{{ entity.idevento.titulocompetencias|default('Competencias') }}</th><th>Categoria</th></tr>
+            {% for ic in entity.competencias %}
+            <tr><td>{{ ic.idcompetencia.descripcion }}</td><td>{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %}</td></tr>
+            {% endfor %}
+            {% endif %}
+            <tr><th>Fecha y Hora</th><td>{{ entity.fechahora.timestamp|date('d-m-Y H:i:s') }}</td></tr>
         </tbody>
     </table>
     <div id='mensaje'>

@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use FraterSoft\PiaWebBundle\Entity\Inscrito;
+use FraterSoft\PiaWebBundle\Entity\InscritoCompetencia;
 use FraterSoft\PiaWebBundle\Entity\Competidor;
 use FraterSoft\PiaWebBundle\Entity\Competencia;
 use FraterSoft\PiaWebBundle\Entity\Evento;
@@ -111,6 +112,7 @@ class InscritoController extends commonPIAClass {
                     'atributos' => $atributos,
                     'email' => $email,
                     'nombreevento'=>$atributos[0]->getIdEvento()->getNombre(),
+                    'titulocompetencias'=>$atributos[0]->getIdEvento()->getTitulocompetencias(),
                     'nivel_seguridad' => $nivel_seguridad
         ));
     }    
@@ -195,6 +197,7 @@ class InscritoController extends commonPIAClass {
                     'idevento' => $idevento,
                     'email' => $email,
                     'nombreevento'=>$atributos[0]->getIdEvento()->getNombre(),
+                    'titulocompetencias'=>$atributos[0]->getIdEvento()->getTitulocompetencias(),
                     'nivel_seguridad' => $nivel_seguridad
         ));
     }    
@@ -249,6 +252,7 @@ class InscritoController extends commonPIAClass {
                     'idevento' => $idevento,
                     'email' => $email,
                     'nombreevento'=>$evento->getNombre(),
+                    'titulocompetencias'=>$evento->getTitulocompetencias(),
                     'nivel_seguridad' => $nivel_seguridad
         ));
     }    
@@ -288,9 +292,51 @@ class InscritoController extends commonPIAClass {
         $accessor = PropertyAccess::createPropertyAccessor();
         
         $form = $this->createCreateForm($entity, null);
-        $form->handleRequest($request);
         $em = $this->getDoctrine()->getManager();
-                
+
+        //Si el evento tiene multicompetencia activo, el campo 'idcompetencia' mapeado se
+        //reemplaza por uno no mapeado 'idcompetencias' (checkboxes) ANTES de procesar el
+        //submit, para que handleRequest capture la seleccion. El evento se determina leyendo
+        //el POST crudo porque el formulario aun no ha sido vinculado en este punto.
+        $esMulticompetencia = false;
+        $datosSubmit = $request->request->get($form->getName());
+        $idEventoSubmit = is_array($datosSubmit) && !empty($datosSubmit['idevento']) ? $datosSubmit['idevento'] : null;
+        if ($idEventoSubmit) {
+            $eventoSubmit = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idEventoSubmit);
+            if ($eventoSubmit && $eventoSubmit->getMulticompetencia()) {
+                $competenciasSubmit = $em->getRepository('FraterSoftPiaWebBundle:Competencia')
+                        ->findBy(array('idevento' => $idEventoSubmit));
+                if (count($competenciasSubmit) > 1) {
+                    $esMulticompetencia = true;
+                    if ($form->has('idcompetencia')) {
+                        $form->remove('idcompetencia');
+                    }
+                    $form->add('idcompetencias', 'entity', array(
+                        'class' => 'FraterSoftPiaWebBundle:Competencia',
+                        'choices' => $competenciasSubmit,
+                        'multiple' => true,
+                        'expanded' => true,
+                        'mapped' => false,
+                        'required' => true,
+                    ));
+                }
+            }
+        }
+
+        $form->handleRequest($request);
+
+        //En multicompetencia debe marcarse al menos una modalidad
+        if ($esMulticompetencia) {
+            $seleccion = $form->get('idcompetencias')->getData();
+            if ($seleccion === null || count($seleccion) === 0) {
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_find', array('idevento' => $idEventoSubmit)),
+                            'texto' => 'Debe seleccionar al menos una ' . ($eventoSubmit->getTitulocompetencias() ?: 'Competencia'),
+                            'tema' => $eventoSubmit->getTema()
+                ));
+            }
+        }
+
         $competidor=$em->getRepository('FraterSoftPiaWebBundle:Competidor')
                 ->findOneBy(array(
             'iddocumento' => $form->get('idpia')->getData()->getIddocumento()
@@ -318,8 +364,30 @@ class InscritoController extends commonPIAClass {
                             'tema' => $entity->getIdevento()->getTema()
                 ));
 
-        $competencia = $form->get('idcompetencia')->getData();
-        
+        //Si el evento tiene multicompetencia activo, el campo no mapeado 'idcompetencias'
+        //trae la seleccion (una o varias competencias); si no existe o esta vacio, se
+        //mantiene el comportamiento actual de una sola competencia.
+        $idcompetenciasSeleccionadas = $form->has('idcompetencias') ? $form->get('idcompetencias')->getData() : null;
+        if ($idcompetenciasSeleccionadas != null && count($idcompetenciasSeleccionadas) > 0) {
+            $competencia = $idcompetenciasSeleccionadas->first();
+        } else {
+            $idcompetenciasSeleccionadas = null;
+            $competencia = $form->get('idcompetencia')->getData();
+        }
+
+        //Valida cupos: rechaza si alguna competencia elegida ya llego a su cupo maximo
+        $competenciasAValidar = ($idcompetenciasSeleccionadas !== null)
+            ? $idcompetenciasSeleccionadas->toArray()
+            : ($competencia ? array($competencia) : array());
+        $llenas = $this->competenciasSinCupo($competenciasAValidar, $form->get('idevento')->getData()->getId(), $em);
+        if (!empty($llenas)) {
+            return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                        'url' => $this->generateUrl('competidor_find', array('idevento' => $form->get('idevento')->getData()->getId())),
+                        'texto' => 'Ya no hay cupos disponibles en: ' . implode(', ', $llenas),
+                        'tema' => $entity->getIdevento()->getTema()
+            ));
+        }
+
         if ($form->isSubmitted()) {
             
             $emails = array();
@@ -370,25 +438,30 @@ class InscritoController extends commonPIAClass {
                 }     
             }            
 
-            $grupo=new Grupo();
-            $grupo=$em->getRepository('FraterSoftPiaWebBundle:Grupo')->findOneBy(array(
-                        'idcompetencia'=>$form->get('idcompetencia')->getData()->getId(),
-                    ));
-            if($grupo){
-                if($idgrupo==null){
-                    $secuenciagrupo=$grupo->getSecuencia();
-                    $em->getConnection()->beginTransaction();
-                    $idgrupo='C'.$entity->getIdCompetencia()->getId().'G'.$secuenciagrupo;
-                    $idcompetencia=$form->get('idcompetencia')->getData()->getId();
-                    try{
-                        $grupo->setSecuencia($secuenciagrupo+1);
-                        $em->persist($grupo);
-                        $em->flush();            
-                        $em->getConnection()->commit();
-                    }
-                    catch (Exception $e) {
-                        $em->getConnection()->rollback();
-                        throw $e;
+            //La inscripcion grupal (Grupo/relay) es una feature ortogonal a multicompetencia,
+            //no diseñada para interoperar con ella: si hay varias competencias marcadas, se omite.
+            $grupo = null;
+            if ($idcompetenciasSeleccionadas === null) {
+                $grupo=new Grupo();
+                $grupo=$em->getRepository('FraterSoftPiaWebBundle:Grupo')->findOneBy(array(
+                            'idcompetencia'=>$form->get('idcompetencia')->getData()->getId(),
+                        ));
+                if($grupo){
+                    if($idgrupo==null){
+                        $secuenciagrupo=$grupo->getSecuencia();
+                        $em->getConnection()->beginTransaction();
+                        $idgrupo='C'.$entity->getIdCompetencia()->getId().'G'.$secuenciagrupo;
+                        $idcompetencia=$form->get('idcompetencia')->getData()->getId();
+                        try{
+                            $grupo->setSecuencia($secuenciagrupo+1);
+                            $em->persist($grupo);
+                            $em->flush();
+                            $em->getConnection()->commit();
+                        }
+                        catch (Exception $e) {
+                            $em->getConnection()->rollback();
+                            throw $e;
+                        }
                     }
                 }
             }
@@ -405,8 +478,20 @@ class InscritoController extends commonPIAClass {
                 }                
             }
 
-            $entity->setIdcompetencia($competencia);
+            //Modo multicompetencia: idcompetencia/idcategoria del Inscrito quedan vacios
+            //(no hay una unica competencia/categoria que representen la inscripcion); la
+            //relacion real vive en InscritoCompetencia, una fila por competencia marcada.
+            if ($idcompetenciasSeleccionadas === null) {
+                $entity->setIdcompetencia($competencia);
+            }
             $entity->setIdpia($competidor);
+
+            if ($idcompetenciasSeleccionadas !== null) {
+                $totalMulticompetencia = $this->reconstruirInscritoCompetencias($entity, $idcompetenciasSeleccionadas, $request, $em);
+                foreach ($form->get('pagos')->getData() as $pagoMulti) {
+                    $pagoMulti->setPrecio($totalMulticompetencia);
+                }
+            }
 
             if($grupo==null)
                 $entity->setStatus(1);
@@ -445,9 +530,16 @@ class InscritoController extends commonPIAClass {
             catch (Exception $e) {
                 $em->getConnection()->rollback();
                 throw $e;
-            }            
+            }
 
-            
+            //Notifica al organizador si alguna de las competencias de esta inscripcion
+            //llego a su cupo maximo
+            $competenciasInscritas = ($idcompetenciasSeleccionadas !== null)
+                ? $idcompetenciasSeleccionadas->toArray()
+                : ($competencia ? array($competencia) : array());
+            $this->notificarCupoMaximoCompetencias($entity, $competenciasInscritas, $em);
+
+
             if($entity->getIdevento()->getProceso()==1 && $grupo==null){
                 if(count($form->get('pagos')->getData())==1){
                     if ($form->get('pagos')[0]->getData()->getIdformapago()->getVerificable() == true) { //PAGOS CON TDC
@@ -515,9 +607,12 @@ class InscritoController extends commonPIAClass {
             }
             else{ //Envia el correo si el proceso es tipo 2
                 if($grupo==null){
-                    $precio=$this->buscarPrecio(
-                                $entity->getIdevento()->getid(), 
-                                $entity->getIdcompetencia()->getid(), 
+                    //En multicompetencia, idcompetencia/idcategoria del Inscrito quedan
+                    //vacios; el detalle de precios por competencia ya viaja en
+                    //entity.competencias, usado por el twig del correo.
+                    $precio = ($idcompetenciasSeleccionadas !== null) ? array() : $this->buscarPrecio(
+                                $entity->getIdevento()->getid(),
+                                $entity->getIdcompetencia()->getid(),
                                 $entity->getIdcategoria()->getid(),
                                 null
                             );
@@ -576,6 +671,237 @@ class InscritoController extends commonPIAClass {
 //        }        
         
         return new Response($form->getErrorsAsString());
+    }
+
+    /**
+     * Precio ESPECIFICO de una competencia/categoria (cascada categoria -> competencia),
+     * SIN caer al precio de evento. Devuelve 0 si no hay precio propio configurado.
+     */
+    private function buscarPrecioCompetenciaCategoria($idcompetencia, $idcategoria, $idmoneda)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $precio = new ArrayCollection();
+        if ($idcategoria) {
+            $precio = $em->getRepository('FraterSoftPiaWebBundle:Precioscategoria')
+                    ->BuscaPreciosCategoria($idcategoria, $idmoneda);
+        }
+        if ($idcompetencia && count($precio) == 0) {
+            $precio = $em->getRepository('FraterSoftPiaWebBundle:Precioscompetencia')
+                    ->BuscaPreciosCompetencia($idcompetencia, $idmoneda);
+        }
+        return (count($precio) > 0) ? $precio[0]['precio'] : 0;
+    }
+
+    /**
+     * Precio configurado a nivel de evento para la moneda dada. 0 si no hay.
+     */
+    private function buscarPrecioEvento($idevento, $idmoneda)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $precio = $em->getRepository('FraterSoftPiaWebBundle:Preciosevento')
+                ->BuscaPreciosEvento($idevento, $idmoneda);
+        return (count($precio) > 0) ? $precio[0]['precio'] : 0;
+    }
+
+    /**
+     * Reconstruye las filas InscritoCompetencia de un inscrito multicompetencia a partir de
+     * las competencias seleccionadas y de los <select> "idcategoria_<idcompetencia>" del POST.
+     * Elimina el detalle anterior (si lo hay) y deja idcompetencia/idcategoria del Inscrito en
+     * null.
+     *
+     * Regla de precios: cada InscritoCompetencia guarda su precio ESPECIFICO (de competencia
+     * o categoria; 0 si no tiene). El precio total del Inscrito = suma de los precios
+     * especificos + el precio de evento UNA sola vez, y solo si alguna modalidad no tiene
+     * precio propio (el precio de evento actua como tarifa base, no se cobra por modalidad).
+     *
+     * @return float El precio total.
+     */
+    private function reconstruirInscritoCompetencias(Inscrito $entity, $competenciasSeleccionadas, Request $request, $em)
+    {
+        //Elimina el detalle anterior (en el alta la coleccion viene vacia y no hace nada)
+        foreach ($entity->getCompetencias() as $inscritoCompetenciaPrevia) {
+            $em->remove($inscritoCompetenciaPrevia);
+        }
+        $entity->getCompetencias()->clear();
+
+        //Moneda seleccionada en el POST (radio pagos[0][idmoneda])
+        $datosPost = $request->request->get('fratersoft_piawebbundle_inscrito');
+        $idMoneda = (is_array($datosPost) && isset($datosPost['pagos'][0]['idmoneda']) && $datosPost['pagos'][0]['idmoneda'] !== '')
+            ? $datosPost['pagos'][0]['idmoneda'] : null;
+
+        $sumaEspecificos = 0;
+        $algunaSinPrecioEspecifico = false;
+        $cantidad = 0;
+
+        if ($competenciasSeleccionadas != null) {
+            foreach ($competenciasSeleccionadas as $comp) {
+                $cantidad++;
+                $idCategoriaComp = $request->request->get('idcategoria_' . $comp->getId());
+                $categoriaComp = $idCategoriaComp
+                    ? $em->getRepository('FraterSoftPiaWebBundle:Categoria')->find($idCategoriaComp)
+                    : null;
+
+                $montoEspecifico = $this->buscarPrecioCompetenciaCategoria($comp->getId(), $idCategoriaComp, $idMoneda);
+
+                $inscritoCompetencia = new InscritoCompetencia();
+                $inscritoCompetencia->setIdcompetencia($comp);
+                $inscritoCompetencia->setIdcategoria($categoriaComp);
+                $inscritoCompetencia->setPrecio($montoEspecifico);
+                $inscritoCompetencia->setIdinscrito($entity);
+                $entity->addCompetencia($inscritoCompetencia);
+
+                if ($montoEspecifico > 0) {
+                    $sumaEspecificos += $montoEspecifico;
+                } else {
+                    $algunaSinPrecioEspecifico = true;
+                }
+            }
+        }
+
+        if ($cantidad == 0) {
+            $precioTotal = 0;
+        } else {
+            $precioEvento = $this->buscarPrecioEvento($entity->getIdevento()->getId(), $idMoneda);
+            $precioTotal = $sumaEspecificos + ($algunaSinPrecioEspecifico ? $precioEvento : 0);
+        }
+
+        $entity->setIdcompetencia(null);
+        $entity->setIdcategoria(null);
+        $entity->setPrecio($precioTotal);
+
+        return $precioTotal;
+    }
+
+    /**
+     * De una lista de Competencia, devuelve las descripciones de las que ya alcanzaron su
+     * cupo maximo (si lo tienen configurado). Array vacio si todas tienen cupo.
+     *
+     * @param array $competencias  Competencia[]
+     * @return string[]
+     */
+    private function competenciasSinCupo(array $competencias, $idevento, $em)
+    {
+        if (empty($competencias)) {
+            return array();
+        }
+        $cupos = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->cantidadPorCompetencia($idevento);
+        $llenas = array();
+        foreach ($competencias as $comp) {
+            if ($comp === null) {
+                continue;
+            }
+            $max = $comp->getCupomaximo();
+            if (!$max) {
+                continue;
+            }
+            $actual = isset($cupos[$comp->getId()]) ? $cupos[$comp->getId()] : 0;
+            if ($actual >= $max) {
+                $llenas[] = $comp->getDescripcion();
+            }
+        }
+        return $llenas;
+    }
+
+    /**
+     * AJAX: dado el evento y una lista de ids de competencia (csv), devuelve cuales ya no
+     * tienen cupo disponible.  {"llenas":[{"id":..,"descripcion":".."}]}
+     */
+    public function cupocompetenciasAjaxAction()
+    {
+        $query = $this->get('request')->query;
+        $idevento = $query->get('idevento');
+        $ids = array_filter(array_map('trim', explode(',', $query->get('idcompetencias', ''))));
+
+        $em = $this->getDoctrine()->getManager();
+        $llenas = array();
+        if ($idevento && $ids) {
+            $cupos = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->cantidadPorCompetencia($idevento);
+            foreach ($ids as $id) {
+                $comp = $em->getRepository('FraterSoftPiaWebBundle:Competencia')->find($id);
+                if (!$comp) {
+                    continue;
+                }
+                $max = $comp->getCupomaximo();
+                if (!$max) {
+                    continue;
+                }
+                $actual = isset($cupos[$comp->getId()]) ? $cupos[$comp->getId()] : 0;
+                if ($actual >= $max) {
+                    $llenas[] = array('id' => $comp->getId(), 'descripcion' => $comp->getDescripcion());
+                }
+            }
+        }
+        return new Response(json_encode(array('llenas' => $llenas)));
+    }
+
+    /**
+     * Tras guardar una inscripcion, revisa las competencias involucradas: si alguna tiene
+     * cupo maximo configurado y ya se alcanzo (o superó), envia un correo al organizador
+     * (email y email de contacto) avisando que esa competencia llego a su cupo.
+     *
+     * @param Inscrito $entity
+     * @param array    $competencias  competencias (Competencia) de esta inscripcion
+     */
+    private function notificarCupoMaximoCompetencias(Inscrito $entity, array $competencias, $em)
+    {
+        if (empty($competencias)) {
+            return;
+        }
+
+        $evento = $entity->getIdevento();
+        $organizador = $evento->getIdorganizador();
+        if ($organizador === null) {
+            return;
+        }
+
+        $destinatarios = array();
+        foreach (array($organizador->getEmail(), $organizador->getEmailcontacto()) as $mail) {
+            if (!is_null($mail) && filter_var($mail, FILTER_VALIDATE_EMAIL) && !in_array($mail, $destinatarios)) {
+                $destinatarios[] = $mail;
+            }
+        }
+        if (empty($destinatarios)) {
+            return;
+        }
+
+        $emailfrom = filter_var($organizador->getEmail(), FILTER_VALIDATE_EMAIL)
+            ? $organizador->getEmail()
+            : 'inscripciones@sistemapia.com';
+
+        $cupos = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
+                ->cantidadPorCompetencia($evento->getId());
+
+        $mailer = $this->get('app.mail_controller');
+        $notificadas = array();
+        foreach ($competencias as $comp) {
+            if ($comp === null || in_array($comp->getId(), $notificadas)) {
+                continue;
+            }
+            $max = $comp->getCupomaximo();
+            if (!$max) {
+                continue;
+            }
+            $actual = isset($cupos[$comp->getId()]) ? $cupos[$comp->getId()] : 0;
+            if ($actual < $max) {
+                continue;
+            }
+            $notificadas[] = $comp->getId();
+            try {
+                $mailer->enviar(
+                    $emailfrom,
+                    'Cupo maximo alcanzado - ' . $comp->getDescripcion() . ' - ' . $evento->getNombre(),
+                    $destinatarios,
+                    $this->renderView('FraterSoftPiaWebBundle:Inscrito:email_cupomaximo.html.twig', array(
+                        'evento' => $evento,
+                        'competencia' => $comp,
+                        'cupomaximo' => $max,
+                        'inscritos' => $actual,
+                    ))
+                );
+            } catch (\Exception $e) {
+                // No interrumpe el flujo de la inscripcion si falla el correo al organizador
+            }
+        }
     }
 
     /**
@@ -662,12 +988,44 @@ class InscritoController extends commonPIAClass {
             }
         }
 
-        //Busca la cantidad de competencias por eventos, si hay mas de 1 muestra el combo        
+        //Busca la cantidad de competencias por eventos, si hay mas de 1 muestra el combo
         $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')
                 ->findBy(array(
             'idevento' => $idevento,
-        ));        
-        
+        ));
+
+        //No se muestran las competencias que ya alcanzaron su cupo maximo (no aplica a
+        //campeonatos, donde la competencia se asigna segun el competidor).
+        if (!$evento->getIdCampeonato()) {
+            $cuposcompetencia = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
+                    ->cantidadPorCompetencia($idevento);
+            $competencias = array_values(array_filter($competencias, function ($comp) use ($cuposcompetencia) {
+                $max = $comp->getCupomaximo();
+                if (!$max) {
+                    return true;
+                }
+                $actual = isset($cuposcompetencia[$comp->getId()]) ? $cuposcompetencia[$comp->getId()] : 0;
+                return $actual < $max;
+            }));
+
+            if (count($competencias) === 0) {
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
+                            'texto' => 'No hay cupos disponibles en las ' . ($evento->getTitulocompetencias() ?: 'competencias') . ' de este evento',
+                            'tema' => $evento->getTema()
+                ));
+            }
+        }
+
+        //Si el evento tiene activo multicompetencia y hay mas de 1 competencia configurada,
+        //el campo de competencia se muestra como checkboxes (seleccion multiple)
+        $multicompetenciaActivo = $evento->getMulticompetencia() && count($competencias) > 1;
+
+        //Titulo del campo de competencia (configurable en el evento) y, si tras el filtro de
+        //cupos queda una sola competencia, la referencia a ella para acotar las categorias.
+        $labelCompetencia = $evento->getTitulocompetencias() ?: 'Competencia';
+        $competenciaUnica = (count($competencias) === 1) ? $competencias[0] : null;
+
         $cantidad_integrantes=($idgrupo)?$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->cantidadIntegrantesGrupo($idgrupo)+1:1;
                 
         //Verifica si el competidor ya esta inscrito
@@ -977,6 +1335,13 @@ class InscritoController extends commonPIAClass {
                 //seleccional la categoria que le aplica al competidor
                 $categorias = $this->seleccionaCategorias($idevento, $competidor);
 
+                //Si queda una sola competencia, las categorias se acotan a las de esa competencia
+                if ($competenciaUnica) {
+                    $categorias = $categorias->filter(function ($cat) use ($competenciaUnica) {
+                        return $cat->getIdcompetencia() && $cat->getIdcompetencia()->getId() == $competenciaUnica->getId();
+                    });
+                }
+
                 if ($categorias->count()==0) {
                     return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                                 'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
@@ -988,9 +1353,17 @@ class InscritoController extends commonPIAClass {
                     $emptyvalue = 'Seleccione una Categoría';
                 else
                     $emptyvalue = null;
-                
+
                 //Si la cantidad de competencias es mayor a 1, no se muestran las categorias
-                if(count($competencias)==1)
+                //Si multicompetencia esta activo, la categoria se selecciona por cada competencia marcada (ver twig/JS), no aqui
+                if ($multicompetenciaActivo) {
+                    // no se agrega idcategoria: se resuelve por competencia en createAction.
+                    // Se remueve el campo base (agregado por InscritoType) para que
+                    // "form.idcategoria is defined" sea false en el twig, igual que idcompetencia.
+                    if ($form->has('idcategoria')) {
+                        $form->remove('idcategoria');
+                    }
+                } elseif(count($competencias)==1)
                     $form->add('idcategoria', 'entity', array(
                         'class' => 'FraterSoftPiaWebBundle:Categoria',
                         'label' => 'Categoria',
@@ -1006,7 +1379,7 @@ class InscritoController extends commonPIAClass {
                         'empty_value' => $emptyvalue,
                         'required' => true,
                     ));
-                    
+
                 $form->add('numero', 'hidden');
 
                 //Dependiendo del tipo de evento asigna el Equipo
@@ -1034,23 +1407,37 @@ class InscritoController extends commonPIAClass {
                 $form = $this->createCreateForm($entity, $idevento);
             else
                 $form = $this->createCreateForm($entity, $idevento,$idcompetencia,$idgrupo);
-            $form
-                    ->add('idcategoria', 'entity', array(
-                        'class' => 'FraterSoftPiaWebBundle:Categoria',
-                        'label' => 'Categoria',
-                        'query_builder' => function (EntityRepository $er) use ( $idevento ) {
-                            return $er->createQueryBuilder('c')
-                                    ->innerJoin('c.idcompetencia', 'co')
-                                    ->innerJoin('co.idevento','ev')
-                                    //->addOrderBy('c.id', 'ASC')
-                                    ->where('c.idcompetencia=co and co.idevento=:idevento')
-                                    ->setParameter('idevento', $idevento);
-                        },
-                        'empty_value' => 'Seleccione Categoria',
-                        'required' => true,
-                    ))
-            ;
-            
+            if ($multicompetenciaActivo) {
+                //Se remueve el campo base (agregado por InscritoType) para que
+                //"form.idcategoria is defined" sea false en el twig, igual que idcompetencia.
+                if ($form->has('idcategoria')) {
+                    $form->remove('idcategoria');
+                }
+            } else {
+                //Si multicompetencia esta activo, la categoria se selecciona por cada competencia marcada (ver twig/JS), no aqui
+                $idcompetenciaUnica = $competenciaUnica ? $competenciaUnica->getId() : null;
+                $form
+                        ->add('idcategoria', 'entity', array(
+                            'class' => 'FraterSoftPiaWebBundle:Categoria',
+                            'label' => 'Categoria',
+                            'query_builder' => function (EntityRepository $er) use ( $idevento, $idcompetenciaUnica ) {
+                                $qb = $er->createQueryBuilder('c')
+                                        ->innerJoin('c.idcompetencia', 'co')
+                                        ->innerJoin('co.idevento','ev')
+                                        //->addOrderBy('c.id', 'ASC')
+                                        ->where('c.idcompetencia=co and co.idevento=:idevento')
+                                        ->setParameter('idevento', $idevento);
+                                if ($idcompetenciaUnica) {
+                                    $qb->andWhere('co.id = :idcompunica')->setParameter('idcompunica', $idcompetenciaUnica);
+                                }
+                                return $qb;
+                            },
+                            'empty_value' => 'Seleccione Categoria',
+                            'required' => true,
+                        ))
+                ;
+            }
+
             $this->ocultaCampos($idevento, $form,array('clave'=>'iddocumento','dato'=>$iddocumento));
 
             
@@ -1082,21 +1469,41 @@ class InscritoController extends commonPIAClass {
         }
             
         if ($competencias) {
-            if (count($competencias) > 1) {
+            if ($multicompetenciaActivo) {
+                //Campo no mapeado: permite marcar varias competencias a la vez. Se procesa
+                //manualmente en createAction para crear una InscritoCompetencia por cada una.
+                //Se remueve el campo mapeado 'idcompetencia' (agregado por InscritoType) para
+                //que no se siga mostrando el combobox original junto a los checkboxes.
+                if ($form->has('idcompetencia')) {
+                    $form->remove('idcompetencia');
+                }
+                $form
+                    ->add('idcompetencias', 'entity', array(
+                        'class' => 'FraterSoftPiaWebBundle:Competencia',
+                        'label' => $evento->getTitulocompetencias() ?: 'Competencias',
+                        'label_attr' => array('class' => 'multicompetencia-titulo'),
+                        'choices' => $competencias,
+                        'multiple' => true,
+                        'expanded' => true,
+                        'mapped' => false,
+                        'required' => true,
+                    ))
+                ;
+            } elseif (count($competencias) > 1) {
                 $form
                     ->add('idcompetencia', 'entity', array(
                         'class' => 'FraterSoftPiaWebBundle:Competencia',
-                        'label' => 'Modalidad',
+                        'label' => $labelCompetencia,
                         'choices' => $competencias,
                         'required' => true,
-                        'empty_value' => 'Seleccione una Modalidad',
+                        'empty_value' => 'Seleccione una ' . $labelCompetencia,
                     ))
                 ;
             } else {
                 $form
                     ->add('idcompetencia', 'entity', array(
                         'class' => 'FraterSoftPiaWebBundle:Competencia',
-                        'label' => 'Modalidad',
+                        'label' => $labelCompetencia,
                         'choices' => $competencias,
                     ))
                 ;
@@ -1317,7 +1724,9 @@ class InscritoController extends commonPIAClass {
             'creditox'=>$creditoArray,
             'menor_edad' => $menor_edad,
             'controlParentalData' => $controlParentalData,
-            'controlParentalConfig' => $controlParentalConfig
+            'controlParentalConfig' => $controlParentalConfig,
+            'multicompetenciaActivo' => $multicompetenciaActivo,
+            'competencias' => $competencias
         ));
     }
 
@@ -1507,43 +1916,98 @@ class InscritoController extends commonPIAClass {
                         'tema' => $evento->getTema()
             ));
         }
-        if ($categorias->count() > 1)
-            $emptyvalue = 'Seleccione una Categoría';
-        else
-            $emptyvalue = null;
-        $editForm->add('idcategoria', 'entity', array(
-            'class' => 'FraterSoftPiaWebBundle:Categoria',
-            'label' => 'Categoria',
-            'choices' => $categorias,
-            'empty_value' => $emptyvalue,
-            'required' => true,
-        ));
-        
         //Busca la cantidad de competencias por eventos, si hay mas de 1 muestra el combo
         //sino, muestra el texto de la competencia
-        //$competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')->cantidad($idevento);
         $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')
                 ->findBy(array('idevento' => $entity->getIdevento()->getId(),
         ));
-        if ($competencias) {
-            if (count($competencias) > 1) {
-                $editForm
-                        ->add('idcompetencia', 'entity', array(
-                            'class' => 'FraterSoftPiaWebBundle:Competencia',
-                            'label' => 'Modalidad',
-                            'choices' => $competencias,
-                            'required' => true,
-                            'empty_value' => 'Seleccione una Modalidad',
-                        ))
-                ;
-            } else {
-                $editForm
-                        ->add('idcompetencia', 'entity', array(
-                            'class' => 'FraterSoftPiaWebBundle:Competencia',
-                            'label' => 'Modalidad',
-                            'choices' => $competencias,
-                        ))
-                ;
+
+        //Si el evento tiene activo multicompetencia y hay mas de 1 competencia configurada,
+        //la modalidad se muestra como checkboxes (seleccion multiple) y la categoria se
+        //selecciona por cada competencia marcada (ver twig/JS), igual que en el alta.
+        $multicompetenciaActivo = $entity->getIdevento()->getMulticompetencia() && count($competencias) > 1;
+
+        $labelCompetencia = $entity->getIdevento()->getTitulocompetencias() ?: 'Competencia';
+        $competenciaUnica = (count($competencias) === 1) ? $competencias[0] : null;
+        //Si hay una sola competencia, las categorias se acotan a las de esa competencia
+        if ($competenciaUnica) {
+            $categorias = $categorias->filter(function ($cat) use ($competenciaUnica) {
+                return $cat->getIdcompetencia() && $cat->getIdcompetencia()->getId() == $competenciaUnica->getId();
+            });
+            if ($categorias->count() == 0) {
+                return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                            'url' => $this->generateUrl('competidor_find', array('idevento' => $entity->getIdevento()->getId())),
+                            'texto' => 'No existe una Categoria aplicable a este participante',
+                            'tema' => $entity->getIdevento()->getTema()
+                ));
+            }
+        }
+
+        //Mapa idcompetencia => idcategoria de la seleccion guardada (para precargar el twig)
+        $categoriasActuales = array();
+        foreach ($entity->getCompetencias() as $inscritoCompetencia) {
+            $categoriasActuales[$inscritoCompetencia->getIdcompetencia()->getId()] =
+                $inscritoCompetencia->getIdcategoria();
+        }
+
+        if ($multicompetenciaActivo) {
+            //Se remueven los campos base mapeados (agregados por InscritoType) para que
+            //"edit_form.idcategoria is defined" / "edit_form.idcompetencia is defined" sean
+            //false en el twig, y se agrega el campo no mapeado de checkboxes con la
+            //seleccion actual precargada.
+            if ($editForm->has('idcompetencia')) {
+                $editForm->remove('idcompetencia');
+            }
+            if ($editForm->has('idcategoria')) {
+                $editForm->remove('idcategoria');
+            }
+            $competenciasActuales = array();
+            foreach ($entity->getCompetencias() as $inscritoCompetencia) {
+                $competenciasActuales[] = $inscritoCompetencia->getIdcompetencia();
+            }
+            $editForm->add('idcompetencias', 'entity', array(
+                'class' => 'FraterSoftPiaWebBundle:Competencia',
+                'label' => $entity->getIdevento()->getTitulocompetencias() ?: 'Competencias',
+                'choices' => $competencias,
+                'multiple' => true,
+                'expanded' => true,
+                'mapped' => false,
+                'required' => true,
+                'data' => $competenciasActuales,
+            ));
+        } else {
+            if ($categorias->count() > 1)
+                $emptyvalue = 'Seleccione una Categoría';
+            else
+                $emptyvalue = null;
+            $editForm->add('idcategoria', 'entity', array(
+                'class' => 'FraterSoftPiaWebBundle:Categoria',
+                'label' => 'Categoria',
+                'choices' => $categorias,
+                'empty_value' => $emptyvalue,
+                'required' => true,
+            ));
+
+            if ($competencias) {
+                if (count($competencias) > 1) {
+                    $editForm
+                            ->add('idcompetencia', 'entity', array(
+                                'class' => 'FraterSoftPiaWebBundle:Competencia',
+                                'label' => $labelCompetencia,
+                                'choices' => $competencias,
+                                'required' => true,
+                                'empty_value' => 'Seleccione una ' . $labelCompetencia,
+                            ))
+                    ;
+                } else {
+                    $editForm
+                            ->add('idcompetencia', 'entity', array(
+                                'class' => 'FraterSoftPiaWebBundle:Competencia',
+                                'label' => $labelCompetencia,
+                                'choices' => $competencias,
+                            ))
+                    ;
+                }
             }
         }
 
@@ -1631,6 +2095,9 @@ class InscritoController extends commonPIAClass {
                     'entity' => $entity,
                     'edit_form' => $editForm->createView(),
                     'atributos' => $atributoscriterios,
+                    'multicompetenciaActivo' => $multicompetenciaActivo,
+                    'competencias' => $competencias,
+                    'categoriasActuales' => $categoriasActuales,
         ));
 
     }
@@ -1675,24 +2142,112 @@ class InscritoController extends commonPIAClass {
             throw $this->createNotFoundException('Unable to find Inscrito entity.');
         }
 
+        //Competencias que el inscrito ya tiene ANTES de editar (no cuentan como nuevas para
+        //la validacion de cupo, ya que su registro actual ya ocupa lugar).
+        $competenciasPreviasIds = array();
+        if ($entity->getIdcompetencia()) {
+            $competenciasPreviasIds[] = $entity->getIdcompetencia()->getId();
+        }
+        foreach ($entity->getCompetencias() as $icPrevia) {
+            $competenciasPreviasIds[] = $icPrevia->getIdcompetencia()->getId();
+        }
+
         $editForm = $this->createEditForm($entity);
+
+        //Si el evento tiene multicompetencia activo (y >1 competencia), los campos mapeados
+        //'idcompetencia'/'idcategoria' se reemplazan por el campo no mapeado 'idcompetencias'
+        //(checkboxes) ANTES de procesar el submit, igual que en createAction.
+        $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')
+                ->findBy(array('idevento' => $entity->getIdevento()->getId()));
+        $multicompetenciaActivo = $entity->getIdevento()->getMulticompetencia() && count($competencias) > 1;
+        if ($multicompetenciaActivo) {
+            if ($editForm->has('idcompetencia')) {
+                $editForm->remove('idcompetencia');
+            }
+            if ($editForm->has('idcategoria')) {
+                $editForm->remove('idcategoria');
+            }
+            $editForm->add('idcompetencias', 'entity', array(
+                'class' => 'FraterSoftPiaWebBundle:Competencia',
+                'choices' => $competencias,
+                'multiple' => true,
+                'expanded' => true,
+                'mapped' => false,
+                'required' => true,
+            ));
+        }
+
         $editForm->handleRequest($request);
 
+        //En multicompetencia debe marcarse al menos una modalidad
+        if ($multicompetenciaActivo) {
+            $seleccion = $editForm->get('idcompetencias')->getData();
+            if ($seleccion === null || count($seleccion) === 0) {
+                $this->get('session')->getFlashBag()->add('error',
+                    'Debe seleccionar al menos una ' . ($entity->getIdevento()->getTitulocompetencias() ?: 'Competencia'));
+                return $this->redirect($this->generateUrl('inscrito_edit', array('id' => $id)));
+            }
+        }
+
+        //Valida cupos: solo se rechaza si se AGREGA una competencia (que antes no tenia) y
+        //esa competencia ya llego a su cupo maximo.
+        if ($multicompetenciaActivo) {
+            $seleccionCupo = $editForm->get('idcompetencias')->getData();
+            $seleccionCupo = ($seleccionCupo !== null) ? $seleccionCupo->toArray() : array();
+        } else {
+            $seleccionCupo = $entity->getIdcompetencia() ? array($entity->getIdcompetencia()) : array();
+        }
+        $nuevasCompetencias = array();
+        foreach ($seleccionCupo as $comp) {
+            if ($comp && !in_array($comp->getId(), $competenciasPreviasIds)) {
+                $nuevasCompetencias[] = $comp;
+            }
+        }
+        $llenasEdit = $this->competenciasSinCupo($nuevasCompetencias, $entity->getIdevento()->getId(), $em);
+        if (!empty($llenasEdit)) {
+            $this->get('session')->getFlashBag()->add('error',
+                'Ya no hay cupos disponibles en: ' . implode(', ', $llenasEdit));
+            return $this->redirect($this->generateUrl('inscrito_edit', array('id' => $id)));
+        }
+
         if ($editForm->isValid()) {
-            
+
             if($editForm->getdata()->getIdevento()->getProceso()==2)
                 $editForm->getdata()->setIdpago(null);
-                
+
+            if ($multicompetenciaActivo) {
+                //Reconstruye el detalle InscritoCompetencia y recalcula el total; actualiza
+                //tambien el precio del Pago asociado para mantener la consistencia.
+                $total = $this->reconstruirInscritoCompetencias(
+                    $entity,
+                    $editForm->get('idcompetencias')->getData(),
+                    $request,
+                    $em
+                );
+                if (count($entity->getPagos()) > 0) {
+                    $entity->getPagos()[0]->setPrecio($total);
+                }
+            }
+
             $em->flush();
+
+            //Notifica al organizador si alguna competencia llego a su cupo maximo
+            if ($multicompetenciaActivo) {
+                $competenciasInscritas = $editForm->get('idcompetencias')->getData();
+                $competenciasInscritas = ($competenciasInscritas !== null) ? $competenciasInscritas->toArray() : array();
+            } else {
+                $competenciasInscritas = $entity->getIdcompetencia() ? array($entity->getIdcompetencia()) : array();
+            }
+            $this->notificarCupoMaximoCompetencias($entity, $competenciasInscritas, $em);
 
             $this->get('session')->getFlashBag()->add('success', 'Guardado satisfactoriamente');
             return $this->redirect($this->generateUrl('inscrito_edit', array('id' => $id)));
         }
 
-        return $this->render('FraterSoftPiaWebBundle:Inscrito:edit.html.twig', array(
-                    'entity' => $entity,
-                    'edit_form' => $editForm->createView(),
-        ));
+        //En fallo de validacion se vuelve a la pantalla de edicion (editAction rearma todas
+        //las variables que el twig necesita).
+        $this->get('session')->getFlashBag()->add('error', 'No se pudo guardar, verifique los datos');
+        return $this->redirect($this->generateUrl('inscrito_edit', array('id' => $id)));
     }
 
     /**
@@ -1923,6 +2478,128 @@ class InscritoController extends commonPIAClass {
         ));
     }
 
+    /**
+     * Restaura una inscripcion anulada: cambia el status de 0 a 1.
+     */
+    public function restaurarAction($id) {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->find($id);
+
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Inscrito entity.');
+        }
+
+        if ($entity->getStatus() == 0) {
+            $entity->setStatus(1);
+            $em->flush();
+            $texto = 'Inscripcion Nro ' . $entity->getSecuencia() . ' restaurada';
+        } else {
+            $texto = 'La inscripcion Nro ' . $entity->getSecuencia() . ' no estaba anulada';
+        }
+
+        $referer = $this->getRequest()->headers->get('referer');
+        return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
+                    'url' => $referer ?: $this->generateUrl('inscrito_lista_anulados', array('idevento' => $entity->getIdevento()->getId())),
+                    'texto' => $texto,
+                    'tema' => $entity->getIdevento()->getTema(),
+        ));
+    }
+
+    /**
+     * Tablero (dashboard) del evento: resumen de preinscritos / inscritos / anulados,
+     * recaudado y cupos por competencia. Es la pantalla inicial al abrir un evento.
+     */
+    public function tableroAction($idevento) {
+        $em = $this->getDoctrine()->getManager();
+        $email = $this->getUser()->getEmail();
+
+        $nivel_seguridad = $this->getNivelSeguridad($em, $email, $idevento);
+
+        $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idevento);
+        if (!$evento) {
+            throw $this->createNotFoundException('Evento no encontrado');
+        }
+
+        $resumen = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
+                ->resumenTablero($idevento);
+
+        $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')
+                ->findBy(array('idevento' => $idevento), array('descripcion' => 'ASC'));
+        $cuposcompetencia = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')
+                ->cantidadPorCompetencia($idevento);
+
+        $cupos = array();
+        foreach ($competencias as $comp) {
+            $cupos[] = array(
+                'descripcion' => $comp->getDescripcion(),
+                'inscritos' => isset($cuposcompetencia[$comp->getId()]) ? $cuposcompetencia[$comp->getId()] : 0,
+                'cupomaximo' => $comp->getCupomaximo(),
+            );
+        }
+
+        $request = $this->container->get('request');
+        $this->get('session')->set('urlreturn', $request->getRequestUri());
+
+        return $this->render('FraterSoftPiaWebBundle:Inscrito:tablero.html.twig', array(
+                    'idevento' => $idevento,
+                    'email' => $email,
+                    'nombreevento' => $evento->getNombre(),
+                    'titulocompetencias' => $evento->getTitulocompetencias(),
+                    'nivel_seguridad' => $nivel_seguridad,
+                    'resumen' => $resumen,
+                    'cupos' => $cupos,
+        ));
+    }
+
+    /**
+     * Elimina fisicamente TODAS las inscripciones del evento junto con sus competencias
+     * (InscritoCompetencia) y sus pagos. Sirve para "arrancar el evento desde cero".
+     * Irreversible. Solo nivel_seguridad 1 (admin del evento). Requiere confirmar
+     * escribiendo el nombre exacto del evento.
+     */
+    public function limpiarInscritosAction($idevento) {
+        $em = $this->getDoctrine()->getManager();
+        $email = $this->getUser()->getEmail();
+
+        $evento = $em->getRepository('FraterSoftPiaWebBundle:Evento')->find($idevento);
+        if (!$evento) {
+            throw $this->createNotFoundException('Evento no encontrado');
+        }
+
+        $nivel_seguridad = $this->getNivelSeguridad($em, $email, $idevento);
+        if ($nivel_seguridad != 1) {
+            $this->get('session')->getFlashBag()->add('error', 'No tiene permisos para limpiar los inscritos de este evento.');
+            return $this->redirect($this->generateUrl('inscrito_tablero', array('idevento' => $idevento)));
+        }
+
+        $confirmacion = trim($this->getRequest()->request->get('confirmacion', ''));
+        if ($confirmacion !== $evento->getNombre()) {
+            $this->get('session')->getFlashBag()->add('error', 'La confirmacion no coincide con el nombre del evento. No se elimino nada.');
+            return $this->redirect($this->generateUrl('inscrito_tablero', array('idevento' => $idevento)));
+        }
+
+        $conn = $em->getConnection();
+        // El id de evento supera el rango de un entero de 32 bits: se sanea a solo
+        // digitos y se usa como string para no truncarlo en PHP de 32 bits.
+        $idevento = preg_replace('/[^0-9]/', '', $idevento);
+        $sub = '(SELECT id FROM piaaccess.tminscritos WHERE idevento = ' . $idevento . ')';
+
+        $conn->beginTransaction();
+        try {
+            $conn->executeUpdate('DELETE FROM piaaccess.tmpagos WHERE idinscrito IN ' . $sub);
+            $conn->executeUpdate('DELETE FROM piaaccess.trinscritoscompetencias WHERE idinscrito IN ' . $sub);
+            $inscritosBorrados = $conn->executeUpdate('DELETE FROM piaaccess.tminscritos WHERE idevento = ' . $idevento);
+            $conn->commit();
+        } catch (\Exception $e) {
+            $conn->rollback();
+            $this->get('session')->getFlashBag()->add('error', 'Error al limpiar los inscritos: ' . $e->getMessage());
+            return $this->redirect($this->generateUrl('inscrito_tablero', array('idevento' => $idevento)));
+        }
+
+        $this->get('session')->getFlashBag()->add('success', 'Se eliminaron ' . $inscritosBorrados . ' inscripciones del evento, con sus competencias y pagos. El evento quedo listo para arrancar desde cero.');
+        return $this->redirect($this->generateUrl('inscrito_tablero', array('idevento' => $idevento)));
+    }
+
     public function buscarPrecioAjaxAction() {
         $encoders = array(new XmlEncoder(), new JsonEncoder());
         $normalizers = array(new GetSetMethodNormalizer());
@@ -1945,7 +2622,38 @@ class InscritoController extends commonPIAClass {
         }
         return new response(0);
     }
-    
+
+    /**
+     * Devuelve el precio configurado a nivel de EVENTO para la moneda dada, como
+     * {"precio": <numero>} (0 si no hay). Usado por el formulario multicompetencia.
+     */
+    public function precioeventoAjaxAction() {
+        $idevento = $this->get('request')->query->get('idevento');
+        $idmoneda = $this->get('request')->query->get('idmoneda');
+        $monto = 0;
+        if ($idevento && $idmoneda) {
+            $monto = $this->buscarPrecioEvento($idevento, $idmoneda);
+        }
+        return new Response(json_encode(array('precio' => $monto)));
+    }
+
+    /**
+     * Devuelve el precio ESPECIFICO de una competencia/categoria (sin caer al precio de
+     * evento) para la moneda dada, como {"precio": <numero>} (0 si no tiene precio propio).
+     * Usado por el formulario multicompetencia para saber si cada modalidad tiene tarifa
+     * propia o debe usar la tarifa base del evento.
+     */
+    public function preciocompetenciaAjaxAction() {
+        $idcompetencia = $this->get('request')->query->get('idcompetencia');
+        $idcategoria = $this->get('request')->query->get('idcategoria');
+        $idmoneda = $this->get('request')->query->get('idmoneda');
+        $monto = 0;
+        if ($idcompetencia && $idmoneda) {
+            $monto = $this->buscarPrecioCompetenciaCategoria($idcompetencia, $idcategoria, $idmoneda);
+        }
+        return new Response(json_encode(array('precio' => $monto)));
+    }
+
     /**
      * Finds and displays a Inscrito entity.
      *
@@ -2358,8 +3066,8 @@ class InscritoController extends commonPIAClass {
 
                 if(!$inscrito){ //si no esta inscrito
                     //Validar si hay cupos
-                    $cantidad=$em->getRepository("FraterSoftPiaWebBundle:Inscrito")->cantidad($idevento);                    
-                    if($evento->getCupocontrol() && $evento->getCupomaximo()<$cantidad){
+                    $cantidad=$em->getRepository("FraterSoftPiaWebBundle:Inscrito")->cantidad($idevento);
+                    if($evento->getCupocontrol() && $cantidad >= $evento->getCupomaximo()){
                         return $this->render('FraterSoftPiaWebBundle:Inscrito:reporteimport.html.twig', array(
                             'cantidad_registros'=>count($csv),
                             'competidores_i'=>$count_competidores_i,
@@ -2470,7 +3178,8 @@ class InscritoController extends commonPIAClass {
                     'atributos' => $atributos,
                     'idevento' => $idevento,
                     'email' => $email,
-                    'nombreevento'=>$atributos[0]->getIdEvento()->getNombre()
+                    'nombreevento'=>$atributos[0]->getIdEvento()->getNombre(),
+                    'titulocompetencias'=>$atributos[0]->getIdEvento()->getTitulocompetencias()
         ));
     }    
     

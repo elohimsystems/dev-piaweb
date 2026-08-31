@@ -198,9 +198,63 @@
         #titulogrupos{
             text-align: center;
             display:none;
-        }    
+        }
         {#% endif %#}
-        
+
+        {% if multicompetenciaActivo %}
+        .multicompetencia-campo {
+            margin-top: 5px;
+        }
+        .multicompetencia-tabla {
+            border-collapse: collapse;
+            table-layout: fixed;
+            width: 100%;
+        }
+        .multicompetencia-tabla th,
+        .multicompetencia-tabla td {
+            text-align: left;
+            vertical-align: middle;
+            overflow: hidden;
+        }
+        .multicompetencia-tabla th:first-child,
+        .multicompetencia-tabla td:first-child {
+            /* Mismo ancho que las etiquetas del formulario del competidor, para que la
+               columna de categorias quede alineada con los inputs del competidor */
+            width: 180px;
+            padding: 2px 0;
+        }
+        .multicompetencia-tabla th:last-child,
+        .multicompetencia-tabla td:last-child {
+            width: auto;
+            padding: 2px 0;
+        }
+        .multicompetencia-tabla th {
+            font-weight: normal;
+            text-decoration: underline;
+            padding-bottom: 4px;
+        }
+        .multicompetencia-fila label {
+            display: inline-block !important;
+            width: auto !important;
+            text-transform: none !important;
+            margin-left: 4px;
+        }
+        .multicompetencia-item select {
+            height: 21px;
+            width: 204px;
+            max-width: 100%;
+        }
+        .multicompetencia-item span[id^="precio_comp_"] {
+            display: none;
+        }
+        #multicompetencia-total {
+            display: none;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+        {% endif %}
+
+
     @media screen and (max-width: 547px){
         form{
             font-size: 0.9em;
@@ -248,7 +302,50 @@
             <div>Agregre Integrante <b>N° {# {integrante} #}</b> {#% if integrante > 1 %#}o Edite el Grupo{#% endif %#}</div>
         </div>   
         {{ form_start(edit_form,{'attr': {'id': 'formulario'}}) }}
-        {{ form_end(edit_form) }} 
+        {% if multicompetenciaActivo %}
+        {{ form_row(edit_form.idevento) }}
+        {{ form_errors(edit_form.idpia) }}
+        {{ form_widget(edit_form.idpia) }}
+        <div class="multicompetencia-campo">
+            <table class="multicompetencia-tabla">
+                <thead>
+                    <tr>
+                        <th>{{ entity.idevento.titulocompetencias|default('Competencias') }}</th>
+                        <th>Categoria</th>
+                    </tr>
+                </thead>
+                <tbody id="{{ edit_form.idcompetencias.vars.id }}">
+                    {% for child in edit_form.idcompetencias %}
+                    {% set seleccionada = categoriasActuales[child.vars.value] is defined %}
+                    {% set catActual = seleccionada ? categoriasActuales[child.vars.value] : null %}
+                    <tr class="multicompetencia-fila">
+                        <td>
+                            {{ form_widget(child) }}
+                            {{ form_label(child) }}
+                        </td>
+                        <td>
+                            <span class="multicompetencia-item" id="multicompetencia-item-{{ child.vars.value }}"
+                                  style="{% if not seleccionada %}display:none;{% endif %}">
+                                <select id="idcategoria_select_{{ child.vars.value }}" name="idcategoria_{{ child.vars.value }}"
+                                        data-categoria-actual="{{ catActual ? catActual.id : '' }}">
+                                    <option value="">Seleccione una Categoría</option>
+                                    {% if catActual %}
+                                    <option value="{{ catActual.id }}" selected>{{ catActual.descripcion }}</option>
+                                    {% endif %}
+                                </select>
+                                <span id="precio_comp_{{ child.vars.value }}"></span>
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div id="multicompetencia-total">
+                <strong>Total: </strong><span id="multicompetencia-total-valor">0</span>
+            </div>
+        </div>
+        {% endif %}
+        {{ form_end(edit_form) }}
         <div id="uploadimage">    
             <div id="fine-uploader"></div>  
             {{ include("FraterSoftPiaWebBundle:Evento:template-fineuploader.html.twig") }} 
@@ -290,12 +387,17 @@
         
         var precios=[];
         function buscaCategorias() {
-        {% if edit_form.idcategoria is defined %}
+        {% if multicompetenciaActivo %}
+            //En modo multicompetencia la categoria se carga por cada competencia marcada
+            $('#{{ edit_form.idcompetencias.vars.id }} input[type=checkbox]:checked').each(function () {
+                cargaCategoriasMulti($(this).val());
+            });
+        {% elseif edit_form.idcategoria is defined %}
             //Busca las categorias segun los atributos configurados
             if(!$('#{{ edit_form.idcompetencia.vars.id }}').val()){
                 alert('Debe seleccionar una Competencia');
                 return null;
-            }            
+            }
             //Busca las categorias segun los atributos configurados
             var criterios = "idevento=" + $('#{{ edit_form.idevento.vars.id }}').val()
                     + "&idcompetencia=" + $('#{{ edit_form.idcompetencia.vars.id }}').val() + "&";
@@ -349,11 +451,177 @@
                                 }
                             }
                     );
-        {% endif %}                    
+        {% endif %}
         }
 
+        {% if multicompetenciaActivo %}
+        //=================== Modo multicompetencia ===================
+        //Carga la categoria aplicable para UNA competencia marcada; si se pasa "preselect"
+        //deja esa categoria seleccionada y busca su precio (usado al precargar la edicion).
+        function cargaCategoriasMulti(idComp, preselect) {
+            var criterios = "idevento=" + $('#{{ edit_form.idevento.vars.id }}').val() + "&idcompetencia=" + idComp + "&";
+        {% for atributo in atributos %}
+            var vc{{ loop.index }} = $("#fratersoft_piawebbundle_inscrito_idpia_{{ atributo.idatributo.nombre|lower }}").val();
+            //Sin todos los criterios completos el endpoint de categorias falla: se aborta
+            if (!vc{{ loop.index }} || vc{{ loop.index }} == '0')
+                return null;
+            criterios += "{{ atributo.idatributo.nombre|lower }}=" + vc{{ loop.index }};
+            {% if not loop.last %}
+            criterios += "&";
+            {% endif %}
+        {% endfor %}
+            $.ajax({
+                type: "GET",
+                data: criterios,
+                url: "{{ path('inscrito_categorias') }}",
+                dataType: "json",
+                success: function (datos) {
+                    var $sel = $("#idcategoria_select_" + idComp);
+                    $sel.empty();
+                    if (datos.length == 0) {
+                        alert("No existe una Categoria aplicable para una de las modalidades seleccionadas");
+                        return null;
+                    }
+                    if (datos.length > 1)
+                        $sel.append("<option value=''>Seleccione una Categoría</option>");
+                    $.each(datos, function (key, value) {
+                        $sel.append($('<option>', {value: value.id, text: value.descripcion}));
+                    });
+                    if (preselect) {
+                        $sel.val(preselect);
+                        buscaPrecioMulti(idComp, preselect);
+                    } else if (datos.length == 1) {
+                        $sel.val(datos[0].id);
+                        buscaPrecioMulti(idComp, datos[0].id);
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert("PIA Ajax Error: " + jqXHR.responseText);
+                }
+            });
+        }
+
+        //Precio por evento (tarifa base) para la moneda seleccionada. Se muestra al cargar
+        //la pagina y se cobra UNA sola vez si alguna modalidad no tiene precio propio.
+        var precioEventoMulti = 0;
+
+        //Carga el precio por evento para la moneda seleccionada
+        function cargarPrecioEventoMulti() {
+            var idmon = $("#formulario input[type='radio']:checked").val();
+            if (!idmon) return;
+            $.ajax({
+                type: "GET",
+                data: { idevento: $('#{{ edit_form.idevento.vars.id }}').val(), idmoneda: idmon },
+                url: "{{ path('inscrito_precio_evento') }}",
+                dataType: "json",
+                success: function (d) {
+                    precioEventoMulti = (d && d.precio) ? parseFloat(d.precio) || 0 : 0;
+                    recalcularTotalMulticompetencia();
+                }
+            });
+        }
+
+        //Busca el precio ESPECIFICO de UNA modalidad (de competencia o categoria; 0 si no
+        //tiene precio propio y debe usar la tarifa base del evento).
+        function buscaPrecioMulti(idComp, idCategoria) {
+            var idmon = $("#formulario input[type='radio']:checked").val();
+            if (!idmon) return;
+            $.ajax({
+                type: "GET",
+                data: {
+                    idcompetencia: idComp,
+                    idcategoria: idCategoria || '',
+                    idmoneda: idmon
+                },
+                url: "{{ path('inscrito_precio_competencia') }}",
+                dataType: "json",
+                success: function (d) {
+                    var monto = (d && d.precio) ? parseFloat(d.precio) || 0 : 0;
+                    $("#precio_comp_" + idComp).data('precio', monto)
+                        .text(monto > 0 ? monto.toFixed(2) : '(tarifa base)');
+                    recalcularTotalMulticompetencia();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    alert("PIA Ajax Error: " + jqXHR.responseText);
+                }
+            });
+        }
+
+        //Precio total = suma de los precios especificos de las modalidades marcadas + la
+        //tarifa base del evento UNA sola vez (solo si alguna modalidad no tiene precio propio).
+        //Sin modalidades marcadas se muestra la tarifa base del evento.
+        function recalcularTotalMulticompetencia() {
+            var $marcadas = $('#{{ edit_form.idcompetencias.vars.id }} input[type=checkbox]:checked');
+            var total = 0;
+            if ($marcadas.length === 0) {
+                total = precioEventoMulti;
+            } else {
+                var sumaEspecificos = 0;
+                var algunaSinPrecio = false;
+                $marcadas.each(function () {
+                    var v = $('#precio_comp_' + $(this).val()).data('precio');
+                    v = (v != null && v !== '') ? (parseFloat(v) || 0) : 0;
+                    if (v > 0) sumaEspecificos += v;
+                    else algunaSinPrecio = true;
+                });
+                total = sumaEspecificos + (algunaSinPrecio ? precioEventoMulti : 0);
+            }
+            $("#multicompetencia-total-valor").text(total.toFixed(2));
+            {% if edit_form.pagos[0].precio is defined %}
+            $("#{{ edit_form.pagos[0].precio.vars.id }}").val(total.toFixed(2));
+            {% endif %}
+        }
+        {% endif %}
+
         $().ready(function () {
-            
+
+            //Antes de guardar, si se AGREGA una competencia (que el inscrito no tenia),
+            //valida por AJAX que aun tenga cupo disponible.
+            var competenciasIniciales = [];
+            {% if multicompetenciaActivo %}
+            $('#{{ edit_form.idcompetencias.vars.id }} input[type=checkbox]:checked').each(function () { competenciasIniciales.push($(this).val()); });
+            {% elseif edit_form.idcompetencia is defined %}
+            competenciasIniciales.push($('#{{ edit_form.idcompetencia.vars.id }}').val());
+            {% endif %}
+            var cupoValidado = false;
+            $("form#formulario").submit(function (event) {
+                if (cupoValidado) { return; }
+                var seleccion = [];
+                {% if multicompetenciaActivo %}
+                $('#{{ edit_form.idcompetencias.vars.id }} input[type=checkbox]:checked').each(function () { seleccion.push($(this).val()); });
+                {% elseif edit_form.idcompetencia is defined %}
+                var vComp = $('#{{ edit_form.idcompetencia.vars.id }}').val();
+                if (vComp) { seleccion.push(vComp); }
+                {% endif %}
+                var nuevas = [];
+                for (var i = 0; i < seleccion.length; i++) {
+                    if (competenciasIniciales.indexOf(seleccion[i]) === -1) { nuevas.push(seleccion[i]); }
+                }
+                if (nuevas.length === 0) { return; }
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                $.ajax({
+                    type: "GET",
+                    url: "{{ path('inscrito_cupo_competencias') }}",
+                    data: { idevento: $('#{{ edit_form.idevento.vars.id }}').val(), idcompetencias: nuevas.join(',') },
+                    dataType: "json",
+                    success: function (d) {
+                        if (d && d.llenas && d.llenas.length > 0) {
+                            var nombres = [];
+                            for (var j = 0; j < d.llenas.length; j++) { nombres.push(d.llenas[j].descripcion); }
+                            alert("Ya no hay cupos disponibles en: " + nombres.join(', ') + ".");
+                        } else {
+                            cupoValidado = true;
+                            $("form#formulario").submit();
+                        }
+                    },
+                    error: function () {
+                        cupoValidado = true;
+                        $("form#formulario").submit();
+                    }
+                });
+            });
+
             $("#{{ edit_form.pagos[0].info.vars.id }}").removeAttr("required");
             $("#{{ edit_form.pagos[0].idbanco.vars.id }}").removeAttr("required");
             {# {% if idgrupo is not null %} #}
@@ -390,6 +658,7 @@
                 }            
             });
             
+            {% if edit_form.idcompetencia is defined %}
             var competenciasgrupo={{null|json_encode|raw}};
             if($.inArray($("#{{ edit_form.idcompetencia.vars.id }}").val(),competenciasgrupo)!=-1){
                 $("#{{edit_form.idcategoria.vars.id}}").prop("disabled", true);
@@ -432,9 +701,10 @@
                         buscaCategorias();
                     }
                     $("#{{ edit_form.submit.vars.id }}").html('<span class="ui-button-text">Inscribir</span>');
-                }                
-            });                      
-            
+                }
+            });
+            {% endif %}
+
             {% elseif entity.idevento.proceso == 2 %}
                 $("form#formulario" ).submit(function( event ) {
                     {% if edit_form.idpia.email is defined and edit_form.idpia.emailpersonal is defined %}
@@ -565,10 +835,52 @@
             buscaCategorias();
         }); #}
 
+        {% if multicompetenciaActivo %}
+        //Al marcar/desmarcar una modalidad se carga/limpia su categoria y precio
+        $('#{{ edit_form.idcompetencias.vars.id }}').on('change', 'input[type=checkbox]', function () {
+            var idComp = $(this).val();
+            if ($(this).is(':checked')) {
+                $('#multicompetencia-item-' + idComp).show();
+                //Muestra ya el precio de la modalidad (competencia o, si no tiene, evento)
+                buscaPrecioMulti(idComp, '');
+                cargaCategoriasMulti(idComp);
+            } else {
+                $('#multicompetencia-item-' + idComp).hide();
+                $('#idcategoria_select_' + idComp).empty();
+                $('#precio_comp_' + idComp).removeData('precio').text('');
+                recalcularTotalMulticompetencia();
+            }
+        });
+        $(document).on('change', 'select[id^=idcategoria_select_]', function () {
+            var idComp = $(this).attr('id').replace('idcategoria_select_', '');
+            buscaPrecioMulti(idComp, $(this).val());
+        });
+
+        //Al cargar muestra el precio por evento para la moneda seleccionada
+        cargarPrecioEventoMulti();
+        //Precarga: la categoria guardada ya viene renderizada como <option selected> desde
+        //el servidor; aqui solo mostramos cada fila y calculamos su precio. Las categorias
+        //se recargan por AJAX unicamente si el usuario cambia un criterio o marca/desmarca.
+        $('#multicompetencia-total').show();
+        $('#{{ edit_form.idcompetencias.vars.id }} input[type=checkbox]:checked').each(function () {
+            var idComp = $(this).val();
+            $('#multicompetencia-item-' + idComp).show();
+            buscaPrecioMulti(idComp, $('#idcategoria_select_' + idComp).val() || '');
+        });
+        //Valida que se haya marcado al menos una modalidad antes de guardar
+        $("form#formulario").submit(function (event) {
+            if ($('#{{ edit_form.idcompetencias.vars.id }} input[type=checkbox]:checked').length === 0) {
+                alert("Debe seleccionar al menos una {{ entity.idevento.titulocompetencias|default('Competencia') }}");
+                event.preventDefault();
+                return false;
+            }
+        });
+        {% else %}
         $("#{{ edit_form.idcompetencia.vars.id }}").change(function () {
             buscaCategorias();
         });
-        
+        {% endif %}
+
         $("#{{ edit_form.idpia.idestado.vars.id }}").change(function () {
             
             if($('#{{ edit_form.idpia.idestado.vars.id }}').val() != 6){
@@ -708,6 +1020,14 @@
                 {{entity.idevento.id}},
                 $("#formulario input[type='radio']:checked").val()
             );
+            {% if multicompetenciaActivo %}
+            //Recalcula el precio por evento y el de cada modalidad marcada para la nueva moneda
+            cargarPrecioEventoMulti();
+            $('#{{ edit_form.idcompetencias.vars.id }} input[type=checkbox]:checked').each(function () {
+                var idComp = $(this).val();
+                buscaPrecioMulti(idComp, $('#idcategoria_select_' + idComp).val() || '');
+            });
+            {% else %}
             buscaPrecio({{entity.idevento.id}},
                 $('#{{ edit_form.idcompetencia.vars.id }}').val(),
                 $('#{{ edit_form.idcategoria.vars.id }}').val(),
@@ -715,6 +1035,7 @@
                 [],
                 $("#formulario input[type='radio']:checked").val()
             );
+            {% endif %}
         });
         
     });

@@ -12,13 +12,16 @@ class InscritoRepository extends EntityRepository
     {
         return $this->getEntityManager()
             ->createQuery(
-                'SELECT i,c,co,e,ca,ev,p FROM FraterSoftPiaWebBundle:Inscrito i '
+                'SELECT i,c,co,e,ca,ev,p,ic,icc,icca FROM FraterSoftPiaWebBundle:Inscrito i '
                     . 'LEFT JOIN i.pagos p '
-                    . 'JOIN i.idcompetencia c '
+                    . 'LEFT JOIN i.idcompetencia c '
                     . 'JOIN i.idpia co '
                     . 'JOIN co.idestado e '
-                    . 'JOIN i.idcategoria ca '                  
-                    . 'JOIN i.idevento ev '                  
+                    . 'LEFT JOIN i.idcategoria ca '
+                    . 'JOIN i.idevento ev '
+                    . 'LEFT JOIN i.competencias ic '
+                    . 'LEFT JOIN ic.idcompetencia icc '
+                    . 'LEFT JOIN ic.idcategoria icca '
                     . 'WHERE '
 //                        . 'i.idcompetencia=c '
 //                        . 'and i.idpia=co '
@@ -67,10 +70,10 @@ class InscritoRepository extends EntityRepository
                 'SELECT i,p,c,ca,co,es,b,fp '
                 . 'FROM FraterSoftPiaWebBundle:Inscrito i '
                     . 'LEFT JOIN i.pagos p '
-                    . 'JOIN i.idcompetencia c '
-                    . 'JOIN i.idcategoria ca '
-                    . 'JOIN i.idpia co '                    
-                    . 'LEFT JOIN co.idestado es '                    
+                    . 'LEFT JOIN i.idcompetencia c '
+                    . 'LEFT JOIN i.idcategoria ca '
+                    . 'JOIN i.idpia co '
+                    . 'LEFT JOIN co.idestado es '
                     . 'LEFT JOIN p.idbanco b '
                     . 'LEFT JOIN p.idformapago fp '
                     . 'WHERE '
@@ -78,33 +81,36 @@ class InscritoRepository extends EntityRepository
                         . 'and p.conciliado=true '
                         . 'and i.idevento=' . $idevento
                     . 'ORDER BY '
-                        . 'i.secuencia ASC'                    
+                        . 'i.secuencia ASC'
             )
             ->getResult();
-    }    
+    }
 
     public function listarConciliadasAjax($idevento)
     {
         return $this->getEntityManager()
             ->createQuery(
-                'SELECT i,p,c,ca,co,es,b,fp '
+                'SELECT i,p,c,ca,co,es,b,fp,ic,icc,icca '
                 . 'FROM FraterSoftPiaWebBundle:Inscrito i '
                     . 'LEFT JOIN i.pagos p '
-                    . 'JOIN i.idcompetencia c '
-                    . 'JOIN i.idcategoria ca '
-                    . 'JOIN i.idpia co '                    
-                    . 'LEFT JOIN co.idestado es '                    
+                    . 'LEFT JOIN i.idcompetencia c '
+                    . 'LEFT JOIN i.idcategoria ca '
+                    . 'JOIN i.idpia co '
+                    . 'LEFT JOIN co.idestado es '
                     . 'LEFT JOIN p.idbanco b '
                     . 'LEFT JOIN p.idformapago fp '
+                    . 'LEFT JOIN i.competencias ic '
+                    . 'LEFT JOIN ic.idcompetencia icc '
+                    . 'LEFT JOIN ic.idcategoria icca '
                     . 'WHERE '
                         . 'i.status=1 '
                         . 'and p.conciliado=true '
                         . 'and i.idevento=' . $idevento
                     . 'ORDER BY '
-                        . 'i.secuencia ASC'                    
+                        . 'i.secuencia ASC'
             )
             ->getArrayResult();
-    } 
+    }
     
     public function listarNoConciliadas($idevento)
     {
@@ -113,11 +119,10 @@ class InscritoRepository extends EntityRepository
                 'SELECT i,p,c FROM FraterSoftPiaWebBundle:Inscrito i '
                     . 'LEFT JOIN '
                         . 'i.idpago p '
-                    . 'JOIN '
+                    . 'LEFT JOIN '
                         . 'i.idcompetencia c '
                     . 'WHERE '
                         . '(i.idpago=p or i.idpago is null)'
-                        . 'and i.idcompetencia=c '
                         . 'and i.status = 1 '
                         . 'and (p.conciliado=false or p.conciliado is null) '
                         . 'and (p.tipo!=\'3\' or p.tipo is null)'
@@ -135,22 +140,22 @@ class InscritoRepository extends EntityRepository
                 'SELECT i,p,c,ca,co,es,b,fp '
                 . 'FROM FraterSoftPiaWebBundle:Inscrito i '
                     . 'LEFT JOIN i.pagos p '
-                    . 'JOIN i.idcompetencia c '
-                    . 'JOIN i.idcategoria ca '
-                    . 'JOIN i.idpia co '                    
-                    . 'JOIN co.idestado es '                    
+                    . 'LEFT JOIN i.idcompetencia c '
+                    . 'LEFT JOIN i.idcategoria ca '
+                    . 'JOIN i.idpia co '
+                    . 'JOIN co.idestado es '
                     . 'LEFT JOIN p.idbanco b '
                     . 'LEFT JOIN p.idformapago fp '
                     . 'WHERE '
                         . 'i.status = 1 '
                         . 'and (p.conciliado=false or p.conciliado is null) '
                         . 'and (p.idformapago!=3 or p.idformapago is null) '
-                        . 'and i.idevento=' . $idevento . ' ' 
+                        . 'and i.idevento=' . $idevento . ' '
                     . 'ORDER BY '
-                        . 'i.secuencia ASC'                 
+                        . 'i.secuencia ASC'
             )
             ->getArrayResult();
-    }     
+    }
 
     public function listarRegistrosAjax($idevento, $email)
     {
@@ -159,18 +164,16 @@ class InscritoRepository extends EntityRepository
                 'SELECT i,p,c,co,ca,es FROM FraterSoftPiaWebBundle:Inscrito i '
                     . 'LEFT JOIN '
                         . 'i.idpago p '
-                    . 'JOIN '
+                    . 'LEFT JOIN '
                         . 'i.idcompetencia c '
-                    . 'JOIN '
+                    . 'LEFT JOIN '
                         . 'i.idcategoria ca '
                     . 'JOIN '
-                        . 'i.idpia co '                    
+                        . 'i.idpia co '
                     . 'JOIN '
-                        . 'co.idestado es '                    
+                        . 'co.idestado es '
                     . 'WHERE '
                         . '(i.idpago=p or i.idpago is null) '
-                        . 'and i.idcompetencia=c '
-                        . 'and i.idcategoria=ca '
                         . 'and i.idpia=co '
                         . 'and co.idestado=es '
                         . 'and i.status = 1 '
@@ -191,11 +194,10 @@ class InscritoRepository extends EntityRepository
                 'SELECT i,p,c FROM FraterSoftPiaWebBundle:Inscrito i '
                     . 'JOIN '
                         . 'i.idpago p '
-                    . 'JOIN '
+                    . 'LEFT JOIN '
                         . 'i.idcompetencia c '
                     . 'WHERE '
                         . 'i.idpago=p '
-                        . 'and i.idcompetencia=c '
                         . 'and i.status = 1 '
                         . 'and p.tipo=\'3\''
                         . 'and i.idevento=' . $idevento
@@ -239,24 +241,116 @@ class InscritoRepository extends EntityRepository
             ->getResult();
     }  
     
+    /**
+     * Cupo asignado del evento para el control de cupos: preinscritos + inscritos.
+     * NO cuenta las inscripciones anuladas (status = 0). Es lo que se compara contra
+     * Evento.cupomaximo, con el mismo criterio que cantidadPorCompetencia().
+     */
     public function cantidad($idevento)
     {
         return $this->getEntityManager()
             ->createQuery(
                 'SELECT count(i) FROM FraterSoftPiaWebBundle:Inscrito i '
                     . 'WHERE '
-                        . 'i.status = 1 '
+                        . 'i.status <> 0 '
                         . 'and i.idevento=' . $idevento
             )
             ->getResult()[0][1];
-    }      
-    
+    }
+
+    /**
+     * Cantidad de inscritos por competencia del evento, para el control de cupos.
+     * NO cuenta las inscripciones anuladas (status = 0). Contempla tanto los inscritos
+     * de una sola competencia (Inscrito.idcompetencia) como los multicompetencia
+     * (InscritoCompetencia).
+     *
+     * @return array  mapa  idcompetencia => cantidad
+     */
+    public function cantidadPorCompetencia($idevento)
+    {
+        $em = $this->getEntityManager();
+        // Los ids de evento superan el rango de un entero de 32 bits: se sanea a
+        // solo digitos y se usa como string para no truncarlo en PHP de 32 bits.
+        $idevento = preg_replace('/[^0-9]/', '', $idevento);
+        $mapa = array();
+
+        $simples = $em->createQuery(
+                'SELECT c.id as idcompetencia, count(i.id) as cantidad '
+                . 'FROM FraterSoftPiaWebBundle:Inscrito i JOIN i.idcompetencia c '
+                . 'WHERE i.status <> 0 AND i.idevento = ' . $idevento . ' '
+                . 'GROUP BY c.id'
+            )->getResult();
+        foreach ($simples as $fila) {
+            $mapa[$fila['idcompetencia']] = (int) $fila['cantidad'];
+        }
+
+        $multi = $em->createQuery(
+                'SELECT icc.id as idcompetencia, count(ic.id) as cantidad '
+                . 'FROM FraterSoftPiaWebBundle:InscritoCompetencia ic '
+                . 'JOIN ic.idinscrito i JOIN ic.idcompetencia icc '
+                . 'WHERE i.status <> 0 AND i.idevento = ' . $idevento . ' '
+                . 'GROUP BY icc.id'
+            )->getResult();
+        foreach ($multi as $fila) {
+            $id = $fila['idcompetencia'];
+            $mapa[$id] = (isset($mapa[$id]) ? $mapa[$id] : 0) + (int) $fila['cantidad'];
+        }
+
+        return $mapa;
+    }
+
+
+    /**
+     * Resumen para el Tablero del evento.
+     *  - inscritos:    inscripciones activas (status 1) con al menos un pago conciliado
+     *  - preinscritos: inscripciones activas (status 1) sin pago conciliado
+     *  - anulados:     inscripciones anuladas (status 0)
+     *  - recaudado:    suma de montos de los pagos conciliados de inscripciones activas
+     *
+     * @return array  claves: inscritos, preinscritos, anulados, recaudado
+     */
+    public function resumenTablero($idevento)
+    {
+        $em = $this->getEntityManager();
+        // Ver nota en cantidadPorCompetencia(): id de evento fuera del rango de 32 bits.
+        $idevento = preg_replace('/[^0-9]/', '', $idevento);
+
+        $activos = (int) $em->createQuery(
+                'SELECT count(i.id) FROM FraterSoftPiaWebBundle:Inscrito i '
+                . 'WHERE i.status = 1 AND i.idevento = ' . $idevento
+            )->getSingleScalarResult();
+
+        $inscritos = (int) $em->createQuery(
+                'SELECT count(DISTINCT i.id) FROM FraterSoftPiaWebBundle:Inscrito i '
+                . 'JOIN i.pagos p '
+                . 'WHERE i.status = 1 AND p.conciliado = true AND i.idevento = ' . $idevento
+            )->getSingleScalarResult();
+
+        $anulados = (int) $em->createQuery(
+                'SELECT count(i.id) FROM FraterSoftPiaWebBundle:Inscrito i '
+                . 'WHERE i.status = 0 AND i.idevento = ' . $idevento
+            )->getSingleScalarResult();
+
+        $recaudado = $em->createQuery(
+                'SELECT COALESCE(SUM(p.monto), 0) FROM FraterSoftPiaWebBundle:Pago p '
+                . 'JOIN p.idinscrito i '
+                . 'WHERE i.status = 1 AND p.conciliado = true AND i.idevento = ' . $idevento
+            )->getSingleScalarResult();
+
+        return array(
+            'inscritos'    => $inscritos,
+            'preinscritos' => max($activos - $inscritos, 0),
+            'anulados'     => $anulados,
+            'recaudado'    => (float) $recaudado,
+        );
+    }
+
     public function inscritosPorCompetencia($idevento)
     {
         return $this->getEntityManager()
             ->createQuery(
                 'SELECT c.descripcion, count(i) as cantidad FROM FraterSoftPiaWebBundle:Inscrito i '
-                    . ' JOIN'
+                    . ' LEFT JOIN'
                         . ' i.idcompetencia c'
                     . ' WHERE'
                         . ' i.status = 1 '
@@ -320,7 +414,7 @@ class InscritoRepository extends EntityRepository
         return $this->getEntityManager()
             ->createQuery(
                 'SELECT c.descripcion, p.sexo, count(i) as cantidad FROM FraterSoftPiaWebBundle:Inscrito i '
-                    . ' JOIN'
+                    . ' LEFT JOIN'
                         . ' i.idcategoria c'
                     . ' JOIN'
                         . ' i.idpia p'                    
@@ -439,19 +533,19 @@ class InscritoRepository extends EntityRepository
                 'SELECT i,p,c,ca,co,es,b,fp '
                 . 'FROM FraterSoftPiaWebBundle:Inscrito i '
                     . 'LEFT JOIN i.pagos p '
-                    . 'JOIN i.idcompetencia c '
-                    . 'JOIN i.idcategoria ca '
-                    . 'JOIN i.idpia co '                    
-                    . 'JOIN co.idestado es '                    
+                    . 'LEFT JOIN i.idcompetencia c '
+                    . 'LEFT JOIN i.idcategoria ca '
+                    . 'JOIN i.idpia co '
+                    . 'JOIN co.idestado es '
                     . 'LEFT JOIN p.idbanco b '
                     . 'LEFT JOIN p.idformapago fp '
                     . 'WHERE '
                         . 'i.idevento=' . $idevento
                     . 'ORDER BY '
-                        . 'i.secuencia ASC'                    
+                        . 'i.secuencia ASC'
             )
             ->getArrayResult();
-    }   
+    }
     
     public function estadisticas($idevento,$entidad_atributo)
     {

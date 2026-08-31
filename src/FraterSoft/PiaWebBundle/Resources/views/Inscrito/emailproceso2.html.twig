@@ -47,8 +47,18 @@
             <tr><th>{{atributo.etiqueta}}</th><td>{{ twiglib.imprimirAtributo(atributo,attribute(entity.idpia,'get'~atributo.idatributo.nombre)) }}</td></tr>
             {% endif %}
             {% endfor %}
-            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>     
+            {% if entity.idcategoria is not null %}
+            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>
+            {% endif %}
+            {% if entity.idcompetencia is not null %}
             <tr><th>Competencia</th><td>{{ entity.idcompetencia.descripcion }}</td></tr>
+            {% endif %}
+            {% if entity.competencias is not empty and entity.competencias|length > 1 %}
+            <tr><th colspan="2">{{ entity.idevento.titulocompetencias|default('Competencias') }} Inscritas</th></tr>
+            {% for ic in entity.competencias %}
+            <tr><td>{{ ic.idcompetencia.descripcion }}</td><td>{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %} - {{ ic.precio|number_format(2,',','.') }}</td></tr>
+            {% endfor %}
+            {% endif %}
             <tr>
                 <th>PreInscrito el</th>
                 <td>{{ entity.fechahora|date('d-m-Y H:i:s') }}</td>
@@ -64,7 +74,7 @@
                     <p> 
                         Costo:<br>
                         {% for prc in precios %}
-                        {{ entity.idcompetencia.descripcion }} - {{prc.moneda}}{{prc.precio|number_format(0, ',', '.')}} 
+                        {% if entity.idcompetencia is not null %}{{ entity.idcompetencia.descripcion }} - {% endif %}{{prc.moneda}}{{prc.precio|number_format(0, ',', '.')}}
                         {% endfor %}
                     </p>
                     <p><b>FORMAS DE PAGO EN BOL&Iacute;VARES <br><br>

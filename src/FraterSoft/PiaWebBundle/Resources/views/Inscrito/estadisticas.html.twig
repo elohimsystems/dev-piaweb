@@ -38,15 +38,17 @@
     <div id="evento">{{nombreevento}}</div>
     <div id="tabs">
         <ul>
+            <li><a href="#tabs-0">Tablero</a></li>
             <li><a href="#tabs-1">Pre-Inscritos</a></li>
             <li><a href="#tabs-2">Inscritos</a></li>
             <li><a href="#tabs-3">Anulados</a></li>
-            <li><a href="#tabs-5">Estadisticas</a></li>            
+            <li><a href="#tabs-5">Estadisticas</a></li>
             {% if nivel_seguridad == 1 %}<li><a href="#tabs-6">Auditoria</a></li>{% endif %}
         </ul>
+        <div id="tabs-0"></div>
         <div id="tabs-2"></div>
-        <div id="tabs-3"></div>  
-        <div id="tabs-1"></div>    
+        <div id="tabs-3"></div>
+        <div id="tabs-1"></div>
         <div id="tabs-5">
             <div id="atributos">
                 Estadisticas por:  
@@ -220,7 +222,11 @@
         }
         $(document).ready(function () {
             $("#tabs").tabs();
-            $('#tabs a[href="#tabs-5"]').click();            
+            $('#tabs a[href="#tabs-5"]').click();
+            //Redireccion al Tablero del evento al hacer click en el tab
+            $('#tabs a[href="#tabs-0"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_tablero',{'idevento':idevento}) }}')
+            });
             //Redireccion a la pagina de los inscritos al hacer click en el tab
             $('#tabs a[href="#tabs-1"]').on("click", function () {
                 $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento}) }}')

@@ -23,8 +23,129 @@
 		buttons: [  
                     {extend: 'excelHtml5',
                         text: 'Exportar',
-                        title: 'Listado Inscritos {{nombreevento}}'
-                    }, 
+                        title: '',
+                        filename: 'Inscritos {{nombreevento}}',
+                        // Genera UN solo Excel con una hoja por disciplina; cada hoja lleva los
+                        // inscritos de esa disciplina ordenados por fecha de conciliacion (asc).
+                        // Un inscrito multicompetencia aparece en la hoja de cada modalidad.
+                        customize: function (xlsx) {
+                            var NS_MAIN = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+                            var NS_R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+                            var NS_CT = 'http://schemas.openxmlformats.org/package/2006/content-types';
+                            var NS_REL = 'http://schemas.openxmlformats.org/package/2006/relationships';
+
+                            var exp = table.buttons.exportData({ modifier: { search: 'applied', order: 'applied' } });
+                            var rowsData = table.rows(null, { search: 'applied', order: 'applied' }).data().toArray();
+
+                            // Columnas que NO se exportan
+                            var excluir = ['Precio', 'Recarga', 'Total'];
+                            var keep = [];
+                            for (var h = 0; h < exp.header.length; h++) {
+                                if (excluir.indexOf(exp.header[h]) === -1) keep.push(h);
+                            }
+                            var header = keep.map(function (idx) { return exp.header[idx]; });
+                            var body = exp.body.map(function (row) {
+                                return keep.map(function (idx) { return row[idx]; });
+                            });
+
+                            var colDist = header.indexOf({{ (titulocompetencias|default('Distancia'))|json_encode|raw }});
+                            var colCat = header.indexOf('Categoria');
+
+                            // Agrupa las filas por disciplina
+                            var grupos = {}, orden = [];
+                            function push(nombre, celdas, ts) {
+                                nombre = (nombre && String(nombre).trim()) ? String(nombre).trim() : 'SIN DISCIPLINA';
+                                if (!grupos[nombre]) { grupos[nombre] = []; orden.push(nombre); }
+                                grupos[nombre].push({ celdas: celdas, ts: ts });
+                            }
+                            for (var r = 0; r < body.length; r++) {
+                                var rd = rowsData[r] || {};
+                                var base = body[r];
+                                var ts = 0;
+                                if (rd.pagos && rd.pagos[0] && rd.pagos[0].conciliadoel && rd.pagos[0].conciliadoel.timestamp) {
+                                    ts = parseInt(rd.pagos[0].conciliadoel.timestamp, 10) || 0;
+                                }
+                                var comps = (rd.competencias && rd.competencias.length) ? rd.competencias : null;
+                                if (comps) {
+                                    for (var k = 0; k < comps.length; k++) {
+                                        var c = base.slice();
+                                        if (colDist !== -1) c[colDist] = comps[k].idcompetencia ? comps[k].idcompetencia.descripcion : '';
+                                        if (colCat !== -1) c[colCat] = comps[k].idcategoria ? comps[k].idcategoria.descripcion : '';
+                                        push(c[colDist], c, ts);
+                                    }
+                                } else {
+                                    push(colDist !== -1 ? base[colDist] : '', base, ts);
+                                }
+                            }
+                            if (orden.length === 0) { orden.push('Sin datos'); grupos['Sin datos'] = []; }
+                            orden.sort();
+                            orden.forEach(function (n) { grupos[n].sort(function (a, b) { return a.ts - b.ts; }); });
+
+                            // Helpers para armar el XML de cada hoja
+                            function colLetra(idx) {
+                                var s = '', n = idx + 1;
+                                while (n > 0) { var m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = Math.floor((n - 1) / 26); }
+                                return s;
+                            }
+                            function esc(v) {
+                                return String(v == null ? '' : v)
+                                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                                    .replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+                            }
+                            function celdaXml(ref, val) {
+                                var s = String(val == null ? '' : val);
+                                if (s !== '' && /^-?\d+(\.\d+)?$/.test(s) && !/^0\d+/.test(s)) {
+                                    return '<c r="' + ref + '" t="n"><v>' + s + '</v></c>';
+                                }
+                                return '<c r="' + ref + '" t="inlineStr"><is><t xml:space="preserve">' + esc(s) + '</t></is></c>';
+                            }
+                            function hojaXml(filas) {
+                                var xml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                                    '<worksheet xmlns="' + NS_MAIN + '" xmlns:r="' + NS_R + '"><sheetData>';
+                                xml += '<row r="1">';
+                                for (var c = 0; c < header.length; c++) xml += celdaXml(colLetra(c) + '1', header[c]);
+                                xml += '</row>';
+                                for (var f = 0; f < filas.length; f++) {
+                                    var rn = f + 2;
+                                    xml += '<row r="' + rn + '">';
+                                    for (var cc = 0; cc < header.length; cc++) xml += celdaXml(colLetra(cc) + rn, filas[f].celdas[cc]);
+                                    xml += '</row>';
+                                }
+                                return xml + '</sheetData></worksheet>';
+                            }
+                            var usados = {};
+                            function nombreHoja(n) {
+                                var base = String(n).replace(/[\\\/\?\*\[\]:]/g, ' ').substring(0, 31).replace(/^\s+|\s+$/g, '') || 'Hoja';
+                                var nm = base, i = 2;
+                                while (usados[nm.toLowerCase()]) { nm = base.substring(0, 27) + ' ' + i; i++; }
+                                usados[nm.toLowerCase()] = true;
+                                return nm;
+                            }
+
+                            // Reconstruye el paquete xlsx con una hoja por disciplina
+                            var sheetsXml = '', relsXml = '', ctSheetsXml = '';
+                            xlsx.xl.worksheets = {};
+                            orden.forEach(function (nombre, idx) {
+                                var n = idx + 1;
+                                var file = 'sheet' + n + '.xml';
+                                xlsx.xl.worksheets[file] = $.parseXML(hojaXml(grupos[nombre]));
+                                sheetsXml += '<sheet name="' + esc(nombreHoja(nombre)) + '" sheetId="' + n + '" r:id="rId' + n + '"/>';
+                                relsXml += '<Relationship Id="rId' + n + '" Type="' + NS_R + '/worksheet" Target="worksheets/' + file + '"/>';
+                                ctSheetsXml += '<Override PartName="/xl/worksheets/' + file + '" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>';
+                            });
+                            delete xlsx.xl['styles.xml'];
+                            xlsx.xl['workbook.xml'] = $.parseXML('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                                '<workbook xmlns="' + NS_MAIN + '" xmlns:r="' + NS_R + '"><sheets>' + sheetsXml + '</sheets></workbook>');
+                            xlsx.xl._rels['workbook.xml.rels'] = $.parseXML('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                                '<Relationships xmlns="' + NS_REL + '">' + relsXml + '</Relationships>');
+                            xlsx['[Content_Types].xml'] = $.parseXML('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+                                '<Types xmlns="' + NS_CT + '">' +
+                                '<Default Extension="xml" ContentType="application/xml"/>' +
+                                '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+                                '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>' +
+                                ctSheetsXml + '</Types>');
+                        }
+                    },
                     { extend: 'print', text: 'Imprimir' },
                     {%if nivel_seguridad == 1%}
                     /*{text: 'Asignar Numeros',
@@ -104,7 +225,7 @@
                     { title: "Numero", data: "numero" },
                     {% for atributo in atributos %}
                     {% if atributo.idatributo.nombre=='emailpersonal'%}
-                        {title:"Email",data:"idpia.emailpersonal",render: function(data, type, row){
+                        {title:"Email",data:"idpia.emailpersonal",visible:false,render: function(data, type, row){
                                 if(row.idpia.emailpersonal==row.idpia.email)
                                     return row.idpia.emailpersonal
                                 else if(row.idpia.emailpersonal==null)
@@ -145,14 +266,17 @@
                         {% if atributo.idatributo.tipo=="U" %}
                             visible:true,
                         {% endif %}
-                    },            
+                        {% if atributo.idatributo.nombre|lower in ['fechanacimiento','telefono'] %}
+                            visible:false,
+                        {% endif %}
+                    },
                     {% endif %}
                     {% endif %}
                     {% endfor %}
-                    { title: "Distancia", data: "idcompetencia.descripcion" },
-                    { title: "Categoria", data: "idcategoria.descripcion" },
+                    { title: {{ (titulocompetencias|default('Distancia'))|json_encode|raw }}, data: "idcompetencia", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
+                    { title: "Categoria", data: "idcategoria", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
                     { title: "Punto", data: "punto", visible:false },
-                    { title: "Precio", data: "pagos[0].precio" },   
+                    { title: "Precio", data: "pagos[0].precio", visible:false },
                     { title: "Recarga", data: "pagos[0].regarga", visible:false },
                     { title: "Total", data: "pagos[0].monto", visible:false },   
                     { title: "Conciliado el", data: "pagos",
@@ -163,9 +287,12 @@
                             //if(data[0].conciliadoel!=null)  
                             //    formatted = $.datepicker.formatDate("dd/mm/yyT00:00:00", new Date(data[0].conciliadoel.timestamp * 1000));
                             //return formatted;
-                            fecha = new Date(data[0].conciliadoel.timestamp * 1000);
+                            var c = (data && data[0]) ? data[0].conciliadoel : null;
+                            if(!c || !c.timestamp) return "";
+                            var fecha = new Date(c.timestamp * 1000);
+                            if(isNaN(fecha.getTime())) return "";
                             //return ('0' + fecha.getDay()).slice(-2) + "/" + ('0' + fecha.getMonth()).slice(-2) + "/" + fecha.getFullYear();
-                            return fecha.getFullYear() + "/" + ('0' + (fecha.getMonth()+1)).slice(-2) + "/" + ('0' + fecha.getDate()).slice(-2) + " " 
+                            return fecha.getFullYear() + "/" + ('0' + (fecha.getMonth()+1)).slice(-2) + "/" + ('0' + fecha.getDate()).slice(-2) + " "
                                 + ('0' + fecha.getHours()).slice(-2) + ":" + ('0' + fecha.getMinutes()).slice(-2) + ":" + ('0' + fecha.getSeconds()).slice(-2);
                         }
                     },   
@@ -184,10 +311,11 @@
                                         + "</a>"
                                         {% if nivel_seguridad == 1 %} + "<a href='" + urledit + "' >"
                                         + "<li class='ui-state-default ui-corner-all' title='Editar'><span class='ui-icon ui-icon-pencil'></span></li>"
-                                        + "</a>"{% endif %}
+                                        + "</a>"
                                         + "<a href='' onclick='anular(" + data + "," + row.secuencia + ");return false;'>"
-                                        {% if nivel_seguridad == 1 %} + "<li class='ui-state-default ui-corner-all' title='Anular'><span class='ui-icon ui-icon-closethick'></span></li>"
-                                        + "</a>" + {% endif %} + "</ul>"                                            
+                                        + "<li class='ui-state-default ui-corner-all' title='Anular'><span class='ui-icon ui-icon-closethick'></span></li>"
+                                        + "</a>"{% endif %}
+                                        + "</ul>"
                                     return html;
                                 },
                         "width": "98px","orderable": false
@@ -309,6 +437,9 @@
         $(function () {
             $("#tabs").tabs();
             $('#tabs a[href="#tabs-2"]').click();
+            $('#tabs a[href="#tabs-0"]').on("click", function () {
+                $(location).attr('href', '{{ path('inscrito_tablero',{'idevento':idevento}) }}')
+            });
             $('#tabs a[href="#tabs-1"]').on("click", function () {
                 $(location).attr('href', '{{ path('inscrito_lista_preinscritos',{'idevento':idevento}) }}')
             });
@@ -373,15 +504,17 @@
         <div id="evento">{{nombreevento}}</div>
         <div id="tabs">
             <ul>
+                <li><a href="#tabs-0">Tablero</a></li>
                 <li><a href="#tabs-1">Pre-Inscritos</a></li>
                 <li><a href="#tabs-2">Inscritos</a></li>
                 <li><a href="#tabs-3">Anulados</a></li>
                 <li><a href="#tabs-5">Estadisticas</a></li>
                 {% if nivel_seguridad == 1 %}<li><a href="#tabs-6">Auditoria</a></li>{% endif %}
             </ul>
+            <div id="tabs-0"></div>
             <div id="tabs-1"></div>
-            <div id="tabs-3"></div>  
-            <div id="tabs-5"></div>  
+            <div id="tabs-3"></div>
+            <div id="tabs-5"></div>
             <div id="tabs-2">
                 <table id="tablaInscritos" class="display row-border hover">
                 </table>     

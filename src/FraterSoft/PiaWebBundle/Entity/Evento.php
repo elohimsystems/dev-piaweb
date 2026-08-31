@@ -225,6 +225,16 @@ class Evento
     private $controlparental;
     
     /**
+     * @var boolean
+     */
+    private $multicompetencia;
+
+    /**
+     * @var string
+     */
+    private $titulocompetencias;
+
+    /**
      * @var \Doctrine\Common\Collections\Collection
      */
     private $atributos;
@@ -1316,11 +1326,57 @@ class Evento
     /**
      * Get controlparental
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getControlparental()
     {
         return $this->controlparental;
+    }
+
+    /**
+     * Set multicompetencia
+     *
+     * @param boolean $multicompetencia
+     * @return Evento
+     */
+    public function setMulticompetencia($multicompetencia)
+    {
+        $this->multicompetencia = $multicompetencia;
+
+        return $this;
+    }
+
+    /**
+     * Get multicompetencia
+     *
+     * @return boolean
+     */
+    public function getMulticompetencia()
+    {
+        return $this->multicompetencia;
+    }
+
+    /**
+     * Set titulocompetencias
+     *
+     * @param string $titulocompetencias
+     * @return Evento
+     */
+    public function setTitulocompetencias($titulocompetencias)
+    {
+        $this->titulocompetencias = $titulocompetencias;
+
+        return $this;
+    }
+
+    /**
+     * Get titulocompetencias
+     *
+     * @return string
+     */
+    public function getTitulocompetencias()
+    {
+        return $this->titulocompetencias;
     }
 
     /**

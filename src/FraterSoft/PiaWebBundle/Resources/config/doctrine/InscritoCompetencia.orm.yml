@@ -1,0 +1,59 @@
+FraterSoft\PiaWebBundle\Entity\InscritoCompetencia:
+    type: entity
+    table: piaaccess.trinscritoscompetencias
+    repositoryClass: FraterSoft\PiaWebBundle\Entity\InscritoCompetenciaRepository
+    indexes:
+        idx_trinscritoscompetencias_idinscrito:
+            columns:
+                - idinscrito
+        idx_trinscritoscompetencias_idcompetencia:
+            columns:
+                - idcompetencia
+        idx_trinscritoscompetencias_idcategoria:
+            columns:
+                - idcategoria
+    id:
+        id:
+            type: bigint
+            nullable: false
+            unsigned: false
+            comment: ''
+            id: true
+            generator:
+                strategy: SEQUENCE
+    fields:
+        precio:
+            type: float
+            nullable: true
+            precision: 10
+            scale: 0
+            comment: ''
+    manyToOne:
+        idinscrito:
+            targetEntity: Inscrito
+            cascade: {  }
+            mappedBy: null
+            inversedBy: competencias
+            joinColumns:
+                idinscrito:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idcompetencia:
+            targetEntity: Competencia
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idcompetencia:
+                    referencedColumnName: id
+            orphanRemoval: false
+        idcategoria:
+            targetEntity: Categoria
+            cascade: {  }
+            mappedBy: null
+            inversedBy: null
+            joinColumns:
+                idcategoria:
+                    referencedColumnName: id
+            orphanRemoval: false
+    lifecycleCallbacks: {  }

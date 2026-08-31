@@ -102,15 +102,40 @@ inscrito_categorias:
     
 inscrito_anular:
     pattern:  /anular/{id}
-    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:anular" }    
-    
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:anular" }
+
+inscrito_restaurar:
+    pattern:  /restaurar/{id}
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:restaurar" }
+
+inscrito_tablero:
+    pattern:  /{idevento}/tablero
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:tablero" }
+
+inscrito_limpiar_inscritos:
+    pattern:  /{idevento}/limpiarinscritos
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:limpiarInscritos" }
+    requirements: { _method: post }
+
 inscrito_boton123pago:
     pattern:  /{id}/{incremento}/boton123pago
     defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:boton123pago" }
     
 inscrito_precio:
     pattern:  /buscarprecioajax
-    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:buscarprecioajax" }    
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:buscarprecioajax" }
+
+inscrito_precio_evento:
+    pattern:  /precioeventoajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:precioeventoajax" }
+
+inscrito_precio_competencia:
+    pattern:  /preciocompetenciaajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:preciocompetenciaajax" }
+
+inscrito_cupo_competencias:
+    pattern:  /cupocompetenciasajax
+    defaults: { _controller: "FraterSoftPiaWebBundle:Inscrito:cupocompetenciasajax" }
     
 inscrito_estadisticas:
     pattern:  /{idevento}/estadisticas

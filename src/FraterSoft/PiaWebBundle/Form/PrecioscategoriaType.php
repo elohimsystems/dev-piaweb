@@ -26,7 +26,7 @@ class PrecioscategoriaType extends AbstractType
             ->add('prioridad')
             ->add('texto')
             ->add('imagen')
-            ->add('moneda')
+            ->add('idmoneda')
         ;
     }
     

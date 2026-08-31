@@ -7,7 +7,7 @@
     }
     #sel_competencias{
         margin: 10px 0;
-    }     
+    }
 </style>
 {% endblock %}  
 {% set entidad='precioscategoria' %}
@@ -33,8 +33,8 @@
         </div> 
         <div id="dialogformGuardar">
             {{ form_start(form,{'attr': {'id': 'formulario'}}) }}
-            {{ form_end(form) }} 
-        </div>          
+            {{ form_end(form) }}
+        </div>
         <div id="dialogelimiar">
             ¿Esta seguro que desea eliminar la {{entidad}} <strong id="eliminar"></strong>?
         </div> 
@@ -96,11 +96,42 @@
 
         //Filtra la tabla de datos segun la opcion del select seleccionado
         filtrarTabla(2,$("#select_competencias_opcion"));
-        
+
+        //================= Filtrado del combo de Categorias del formulario =================
+        //El combo idcategoria de la ventana emergente debe mostrar solo las categorias de la
+        //competencia elegida en el select del listado (#select_competencias_opcion).
+        var catComp = {{ categoriasCompetencia|json_encode|raw }};
+        var $selCat = $("#{{ form.idcategoria.vars.id }}");
+        var catOpcionesOriginal = $selCat.find('option').clone();
+
+        function filtrarCategoriasFormulario() {
+            var idComp = String($("#select_competencias_opcion").val());
+            var actual = $selCat.val();
+            $selCat.empty();
+            catOpcionesOriginal.each(function () {
+                var val = $(this).attr('value');
+                if (!val || String(catComp[val]) === idComp) {
+                    $selCat.append($(this).clone());
+                }
+            });
+            if (actual && $selCat.find('option[value="' + actual + '"]').length) {
+                $selCat.val(actual);
+            }
+        }
+
         $("#select_competencias_opcion").change(function () {
             tabla.draw();
-        });        
-                    
-    });    
+            filtrarCategoriasFormulario();
+        });
+
+        //Refiltra al abrir el dialogo (por si se abrio "Editar" de una fila y el combo del
+        //listado quedo en otra competencia)
+        $("#dialogformGuardar").on("dialogopen", function () {
+            filtrarCategoriasFormulario();
+        });
+
+        filtrarCategoriasFormulario();
+
+    });
 </script>    
 {% endblock %}

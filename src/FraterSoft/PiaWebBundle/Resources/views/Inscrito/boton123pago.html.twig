@@ -85,7 +85,14 @@
             <tr><th>Estado</th><td>{{ entity.idpia.idestado.estado }}</td></tr>
             <tr><th>Email Personal</th><td>{{ entity.idpia.emailpersonal|lower }}</td></tr>
             <tr><th>Monto</th><td>{{( entity.idpago.monto * (1 + (incremento/100)))|round(2, 'floor') }}</td></tr>
-            <tr><th>Categor&iacute;a</th><td>{{ entity.idcategoria.descripcion }}</td></tr>            
+            {% if entity.idcategoria is not null %}
+            <tr><th>Categor&iacute;a</th><td>{{ entity.idcategoria.descripcion }}</td></tr>
+            {% endif %}
+            {% if entity.competencias is not empty and entity.competencias|length > 1 %}
+            {% for ic in entity.competencias %}
+            <tr><th>{{ ic.idcompetencia.descripcion }}</th><td>{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %}</td></tr>
+            {% endfor %}
+            {% endif %}
             <tr>
                 <th>Inscrito el</th>
                 <td>{{ entity.fechahora|date('d-m-Y H:i:s') }}</td>

@@ -57,7 +57,9 @@
                 {% endif %}
             {# {% endif %} #}
             {% endfor %}
-            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>            
+            {% if entity.idcategoria is not null %}
+            <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>
+            {% endif %}
             <tr>
                 <th>PreInscrito el</th>
                 <td>{{ entity.fechahora|date('d-m-Y H:i:s') }}</td>
@@ -66,6 +68,12 @@
                 <th>Precio</th>
                 <td>{{ entity.precio|number_format(2,',','.') }}</td>
             </tr>
+            {% if entity.competencias is not empty and entity.competencias|length > 1 %}
+            <tr><th>{{ entity.idevento.titulocompetencias|default('Competencias') }}</th><th>Categoria</th></tr>
+            {% for ic in entity.competencias %}
+            <tr><td>{{ ic.idcompetencia.descripcion }}</td><td>{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %}</td></tr>
+            {% endfor %}
+            {% endif %}
             <tr>
                 <td colspan="3" align="center">
                     Su pre-incripci&oacute;n ser&aacute; certificada una vez verifiquemos los datos del pago.

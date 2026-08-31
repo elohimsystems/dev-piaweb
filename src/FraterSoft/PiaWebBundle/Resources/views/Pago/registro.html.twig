@@ -56,7 +56,9 @@
     <div class="container">
     <table id="tablaReporte" class="display compact">
         <tbody>          
+            {% if pago.idinscrito.idcompetencia is not null %}
             <tr><th>Competencia</th><td>{{ pago.idinscrito.idcompetencia.descripcion }}</td></tr>
+            {% endif %}
             {%if pago.idinscrito.numero is not null%}<tr><th>Numero</th><td>{{ pago.idinscrito.numero }}</td></tr>{%endif%}
             {% for atributo in atributos %}
             {%if atributo.idatributo.tipodato=='D' %}
@@ -67,8 +69,16 @@
             <tr><th>{% if atributo.etiqueta is null %}{{ atributo.idatributo.nombre|title }}{% else %}{{atributo.etiqueta}}{% endif %}</th><td>{{ attribute(pago.idinscrito.idpia,'get' ~ atributo.idatributo.nombre|lower) }}</td></tr>
             {%endif%}
             {%endfor%}
-            <tr><th>Categoria</th><td>{{ pago.idinscrito.idcategoria.descripcion }}</td></tr> 
-            <tr><th>Fecha y Hora</th><td>{{ pago.idinscrito.fechahora.timestamp|date('d-m-Y H:i:s') }}</td></tr>                        
+            {% if pago.idinscrito.idcategoria is not null %}
+            <tr><th>Categoria</th><td>{{ pago.idinscrito.idcategoria.descripcion }}</td></tr>
+            {% endif %}
+            {% if pago.idinscrito.competencias is not empty and pago.idinscrito.competencias|length > 1 %}
+            <tr><th>{{ pago.idinscrito.idevento.titulocompetencias|default('Competencias') }}</th><th>Categoria</th></tr>
+            {% for ic in pago.idinscrito.competencias %}
+            <tr><td>{{ ic.idcompetencia.descripcion }}</td><td>{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %}</td></tr>
+            {% endfor %}
+            {% endif %}
+            <tr><th>Fecha y Hora</th><td>{{ pago.idinscrito.fechahora.timestamp|date('d-m-Y H:i:s') }}</td></tr>
         </tbody>
     </table><p>
     <table id="tablaPago" class="display compact">

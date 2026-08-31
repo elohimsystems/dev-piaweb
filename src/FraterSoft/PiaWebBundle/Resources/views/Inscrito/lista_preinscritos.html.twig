@@ -24,7 +24,7 @@
                 ajax: url,    
                 columns: [
                     { title: "Sec.", data: "secuencia",visible:true },
-                    { title: "Competencia", data: "idcompetencia.descripcion" },
+                    { title: {{ (titulocompetencias|default('Competencia'))|json_encode|raw }}, data: "idcompetencia", defaultContent: "", render: function(data){return data==null?"":data.descripcion;} },
                     { title: "Forma Pago", data: "pagos[0].idformapago.nombre"},
                     { title: "Precio", data: "pagos[0].precio" },
                     { title: "Banco", data: "pagos[0].idbanco.nombre",render: function(data){return data==null?"":data;}},
@@ -34,12 +34,12 @@
                             return data.toUpperCase();
                         }                        
                     },
-                    { title: "Fecha Pago", data: "pagos[0].fechahora",
+                    { title: "Fecha Pago", data: "pagos[0].fechahora", defaultContent: "",
                         render: function(data){
-                            var formatted="";
-                            if(data!=null)  
-                                formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
-                            return formatted;
+                            if(!data || !data.timestamp) return "";
+                            var fecha = new Date(data.timestamp * 1000);
+                            if(isNaN(fecha.getTime())) return "";
+                            return $.datepicker.formatDate("dd/mm/yy", fecha);
                         },visible:false
                     },
                     { title: "Monto", data: "pagos[0].monto" },
@@ -50,13 +50,13 @@
                         data: "idpia.{{atributo.idatributo.nombre|lower}}",
                         {% if atributo.idatributo.tipodato=='S' %} 
                         render: function(data){return data==null?"":data.toUpperCase();} 
-                        {% elseif  atributo.idatributo.tipodato=='D' %} 
+                        {% elseif  atributo.idatributo.tipodato=='D' %}
                         render: function(data){
-                            var formatted="";
-                            if(data!=null)
-                                formatted = $.datepicker.formatDate("dd/mm/yy", new Date(data.timestamp * 1000));
-                            return formatted;
-                        }         
+                            if(!data || !data.timestamp) return "";
+                            var fecha = new Date(data.timestamp * 1000);
+                            if(isNaN(fecha.getTime())) return "";
+                            return $.datepicker.formatDate("dd/mm/yy", fecha);
+                        }
                         {% elseif  atributo.idatributo.tipodato=='N' %} 
                         render: function(data){
                             return data;
@@ -114,7 +114,7 @@
                     {extend: 'excelHtml5',
                         text: 'Exportar',
                         title: 'Listado PreInscritos {{nombreevento}}'
-                    }, 
+                    },
                     {extend: 'print',
                         text: 'Imprimir'},
                     {%if atributos[0].idevento.proceso!=2 and atributos[0].idevento.registropago!=2 and nivel_seguridad == 1%}
@@ -262,6 +262,11 @@
         
 $(function () {
     $("#tabs").tabs();
+        $('#tabs a[href="#tabs-1"]').click();
+        //Redireccion al Tablero del evento al hacer click en el tab
+        $('#tabs a[href="#tabs-0"]').on("click", function () {
+            $(location).attr('href', '{{ path('inscrito_tablero',{'idevento':idevento}) }}')
+        });
         //Redireccion a la pagina de los inscritos al hacer click en el tab
         $('#tabs a[href="#tabs-2"]').on("click", function () {
             $(location).attr('href', '{{ path('inscrito_lista_inscritos',{'idevento':idevento}) }}')
@@ -354,15 +359,17 @@ $(function () {
         <div id="evento">{{nombreevento}}</div>
         <div id="tabs">
             <ul>
+                <li><a href="#tabs-0">Tablero</a></li>
                 <li><a href="#tabs-1">Pre-Inscritos</a></li>
                 <li><a href="#tabs-2">Inscritos</a></li>
                 <li><a href="#tabs-3">Anulados</a></li>
-                <li><a href="#tabs-5">Estadisticas</a></li>            
+                <li><a href="#tabs-5">Estadisticas</a></li>
                 {% if nivel_seguridad == 1 %}<li><a href="#tabs-6">Auditoria</a></li>{% endif %}
             </ul>
+            <div id="tabs-0"></div>
             <div id="tabs-2"></div>
-            <div id="tabs-3"></div>  
-            <div id="tabs-5"></div>    
+            <div id="tabs-3"></div>
+            <div id="tabs-5"></div>
             <div id="tabs-1">
                 <table id="tablaPreInscritos" class="display row-border hover">
                 </table>        

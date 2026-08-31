@@ -205,6 +205,17 @@ FraterSoft\PiaWebBundle\Entity\Evento:
             nullable: true
             comment: 'Activa el control parental parametrizable'
             default: false
+        multicompetencia:
+            type: boolean
+            nullable: true
+            comment: 'Permite inscribirse en varias competencias/modalidades a la vez'
+            default: false
+        titulocompetencias:
+            type: string
+            nullable: true
+            length: 50
+            fixed: false
+            comment: 'Titulo personalizado para el campo de seleccion de competencias en el formulario de inscripcion (por defecto "Modalidades")'
         localidad:
             type: string
             nullable: true

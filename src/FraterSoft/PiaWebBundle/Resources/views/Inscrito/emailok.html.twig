@@ -49,8 +49,18 @@
             <tr><th>{{atributo.etiqueta}}</th><td>{{ twiglib.imprimirAtributo(atributo,attribute(inscrito.idpia,'get'~atributo.idatributo.nombre)) }}</td></tr>
             {% endif %}
             {% endfor %}
-            <tr><th>Distancia</th><td>{{ inscrito.idcompetencia.descripcion }}</td></tr>            
-            <tr><th>Categoria</th><td>{{ inscrito.idcategoria.descripcion }}</td></tr>            
+            {% if inscrito.idcompetencia is not null %}
+            <tr><th>Distancia</th><td>{{ inscrito.idcompetencia.descripcion }}</td></tr>
+            {% endif %}
+            {% if inscrito.idcategoria is not null %}
+            <tr><th>Categoria</th><td>{{ inscrito.idcategoria.descripcion }}</td></tr>
+            {% endif %}
+            {% if inscrito.competencias is not empty and inscrito.competencias|length > 1 %}
+            <tr><th>{{ inscrito.idevento.titulocompetencias|default('Competencias') }}</th><th>Categoria</th></tr>
+            {% for ic in inscrito.competencias %}
+            <tr><td>{{ ic.idcompetencia.descripcion }}</td><td>{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %}</td></tr>
+            {% endfor %}
+            {% endif %}
             <tr>
                 <th>PreInscrito el</th>
                 <td>{{ inscrito.fechahora|date('d-m-Y H:i:s') }}</td>
