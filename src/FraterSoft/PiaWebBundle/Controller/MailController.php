@@ -16,8 +16,8 @@ class MailController {
      * El From siempre es la cuenta configurada en mailer_user (parameters.yml): es la
      * unica autenticada ante el SMTP, y usar otra direccion (p.ej. la del organizador)
      * hace que el correo sea rechazado o marcado como spam por SPF/DKIM. El $emailfrom
-     * recibido (organizador) se conserva como Reply-To para que las respuestas le
-     * lleguen a el.
+     * recibido (organizador) no se usa: las respuestas al correo del organizador no le
+     * llegan de todas formas.
      */
     private function crearMensaje($emailfrom, $subject, $to, $body, $adjuntos = array()) {
         $mensaje = \Swift_Message::newInstance()
@@ -27,9 +27,6 @@ class MailController {
                 ->setContentType('text/html')
                 ->setTo($to)
                 ->setBody($body);
-        if ($emailfrom && $emailfrom !== $this->mailerUser) {
-            $mensaje->setReplyTo($emailfrom);
-        }
         foreach ($adjuntos as $adjunto) {
             if (file_exists($adjunto)) {
                 $mensaje->attach(\Swift_Attachment::fromPath($adjunto));
