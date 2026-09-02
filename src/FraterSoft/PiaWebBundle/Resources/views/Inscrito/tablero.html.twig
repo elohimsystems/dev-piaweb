@@ -23,7 +23,7 @@
             $("#dialogLimpiar").dialog({
                 autoOpen: false,
                 modal: true,
-                width: 460,
+                width: Math.min(460, $(window).width() - 20),
                 buttons: {
                     "Limpiar inscritos": function () {
                         var nombre = $("#confirmacion_nombre").val().trim();
@@ -154,6 +154,27 @@
         color: #c0392b;
         font-size: 12px;
         margin-top: 6px;
+    }
+    /* Telefonos: las tarjetas pasan a una sola columna */
+    @media screen and (max-width: 600px){
+        .tablero-tarjetas{
+            flex-direction: column;
+            gap: 8px;
+        }
+        .tablero-tarjeta{
+            flex: 1 1 auto;
+            width: 100%;
+            padding: 10px 12px;
+        }
+        .tablero-tarjeta .valor{
+            font-size: 22px;
+        }
+        .tablero-cupos{
+            max-width: 100%;
+        }
+        #btnLimpiarInscritos{
+            width: 100%;
+        }
     }
 </style>
 {% endblock %}
