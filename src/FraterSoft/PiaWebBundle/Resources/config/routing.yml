@@ -171,6 +171,10 @@ FraterSoftPiaWebBundle_organizador:
   resource: "@FraterSoftPiaWebBundle/Resources/config/routing/organizador.yml"
   prefix: /organizador
 
+FraterSoftPiaWebBundle_maestros:
+  resource: "@FraterSoftPiaWebBundle/Resources/config/routing/maestros.yml"
+  prefix: /maestros
+
 FraterSoftPiaWebBundle_publicidad:
   resource: "@FraterSoftPiaWebBundle/Resources/config/routing/publicidad.yml"
   prefix: /publicidad

@@ -1,0 +1,26 @@
+maestro_organizador:
+    pattern:  /organizadores
+    defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:index" }
+
+maestro_organizador_new:
+    pattern:  /organizadores/new
+    defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:new" }
+
+maestro_organizador_create:
+    pattern:  /organizadores/create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:create" }
+    requirements: { _method: post }
+
+maestro_organizador_edit:
+    pattern:  /organizadores/{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:edit" }
+
+maestro_organizador_update:
+    pattern:  /organizadores/{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:update" }
+    requirements: { _method: post }
+
+maestro_organizador_eliminar:
+    pattern:  /organizadores/{id}/eliminar
+    defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:eliminar" }
+    requirements: { _method: post }
