@@ -1,0 +1,59 @@
+{% extends '::base.html.twig' %}
+{% block style %}
+<style type="text/css">
+    .maestro-form-wrap { max-width: 800px; margin: 30px auto; padding: 30px; border: 1px solid #ccc; border-radius: 6px; box-shadow: 2px 2px 8px rgba(0,0,0,0.1); }
+    .maestro-form-wrap h2 { margin: 0 0 20px; }
+    .maestro-flash { padding: 8px 12px; border-radius: 4px; margin: 8px 0; font-size: 13px; }
+    .maestro-flash.success { background: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; }
+    .maestro-flash.error { background: #fdecea; border: 1px solid #f5c6cb; color: #c0392b; }
+    .maestro-form-acciones { margin-top: 20px; text-align: center; }
+    .maestro-form-acciones a { display: inline-block; padding: 8px 20px; border: 1px solid #ccc; border-radius: 4px; text-decoration: none; color: #333; background: #f7f7f7; font-size: 13px; }
+    @media screen and (max-width: 600px) { .maestro-form-wrap { margin: 15px auto; padding: 15px; } }
+</style>
+{% endblock %}
+{% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+        <div class="maestro-form-wrap">
+            <h2>{{ titulo }}</h2>
+
+            {% for tipo, mensajes in app.session.flashbag.all %}
+                {% for mensaje in mensajes %}
+                    <div class="maestro-flash {{ tipo }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endfor %}
+
+            <div id="tabs">
+                <ul>
+                    <li><a href="#tabs-1">Organizador</a></li>
+                    <li><a href="#tabs-2">Formas de Pago</a></li>
+                </ul>
+                <div id="tabs-1">
+                    {% include 'FraterSoftPiaWebBundle:Organizador:_form.html.twig' with {'organizador_form': form, 'organizador': entity} only %}
+                </div>
+                <div id="tabs-2">
+                    {% include 'FraterSoftPiaWebBundle:Organizador:_formaspago.html.twig' with {'organizador': entity, 'asignaciones': asignaciones, 'formaspagos': formaspagos} only %}
+                </div>
+            </div>
+
+            <div class="maestro-form-acciones">
+                <a href="{{ path('maestro_organizador') }}">Volver al listado</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        $(function () {
+            $("#tabs").tabs();
+            if (window.location.hash) {
+                $("#tabs").tabs("option", "active", $("#tabs a[href='" + window.location.hash + "']").parent().index());
+            }
+            $("#tabs").on("tabsactivate", function (event, ui) {
+                if (history.replaceState) {
+                    history.replaceState(null, null, ui.newPanel.selector);
+                }
+            });
+        });
+    </script>
+{% endblock %}

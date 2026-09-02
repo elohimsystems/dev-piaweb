@@ -1,0 +1,60 @@
+{# Formas de pago asignadas a un organizador. Requiere: organizador (entidad),
+   asignaciones (OrganizadorFormaspago[]), formaspagos (Formaspago[]). #}
+<h3>Formas de Pago del Organizador</h3>
+
+{% if asignaciones|length > 0 %}
+<table class="table table-bordered" style="width:100%; margin-bottom:20px;">
+    <thead>
+        <tr>
+            <th>Forma de Pago</th>
+            <th>Observaci&oacute;n</th>
+            <th>QR</th>
+            <th>Acci&oacute;n</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for asignacion in asignaciones %}
+        <tr>
+            <td>{{ asignacion.idformapago.nombre }}</td>
+            <td>{{ asignacion.observacion }}</td>
+            <td>
+                {% if asignacion.qr %}
+                <img src="{{ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ asignacion.qr }}" style="max-width:60px; max-height:60px;">
+                {% endif %}
+            </td>
+            <td>
+                <a href="{{ path('maestro_organizador_formapago_eliminar', {'id': asignacion.id}) }}" onclick="return confirm('¿Eliminar esta forma de pago?')">Eliminar</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No hay formas de pago asignadas.</p>
+{% endif %}
+
+<h4>Agregar Forma de Pago</h4>
+<form method="post" action="{{ path('maestro_organizador_formapago_add', {'id': organizador.id}) }}" enctype="multipart/form-data">
+    <div class="org-grid">
+        <div>
+            <label for="idformapago">Forma de Pago</label>
+            <select name="idformapago" id="idformapago" required>
+                <option value="">Seleccione...</option>
+                {% for fp in formaspagos %}
+                <option value="{{ fp.id }}">{{ fp.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <label for="observacion">Observaci&oacute;n</label>
+            <textarea name="observacion" id="observacion" rows="3" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;"></textarea>
+        </div>
+        <div class="full-width">
+            <label for="qr">C&oacute;digo QR (opcional)</label>
+            <input type="file" name="qr" id="qr" accept="image/*">
+        </div>
+    </div>
+    <div class="submit-btn">
+        <button type="submit" style="padding:10px 40px; background:#337ab7; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:14px;">Agregar</button>
+    </div>
+</form>

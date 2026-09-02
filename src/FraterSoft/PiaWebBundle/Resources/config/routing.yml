@@ -10,10 +10,6 @@ frater_soft_pia_web_perfil:
   pattern: /perfil
   defaults: { _controller: FraterSoftPiaWebBundle:Default:perfil }
 
-frater_soft_pia_web_perfil_delete_formapago:
-  pattern: /perfil/formapago/{id}/eliminar
-  defaults: { _controller: FraterSoftPiaWebBundle:Default:eliminarFormapagoOrganizador }
-
 frater_soft_pia_web_contacto:
   pattern: /contacto
   defaults: { _controller: FraterSoftPiaWebBundle:Default:contacto }
@@ -170,6 +166,10 @@ FraterSoftPiaWebBundle_patrocinante:
 FraterSoftPiaWebBundle_organizador:
   resource: "@FraterSoftPiaWebBundle/Resources/config/routing/organizador.yml"
   prefix: /organizador
+
+FraterSoftPiaWebBundle_maestros:
+  resource: "@FraterSoftPiaWebBundle/Resources/config/routing/maestros.yml"
+  prefix: /maestros
 
 FraterSoftPiaWebBundle_publicidad:
   resource: "@FraterSoftPiaWebBundle/Resources/config/routing/publicidad.yml"

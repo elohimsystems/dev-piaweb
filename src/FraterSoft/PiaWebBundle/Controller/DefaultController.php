@@ -148,45 +148,6 @@ class DefaultController extends commonPIAClass
                     $submitted = true;
                     $tab = 'tabs-4';
                 }
-            } elseif ($request->request->has('formaspago_add')) {
-                $idformapago = $request->request->get('idformapago');
-                $observacion = $request->request->get('observacion');
-                $qrFile = $request->files->get('qr');
-                if ($organizador && $organizador->getId() && $idformapago) {
-                    $formapago = $em->getRepository('FraterSoftPiaWebBundle:Formaspago')->find($idformapago);
-                    if ($formapago) {
-                        $qrFilename = null;
-                        if ($qrFile) {
-                            $dir = $this->get('kernel')->getRootDir() . '/../web/bundles/fratersoftpiaweb/fine-uploader/files';
-                            $qrFilename = uniqid() . '.' . $qrFile->guessExtension();
-                            $qrFile->move($dir, $qrFilename);
-                        }
-
-                        $existe = $em->getRepository('FraterSoftPiaWebBundle:OrganizadorFormaspago')
-                            ->findOneBy(array('idorganizador' => $organizador, 'idformapago' => $formapago));
-                        if (!$existe) {
-                            $of = new OrganizadorFormaspago();
-                            $of->setIdorganizador($organizador);
-                            $of->setIdformapago($formapago);
-                            $of->setObservacion($observacion);
-                            if ($qrFilename) {
-                                $of->setQr($qrFilename);
-                            }
-                            $em->persist($of);
-                            $em->flush();
-                            $this->get('session')->getFlashBag()->add('success', 'Forma de pago asignada al organizador.');
-                        } else {
-                            $existe->setObservacion($observacion);
-                            if ($qrFilename) {
-                                $existe->setQr($qrFilename);
-                            }
-                            $em->flush();
-                            $this->get('session')->getFlashBag()->add('success', 'Observacion actualizada.');
-                        }
-                    }
-                }
-                $submitted = true;
-                $tab = 'tabs-3';
             }
 
             if ($submitted) {
@@ -198,21 +159,12 @@ class DefaultController extends commonPIAClass
             }
         }
 
-        $formaspagos = $em->getRepository('FraterSoftPiaWebBundle:Formaspago')->findBy(array('status' => 1));
-        $asignaciones = array();
-        if ($organizador && $organizador->getId()) {
-            $asignaciones = $em->getRepository('FraterSoftPiaWebBundle:OrganizadorFormaspago')
-                ->findBy(array('idorganizador' => $organizador));
-        }
-
         return $this->render('FraterSoftPiaWebBundle:Default:perfil.html.twig', array(
             'user_form' => $userForm->createView(),
             'change_password_form' => $changePasswordForm->createView(),
             'organizador_form' => $organizadorForm->createView(),
             'user' => $user,
             'organizador' => $organizador,
-            'formaspagos' => $formaspagos,
-            'asignaciones' => $asignaciones,
         ));
     }
     
@@ -553,31 +505,4 @@ class DefaultController extends commonPIAClass
         return new Response('<pre>' . print_r($data, true) . '</pre>');
     }
 
-    public function eliminarFormapagoOrganizadorAction($id)
-    {
-        $user = $this->getUser();
-        if (!is_object($user) || !$user instanceof UserInterface) {
-            throw new AccessDeniedException('This user does not have access to this section.');
-        }
-
-        $em = $this->getDoctrine()->getManager();
-        $asignacion = $em->getRepository('FraterSoftPiaWebBundle:OrganizadorFormaspago')->find($id);
-
-        if (!$asignacion) {
-            throw $this->createNotFoundException('Asignacion no encontrada.');
-        }
-
-        $organizador = $user->getIdorganizador();
-        if (!$organizador || $asignacion->getIdorganizador()->getId() !== $organizador->getId()) {
-            throw new AccessDeniedException('No autorizado.');
-        }
-
-        $em->remove($asignacion);
-        $em->flush();
-
-        $this->get('session')->getFlashBag()->add('success', 'Forma de pago eliminada del organizador.');
-
-        return $this->redirect($this->generateUrl('frater_soft_pia_web_perfil') . '#tabs-3');
-    }
-    
 }

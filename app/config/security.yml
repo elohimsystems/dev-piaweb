@@ -39,4 +39,5 @@ security:
         - { path: ^/evento/\d+/detalle, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/sitemap\.xml$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/maestros, role: ROLE_SUPER_ADMIN }
         - { path: ^/, role: ROLE_USER }

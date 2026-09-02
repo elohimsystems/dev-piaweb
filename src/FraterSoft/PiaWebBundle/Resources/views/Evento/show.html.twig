@@ -55,6 +55,21 @@
         cursor: pointer;
         font-size: 14px;
     }
+    /* Telefonos: los datos pasan a una sola columna */
+    @media screen and (max-width: 600px) {
+        .evento-show {
+            margin: 15px auto;
+            padding: 15px;
+        }
+        .evento-grid {
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .submit-btn a button {
+            width: 100%;
+            padding: 12px 0;
+        }
+    }
 </style>
 
 <div class="pia-wrapper">

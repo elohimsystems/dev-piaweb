@@ -9,4 +9,4 @@ services:
             
     app.mail_controller:
         class: FraterSoft\PiaWebBundle\Controller\MailController
-        arguments: [@mailer]
+        arguments: [@mailer, "%mailer_user%"]

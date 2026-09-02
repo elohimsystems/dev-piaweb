@@ -1,0 +1,24 @@
+{% extends '::base.html.twig' %}
+{% block style %}
+<style type="text/css">
+    .maestro-form-wrap { max-width: 800px; margin: 30px auto; padding: 30px; border: 1px solid #ccc; border-radius: 6px; box-shadow: 2px 2px 8px rgba(0,0,0,0.1); }
+    .maestro-form-wrap h2 { margin: 0 0 20px; }
+    .maestro-form-acciones { margin-top: 20px; text-align: center; }
+    .maestro-form-acciones a { display: inline-block; padding: 8px 20px; border: 1px solid #ccc; border-radius: 4px; text-decoration: none; color: #333; background: #f7f7f7; font-size: 13px; }
+    @media screen and (max-width: 600px) { .maestro-form-wrap { margin: 15px auto; padding: 15px; } }
+</style>
+{% endblock %}
+{% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+        <div class="maestro-form-wrap">
+            <h2>{{ titulo }}</h2>
+
+            {% include 'FraterSoftPiaWebBundle:Organizador:_form.html.twig' with {'organizador_form': form, 'organizador': entity} only %}
+
+            <div class="maestro-form-acciones">
+                <a href="{{ path('maestro_organizador') }}">Volver al listado</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

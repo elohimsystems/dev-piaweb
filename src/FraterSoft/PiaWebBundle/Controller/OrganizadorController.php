@@ -108,7 +108,214 @@ class OrganizadorController extends commonPIAClass {
             return $this->redirect($this->generateUrl('organizador_gestion', array(
                 'idorganizador' => $entity->getIdorganizador()->getId(),
                 'estado' => 1
-            )));            
+            )));
     }
-    
+
+    // ---------------------------------------------------------------------
+    // Maestro de Organizadores (menu Maestros, solo ROLE_SUPER_ADMIN).
+    // Rutas /maestros/organizadores/* protegidas en security.yml.
+    // ---------------------------------------------------------------------
+
+    private function crearFormMaestro(Organizador $entity, $action)
+    {
+        $form = $this->createForm(new OrganizadorType(), $entity, array(
+            'action' => $action,
+            'method' => 'POST',
+        ));
+        $form->add('submit', 'submit', array('label' => 'Guardar'));
+        return $form;
+    }
+
+    private function procesarLogo($form, Organizador $entity)
+    {
+        $file = $form->get('logo')->getData();
+        if ($file) {
+            $dir = $this->get('kernel')->getRootDir() . '/../web/bundles/fratersoftpiaweb/fine-uploader/files';
+            $nombre = uniqid('org_') . '.' . $file->guessExtension();
+            $file->move($dir, $nombre);
+            $entity->setLogo($nombre);
+        }
+    }
+
+    public function indexAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entities = $em->getRepository('FraterSoftPiaWebBundle:Organizador')
+                ->findBy(array(), array('nombre' => 'ASC'));
+
+        return $this->render('FraterSoftPiaWebBundle:Organizador:index.html.twig', array(
+            'entities' => $entities,
+        ));
+    }
+
+    public function newAction()
+    {
+        $entity = new Organizador();
+        $form = $this->crearFormMaestro($entity, $this->generateUrl('maestro_organizador_create'));
+
+        return $this->render('FraterSoftPiaWebBundle:Organizador:maestro_form.html.twig', array(
+            'entity' => $entity,
+            'form' => $form->createView(),
+            'titulo' => 'Nuevo Organizador',
+        ));
+    }
+
+    public function createAction(Request $request)
+    {
+        $entity = new Organizador();
+        $form = $this->crearFormMaestro($entity, $this->generateUrl('maestro_organizador_create'));
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $this->procesarLogo($form, $entity);
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($entity);
+            $em->flush();
+            $this->get('session')->getFlashBag()->add('success', 'Organizador creado');
+            return $this->redirect($this->generateUrl('maestro_organizador'));
+        }
+
+        return $this->render('FraterSoftPiaWebBundle:Organizador:maestro_form.html.twig', array(
+            'entity' => $entity,
+            'form' => $form->createView(),
+            'titulo' => 'Nuevo Organizador',
+        ));
+    }
+
+    private function datosFormaspago($em, Organizador $entity)
+    {
+        return array(
+            'formaspagos' => $em->getRepository('FraterSoftPiaWebBundle:Formaspago')
+                    ->findBy(array('status' => 1)),
+            'asignaciones' => $entity->getId()
+                ? $em->getRepository('FraterSoftPiaWebBundle:OrganizadorFormaspago')
+                        ->findBy(array('idorganizador' => $entity))
+                : array(),
+        );
+    }
+
+    public function editAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Organizador')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Organizador no encontrado');
+        }
+        $form = $this->crearFormMaestro($entity, $this->generateUrl('maestro_organizador_update', array('id' => $id)));
+
+        return $this->render('FraterSoftPiaWebBundle:Organizador:maestro_edit.html.twig', array_merge(array(
+            'entity' => $entity,
+            'form' => $form->createView(),
+            'titulo' => 'Editar Organizador',
+        ), $this->datosFormaspago($em, $entity)));
+    }
+
+    public function updateAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Organizador')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Organizador no encontrado');
+        }
+        $form = $this->crearFormMaestro($entity, $this->generateUrl('maestro_organizador_update', array('id' => $id)));
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $this->procesarLogo($form, $entity);
+            $em->flush();
+            $this->get('session')->getFlashBag()->add('success', 'Organizador actualizado');
+            return $this->redirect($this->generateUrl('maestro_organizador'));
+        }
+
+        return $this->render('FraterSoftPiaWebBundle:Organizador:maestro_edit.html.twig', array_merge(array(
+            'entity' => $entity,
+            'form' => $form->createView(),
+            'titulo' => 'Editar Organizador',
+        ), $this->datosFormaspago($em, $entity)));
+    }
+
+    /**
+     * Asigna (o actualiza) una forma de pago al organizador. Portado desde la
+     * pestana "Formas de Pago" que estaba en "Editar Perfil".
+     */
+    public function formapagoAddAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Organizador')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Organizador no encontrado');
+        }
+
+        $idformapago = $request->request->get('idformapago');
+        $observacion = $request->request->get('observacion');
+        $qrFile = $request->files->get('qr');
+
+        if ($idformapago) {
+            $formapago = $em->getRepository('FraterSoftPiaWebBundle:Formaspago')->find($idformapago);
+            if ($formapago) {
+                $qrFilename = null;
+                if ($qrFile) {
+                    $dir = $this->get('kernel')->getRootDir() . '/../web/bundles/fratersoftpiaweb/fine-uploader/files';
+                    $qrFilename = uniqid() . '.' . $qrFile->guessExtension();
+                    $qrFile->move($dir, $qrFilename);
+                }
+
+                $existe = $em->getRepository('FraterSoftPiaWebBundle:OrganizadorFormaspago')
+                        ->findOneBy(array('idorganizador' => $entity, 'idformapago' => $formapago));
+                if (!$existe) {
+                    $of = new \FraterSoft\PiaWebBundle\Entity\OrganizadorFormaspago();
+                    $of->setIdorganizador($entity);
+                    $of->setIdformapago($formapago);
+                    $of->setObservacion($observacion);
+                    if ($qrFilename) {
+                        $of->setQr($qrFilename);
+                    }
+                    $em->persist($of);
+                    $this->get('session')->getFlashBag()->add('success', 'Forma de pago asignada al organizador.');
+                } else {
+                    $existe->setObservacion($observacion);
+                    if ($qrFilename) {
+                        $existe->setQr($qrFilename);
+                    }
+                    $this->get('session')->getFlashBag()->add('success', 'Observacion actualizada.');
+                }
+                $em->flush();
+            }
+        }
+
+        return $this->redirect($this->generateUrl('maestro_organizador_edit', array('id' => $id)) . '#tabs-2');
+    }
+
+    public function formapagoEliminarAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $asignacion = $em->getRepository('FraterSoftPiaWebBundle:OrganizadorFormaspago')->find($id);
+        if (!$asignacion) {
+            throw $this->createNotFoundException('Asignacion no encontrada.');
+        }
+        $idorganizador = $asignacion->getIdorganizador()->getId();
+        $em->remove($asignacion);
+        $em->flush();
+        $this->get('session')->getFlashBag()->add('success', 'Forma de pago eliminada del organizador.');
+
+        return $this->redirect($this->generateUrl('maestro_organizador_edit', array('id' => $idorganizador)) . '#tabs-2');
+    }
+
+    public function eliminarAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Organizador')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Organizador no encontrado');
+        }
+        try {
+            $em->remove($entity);
+            $em->flush();
+            $this->get('session')->getFlashBag()->add('success', 'Organizador eliminado');
+        } catch (\Exception $e) {
+            $this->get('session')->getFlashBag()->add('error', 'No se pudo eliminar: el organizador tiene registros asociados (eventos, usuarios, etc.)');
+        }
+        return $this->redirect($this->generateUrl('maestro_organizador'));
+    }
+
 }

@@ -1,0 +1,104 @@
+{# Formulario de alta/edicion de un Organizador. Compartido por "Editar Perfil"
+   (pestana Organizador) y el "Maestro de Organizadores".
+   Requiere: organizador_form (FormView), organizador (entidad, puede ser nueva). #}
+<style>
+    .org-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .org-grid .full-width { grid-column: 1 / -1; }
+    .org-grid label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 13px; }
+    .org-grid input, .org-grid select {
+        width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+    }
+    .logo-section { text-align: center; margin-bottom: 20px; }
+    .logo-section img {
+        width: 150px; height: 150px; object-fit: cover; border-radius: 10%;
+        border: 2px solid #ddd; display: block; margin: 0 auto 10px auto;
+    }
+    .btn-select-logo {
+        display: inline-block; padding: 6px 14px; background: #f7f7f7;
+        border: 1px solid #ccc; border-radius: 4px; cursor: pointer; font-size: 13px;
+    }
+    .submit-btn { text-align: center; margin-top: 25px; }
+    .submit-btn input, .submit-btn button {
+        padding: 10px 40px; background: #337ab7; color: #fff; border: none;
+        border-radius: 4px; cursor: pointer; font-size: 14px;
+    }
+    @media screen and (max-width: 600px) { .org-grid { grid-template-columns: 1fr; } }
+</style>
+
+{{ form_start(organizador_form, {'attr': {'id': 'formulario'}}) }}
+
+    <div class="logo-section full-width">
+        <img id="logo-preview" src="{% if organizador and organizador.logo %}{{ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ organizador.logo }}{% else %}{{ asset('bundles/fratersoftpiaweb/images/sinimagen.png') }}{% endif %}" alt="Logo">
+        <label for="{{ organizador_form.logo.vars.id }}" class="btn-select-logo">Seleccionar Logo</label>
+        {{ form_widget(organizador_form.logo, {'attr': {'style': 'display:none', 'accept': 'image/*'}}) }}
+        {{ form_errors(organizador_form.logo) }}
+    </div>
+
+    <div class="org-grid">
+        <div>
+            <label>{{ form_label(organizador_form.nombre) }}</label>
+            {{ form_widget(organizador_form.nombre) }}
+            {{ form_errors(organizador_form.nombre) }}
+        </div>
+        <div>
+            <label>{{ form_label(organizador_form.abreviado) }}</label>
+            {{ form_widget(organizador_form.abreviado) }}
+            {{ form_errors(organizador_form.abreviado) }}
+        </div>
+        <div>
+            <label>{{ form_label(organizador_form.email) }}</label>
+            {{ form_widget(organizador_form.email) }}
+            {{ form_errors(organizador_form.email) }}
+        </div>
+        <div>
+            <label>{{ form_label(organizador_form.rif) }}</label>
+            {{ form_widget(organizador_form.rif) }}
+            {{ form_errors(organizador_form.rif) }}
+        </div>
+        <div>
+            <label>{{ form_label(organizador_form.contacto) }}</label>
+            {{ form_widget(organizador_form.contacto) }}
+            {{ form_errors(organizador_form.contacto) }}
+        </div>
+        <div>
+            <label>{{ form_label(organizador_form.telefonocontacto) }}</label>
+            {{ form_widget(organizador_form.telefonocontacto) }}
+            {{ form_errors(organizador_form.telefonocontacto) }}
+        </div>
+        <div>
+            <label>{{ form_label(organizador_form.emailcontacto) }}</label>
+            {{ form_widget(organizador_form.emailcontacto) }}
+            {{ form_errors(organizador_form.emailcontacto) }}
+        </div>
+        <div class="full-width">
+            <label>{{ form_label(organizador_form.idmoneda) }}</label>
+            {{ form_widget(organizador_form.idmoneda) }}
+            {{ form_errors(organizador_form.idmoneda) }}
+        </div>
+    </div>
+
+    {{ form_rest(organizador_form) }}
+
+    <div class="submit-btn">
+        {{ form_widget(organizador_form.submit) }}
+    </div>
+
+{{ form_end(organizador_form) }}
+
+<script>
+    (function () {
+        var logoInput = document.getElementById('{{ organizador_form.logo.vars.id }}');
+        if (logoInput) {
+            logoInput.addEventListener('change', function (e) {
+                var file = e.target.files[0];
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function (ev) {
+                        document.getElementById('logo-preview').src = ev.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    })();
+</script>

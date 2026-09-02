@@ -99,7 +99,6 @@
         <ul>
             <li><a href="#tabs-1">Usuario</a></li>
             <li><a href="#tabs-2">Organizador</a></li>
-            <li><a href="#tabs-3">Formas de Pago</a></li>
             <li><a href="#tabs-4">Cambiar Contraseña</a></li>
         </ul>
         <div id="tabs-1">
@@ -126,125 +125,7 @@
             {{ form_end(user_form) }}
         </div>
         <div id="tabs-2">
-            {{ form_start(organizador_form, {'attr': {'id': 'formulario'}}) }}
-
-            <div class="logo-section full-width">
-                <img id="logo-preview" src="{% if organizador and organizador.logo %}{{ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ organizador.logo }}{% else %}{{ asset('bundles/fratersoftpiaweb/images/sinimagen.png') }}{% endif %}" alt="Logo">
-                <label for="{{ organizador_form.logo.vars.id }}" class="btn-select-logo">Seleccionar Logo</label>
-                {{ form_widget(organizador_form.logo, {'attr': {'style': 'display:none', 'accept': 'image/*'}}) }}
-                {{ form_errors(organizador_form.logo) }}
-            </div>
-
-            <div class="org-grid">
-                <div>
-                    <label>{{ form_label(organizador_form.nombre) }}</label>
-                    {{ form_widget(organizador_form.nombre) }}
-                    {{ form_errors(organizador_form.nombre) }}
-                </div>
-                <div>
-                    <label>{{ form_label(organizador_form.abreviado) }}</label>
-                    {{ form_widget(organizador_form.abreviado) }}
-                    {{ form_errors(organizador_form.abreviado) }}
-                </div>
-                <div>
-                    <label>{{ form_label(organizador_form.email) }}</label>
-                    {{ form_widget(organizador_form.email) }}
-                    {{ form_errors(organizador_form.email) }}
-                </div>
-                <div>
-                    <label>{{ form_label(organizador_form.rif) }}</label>
-                    {{ form_widget(organizador_form.rif) }}
-                    {{ form_errors(organizador_form.rif) }}
-                </div>
-                <div>
-                    <label>{{ form_label(organizador_form.contacto) }}</label>
-                    {{ form_widget(organizador_form.contacto) }}
-                    {{ form_errors(organizador_form.contacto) }}
-                </div>
-                <div>
-                    <label>{{ form_label(organizador_form.telefonocontacto) }}</label>
-                    {{ form_widget(organizador_form.telefonocontacto) }}
-                    {{ form_errors(organizador_form.telefonocontacto) }}
-                </div>
-                <div>
-                    <label>{{ form_label(organizador_form.emailcontacto) }}</label>
-                    {{ form_widget(organizador_form.emailcontacto) }}
-                    {{ form_errors(organizador_form.emailcontacto) }}
-                </div>
-                <div class="full-width">
-                    <label>{{ form_label(organizador_form.idmoneda) }}</label>
-                    {{ form_widget(organizador_form.idmoneda) }}
-                    {{ form_errors(organizador_form.idmoneda) }}
-                </div>
-            </div>
-
-            {{ form_rest(organizador_form) }}
-
-            <div class="submit-btn">
-                {{ form_widget(organizador_form.submit) }}
-            </div>
-
-            {{ form_end(organizador_form) }}
-        </div>
-        <div id="tabs-3">
-            <h3>Formas de Pago del Organizador</h3>
-
-            {% if asignaciones|length > 0 %}
-            <table class="table table-bordered" style="width:100%; margin-bottom:20px;">
-                <thead>
-                    <tr>
-                        <th>Forma de Pago</th>
-                        <th>Observación</th>
-                        <th>QR</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for asignacion in asignaciones %}
-                    <tr>
-                        <td>{{ asignacion.idformapago.nombre }}</td>
-                        <td>{{ asignacion.observacion }}</td>
-                        <td>
-                            {% if asignacion.qr %}
-                            <img src="{{ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ asignacion.qr }}" style="max-width:60px; max-height:60px;">
-                            {% endif %}
-                        </td>
-                        <td>
-                            <a href="{{ path('frater_soft_pia_web_perfil_delete_formapago', {'id': asignacion.id}) }}" onclick="return confirm('¿Eliminar esta forma de pago?')">Eliminar</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p>No hay formas de pago asignadas.</p>
-            {% endif %}
-
-            <h4>Agregar Forma de Pago</h4>
-            <form method="post" action="{{ path('frater_soft_pia_web_perfil') }}" enctype="multipart/form-data">
-                <div class="org-grid">
-                    <div>
-                        <label for="idformapago">Forma de Pago</label>
-                        <select name="idformapago" id="idformapago" required>
-                            <option value="">Seleccione...</option>
-                            {% for fp in formaspagos %}
-                            <option value="{{ fp.id }}">{{ fp.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div>
-                        <label for="observacion">Observación</label>
-                        <textarea name="observacion" id="observacion" rows="3" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;"></textarea>
-                    </div>
-                    <div class="full-width">
-                        <label for="qr">Código QR (opcional)</label>
-                        <input type="file" name="qr" id="qr" accept="image/*">
-                    </div>
-                </div>
-                <div class="submit-btn">
-                    <button type="submit" name="formaspago_add" class="btn btn-primary" style="padding:10px 40px; background:#337ab7; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:14px;">Agregar</button>
-                </div>
-            </form>
+            {% include 'FraterSoftPiaWebBundle:Organizador:_form.html.twig' %}
         </div>
         <div id="tabs-4">
             {{ form_start(change_password_form, {'attr': {'class': 'user-form'}}) }}
@@ -286,19 +167,5 @@
             }
         });
     });
-
-    var logoInput = document.getElementById('{{ organizador_form.logo.vars.id }}');
-    if (logoInput) {
-        logoInput.addEventListener('change', function(e) {
-            var file = e.target.files[0];
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = function(ev) {
-                    document.getElementById('logo-preview').src = ev.target.result;
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
 </script>
 {% endblock fos_user_content %}
