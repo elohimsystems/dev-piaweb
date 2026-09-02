@@ -182,6 +182,18 @@ class OrganizadorController extends commonPIAClass {
         ));
     }
 
+    private function datosFormaspago($em, Organizador $entity)
+    {
+        return array(
+            'formaspagos' => $em->getRepository('FraterSoftPiaWebBundle:Formaspago')
+                    ->findBy(array('status' => 1)),
+            'asignaciones' => $entity->getId()
+                ? $em->getRepository('FraterSoftPiaWebBundle:OrganizadorFormaspago')
+                        ->findBy(array('idorganizador' => $entity))
+                : array(),
+        );
+    }
+
     public function editAction($id)
     {
         $em = $this->getDoctrine()->getManager();
@@ -191,11 +203,11 @@ class OrganizadorController extends commonPIAClass {
         }
         $form = $this->crearFormMaestro($entity, $this->generateUrl('maestro_organizador_update', array('id' => $id)));
 
-        return $this->render('FraterSoftPiaWebBundle:Organizador:maestro_form.html.twig', array(
+        return $this->render('FraterSoftPiaWebBundle:Organizador:maestro_edit.html.twig', array_merge(array(
             'entity' => $entity,
             'form' => $form->createView(),
             'titulo' => 'Editar Organizador',
-        ));
+        ), $this->datosFormaspago($em, $entity)));
     }
 
     public function updateAction(Request $request, $id)
@@ -215,11 +227,78 @@ class OrganizadorController extends commonPIAClass {
             return $this->redirect($this->generateUrl('maestro_organizador'));
         }
 
-        return $this->render('FraterSoftPiaWebBundle:Organizador:maestro_form.html.twig', array(
+        return $this->render('FraterSoftPiaWebBundle:Organizador:maestro_edit.html.twig', array_merge(array(
             'entity' => $entity,
             'form' => $form->createView(),
             'titulo' => 'Editar Organizador',
-        ));
+        ), $this->datosFormaspago($em, $entity)));
+    }
+
+    /**
+     * Asigna (o actualiza) una forma de pago al organizador. Portado desde la
+     * pestana "Formas de Pago" que estaba en "Editar Perfil".
+     */
+    public function formapagoAddAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Organizador')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Organizador no encontrado');
+        }
+
+        $idformapago = $request->request->get('idformapago');
+        $observacion = $request->request->get('observacion');
+        $qrFile = $request->files->get('qr');
+
+        if ($idformapago) {
+            $formapago = $em->getRepository('FraterSoftPiaWebBundle:Formaspago')->find($idformapago);
+            if ($formapago) {
+                $qrFilename = null;
+                if ($qrFile) {
+                    $dir = $this->get('kernel')->getRootDir() . '/../web/bundles/fratersoftpiaweb/fine-uploader/files';
+                    $qrFilename = uniqid() . '.' . $qrFile->guessExtension();
+                    $qrFile->move($dir, $qrFilename);
+                }
+
+                $existe = $em->getRepository('FraterSoftPiaWebBundle:OrganizadorFormaspago')
+                        ->findOneBy(array('idorganizador' => $entity, 'idformapago' => $formapago));
+                if (!$existe) {
+                    $of = new \FraterSoft\PiaWebBundle\Entity\OrganizadorFormaspago();
+                    $of->setIdorganizador($entity);
+                    $of->setIdformapago($formapago);
+                    $of->setObservacion($observacion);
+                    if ($qrFilename) {
+                        $of->setQr($qrFilename);
+                    }
+                    $em->persist($of);
+                    $this->get('session')->getFlashBag()->add('success', 'Forma de pago asignada al organizador.');
+                } else {
+                    $existe->setObservacion($observacion);
+                    if ($qrFilename) {
+                        $existe->setQr($qrFilename);
+                    }
+                    $this->get('session')->getFlashBag()->add('success', 'Observacion actualizada.');
+                }
+                $em->flush();
+            }
+        }
+
+        return $this->redirect($this->generateUrl('maestro_organizador_edit', array('id' => $id)) . '#tabs-2');
+    }
+
+    public function formapagoEliminarAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $asignacion = $em->getRepository('FraterSoftPiaWebBundle:OrganizadorFormaspago')->find($id);
+        if (!$asignacion) {
+            throw $this->createNotFoundException('Asignacion no encontrada.');
+        }
+        $idorganizador = $asignacion->getIdorganizador()->getId();
+        $em->remove($asignacion);
+        $em->flush();
+        $this->get('session')->getFlashBag()->add('success', 'Forma de pago eliminada del organizador.');
+
+        return $this->redirect($this->generateUrl('maestro_organizador_edit', array('id' => $idorganizador)) . '#tabs-2');
     }
 
     public function eliminarAction(Request $request, $id)

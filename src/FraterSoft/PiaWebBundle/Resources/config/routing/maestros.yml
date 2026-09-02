@@ -24,3 +24,12 @@ maestro_organizador_eliminar:
     pattern:  /organizadores/{id}/eliminar
     defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:eliminar" }
     requirements: { _method: post }
+
+maestro_organizador_formapago_add:
+    pattern:  /organizadores/{id}/formaspago/agregar
+    defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:formapagoAdd" }
+    requirements: { _method: post }
+
+maestro_organizador_formapago_eliminar:
+    pattern:  /organizadores/formaspago/{id}/eliminar
+    defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:formapagoEliminar" }

@@ -99,7 +99,6 @@
         <ul>
             <li><a href="#tabs-1">Usuario</a></li>
             <li><a href="#tabs-2">Organizador</a></li>
-            <li><a href="#tabs-3">Formas de Pago</a></li>
             <li><a href="#tabs-4">Cambiar Contraseña</a></li>
         </ul>
         <div id="tabs-1">
@@ -127,66 +126,6 @@
         </div>
         <div id="tabs-2">
             {% include 'FraterSoftPiaWebBundle:Organizador:_form.html.twig' %}
-        </div>
-        <div id="tabs-3">
-            <h3>Formas de Pago del Organizador</h3>
-
-            {% if asignaciones|length > 0 %}
-            <table class="table table-bordered" style="width:100%; margin-bottom:20px;">
-                <thead>
-                    <tr>
-                        <th>Forma de Pago</th>
-                        <th>Observación</th>
-                        <th>QR</th>
-                        <th>Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {% for asignacion in asignaciones %}
-                    <tr>
-                        <td>{{ asignacion.idformapago.nombre }}</td>
-                        <td>{{ asignacion.observacion }}</td>
-                        <td>
-                            {% if asignacion.qr %}
-                            <img src="{{ asset('bundles/fratersoftpiaweb/fine-uploader/files/') ~ asignacion.qr }}" style="max-width:60px; max-height:60px;">
-                            {% endif %}
-                        </td>
-                        <td>
-                            <a href="{{ path('frater_soft_pia_web_perfil_delete_formapago', {'id': asignacion.id}) }}" onclick="return confirm('¿Eliminar esta forma de pago?')">Eliminar</a>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            {% else %}
-            <p>No hay formas de pago asignadas.</p>
-            {% endif %}
-
-            <h4>Agregar Forma de Pago</h4>
-            <form method="post" action="{{ path('frater_soft_pia_web_perfil') }}" enctype="multipart/form-data">
-                <div class="org-grid">
-                    <div>
-                        <label for="idformapago">Forma de Pago</label>
-                        <select name="idformapago" id="idformapago" required>
-                            <option value="">Seleccione...</option>
-                            {% for fp in formaspagos %}
-                            <option value="{{ fp.id }}">{{ fp.nombre }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div>
-                        <label for="observacion">Observación</label>
-                        <textarea name="observacion" id="observacion" rows="3" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;"></textarea>
-                    </div>
-                    <div class="full-width">
-                        <label for="qr">Código QR (opcional)</label>
-                        <input type="file" name="qr" id="qr" accept="image/*">
-                    </div>
-                </div>
-                <div class="submit-btn">
-                    <button type="submit" name="formaspago_add" class="btn btn-primary" style="padding:10px 40px; background:#337ab7; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:14px;">Agregar</button>
-                </div>
-            </form>
         </div>
         <div id="tabs-4">
             {{ form_start(change_password_form, {'attr': {'class': 'user-form'}}) }}
