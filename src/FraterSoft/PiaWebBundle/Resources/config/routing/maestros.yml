@@ -60,3 +60,8 @@ maestro_formapago_eliminar:
     pattern:  /formaspago/{id}/eliminar
     defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:maestroEliminar" }
     requirements: { _method: post }
+
+maestro_formapago_duplicar:
+    pattern:  /formaspago/{id}/duplicar
+    defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:maestroDuplicar" }
+    requirements: { _method: post }

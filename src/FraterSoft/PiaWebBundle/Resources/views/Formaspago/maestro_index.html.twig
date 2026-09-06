@@ -104,6 +104,11 @@
                         <td>
                             <div class="acciones-fp">
                                 <a href="{{ path('maestro_formapago_edit', { 'id': entity.id }) }}">Editar</a>
+                                <form method="post" action="{{ path('maestro_formapago_duplicar', { 'id': entity.id }) }}"
+                                      onsubmit="return confirm('¿Duplicar la forma de pago {{ entity.nombre|e('js') }}? Se creara una copia inactiva.');"
+                                      style="margin:0;">
+                                    <button type="submit">Duplicar</button>
+                                </form>
                                 <form method="post" action="{{ path('maestro_formapago_eliminar', { 'id': entity.id }) }}"
                                       onsubmit="return confirm('¿Eliminar la forma de pago {{ entity.nombre|e('js') }}? Esta accion no se puede deshacer.');"
                                       style="margin:0;">

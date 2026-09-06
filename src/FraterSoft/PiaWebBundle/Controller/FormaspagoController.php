@@ -272,6 +272,55 @@ class FormaspagoController extends commonPIAClass
         ));
     }
 
+    /**
+     * Duplica una forma de pago: copia todas las columnas de la fila (incluidas las no
+     * mapeadas por Doctrine: control, datos, requisito, moneda, idpais), le pone al nombre
+     * el original + " copia" y deja la copia Inactiva.
+     */
+    public function maestroDuplicarAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Formaspago')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Forma de pago no encontrada');
+        }
+
+        $conn = $em->getConnection();
+        $nuevoNombre = $this->nombreCopiaFormapago($conn, $entity->getNombre());
+
+        $conn->executeUpdate(
+            'INSERT INTO piaaccess.tmformaspagos '
+            . '(nombre, status, icono, moneda, parametros, idmoneda, programa, requisito, control, datos, idpais, verificable) '
+            . 'SELECT :nombre, 0, icono, moneda, parametros, idmoneda, programa, requisito, control, datos, idpais, verificable '
+            . 'FROM piaaccess.tmformaspagos WHERE id = :id',
+            array('nombre' => $nuevoNombre, 'id' => $id)
+        );
+
+        $this->get('session')->getFlashBag()->add('success', 'Forma de pago duplicada como "' . $nuevoNombre . '" (Inactiva).');
+        return $this->redirect($this->generateUrl('maestro_formapago'));
+    }
+
+    /**
+     * Devuelve "<base> copia" (o " copia 2", " copia 3"... si ya existe), recortado a los
+     * 50 caracteres que admite la columna nombre.
+     */
+    private function nombreCopiaFormapago($conn, $nombreBase)
+    {
+        $base = $nombreBase . ' copia';
+        for ($i = 1; $i <= 50; $i++) {
+            $nombre = $i === 1 ? $base : $base . ' ' . $i;
+            $nombre = mb_substr($nombre, 0, 50);
+            $existe = $conn->fetchColumn(
+                'SELECT COUNT(*) FROM piaaccess.tmformaspagos WHERE nombre = ?',
+                array($nombre)
+            );
+            if (!$existe) {
+                return $nombre;
+            }
+        }
+        return mb_substr($nombreBase . ' ' . uniqid('copia'), 0, 50);
+    }
+
     public function maestroEliminarAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
