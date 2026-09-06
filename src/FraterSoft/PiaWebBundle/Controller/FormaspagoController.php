@@ -169,7 +169,173 @@ class FormaspagoController extends commonPIAClass
         return $this->redirect($this->generateUrl('competencia_new', array(
             'idevento' => $entity->getIdevento()->getId(),
             'estado' => 1
-        )));            
+        )));
+    }
+
+    // ---------------------------------------------------------------------
+    // Maestro de Formas de Pago (menu Maestros, solo ROLE_SUPER_ADMIN).
+    // Rutas /maestros/formaspago/* protegidas en security.yml.
+    // ---------------------------------------------------------------------
+
+    private function crearFormMaestro(Formaspago $entity, $action)
+    {
+        $form = $this->createForm(new FormaspagoType(), $entity, array(
+            'action' => $action,
+            'method' => 'POST',
+        ));
+        $form->add('submit', 'submit', array('label' => 'Guardar'));
+        return $form;
+    }
+
+    public function maestroIndexAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entities = $em->getRepository('FraterSoftPiaWebBundle:Formaspago')
+                ->findBy(array(), array('nombre' => 'ASC'));
+
+        return $this->render('FraterSoftPiaWebBundle:Formaspago:maestro_index.html.twig', array(
+            'entities' => $entities,
+        ));
+    }
+
+    public function maestroNewAction()
+    {
+        $entity = new Formaspago();
+        $entity->setStatus(1);
+        $entity->setVerificable(false);
+        $form = $this->crearFormMaestro($entity, $this->generateUrl('maestro_formapago_create'));
+
+        return $this->render('FraterSoftPiaWebBundle:Formaspago:maestro_form.html.twig', array(
+            'entity' => $entity,
+            'form' => $form->createView(),
+            'titulo' => 'Nueva Forma de Pago',
+        ));
+    }
+
+    public function maestroCreateAction(Request $request)
+    {
+        $entity = new Formaspago();
+        $form = $this->crearFormMaestro($entity, $this->generateUrl('maestro_formapago_create'));
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($entity);
+            $em->flush();
+            $this->get('session')->getFlashBag()->add('success', 'Forma de pago creada');
+            return $this->redirect($this->generateUrl('maestro_formapago'));
+        }
+
+        return $this->render('FraterSoftPiaWebBundle:Formaspago:maestro_form.html.twig', array(
+            'entity' => $entity,
+            'form' => $form->createView(),
+            'titulo' => 'Nueva Forma de Pago',
+        ));
+    }
+
+    public function maestroEditAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Formaspago')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Forma de pago no encontrada');
+        }
+        $form = $this->crearFormMaestro($entity, $this->generateUrl('maestro_formapago_update', array('id' => $id)));
+
+        return $this->render('FraterSoftPiaWebBundle:Formaspago:maestro_form.html.twig', array(
+            'entity' => $entity,
+            'form' => $form->createView(),
+            'titulo' => 'Editar Forma de Pago',
+        ));
+    }
+
+    public function maestroUpdateAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Formaspago')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Forma de pago no encontrada');
+        }
+        $form = $this->crearFormMaestro($entity, $this->generateUrl('maestro_formapago_update', array('id' => $id)));
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            $em->flush();
+            $this->get('session')->getFlashBag()->add('success', 'Forma de pago actualizada');
+            return $this->redirect($this->generateUrl('maestro_formapago'));
+        }
+
+        return $this->render('FraterSoftPiaWebBundle:Formaspago:maestro_form.html.twig', array(
+            'entity' => $entity,
+            'form' => $form->createView(),
+            'titulo' => 'Editar Forma de Pago',
+        ));
+    }
+
+    /**
+     * Duplica una forma de pago: copia todas las columnas de la fila (incluidas las no
+     * mapeadas por Doctrine: control, datos, requisito, moneda, idpais), le pone al nombre
+     * el original + " copia" y deja la copia Inactiva.
+     */
+    public function maestroDuplicarAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Formaspago')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Forma de pago no encontrada');
+        }
+
+        $conn = $em->getConnection();
+        $nuevoNombre = $this->nombreCopiaFormapago($conn, $entity->getNombre());
+
+        $conn->executeUpdate(
+            'INSERT INTO piaaccess.tmformaspagos '
+            . '(nombre, status, icono, moneda, parametros, idmoneda, programa, requisito, control, datos, idpais, verificable) '
+            . 'SELECT :nombre, 0, icono, moneda, parametros, idmoneda, programa, requisito, control, datos, idpais, verificable '
+            . 'FROM piaaccess.tmformaspagos WHERE id = :id',
+            array('nombre' => $nuevoNombre, 'id' => $id)
+        );
+
+        $this->get('session')->getFlashBag()->add('success', 'Forma de pago duplicada como "' . $nuevoNombre . '" (Inactiva).');
+        return $this->redirect($this->generateUrl('maestro_formapago'));
+    }
+
+    /**
+     * Devuelve "<base> copia" (o " copia 2", " copia 3"... si ya existe), recortado a los
+     * 50 caracteres que admite la columna nombre.
+     */
+    private function nombreCopiaFormapago($conn, $nombreBase)
+    {
+        $base = $nombreBase . ' copia';
+        for ($i = 1; $i <= 50; $i++) {
+            $nombre = $i === 1 ? $base : $base . ' ' . $i;
+            $nombre = mb_substr($nombre, 0, 50);
+            $existe = $conn->fetchColumn(
+                'SELECT COUNT(*) FROM piaaccess.tmformaspagos WHERE nombre = ?',
+                array($nombre)
+            );
+            if (!$existe) {
+                return $nombre;
+            }
+        }
+        return mb_substr($nombreBase . ' ' . uniqid('copia'), 0, 50);
+    }
+
+    public function maestroEliminarAction(Request $request, $id)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('FraterSoftPiaWebBundle:Formaspago')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Forma de pago no encontrada');
+        }
+        try {
+            $em->remove($entity);
+            $em->flush();
+            $this->get('session')->getFlashBag()->add('success', 'Forma de pago eliminada');
+        } catch (\Exception $e) {
+            $this->get('session')->getFlashBag()->add('error', 'No se pudo eliminar: la forma de pago tiene registros asociados (eventos, organizadores o pagos). Puede marcarla como Inactiva.');
+        }
+        return $this->redirect($this->generateUrl('maestro_formapago'));
     }
 
 }

@@ -1,0 +1,91 @@
+{% extends '::base.html.twig' %}
+{% block style %}
+<style type="text/css">
+    .maestro-form-wrap { max-width: 720px; margin: 30px auto; padding: 30px; border: 1px solid #ccc; border-radius: 6px; box-shadow: 2px 2px 8px rgba(0,0,0,0.1); }
+    .maestro-form-wrap h2 { margin: 0 0 20px; }
+    .fp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .fp-grid .full-width { grid-column: 1 / -1; }
+    .fp-grid label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 13px; }
+    .fp-grid input[type="text"], .fp-grid input[type="email"], .fp-grid select, .fp-grid textarea {
+        width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 13px;
+    }
+    .fp-grid textarea { min-height: 90px; font-family: monospace; }
+    .fp-check { display: flex; align-items: center; gap: 8px; }
+    .fp-check label { margin: 0; }
+    .submit-btn { text-align: center; margin-top: 25px; }
+    .submit-btn input, .submit-btn button {
+        padding: 10px 40px; background: #337ab7; color: #fff; border: none;
+        border-radius: 4px; cursor: pointer; font-size: 14px;
+    }
+    .maestro-form-acciones { margin-top: 20px; text-align: center; }
+    .maestro-form-acciones a { display: inline-block; padding: 8px 20px; border: 1px solid #ccc; border-radius: 4px; text-decoration: none; color: #333; background: #f7f7f7; font-size: 13px; }
+    .maestro-flash { padding: 8px 12px; border-radius: 4px; margin: 8px 0; font-size: 13px; }
+    .maestro-flash.error { background: #fdecea; border: 1px solid #f5c6cb; color: #c0392b; }
+    @media screen and (max-width: 600px) { .maestro-form-wrap { margin: 15px auto; padding: 15px; } .fp-grid { grid-template-columns: 1fr; } }
+</style>
+{% endblock %}
+{% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+        <div class="maestro-form-wrap">
+            <h2>{{ titulo }}</h2>
+
+            {% for tipo, mensajes in app.session.flashbag.all %}
+                {% for mensaje in mensajes %}
+                    <div class="maestro-flash {{ tipo }}">{{ mensaje }}</div>
+                {% endfor %}
+            {% endfor %}
+
+            {{ form_start(form, {'attr': {'id': 'formulario'}}) }}
+                <div class="fp-grid">
+                    <div>
+                        <label>{{ form_label(form.nombre) }}</label>
+                        {{ form_widget(form.nombre) }}
+                        {{ form_errors(form.nombre) }}
+                    </div>
+                    <div>
+                        <label>{{ form_label(form.idmoneda) }}</label>
+                        {{ form_widget(form.idmoneda) }}
+                        {{ form_errors(form.idmoneda) }}
+                    </div>
+                    <div>
+                        <label>{{ form_label(form.status) }}</label>
+                        {{ form_widget(form.status) }}
+                        {{ form_errors(form.status) }}
+                    </div>
+                    <div>
+                        <label>{{ form_label(form.icono) }}</label>
+                        {{ form_widget(form.icono) }}
+                        {{ form_errors(form.icono) }}
+                    </div>
+                    <div class="full-width fp-check">
+                        {{ form_widget(form.verificable) }}
+                        <label>{{ form_label(form.verificable) }}</label>
+                        {{ form_errors(form.verificable) }}
+                    </div>
+                    <div class="full-width">
+                        <label>{{ form_label(form.programa) }}</label>
+                        {{ form_widget(form.programa) }}
+                        {{ form_errors(form.programa) }}
+                    </div>
+                    <div class="full-width">
+                        <label>{{ form_label(form.parametros) }}</label>
+                        {{ form_widget(form.parametros) }}
+                        {{ form_errors(form.parametros) }}
+                        <small>Ej: [{"campo":"referencia","etiqueta":"Numero de Operacion"}]</small>
+                    </div>
+                </div>
+
+                {{ form_rest(form) }}
+
+                <div class="submit-btn">
+                    {{ form_widget(form.submit) }}
+                </div>
+            {{ form_end(form) }}
+
+            <div class="maestro-form-acciones">
+                <a href="{{ path('maestro_formapago') }}">Volver al listado</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
