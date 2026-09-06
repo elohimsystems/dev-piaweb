@@ -1,0 +1,119 @@
+{% extends '::base.html.twig' %}
+{% block javascripts %}
+    <script>
+        $(document).ready(function () {
+            $('#tablaFormaspago').DataTable({
+                "dom": 'Bflit<"bottom"Blp>',
+                "order": [[0, "ASC"]],
+                "columnDefs": [{ "orderable": false, "targets": [-1] }],
+                "language": {
+                    "emptyTable": "No hay formas de pago registradas",
+                    "lengthMenu": "Muestra _MENU_ registros",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                    "infoEmpty": "0 registros",
+                    "infoFiltered": "(filtrados de _MAX_)",
+                    "search": "Buscar:",
+                    "paginate": { "first": "Primero", "last": "Ultimo", "next": "Siguiente", "previous": "Anterior" }
+                }
+            });
+        });
+    </script>
+{% endblock %}
+{% block style %}
+<style type="text/css">
+    .maestro-cab {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+    .maestro-cab h1 { margin: 0; font-size: 20px; }
+    .btn-nuevo {
+        background: #337ab7;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 13px;
+    }
+    td, th { font-size: 11px; }
+    #tablaFormaspago td { vertical-align: middle; }
+    .maestro-flash { padding: 8px 12px; border-radius: 4px; margin: 8px 0; font-size: 13px; }
+    .maestro-flash.success { background: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; }
+    .maestro-flash.error { background: #fdecea; border: 1px solid #f5c6cb; color: #c0392b; }
+    .estado-pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; }
+    .estado-pill.activo { background: #e8f5e9; color: #2e7d32; }
+    .estado-pill.inactivo { background: #fdecea; color: #c0392b; }
+    .acciones-fp { display: flex; gap: 4px; }
+    .acciones-fp a, .acciones-fp button {
+        border: 1px solid #ccc;
+        background: #f7f7f7;
+        border-radius: 4px;
+        padding: 3px 8px;
+        font-size: 11px;
+        cursor: pointer;
+        text-decoration: none;
+        color: #333;
+    }
+    .acciones-fp .btn-eliminar { color: #c0392b; border-color: #e6b0aa; }
+</style>
+{% endblock %}
+{% block body -%}
+    <div class="pia-wrapper">
+        {{ include("FraterSoftPiaWebBundle:Default:_header.html.twig") }}
+
+        {% for tipo, mensajes in app.session.flashbag.all %}
+            {% for mensaje in mensajes %}
+                <div class="maestro-flash {{ tipo }}">{{ mensaje }}</div>
+            {% endfor %}
+        {% endfor %}
+
+        <div class="maestro-cab">
+            <h1>Maestro de Formas de Pago</h1>
+            <a href="{{ path('maestro_formapago_new') }}"><button type="button" class="btn-nuevo">Nueva Forma de Pago</button></a>
+        </div>
+
+        <table id="tablaFormaspago" class="display row-border hover compact">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Moneda</th>
+                    <th>Estatus</th>
+                    <th>Verificable</th>
+                    <th>Programa</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entity in entities %}
+                    <tr>
+                        <td>{{ entity.nombre }}</td>
+                        <td>{{ entity.idmoneda ? entity.idmoneda.nombre : '' }}</td>
+                        <td>
+                            {% if entity.status == 1 %}
+                                <span class="estado-pill activo">Activo</span>
+                            {% else %}
+                                <span class="estado-pill inactivo">Inactivo</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ entity.verificable ? 'Si' : 'No' }}</td>
+                        <td>{{ entity.programa }}</td>
+                        <td>
+                            <div class="acciones-fp">
+                                <a href="{{ path('maestro_formapago_edit', { 'id': entity.id }) }}">Editar</a>
+                                <form method="post" action="{{ path('maestro_formapago_eliminar', { 'id': entity.id }) }}"
+                                      onsubmit="return confirm('¿Eliminar la forma de pago {{ entity.nombre|e('js') }}? Esta accion no se puede deshacer.');"
+                                      style="margin:0;">
+                                    <button type="submit" class="btn-eliminar">Eliminar</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

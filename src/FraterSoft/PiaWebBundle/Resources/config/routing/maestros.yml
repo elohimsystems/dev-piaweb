@@ -33,3 +33,30 @@ maestro_organizador_formapago_add:
 maestro_organizador_formapago_eliminar:
     pattern:  /organizadores/formaspago/{id}/eliminar
     defaults: { _controller: "FraterSoftPiaWebBundle:Organizador:formapagoEliminar" }
+
+maestro_formapago:
+    pattern:  /formaspago
+    defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:maestroIndex" }
+
+maestro_formapago_new:
+    pattern:  /formaspago/new
+    defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:maestroNew" }
+
+maestro_formapago_create:
+    pattern:  /formaspago/create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:maestroCreate" }
+    requirements: { _method: post }
+
+maestro_formapago_edit:
+    pattern:  /formaspago/{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:maestroEdit" }
+
+maestro_formapago_update:
+    pattern:  /formaspago/{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:maestroUpdate" }
+    requirements: { _method: post }
+
+maestro_formapago_eliminar:
+    pattern:  /formaspago/{id}/eliminar
+    defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:maestroEliminar" }
+    requirements: { _method: post }
