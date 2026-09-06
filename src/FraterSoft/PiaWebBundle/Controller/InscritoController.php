@@ -1126,60 +1126,97 @@ class InscritoController extends commonPIAClass {
                 ));
             else{
                 if($entity[0]->getPagos()[0]->getConciliado()){
-//                    if($entity[0]->getPagos()[0]->getIdformapago() == 0){  
+//                    if($entity[0]->getPagos()[0]->getIdformapago() == 0){
 
-                        // Busca los rivales del atleta y los muesta en una tabla
+                        // Busca los rivales del atleta y los muestra en una tabla
                         //$this->mostrarInfoInscrito($em,$entity[0]);
-                         $rivales=$em->getRepository('FraterSoftPiaWebBundle:Inscrito')->listarRivales(
-                            $idevento,
-                            $entity[0]->getIdcompetencia()->getId(),
-                            $entity[0]->getIdcategoria()->getId(),
-                            $entity[0]->getIdpia()->getSexo()
-                        );
-                        if(count($rivales) > 0){
-                            //print_r(count($rivales));
-                            $cuadrorivales = "<div class='infoTable'><div class='infoTableTitle'>Rivales</div>"
-                                . "<div class='infoTableHeader'>" 
-                                    . "<div class='infoTableCell'>ATLETA</div>"
-                                    //. "<div class='infoTableCell'>CLUB</div>"
-                                . "</div>";
-                            foreach($rivales as $rival){
-                                $cuadrorivales .= "<div class='infoTableRow'><div class='infoTableCell'>" . strtoupper($rival->getIdpia()->getApellido()) . " " . strtoupper($rival->getIdpia()->getNombre()) . "</div>";
-                                //$cuadrorivales .= "<div class='infoTableCell'>" . strtoupper($rival->getIdpia()->getEquipo()) . "</div>";
+
+                        //En multicompetencia la competencia/categoria no viven en el Inscrito
+                        //sino en cada fila InscritoCompetencia (una por modalidad inscrita).
+                        $esInscritoMulti = count($entity[0]->getCompetencias()) > 0;
+                        $cuadrorivales = "";
+                        $dorsal = "";
+                        $genero = ($entity[0]->getIdpia()->getSexo() == 'M') ? 'Masculino' : 'Femenino';
+
+                        if ($esInscritoMulti) {
+                            //Una linea "Competencia => Categoria" por modalidad, y los rivales
+                            //se acumulan buscando por cada par competencia+categoria.
+                            $categoriaFilas = "";
+                            $filasRivales = "";
+                            foreach ($entity[0]->getCompetencias() as $ic) {
+                                $nombreComp = $ic->getIdcompetencia() ? $ic->getIdcompetencia()->getDescripcion() : '';
+                                $nombreCat = $ic->getIdcategoria() ? $ic->getIdcategoria()->getDescripcion() : 'Unica';
+                                $categoriaFilas .= "<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>"
+                                    . htmlspecialchars($nombreComp) . "</div><div class='infoTableCell'>"
+                                    . htmlspecialchars($nombreCat) . "</div></div>";
+                                if ($ic->getIdcompetencia() && $ic->getIdcategoria()) {
+                                    $rivales = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->listarRivales(
+                                        $idevento,
+                                        $ic->getIdcompetencia()->getId(),
+                                        $ic->getIdcategoria()->getId(),
+                                        $entity[0]->getIdpia()->getSexo()
+                                    );
+                                    foreach ($rivales as $rival) {
+                                        $filasRivales .= "<div class='infoTableRow'><div class='infoTableCell'>"
+                                            . strtoupper($rival->getIdpia()->getApellido()) . " " . strtoupper($rival->getIdpia()->getNombre())
+                                            . "</div></div>";
+                                    }
+                                }
+                            }
+                            if ($filasRivales != "") {
+                                $cuadrorivales = "<div class='infoTable'><div class='infoTableTitle'>Rivales</div>"
+                                    . "<div class='infoTableHeader'><div class='infoTableCell'>ATLETA</div></div>"
+                                    . $filasRivales . "</div>";
+                            }
+                        } else {
+                            $rivales = $em->getRepository('FraterSoftPiaWebBundle:Inscrito')->listarRivales(
+                                $idevento,
+                                $entity[0]->getIdcompetencia()->getId(),
+                                $entity[0]->getIdcategoria()->getId(),
+                                $entity[0]->getIdpia()->getSexo()
+                            );
+                            if(count($rivales) > 0){
+                                $cuadrorivales = "<div class='infoTable'><div class='infoTableTitle'>Rivales</div>"
+                                    . "<div class='infoTableHeader'>"
+                                        . "<div class='infoTableCell'>ATLETA</div>"
+                                    . "</div>";
+                                foreach($rivales as $rival){
+                                    $cuadrorivales .= "<div class='infoTableRow'><div class='infoTableCell'>" . strtoupper($rival->getIdpia()->getApellido()) . " " . strtoupper($rival->getIdpia()->getNombre()) . "</div>";
+                                    $cuadrorivales .= "</div>";
+                                }
                                 $cuadrorivales .= "</div>";
-                            }  
-                            $cuadrorivales .= "</div>";
+                            }
+                            if($idevento == 7209814356 && $entity[0]->getNumero()<>""){
+                                $desc_competencia = $entity[0]->getIdcategoria()->getIdCompetencia()->getDescripcion();
+                                $color = "black";
+                                $top_numero_dorsal = "75%";
+                                if($desc_competencia == "5K") {
+                                    $color = "white";
+                                    $top_numero_dorsal = "55%";
+                                }
+                                else if ($desc_competencia == "10K") {
+                                    $color = "white";
+                                    $top_numero_dorsal = "56%";
+                                }
+                                $dorsal = "<div class='contenedor-dorsal'><div class='titulo-dorsal'>Tu Dorsal</div>"
+                                    . "<div class='imagen-dorsal'><img src='/piaweb/web/bundles/fratersoftpiaweb/images/numero-" . $desc_competencia . ".jpg' width='700px' border:'1px solid black'></div>"
+                                    . "<div class='texto-dorsal' style='color:" . $color . ";top:" . $top_numero_dorsal  . "'>" . str_pad($entity[0]->getNumero(), 4, "0", STR_PAD_LEFT) . "</div>"
+                                    . "</div>";
+                            }
+                            $categoriaFilas = "<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>Categor&iacute;a</div>"
+                                . "<div class='infoTableCell'>" . $entity[0]->getIdcategoria()->getDescripcion() . "</div></div>";
                         }
-                        $dorsal="";
-                        if($idevento == 7209814356 && $entity[0]->getNumero()<>""){
-                            $desc_competencia = $entity[0]->getIdcategoria()->getIdCompetencia()->getDescripcion();
-                            $color = "black";
-                            $top_numero_dorsal = "75%";
-                            if($desc_competencia == "5K") {
-                                $color = "white";
-                                $top_numero_dorsal = "55%";
-                            }
-                            else if ($desc_competencia == "10K") {
-                                $color = "white";
-                                $top_numero_dorsal = "56%";
-                            }
-                            $dorsal = "<div class='contenedor-dorsal'><div class='titulo-dorsal'>Tu Dorsal</div>"
-                                . "<div class='imagen-dorsal'><img src='/piaweb/web/bundles/fratersoftpiaweb/images/numero-" . $desc_competencia . ".jpg' width='700px' border:'1px solid black'></div>"
-                                . "<div class='texto-dorsal' style='color:" . $color . ";top:" . $top_numero_dorsal  . "'>" . str_pad($entity[0]->getNumero(), 4, "0", STR_PAD_LEFT) . "</div>"
-                                . "</div>";
-                        }                            
+
                         $numero = ($entity[0]->getNumero() == null)?"":"<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>N&uacute;mero de Participaci&oacute;n</div><div class='infoTableCell'>" . $entity[0]->getNumero() . "</div></div>"; //
-                        $genero = ($entity[0]->getIdpia()->getSexo()=='M')?'Masculino':'Femenino';
                         return $this->render('FraterSoftPiaWebBundle:Default:mensaje.html.twig', array(
                                     'url' => $this->generateUrl('competidor_find', array('idevento' => $idevento)),
                                     'texto' => "El portador del Documento de Identidad Nro. " . $entity[0]->getIdpia()->getIdDocumento() . "<br>"
-                                    . "est&aacute; oficialmente inscrito para el evento <br><b>" 
+                                    . "est&aacute; oficialmente inscrito para el evento <br><b>"
                                     . $evento->getNombre() . "</b><br><br>"
                                     . "<div class='infoTable'>"
-                                    . "<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>Categor&iacute;a</div>" 
-                                    . "<div class='infoTableCell'>" . $entity[0]->getIdcategoria()->getDescripcion() . "</div></div>" 
-                                    . "<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>G&eacute;nero</div>" 
-                                    . "<div class='infoTableCell'>" . $genero . "</div></div></div>" 
+                                    . $categoriaFilas
+                                    . "<div class='infoTableRow'><div class='infoTableHeaderVertical infoTableCell'>G&eacute;nero</div>"
+                                    . "<div class='infoTableCell'>" . $genero . "</div></div></div>"
                                     //. $numero
                                     . $dorsal
                                     . $cuadrorivales,
