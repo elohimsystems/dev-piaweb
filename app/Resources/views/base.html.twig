@@ -102,6 +102,11 @@
         <!-- FIN DE BLOQUE -->
     </head>
     <body style="font-family: Droid Sans, arial, serif">
+        {% if app.request and app.request.host not in ['sistemapia.com.ve', 'www.sistemapia.com.ve'] %}
+        {# Barra visible solo fuera de produccion (dev-piaweb.sistemapia.com.ve, localhost, etc.) #}
+        <div style="position:fixed;top:0;left:0;right:0;z-index:2147483647;height:26px;background:#c0392b;color:#fff;text-align:center;font:bold 12px/26px Arial,Helvetica,sans-serif;letter-spacing:2px;text-transform:uppercase;box-shadow:0 1px 5px rgba(0,0,0,.35);">Ambiente de Desarrollo</div>
+        <div style="height:26px;"></div>
+        {% endif %}
         {% block poweredby %}
         {% endblock %}
         {% block body %}{% endblock %}
