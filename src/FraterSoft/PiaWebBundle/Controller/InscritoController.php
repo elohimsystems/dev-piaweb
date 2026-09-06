@@ -1021,6 +1021,12 @@ class InscritoController extends commonPIAClass {
         //el campo de competencia se muestra como checkboxes (seleccion multiple)
         $multicompetenciaActivo = $evento->getMulticompetencia() && count($competencias) > 1;
 
+        //Cantidad de categorias configuradas por competencia. En multicompetencia el selector
+        //de categoria solo se muestra si la competencia tiene mas de una (ver new.html.twig).
+        $categoriasPorCompetencia = $multicompetenciaActivo
+            ? $em->getRepository('FraterSoftPiaWebBundle:Categoria')->conteoPorCompetencia($idevento)
+            : array();
+
         //Titulo del campo de competencia (configurable en el evento) y, si tras el filtro de
         //cupos queda una sola competencia, la referencia a ella para acotar las categorias.
         $labelCompetencia = $evento->getTitulocompetencias() ?: 'Competencia';
@@ -1726,7 +1732,8 @@ class InscritoController extends commonPIAClass {
             'controlParentalData' => $controlParentalData,
             'controlParentalConfig' => $controlParentalConfig,
             'multicompetenciaActivo' => $multicompetenciaActivo,
-            'competencias' => $competencias
+            'competencias' => $competencias,
+            'categoriasPorCompetencia' => $categoriasPorCompetencia
         ));
     }
 
@@ -1927,6 +1934,12 @@ class InscritoController extends commonPIAClass {
         //selecciona por cada competencia marcada (ver twig/JS), igual que en el alta.
         $multicompetenciaActivo = $entity->getIdevento()->getMulticompetencia() && count($competencias) > 1;
 
+        //Cantidad de categorias configuradas por competencia. En multicompetencia el selector
+        //de categoria solo se muestra si la competencia tiene mas de una (ver edit.html.twig).
+        $categoriasPorCompetencia = $multicompetenciaActivo
+            ? $em->getRepository('FraterSoftPiaWebBundle:Categoria')->conteoPorCompetencia($entity->getIdevento()->getId())
+            : array();
+
         $labelCompetencia = $entity->getIdevento()->getTitulocompetencias() ?: 'Competencia';
         $competenciaUnica = (count($competencias) === 1) ? $competencias[0] : null;
         //Si hay una sola competencia, las categorias se acotan a las de esa competencia
@@ -2098,6 +2111,7 @@ class InscritoController extends commonPIAClass {
                     'multicompetenciaActivo' => $multicompetenciaActivo,
                     'competencias' => $competencias,
                     'categoriasActuales' => $categoriasActuales,
+                    'categoriasPorCompetencia' => $categoriasPorCompetencia,
         ));
 
     }
