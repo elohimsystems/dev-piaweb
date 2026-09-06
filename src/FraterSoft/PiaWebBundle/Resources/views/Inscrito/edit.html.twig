@@ -318,6 +318,7 @@
                     {% for child in edit_form.idcompetencias %}
                     {% set seleccionada = categoriasActuales[child.vars.value] is defined %}
                     {% set catActual = seleccionada ? categoriasActuales[child.vars.value] : null %}
+                    {% set totalCategorias = categoriasPorCompetencia[child.vars.value]|default(0) %}
                     <tr class="multicompetencia-fila">
                         <td>
                             {{ form_widget(child) }}
@@ -325,9 +326,10 @@
                         </td>
                         <td>
                             <span class="multicompetencia-item" id="multicompetencia-item-{{ child.vars.value }}"
-                                  style="{% if not seleccionada %}display:none;{% endif %}">
+                                  style="{% if not seleccionada or totalCategorias <= 1 %}display:none;{% endif %}">
                                 <select id="idcategoria_select_{{ child.vars.value }}" name="idcategoria_{{ child.vars.value }}"
-                                        data-categoria-actual="{{ catActual ? catActual.id : '' }}">
+                                        data-categoria-actual="{{ catActual ? catActual.id : '' }}"
+                                        data-total-categorias="{{ totalCategorias }}">
                                     <option value="">Seleccione una Categoría</option>
                                     {% if catActual %}
                                     <option value="{{ catActual.id }}" selected>{{ catActual.descripcion }}</option>
@@ -477,20 +479,30 @@
                 dataType: "json",
                 success: function (datos) {
                     var $sel = $("#idcategoria_select_" + idComp);
+                    var totalCategorias = parseInt($sel.data('total-categorias')) || 0;
                     $sel.empty();
                     if (datos.length == 0) {
                         alert("No existe una Categoria aplicable para una de las modalidades seleccionadas");
                         return null;
                     }
-                    if (datos.length > 1)
+                    //El selector solo se muestra si la competencia tiene mas de una categoria
+                    //configurada. Con una sola, se asigna automaticamente y se envia oculta.
+                    var mostrarSelector = totalCategorias > 1;
+                    if (mostrarSelector && datos.length > 1)
                         $sel.append("<option value=''>Seleccione una Categoría</option>");
                     $.each(datos, function (key, value) {
                         $sel.append($('<option>', {value: value.id, text: value.descripcion}));
                     });
+                    if (mostrarSelector) {
+                        $('#multicompetencia-item-' + idComp).show();
+                    } else {
+                        $('#multicompetencia-item-' + idComp).hide();
+                    }
                     if (preselect) {
                         $sel.val(preselect);
                         buscaPrecioMulti(idComp, preselect);
-                    } else if (datos.length == 1) {
+                    } else if (!mostrarSelector || datos.length == 1) {
+                        //Sin eleccion posible: se asigna la unica opcion y se cotiza
                         $sel.val(datos[0].id);
                         buscaPrecioMulti(idComp, datos[0].id);
                     }
@@ -840,8 +852,8 @@
         $('#{{ edit_form.idcompetencias.vars.id }}').on('change', 'input[type=checkbox]', function () {
             var idComp = $(this).val();
             if ($(this).is(':checked')) {
-                $('#multicompetencia-item-' + idComp).show();
-                //Muestra ya el precio de la modalidad (competencia o, si no tiene, evento)
+                //El selector de categoria se mantiene oculto hasta saber cuantas aplican:
+                //cargaCategoriasMulti() lo muestra solo si hay mas de una (evita el parpadeo)
                 buscaPrecioMulti(idComp, '');
                 cargaCategoriasMulti(idComp);
             } else {
@@ -864,8 +876,12 @@
         $('#multicompetencia-total').show();
         $('#{{ edit_form.idcompetencias.vars.id }} input[type=checkbox]:checked').each(function () {
             var idComp = $(this).val();
-            $('#multicompetencia-item-' + idComp).show();
-            buscaPrecioMulti(idComp, $('#idcategoria_select_' + idComp).val() || '');
+            var $sel = $('#idcategoria_select_' + idComp);
+            //El selector solo se muestra si la competencia tiene mas de una categoria configurada
+            if ((parseInt($sel.data('total-categorias')) || 0) > 1) {
+                $('#multicompetencia-item-' + idComp).show();
+            }
+            buscaPrecioMulti(idComp, $sel.val() || '');
         });
         //Valida que se haya marcado al menos una modalidad antes de guardar
         $("form#formulario").submit(function (event) {

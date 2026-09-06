@@ -366,7 +366,8 @@
                         </td>
                         <td>
                             <span class="multicompetencia-item" id="multicompetencia-item-{{ child.vars.value }}" style="display:none;">
-                                <select id="idcategoria_select_{{ child.vars.value }}" name="idcategoria_{{ child.vars.value }}">
+                                <select id="idcategoria_select_{{ child.vars.value }}" name="idcategoria_{{ child.vars.value }}"
+                                        data-total-categorias="{{ categoriasPorCompetencia[child.vars.value]|default(0) }}">
                                     <option value="">Seleccione una Categoría</option>
                                 </select>
                                 <span id="precio_comp_{{ child.vars.value }}"></span>
@@ -522,17 +523,29 @@
                 dataType: "json",
                 success: function (datos) {
                     var $sel = $("#idcategoria_select_" + idComp);
+                    var totalCategorias = parseInt($sel.data('total-categorias')) || 0;
                     $sel.empty();
                     if (datos.length == 0) {
                         alert("No existe una Categoria aplicable para una de las modalidades seleccionadas");
                         return null;
                     }
-                    if (datos.length > 1)
+                    //El selector solo se muestra si la competencia tiene mas de una categoria
+                    //configurada. Con una sola, se asigna automaticamente y se envia oculta.
+                    var mostrarSelector = totalCategorias > 1;
+                    if (mostrarSelector && datos.length > 1)
                         $sel.append("<option selected value=''>Seleccione una Categoría</option>");
                     $.each(datos, function (key, value) {
                         $sel.append($('<option>', {value: value.id, text: value.descripcion}));
                     });
-                    if (datos.length == 1) {
+                    if (mostrarSelector) {
+                        $('#multicompetencia-item-' + idComp).show();
+                    } else {
+                        $('#multicompetencia-item-' + idComp).hide();
+                    }
+                    //Si no hay que elegir (selector oculto, o una sola categoria aplicable),
+                    //se asigna la unica opcion y se cotiza
+                    if (!mostrarSelector || datos.length == 1) {
+                        $sel.val(datos[0].id);
                         buscaPrecioMulti(idComp, datos[0].id);
                     }
                 },
@@ -908,8 +921,8 @@
         $('#{{ form.idcompetencias.vars.id }}').on('change', 'input[type=checkbox]', function () {
             var idComp = $(this).val();
             if ($(this).is(':checked')) {
-                $('#multicompetencia-item-' + idComp).show();
-                //Muestra ya el precio de la modalidad (competencia o, si no tiene, evento)
+                //El selector de categoria se mantiene oculto hasta saber cuantas aplican:
+                //cargaCategoriasMulti() lo muestra solo si hay mas de una (evita el parpadeo)
                 buscaPrecioMulti(idComp, '');
                 cargaCategoriasMulti(idComp);
             } else {

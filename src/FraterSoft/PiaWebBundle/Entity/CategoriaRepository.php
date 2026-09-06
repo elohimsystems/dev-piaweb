@@ -36,6 +36,29 @@ where ca.idcampeonato=' . $idcampeonato
             ->getResult();
     }
     
+    /**
+     * Devuelve un mapa (idcompetencia => cantidad de categorias configuradas) para las
+     * competencias del evento. Lo usa el formulario multicompetencia para decidir si se
+     * muestra el selector de categoria: solo si la competencia tiene mas de una.
+     */
+    public function conteoPorCompetencia($idevento)
+    {
+        $filas = $this->getEntityManager()
+            ->createQuery(
+                'select co.id as idcompetencia, count(ca.id) as total '
+                . 'from FraterSoftPiaWebBundle:Competencia co '
+                . 'inner join FraterSoftPiaWebBundle:Categoria ca WITH co.id = ca.idcompetencia '
+                . 'where co.idevento = ' . (int) $idevento . ' '
+                . 'group by co.id'
+            )
+            ->getResult();
+        $mapa = array();
+        foreach ($filas as $fila) {
+            $mapa[$fila['idcompetencia']] = (int) $fila['total'];
+        }
+        return $mapa;
+    }
+
     public function arrayCategorias($idcompetencia)
     {
         return $this->getEntityManager()
