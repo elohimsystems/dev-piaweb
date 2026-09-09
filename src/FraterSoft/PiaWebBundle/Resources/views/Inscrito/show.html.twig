@@ -123,10 +123,10 @@
             {% if entity.idcategoria is not null %}
             <tr><th>Categoria</th><td>{{ entity.idcategoria.descripcion }}</td></tr>
             {% endif %}
-            {% if entity.competencias is not empty and entity.competencias|length > 1 %}
+            {% if entity.competencias is not empty %}
             <tr><th>{{ entity.idevento.titulocompetencias|default('Competencias') }}</th><th>Categoria</th></tr>
             {% for ic in entity.competencias %}
-            <tr><td>{{ ic.idcompetencia.descripcion }}</td><td>{{ ic.idcategoria.descripcion }}</td></tr>
+            <tr><td>{{ ic.idcompetencia.descripcion }}</td><td>{% if ic.idcategoria %}{{ ic.idcategoria.descripcion }}{% endif %}</td></tr>
             {% endfor %}
             {% endif %}
         </tbody>
