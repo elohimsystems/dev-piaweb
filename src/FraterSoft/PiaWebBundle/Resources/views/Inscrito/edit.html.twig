@@ -121,8 +121,19 @@
         /*  Configura el estilo del subformulario pago ******/
         /****************************************************/
         div[id*=idmoneda]{
+            display: inline-block;
+            vertical-align: middle;
             width: 204px;
-            float: right;        
+        }
+        div[id*=idmoneda] input[type="radio"]{
+            vertical-align: middle;
+            margin: 0 3px 0 0;
+        }
+        div[id*=idmoneda] label{
+            display: inline-block;
+            vertical-align: middle;
+            width: auto;
+            margin: 0 10px 0 0;
         }
         div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea{
             vertical-align: middle;
