@@ -1,5 +1,16 @@
 {% extends '::base.html.twig' %}
+{% form_theme edit_form _self %}
 {% import "FraterSoftPiaWebBundle:Default:FS-TWIG-Library.html.twig" as twiglib %}
+{% block _fratersoft_piawebbundle_inscrito_pagos_entry_idmoneda_widget %}
+    <div {{ block('widget_container_attributes') }}>
+        {% for child in form %}
+            <label for="{{ child.vars.id }}" class="moneda-card">
+                {{ form_widget(child) }}
+                <span>{{ child.vars.label }}</span>
+            </label>
+        {% endfor %}
+    </div>
+{% endblock %}
     
 {#{%macro opeart(operador_art)%}
     {%if(operador_art=='>')%}>{%elseif(operador_art=='<')%}<{%elseif(operador_art=='>=')%}>={%elseif(operador_art=='<=')%}<={%elseif(operador_art=='==')%}=={%elseif(operador_art=='!=')%}!={%endif%}
@@ -121,19 +132,40 @@
         /*  Configura el estilo del subformulario pago ******/
         /****************************************************/
         div[id*=idmoneda]{
-            display: inline-block;
+            display: inline-flex;
+            flex-wrap: wrap;
+            gap: 8px;
             vertical-align: middle;
-            width: 204px;
+            white-space: normal;
         }
-        div[id*=idmoneda] input[type="radio"]{
-            vertical-align: middle;
-            margin: 0 3px 0 0;
+        div[id*=idmoneda] .moneda-card{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            margin: 0;
+            padding: 4px 6px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background: #f7f7f7;
+            cursor: pointer;
         }
-        div[id*=idmoneda] label{
-            display: inline-block;
-            vertical-align: middle;
-            width: auto;
-            margin: 0 10px 0 0;
+        div[id*=idmoneda] .moneda-card input[type="radio"]{
+            margin: 0;
+        }
+        div[id*=idmoneda] .moneda-card span{
+            text-align: center;
+        }
+        div[id*=idmoneda] .moneda-card:has(input:checked){
+            background: #eaf3fc;
+            border-color: #337ab7;
+        }
+        div[id*=idmoneda] .moneda-card input[type="radio"]:checked + span{
+            font-weight: bold;
+            color: #204d74;
+        }
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:has(> div[id*=idmoneda]){
+            white-space: nowrap;
         }
         div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > input[type="text"],input[type="number"],textarea{
             vertical-align: middle;
@@ -278,11 +310,16 @@
         }
         #fratersoft_piawebbundle_inscrito_idpia > div:nth-child(n+0) > select,
         #formulario > div:nth-child(n+0) > select,
-        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > select,
-        div[id*=idmoneda] {        
+        div[id*=fratersoft_piawebbundle_inscrito_pagos] > div:nth-child(n+0) > select {
             height: 18px;
             width: 174px;
             font-size: 0.8em;
+        }
+        div[id*=idmoneda]{
+            gap: 6px;
+        }
+        div[id*=idmoneda] .moneda-card{
+            padding: 4px 7px;
         }
         #fratersoft_piawebbundle_inscrito_idpia > div:nth-child(n+0) > label,
         #formulario > div:nth-child(n+0) > label ,
