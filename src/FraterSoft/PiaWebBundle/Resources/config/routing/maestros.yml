@@ -65,3 +65,30 @@ maestro_formapago_duplicar:
     pattern:  /formaspago/{id}/duplicar
     defaults: { _controller: "FraterSoftPiaWebBundle:Formaspago:maestroDuplicar" }
     requirements: { _method: post }
+
+maestro_moneda:
+    pattern:  /monedas
+    defaults: { _controller: "FraterSoftPiaWebBundle:Moneda:maestroIndex" }
+
+maestro_moneda_new:
+    pattern:  /monedas/new
+    defaults: { _controller: "FraterSoftPiaWebBundle:Moneda:maestroNew" }
+
+maestro_moneda_create:
+    pattern:  /monedas/create
+    defaults: { _controller: "FraterSoftPiaWebBundle:Moneda:maestroCreate" }
+    requirements: { _method: post }
+
+maestro_moneda_edit:
+    pattern:  /monedas/{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:Moneda:maestroEdit" }
+
+maestro_moneda_update:
+    pattern:  /monedas/{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:Moneda:maestroUpdate" }
+    requirements: { _method: post }
+
+maestro_moneda_eliminar:
+    pattern:  /monedas/{id}/eliminar
+    defaults: { _controller: "FraterSoftPiaWebBundle:Moneda:maestroEliminar" }
+    requirements: { _method: post }
