@@ -11,6 +11,10 @@ FraterSoft\PiaWebBundle\Entity\Formaspago:
             id: true
             generator:
                 strategy: SEQUENCE
+            sequenceGenerator:
+                sequenceName: piaaccess.tmformaspagos_id_sq
+                allocationSize: 1
+                initialValue: 1
     fields:
         nombre:
             type: string
