@@ -68,8 +68,8 @@ class Moneda
      */
     public function setCodigolocal($codigolocal)
     {
-        $this->codigolocal = $codigolocal;
-    
+        $this->codigolocal = is_null($codigolocal) ? $codigolocal : trim($codigolocal);
+
         return $this;
     }
 

@@ -20,7 +20,7 @@ FraterSoft\PiaWebBundle\Entity\Moneda:
       type: string
       nullable: true
       length: 5
-      fixed: true
+      fixed: false
       comment: ""
     codigointernacional:
       type: string
