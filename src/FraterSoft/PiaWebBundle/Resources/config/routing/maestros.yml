@@ -92,3 +92,30 @@ maestro_moneda_eliminar:
     pattern:  /monedas/{id}/eliminar
     defaults: { _controller: "FraterSoftPiaWebBundle:Moneda:maestroEliminar" }
     requirements: { _method: post }
+
+maestro_user:
+    pattern:  /usuarios
+    defaults: { _controller: "FraterSoftPiaWebBundle:User:maestroIndex" }
+
+maestro_user_new:
+    pattern:  /usuarios/new
+    defaults: { _controller: "FraterSoftPiaWebBundle:User:maestroNew" }
+
+maestro_user_create:
+    pattern:  /usuarios/create
+    defaults: { _controller: "FraterSoftPiaWebBundle:User:maestroCreate" }
+    requirements: { _method: post }
+
+maestro_user_edit:
+    pattern:  /usuarios/{id}/edit
+    defaults: { _controller: "FraterSoftPiaWebBundle:User:maestroEdit" }
+
+maestro_user_update:
+    pattern:  /usuarios/{id}/update
+    defaults: { _controller: "FraterSoftPiaWebBundle:User:maestroUpdate" }
+    requirements: { _method: post }
+
+maestro_user_eliminar:
+    pattern:  /usuarios/{id}/eliminar
+    defaults: { _controller: "FraterSoftPiaWebBundle:User:maestroEliminar" }
+    requirements: { _method: post }
