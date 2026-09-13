@@ -628,7 +628,9 @@
             }
             $("#multicompetencia-total-valor").text(total.toFixed(2));
             {% if edit_form.pagos[0].precio is defined %}
-            $("#{{ edit_form.pagos[0].precio.vars.id }}").val(total.toFixed(2));
+            var $campoPrecioMulti = $("#{{ edit_form.pagos[0].precio.vars.id }}");
+            $campoPrecioMulti.find('option').remove();
+            $campoPrecioMulti.append('<option selected value="' + total.toFixed(2) + '">' + total.toFixed(2) + '</option>');
             {% endif %}
         }
         {% endif %}
@@ -939,7 +941,7 @@
                 return false;
             }
         });
-        {% else %}
+        {% elseif entity.idevento.proceso != 1 %}
         $("#{{ edit_form.idcompetencia.vars.id }}").change(function () {
             buscaCategorias();
         });
@@ -1063,16 +1065,15 @@
             ]
         });
 
-        {% if edit_form.precio is defined %}
-        $("#{{edit_form.precio.vars.id}}").change(function () {
-            setTextoPrecio($("#{{edit_form.precio.vars.id}} option:selected"),$("#{{edit_form.idpago.texto.vars.id}}"));
+        {% if edit_form.pagos is defined and edit_form.pagos[0].precio is defined %}
+        $("#{{edit_form.pagos[0].precio.vars.id}}").change(function () {
+            setTextoPrecio($("#{{edit_form.pagos[0].precio.vars.id}} option:selected"),$("#{{edit_form.pagos[0].texto.vars.id}}"));
             calcularTotalPagar(
-                    $("#{{edit_form.precio.vars.id}}"),
-                    $("#{{edit_form.idpago.monto.vars.id}}"),
-                    {# {{recargas|json_encode|raw}} #}
+                    $("#{{edit_form.pagos[0].precio.vars.id}}"),
+                    $("#{{edit_form.pagos[0].monto.vars.id}}"),
                     {{null|json_encode|raw}}
             );
-        });   
+        });
         {% endif %}
 
         {#$("#{{ edit_form.pagos[0].idmoneda.vars.id }}").change(function () {#}
