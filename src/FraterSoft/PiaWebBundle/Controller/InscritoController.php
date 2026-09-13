@@ -1642,11 +1642,10 @@ class InscritoController extends commonPIAClass {
                             'expanded' => true,
                             'data'=>$default_moneda,
                         ))                     
-                        ->add('precio','text',array(
+                        ->add('precio','choice',array(
                             'label'=>'Precio',
                             'required' => true,
-                            'read_only' => true,
-                        ))                        
+                        ))
                         ->add('idformapago', 'choice', array(
                             'label' => 'Forma  de Pago',
                             'choices' => $formasdepagoarray,
@@ -2119,10 +2118,9 @@ class InscritoController extends commonPIAClass {
                             'expanded' => true,
                             'data'=>$entity->getPagos()[0]->getIdmoneda()->getId(),
                         ))                     
-                        ->add('precio','text',array(
+                        ->add('precio','choice',array(
                             'label'=>'Precio',
-                            'read_only' => true,
-                        ))  
+                        ))
                         ->add('message',null,array(
                             'mapped' => false,
                             'label'=>'',

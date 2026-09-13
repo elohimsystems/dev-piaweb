@@ -322,6 +322,14 @@ class DefaultController extends commonPIAClass
         $preciosCategoria = $em->getRepository('FraterSoftPiaWebBundle:Precioscategoria')
             ->arrayPrecios($id);
 
+        $preciosCompetencia = $em->getRepository('FraterSoftPiaWebBundle:Precioscompetencia')
+            ->arrayPrecios($id);
+
+        $competenciaDescripcion = array();
+        foreach ($competencias as $c) {
+            $competenciaDescripcion[$c->getId()] = $c->getDescripcion();
+        }
+
         $publicidad = $em->getRepository('FraterSoftPiaWebBundle:Publicidad')
             ->arrayLista($id);
 
@@ -343,6 +351,7 @@ class DefaultController extends commonPIAClass
                     'monedaNombre' => $nom,
                     'prices' => array(),
                     'formaspagos' => array(),
+                    'competencias' => array(),
                 );
             }
             $idx = $cardsIdx[$cod];
@@ -364,10 +373,35 @@ class DefaultController extends commonPIAClass
                     'monedaNombre' => $cod,
                     'prices' => array(),
                     'formaspagos' => array(),
+                    'competencias' => array(),
+                );
+            }
+            // Solo se usa para detectar la moneda; el precio de categoria no se
+            // muestra en el encabezado de la tarjeta (ese es solo el de evento).
+        }
+
+        foreach ($preciosCompetencia as $pc) {
+            $cod = $pc['moneda'];
+            if (!$cod) continue;
+            if (!isset($cardsIdx[$cod])) {
+                $cardsIdx[$cod] = count($cards);
+                $cards[] = array(
+                    'monedaCodigo' => $cod,
+                    'monedaNombre' => $cod,
+                    'prices' => array(),
+                    'formaspagos' => array(),
+                    'competencias' => array(),
                 );
             }
             $idx = $cardsIdx[$cod];
-            $cards[$idx]['prices'][] = array(
+            $idcompetencia = $pc['idcompetencia'];
+            if (!isset($cards[$idx]['competencias'][$idcompetencia])) {
+                $cards[$idx]['competencias'][$idcompetencia] = array(
+                    'nombre' => isset($competenciaDescripcion[$idcompetencia]) ? $competenciaDescripcion[$idcompetencia] : '',
+                    'precios' => array(),
+                );
+            }
+            $cards[$idx]['competencias'][$idcompetencia]['precios'][] = array(
                 'texto' => $pc['texto'],
                 'precio' => $pc['precio'],
             );
@@ -392,6 +426,7 @@ class DefaultController extends commonPIAClass
                             'monedaNombre' => $fp->getIdmoneda()->getNombre(),
                             'prices' => array(),
                             'formaspagos' => array(),
+                            'competencias' => array(),
                         );
                     }
                     $idx = $cardsIdx[$cod];
@@ -416,8 +451,6 @@ class DefaultController extends commonPIAClass
             'competencias' => $competencias,
             'categoriasPorCompetencia' => $categoriasPorCompetencia,
             'cards' => $cards,
-            'preciosCompetencia' => $em->getRepository('FraterSoftPiaWebBundle:Precioscompetencia')
-                ->arrayPrecios($id),
             'publicidad' => $publicidad,
         ));
     }

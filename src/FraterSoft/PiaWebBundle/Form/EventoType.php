@@ -97,8 +97,9 @@ class EventoType extends AbstractType
             ->add('zonahoraria')
             ->add('idorganizador')
             ->add('url','textarea', array(
-                'label' => 'Url' , 
-                'max_length' => 255 , 
+                'label' => 'Url' ,
+                'max_length' => 255 ,
+                'required' => false,
                 'attr' => array(
                     'cols' => '25',
                     'rows' => '4',
