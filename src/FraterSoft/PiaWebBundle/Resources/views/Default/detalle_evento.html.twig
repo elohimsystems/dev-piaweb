@@ -115,19 +115,6 @@
                     {% endfor %}
                 </div>
                 {% endif %}
-                {% if preciosCompetencia is not empty %}
-                {% set pcs = '' %}
-                {% for p in preciosCompetencia %}
-                {% if p.idcompetencia == competencia.id %}
-                {% set pcs = pcs ~ (pcs ? ' / ' : '') ~ p.moneda ~ ' ' ~ p.precio|number_format(2) %}
-                {% endif %}
-                {% endfor %}
-                {% if pcs %}
-                <div style="margin-top: 8px; font-size: 13px; color: #888; border-top: 1px dotted #eee; padding-top: 8px;">
-                    Precios: {{ pcs }}
-                </div>
-                {% endif %}
-                {% endif %}
             </div>
             {% endfor %}
         </div>
@@ -146,6 +133,32 @@
                     <span>{{ card.monedaCodigo }} {{ card.prices[0].precio|number_format(2) }}</span>
                     {% endif %}
                 </div>
+
+                {% if card.competencias is not empty %}
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 13px; font-weight: bold; color: #555; margin-bottom: 6px; text-transform: uppercase;">Precio por Competencias</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        {% for comp in card.competencias %}
+                        <div style="border: 1px solid #eee; border-radius: 6px; padding: 8px 10px; background: #fafafa;">
+                            {% if comp.precios|length > 1 %}
+                            <div style="font-weight: bold; color: #337ab7; font-size: 13px; margin-bottom: 4px;">{{ comp.nombre }}</div>
+                            {% for pr in comp.precios %}
+                            <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: #333; padding: 2px 0;">
+                                <span>{{ pr.texto ?: 'Precio' }}</span>
+                                <span style="font-weight: bold; white-space: nowrap;">{{ card.monedaCodigo }} {{ pr.precio|number_format(2) }}</span>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: #333;">
+                                <span>{{ comp.nombre }}</span>
+                                <span style="font-weight: bold; white-space: nowrap;">{{ card.monedaCodigo }} {{ comp.precios[0].precio|number_format(2) }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
 
                 {% if card.formaspagos is not empty %}
                 <div>
