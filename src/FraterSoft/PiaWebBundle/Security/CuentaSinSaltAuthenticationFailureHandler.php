@@ -2,6 +2,7 @@
 
 namespace FraterSoft\PiaWebBundle\Security;
 
+use FraterSoft\PiaWebBundle\Controller\CuentaMovilController;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,13 +18,11 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationFailureHandlerI
  * importar que la clave este bien escrita.
  *
  * En vez del error generico "credenciales invalidas", cuando el login falla
- * y el usuario encontrado tiene salt = NULL, se le manda un correo para que
- * fije una clave nueva (reutiliza el flujo de "olvide mi clave" de
- * FOSUserBundle: mismo confirmation_token/password_requested_at, mismo
- * token_ttl). Al fijarla, ResettingController::resetAction (override de
- * este bundle) genera un salt nuevo antes de guardar - de ahi en adelante la
- * cuenta puede loguearse aca Y sigue pudiendo loguearse desde la app nueva
- * (que ya sabe verificar cuentas con salt via el mismo algoritmo sha512).
+ * y el usuario encontrado tiene salt = NULL, se lo manda a
+ * CuentaMovilController::revalidarAction (solo se guarda el id en sesion,
+ * nunca el email) para que confirme el email de su cuenta antes de que se le
+ * mande el correo de "fijar clave nueva" - evita que alguien dispare ese
+ * correo solo por adivinar un nombre de usuario.
  */
 class CuentaSinSaltAuthenticationFailureHandler implements AuthenticationFailureHandlerInterface
 {
@@ -40,64 +39,15 @@ class CuentaSinSaltAuthenticationFailureHandler implements AuthenticationFailure
         if ($username) {
             $user = $this->container->get('fos_user.user_manager')->findUserByUsernameOrEmail($username);
             if (null !== $user && null === $user->getSalt()) {
-                return $this->manejarCuentaSinSalt($user);
+                $request->getSession()->set(CuentaMovilController::SESSION_USER_ID, $user->getId());
+
+                return new RedirectResponse(
+                    $this->container->get('router')->generate('frater_soft_pia_web_cuenta_movil_revalidar')
+                );
             }
         }
 
         return $this->fallo($request, $exception);
-    }
-
-    private function manejarCuentaSinSalt($user)
-    {
-        $ttl = $this->container->getParameter('fos_user.resetting.token_ttl');
-
-        if ($user->isPasswordRequestNonExpired($ttl)) {
-            return $this->redirigirConMensaje(
-                'Ya te enviamos un correo para que puedas ingresar desde este sistema. ' .
-                'Revisa tu bandeja de entrada (tambien spam).'
-            );
-        }
-
-        if (null === $user->getConfirmationToken()) {
-            $tokenGenerator = $this->container->get('fos_user.util.token_generator');
-            $user->setConfirmationToken($tokenGenerator->generateToken());
-        }
-
-        $enlace = $this->container->get('router')->generate(
-            'fos_user_resetting_reset',
-            array('token' => $user->getConfirmationToken()),
-            true
-        );
-
-        $cuerpo = $this->container->get('templating')->render(
-            'FraterSoftPiaWebBundle:Default:email_establecer_clave.html.twig',
-            array('usuario' => $user, 'enlace' => $enlace)
-        );
-
-        $this->container->get('app.mail_controller')->enviar(
-            $this->container->getParameter('mailer_user'),
-            'Establece tu clave de acceso - SistemaPIA',
-            $user->getEmail(),
-            $cuerpo
-        );
-
-        $user->setPasswordRequestedAt(new \DateTime());
-        $this->container->get('fos_user.user_manager')->updateUser($user);
-
-        return $this->redirigirConMensaje(
-            'Tu cuenta fue creada desde la app movil. Te enviamos un correo para que ' .
-            'puedas fijar una clave y entrar tambien desde aca.'
-        );
-    }
-
-    private function redirigirConMensaje($mensaje)
-    {
-        $this->container->get('session')->set(
-            SecurityContext::AUTHENTICATION_ERROR,
-            new AuthenticationException($mensaje)
-        );
-
-        return new RedirectResponse($this->container->get('router')->generate('fos_user_security_login'));
     }
 
     private function fallo(Request $request, AuthenticationException $exception)

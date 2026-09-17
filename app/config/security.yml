@@ -36,6 +36,7 @@ security:
         - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/cuenta-movil, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/contacto$, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/evento/\d+/detalle, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/sitemap\.xml$, role: IS_AUTHENTICATED_ANONYMOUSLY }

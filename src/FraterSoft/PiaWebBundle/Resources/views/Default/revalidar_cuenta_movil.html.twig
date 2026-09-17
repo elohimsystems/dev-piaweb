@@ -1,0 +1,31 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% block fos_user_content %}
+<div style="width: 400px; margin: 80px auto; padding: 30px; border: 1px solid #ccc; border-radius: 6px; box-shadow: 2px 2px 8px rgba(0,0,0,0.1);">
+    <h2 style="margin-top: 0;">Confirmá tu cuenta</h2>
+
+    <div style="color: #31708f; background: #d9edf7; border: 1px solid #bce8f1; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+        Tu cuenta fue creada desde la app móvil de SistemaPIA. Para poder ingresar también desde
+        este sistema, primero necesitamos confirmar el correo electrónico de tu cuenta.
+    </div>
+
+    {% if error %}
+    <div style="color: #a94442; background: #f2dede; border: 1px solid #ebccd1; padding: 10px; border-radius: 4px; margin-bottom: 15px;">
+        {{ error }}
+    </div>
+    {% endif %}
+
+    <form action="{{ path('frater_soft_pia_web_cuenta_movil_revalidar') }}" method="post">
+        <label for="email" style="display:block; margin-bottom:4px;">Correo electrónico de tu cuenta</label>
+        <input type="email" id="email" name="email" required="required"
+               style="width:100%; padding:8px; margin-bottom:12px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;" />
+
+        <input type="submit" value="Enviar correo de confirmación"
+               style="width:100%; padding:10px; background:#337ab7; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:14px;" />
+    </form>
+
+    <div style="text-align:center; margin-top:15px;">
+        <a href="{{ path('fos_user_security_login') }}" style="font-size:13px; color:#337ab7;">Volver a iniciar sesión</a>
+    </div>
+</div>
+{% endblock fos_user_content %}
