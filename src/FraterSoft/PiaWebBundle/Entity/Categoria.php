@@ -25,6 +25,11 @@ class Categoria
     private $descripcion;
 
     /**
+     * @var integer
+     */
+    private $orden;
+
+    /**
      * @var \FraterSoft\PiaWebBundle\Entity\Competencia
      */
     private $idcompetencia;
@@ -116,5 +121,28 @@ class Categoria
     public function getIdcompetencia()
     {
         return $this->idcompetencia;
+    }
+
+    /**
+     * Set orden
+     *
+     * @param integer $orden
+     * @return Categoria
+     */
+    public function setOrden($orden)
+    {
+        $this->orden = $orden;
+
+        return $this;
+    }
+
+    /**
+     * Get orden
+     *
+     * @return integer
+     */
+    public function getOrden()
+    {
+        return $this->orden;
     }
 }

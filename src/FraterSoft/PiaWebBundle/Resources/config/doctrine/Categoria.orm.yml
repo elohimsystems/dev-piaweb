@@ -27,6 +27,11 @@ FraterSoft\PiaWebBundle\Entity\Categoria:
             length: 30
             fixed: false
             comment: ''
+        orden:
+            type: integer
+            nullable: true
+            unsigned: false
+            comment: ''
     manyToOne:
         idcompetencia:
             targetEntity: Competencia

@@ -11,7 +11,7 @@ class CategoriaRepository extends EntityRepository
         return $this->getEntityManager()
             ->createQuery(
                 'select ca from FraterSoftPiaWebBundle:Evento ev inner join FraterSoftPiaWebBundle:Competencia co WITH ev.id = co.idevento inner join FraterSoftPiaWebBundle:Categoria ca WITH co.id = ca.idcompetencia
-where ev.id=' . $idevento
+where ev.id=' . $idevento . ' order by co.id, ca.orden, ca.id'
             )
             ->getResult();
     }
@@ -21,7 +21,7 @@ where ev.id=' . $idevento
         return $this->getEntityManager()
             ->createQuery(
                 'select ca from FraterSoftPiaWebBundle:Categoria ca 
-where ca.idcampeonato=' . $idcampeonato
+where ca.idcampeonato=' . $idcampeonato . ' order by ca.orden, ca.id'
             )
             ->getResult();
     }
@@ -31,7 +31,7 @@ where ca.idcampeonato=' . $idcampeonato
         return $this->getEntityManager()
             ->createQuery(
                 'select ca from FraterSoftPiaWebBundle:Evento ev inner join FraterSoftPiaWebBundle:Competencia co WITH ev.id = co.idevento inner join FraterSoftPiaWebBundle:Categoria ca WITH co.id = ca.idcompetencia '
-                . 'where ev.id=' . $idevento . ' and co.id=' . $idcompetencia
+                . 'where ev.id=' . $idevento . ' and co.id=' . $idcompetencia . ' order by ca.orden, ca.id'
             )
             ->getResult();
     }
@@ -64,7 +64,7 @@ where ca.idcampeonato=' . $idcampeonato
         return $this->getEntityManager()
             ->createQuery(
                 'select ca from FraterSoftPiaWebBundle:Competencia co inner join FraterSoftPiaWebBundle:Categoria ca WITH co.id = ca.idcompetencia
-                where co.id=' . $idcompetencia
+                where co.id=' . $idcompetencia . ' order by ca.orden, ca.id'
             )
             ->getArrayResult();
     }
@@ -73,9 +73,9 @@ where ca.idcampeonato=' . $idcampeonato
     {
         return $this->getEntityManager()
             ->createQuery(
-                'select ca.id,co.id as idcompetencia,ca.idcampeonato, ca.descripcion  '
+                'select ca.id,co.id as idcompetencia,ca.idcampeonato, ca.descripcion, ca.orden  '
                     . 'from FraterSoftPiaWebBundle:Competencia co inner join FraterSoftPiaWebBundle:Categoria ca WITH co.id = ca.idcompetencia
-                    where co.idevento=' . $idevento
+                    where co.idevento=' . $idevento . ' order by co.id, ca.orden, ca.id'
             )
             ->getResult();
     }
@@ -84,9 +84,9 @@ where ca.idcampeonato=' . $idcampeonato
     {
         return $this->getEntityManager()
             ->createQuery(
-                'select ca.id,0 as idcompetencia,ca.idcampeonato,ca.descripcion  '
+                'select ca.id,0 as idcompetencia,ca.idcampeonato,ca.descripcion, ca.orden  '
                     . 'from FraterSoftPiaWebBundle:Categoria ca 
-                    where ca.idcampeonato=' . $idcampeonato
+                    where ca.idcampeonato=' . $idcampeonato . ' order by ca.orden, ca.id'
             )
             ->getResult();
     }

@@ -18,6 +18,7 @@ class CategoriaType extends AbstractType
             ->add('idcompetencia')
             ->add('idcampeonato')
             ->add('descripcion')
+            ->add('orden')
         ;
     }
     
