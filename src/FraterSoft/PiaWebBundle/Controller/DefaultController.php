@@ -309,10 +309,27 @@ class DefaultController extends commonPIAClass
         $competencias = $em->getRepository('FraterSoftPiaWebBundle:Competencia')->findBy(array('idevento' => $id));
 
         $categoriasPorCompetencia = array();
+        $idsCategorias = array();
         foreach ($competencias as $c) {
-            $cats = $em->getRepository('FraterSoftPiaWebBundle:Categoria')->findBy(array('idcompetencia' => $c));
+            $cats = $em->getRepository('FraterSoftPiaWebBundle:Categoria')->findBy(array('idcompetencia' => $c), array('orden' => 'ASC', 'id' => 'ASC'));
             foreach ($cats as $cat) {
                 $categoriasPorCompetencia[$c->getId()][] = $cat;
+                $idsCategorias[] = $cat->getId();
+            }
+        }
+
+        // Reglas de cada categoria. Tipo rango: 'R' o '[]'; cualquier otro (=, V) es valor.
+        $reglasPorCategoria = array();
+        if ($idsCategorias) {
+            $reglas = $em->getRepository('FraterSoftPiaWebBundle:CategoriaReglas')
+                ->findBy(array('idcategoria' => $idsCategorias), array('id' => 'ASC'));
+            foreach ($reglas as $regla) {
+                $reglasPorCategoria[$regla->getIdcategoria()->getId()][] = array(
+                    'atributo' => $regla->getAtributo(),
+                    'esRango' => in_array($regla->getTipo(), array('R', '[]')),
+                    'valor1' => $regla->getValor1(),
+                    'valor2' => $regla->getValor2(),
+                );
             }
         }
 
@@ -450,6 +467,7 @@ class DefaultController extends commonPIAClass
             'organizador' => $organizador,
             'competencias' => $competencias,
             'categoriasPorCompetencia' => $categoriasPorCompetencia,
+            'reglasPorCategoria' => $reglasPorCategoria,
             'cards' => $cards,
             'publicidad' => $publicidad,
         ));

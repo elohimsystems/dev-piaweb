@@ -36,6 +36,7 @@ class CategoriaController extends commonPIAClass
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $this->asignarOrdenNuevo($em, $entity);
             $em->persist($entity);
             $em->flush();
 
@@ -162,6 +163,7 @@ class CategoriaController extends commonPIAClass
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $this->asignarOrdenNuevo($em, $entity);
             $em->persist($entity);
             $em->flush();
 
@@ -265,10 +267,13 @@ class CategoriaController extends commonPIAClass
             throw $this->createNotFoundException('Unable to find Categoria entity.');
         }
 
+        $ordenAnterior = $entity->getOrden();
+
         $editForm = $this->createEditForm($entity);
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
+            $this->moverOrden($em, $entity, $ordenAnterior);
             $em->flush();
 
             return $this->redirect($this->generateUrl('categoria_campeonato_new', array(
@@ -357,10 +362,13 @@ class CategoriaController extends commonPIAClass
             throw $this->createNotFoundException('Unable to find Categoria entity.');
         }
 
+        $ordenAnterior = $entity->getOrden();
+
         $editForm = $this->createEditForm($entity);
         $editForm->handleRequest($request);
 
         if ($editForm->isValid()) {
+            $this->moverOrden($em, $entity, $ordenAnterior);
             $em->flush();
 
             return $this->redirect($this->generateUrl('categoria_new', array(
@@ -405,4 +413,86 @@ class CategoriaController extends commonPIAClass
         ));
         return $form;
     }    
+
+    /**
+     * Orden automatico de la categoria (mismo criterio que EventoAtributos): al
+     * crear se ignora el 'orden' que llegue del formulario y se asigna el
+     * siguiente correlativo dentro de su competencia (o de su campeonato si no
+     * tiene competencia), es decir, siempre al final.
+     */
+    private function asignarOrdenNuevo($em, Categoria $entity)
+    {
+        $maxOrden = $this->qbCategoriasMismoGrupo($em, $entity)
+            ->select('MAX(ca.orden)')
+            ->getQuery()
+            ->getSingleScalarResult();
+        $entity->setOrden(($maxOrden !== null ? (int) $maxOrden : 0) + 1);
+    }
+
+    /**
+     * Mover categoria de orden: si el orden pedido en el formulario cambio
+     * respecto al que tenia, se corren las categorias que quedan en el medio
+     * en vez de pisar el valor (evita 'orden' duplicados). Ej.: de 5 a 2 -> las
+     * que estaban en 2,3,4 suben a 3,4,5; de 2 a 5 -> las que estaban en 3,4,5
+     * bajan a 2,3,4. Un orden vacio conserva el anterior y uno fuera de rango
+     * se ajusta a [1, ultimo].
+     */
+    private function moverOrden($em, Categoria $entity, $ordenAnterior)
+    {
+        $ordenNuevo = $entity->getOrden();
+        if ($ordenAnterior === null) {
+            return;
+        }
+        if ($ordenNuevo === null) {
+            $entity->setOrden($ordenAnterior);
+            return;
+        }
+
+        $maxOrden = (int) $this->qbCategoriasMismoGrupo($em, $entity)
+            ->select('MAX(ca.orden)')
+            ->getQuery()
+            ->getSingleScalarResult();
+        $ordenNuevo = max(1, min((int) $ordenNuevo, $maxOrden));
+        $entity->setOrden($ordenNuevo);
+        if ($ordenNuevo == $ordenAnterior) {
+            return;
+        }
+
+        $qb = $this->qbCategoriasMismoGrupo($em, $entity, true)
+            ->andWhere('ca.id != :id')
+            ->setParameter('id', $entity->getId());
+        if ($ordenNuevo < $ordenAnterior) {
+            $qb->set('ca.orden', 'ca.orden + 1')
+                ->andWhere('ca.orden >= :nuevo AND ca.orden < :anterior');
+        } else {
+            $qb->set('ca.orden', 'ca.orden - 1')
+                ->andWhere('ca.orden > :anterior AND ca.orden <= :nuevo');
+        }
+        $qb->setParameter('nuevo', $ordenNuevo)
+            ->setParameter('anterior', $ordenAnterior)
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * QueryBuilder (select o update) de las categorias que comparten el mismo
+     * grupo de orden que $entity: su competencia o, si no tiene, su campeonato.
+     */
+    private function qbCategoriasMismoGrupo($em, Categoria $entity, $update = false)
+    {
+        $qb = $em->createQueryBuilder();
+        if ($update) {
+            $qb->update('FraterSoftPiaWebBundle:Categoria', 'ca');
+        } else {
+            $qb->from('FraterSoftPiaWebBundle:Categoria', 'ca');
+        }
+        if ($entity->getIdcompetencia()) {
+            $qb->where('ca.idcompetencia = :grupo')
+                ->setParameter('grupo', $entity->getIdcompetencia());
+        } else {
+            $qb->where('ca.idcompetencia IS NULL AND ca.idcampeonato = :grupo')
+                ->setParameter('grupo', $entity->getIdcampeonato());
+        }
+        return $qb;
+    }
 }

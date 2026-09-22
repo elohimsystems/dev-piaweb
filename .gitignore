@@ -10,3 +10,5 @@ app/cache/
 web/bundles/fratersoftpiaweb/fine-uploader/files
 # Credenciales
 app/config/parameters.yml
+web/bundles/fratersoftpiaweb/photos/
+web/bundles/fratersoftpiaweb/fileupload/

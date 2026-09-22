@@ -24,4 +24,17 @@ class User extends BaseUser
         $this->idorganizador = $idorganizador;
         return $this;
     }
+
+    /**
+     * FOSUserBundle solo genera el salt en el constructor (Model\User::__construct)
+     * y nunca expone un setter - hace falta uno propio para poder asignarle un
+     * salt nuevo a una cuenta ya existente (creada sin salt desde la app movil,
+     * con bcrypt) al establecer una clave nueva por este sistema. Ver
+     * ResettingController::resetAction.
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+        return $this;
+    }
 }

@@ -10,3 +10,7 @@ services:
     app.mail_controller:
         class: FraterSoft\PiaWebBundle\Controller\MailController
         arguments: [@mailer, "%mailer_user%"]
+
+    app.cuenta_sin_salt_failure_handler:
+        class: FraterSoft\PiaWebBundle\Security\CuentaSinSaltAuthenticationFailureHandler
+        arguments: [@service_container]

@@ -50,13 +50,32 @@ class EventoAtributosController extends commonPIAClass
 
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+
+            // Orden automatico (2026-09-17, a pedido de Freddy): antes lo
+            // ingresaba el organizador a mano (campo 'orden' del formulario,
+            // con una validacion del lado del cliente que no evitaba
+            // duplicados - ver new.html.twig), y eso produjo `orden`
+            // repetidos entre atributos de un mismo evento (ej. evento 25,
+            // "foto" e "iddocumento" ambos con orden=1). Ahora se ignora lo
+            // que haya llegado del formulario y se asigna siempre el
+            // siguiente correlativo dentro del evento, en el orden en que se
+            // van agregando.
+            $maxOrden = $em->createQueryBuilder()
+                ->select('MAX(ea.orden)')
+                ->from('FraterSoftPiaWebBundle:EventoAtributos', 'ea')
+                ->where('ea.idevento = :idevento')
+                ->setParameter('idevento', $entity->getIdevento())
+                ->getQuery()
+                ->getSingleScalarResult();
+            $entity->setOrden(($maxOrden !== null ? (int) $maxOrden : 0) + 1);
+
             $em->persist($entity);
             $em->flush();
 
             return $this->redirect($this->generateUrl('eventoatributos_new', array(
                 'idevento' => $entity->getIdevento()->getId(),
                 'estado' => 2
-            )));            
+            )));
         }
 
         return $this->render('FraterSoftPiaWebBundle:EventoAtributos:new.html.twig', array(
@@ -173,10 +192,43 @@ class EventoAtributosController extends commonPIAClass
             throw $this->createNotFoundException('Unable to find EventoAtributos entity.');
         }
 
+        $ordenAnterior = $entity->getOrden();
+
         $editForm = $this->crearFormulario($entity);
         $editForm->handleRequest($request);
-        
+
         if ($editForm->isSubmitted()) {
+            // Mover atributo de orden (2026-09-17, a pedido de Freddy): si el
+            // orden pedido en el formulario cambio respecto al que tenia, hay
+            // que correr a los atributos que quedan en el medio en vez de
+            // simplemente pisar el valor (eso es lo que producia `orden`
+            // duplicados entre atributos de un mismo evento - ver tambien el
+            // fix de createAction). Ej.: de 5 a 2 -> los que estaban en
+            // 2,3,4 suben a 3,4,5; de 2 a 5 -> los que estaban en 3,4,5 bajan
+            // a 2,3,4.
+            $ordenNuevo = $entity->getOrden();
+            if ($ordenAnterior !== null && $ordenNuevo !== null && $ordenNuevo != $ordenAnterior) {
+                $qb = $em->createQueryBuilder()
+                    ->update('FraterSoftPiaWebBundle:EventoAtributos', 'ea')
+                    ->where('ea.idevento = :idevento')
+                    ->andWhere('ea.id != :id')
+                    ->setParameter('idevento', $entity->getIdevento())
+                    ->setParameter('id', $entity->getId());
+
+                if ($ordenNuevo < $ordenAnterior) {
+                    $qb->set('ea.orden', 'ea.orden + 1')
+                        ->andWhere('ea.orden >= :nuevo AND ea.orden < :anterior')
+                        ->setParameter('nuevo', $ordenNuevo)
+                        ->setParameter('anterior', $ordenAnterior);
+                } else {
+                    $qb->set('ea.orden', 'ea.orden - 1')
+                        ->andWhere('ea.orden > :anterior AND ea.orden <= :nuevo')
+                        ->setParameter('anterior', $ordenAnterior)
+                        ->setParameter('nuevo', $ordenNuevo);
+                }
+                $qb->getQuery()->execute();
+            }
+
             $em->flush();
             return $this->redirect($this->generateUrl('eventoatributos_new', array(
                 'idevento' => $entity->getIdevento()->getId(),

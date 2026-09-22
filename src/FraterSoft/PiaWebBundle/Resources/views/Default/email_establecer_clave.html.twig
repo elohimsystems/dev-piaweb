@@ -1,0 +1,27 @@
+{% extends '::base.html.twig' %}
+{% block poweredby %}
+{{ include('FraterSoftPiaWebBundle:Default:_poweredby.html.twig') }}
+{% endblock %}
+{% block body -%}
+    <table align="center" width="500">
+        <tbody>
+            <tr>
+                <td align="center">
+                    <h2>Establec&eacute; tu clave de acceso</h2>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p>Hola {{ usuario.username }},</p>
+                    <p>Tu cuenta fue creada desde la app m&oacute;vil de SistemaPIA. Para poder
+                    ingresar tambi&eacute;n desde este sistema, eleg&iacute; una clave de acceso
+                    haciendo click en el siguiente enlace:</p>
+                    <p align="center">
+                        <a href="{{ enlace }}">{{ enlace }}</a>
+                    </p>
+                    <p>Si no reconoc&eacute;s esta solicitud, pod&eacute;s ignorar este correo.</p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

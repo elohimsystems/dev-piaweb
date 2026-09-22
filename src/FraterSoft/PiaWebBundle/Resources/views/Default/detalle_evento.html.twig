@@ -108,12 +108,40 @@
                 <div style="color: #777; font-size: 14px; margin-bottom: 8px;">Cupo maximo: {{ competencia.cupomaximo }}</div>
                 {% endif %}
                 {% if categoriasPorCompetencia[competencia.id] is defined and categoriasPorCompetencia[competencia.id] is not empty %}
-                <div style="margin-bottom: 8px;">
-                    <div style="font-size: 13px; font-weight: bold; color: #555; margin-bottom: 4px; text-transform: uppercase;">Categorias</div>
+                {% set hayReglas = false %}
+                {% for categoria in categoriasPorCompetencia[competencia.id] %}
+                    {% if reglasPorCategoria[categoria.id] is defined %}{% set hayReglas = true %}{% endif %}
+                {% endfor %}
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 8px;">
+                    <thead>
+                        <tr style="font-size: 13px; color: #555; text-transform: uppercase; text-align: left;">
+                            <th style="padding: 0 12px 4px 0; width: 1%; white-space: nowrap;">Categorias</th>
+                            {% if hayReglas %}<th style="padding: 0 0 4px 0;">Condicion</th>{% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
                     {% for categoria in categoriasPorCompetencia[competencia.id] %}
-                    <div style="padding: 4px 0; color: #666; font-size: 14px; border-bottom: 1px dotted #f0f0f0;">{{ categoria.descripcion }}</div>
+                        <tr style="color: #666; font-size: 14px; border-bottom: 1px dotted #f0f0f0;">
+                            <td style="padding: 4px 12px 4px 0; vertical-align: top; white-space: nowrap;">{{ categoria.descripcion }}</td>
+                            {% if hayReglas %}
+                            <td style="padding: 4px 0; vertical-align: top;">
+                                {% if reglasPorCategoria[categoria.id] is defined %}
+                                {% for regla in reglasPorCategoria[categoria.id] %}
+                                <span style="display: inline-block; margin: 0 6px 2px 0; font-size: 12px; color: #337ab7; background: #eef5fb; border-radius: 10px; padding: 1px 8px; white-space: nowrap;">
+                                    {%- if regla.esRango -%}
+                                        {{ regla.atributo|capitalize }} de {{ regla.valor1 }} a {{ regla.valor2 }}
+                                    {%- else -%}
+                                        {{ regla.atributo|capitalize }} = {{ regla.valor1 }}
+                                    {%- endif -%}
+                                </span>
+                                {% endfor %}
+                                {% endif %}
+                            </td>
+                            {% endif %}
+                        </tr>
                     {% endfor %}
-                </div>
+                    </tbody>
+                </table>
                 {% endif %}
             </div>
             {% endfor %}

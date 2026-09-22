@@ -14,6 +14,10 @@ frater_soft_pia_web_contacto:
   pattern: /contacto
   defaults: { _controller: FraterSoftPiaWebBundle:Default:contacto }
 
+frater_soft_pia_web_cuenta_movil_revalidar:
+  pattern: /cuenta-movil/revalidar
+  defaults: { _controller: FraterSoftPiaWebBundle:CuentaMovil:revalidar }
+
 frater_soft_pia_web_evento_detalle:
   pattern: /evento/{id}/detalle
   defaults: { _controller: FraterSoftPiaWebBundle:Default:detalleEvento }
